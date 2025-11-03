@@ -42,10 +42,6 @@ const Navbar: React.FC = () => {
   // Only apply prominent styling when second video is active AND in hero section AND navbar is transparent
   // When navbar is visible (scrolled), don't apply color changes
   const isSecondVideo = currentVideoIndex === 1 && isHeroSection && isTransparent
-  // Check if first video is active in hero section
-  const isFirstVideo = currentVideoIndex === 0 && isHeroSection && isTransparent
-  // Logo should be bright when navbar is visible OR when first video is active
-  const shouldMakeLogoBright = !isTransparent || isFirstVideo
 
   const navigationLinks = [
     { path: '/', label: 'Home' },
