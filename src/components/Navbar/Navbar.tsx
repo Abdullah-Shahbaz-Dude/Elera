@@ -66,10 +66,10 @@ const Navbar: React.FC = () => {
   return (
     <nav className="fixed top-0 left-0 right-0 z-[100] w-full transition-all duration-300 pointer-events-none">
       {/* Navbar Container with Gradient Border */}
-      <div className="relative mx-auto mt-6 max-w-[2000px] px-5 pointer-events-auto">
+      <div className="relative mx-auto mt-3 md:mt-6 max-w-[2000px] px-3 md:px-5 pointer-events-auto">
         {/* Gradient Border Container - Outer border with gradient */}
         <div
-          className="relative h-[100px] rounded-[109px] p-[5px] transition-all duration-300"
+          className="relative h-[70px] md:h-[100px] rounded-[35px] md:rounded-[109px] p-[3px] md:p-[5px] transition-all duration-300"
           style={{
             background: isTransparent ? 'transparent' : 'rgba(29, 29, 29, 0.85)',
             boxShadow: isTransparent
@@ -79,29 +79,25 @@ const Navbar: React.FC = () => {
         >
           {/* Inner content container */}
           <div
-            className={`relative flex h-full items-center rounded-[104px] px-6 transition-all duration-300 ${
+            className={`relative flex h-full items-center rounded-[32px] md:rounded-[104px] px-3 md:px-6 transition-all duration-300 ${
               isTransparent
                 ? 'bg-transparent backdrop-blur-none'
                 : 'bg-[rgba(29,29,29,0.85)] backdrop-blur-md'
             }`}
           >
           <div className="flex w-full items-center justify-between">
-            {/* Logo - Top Left with Light Effect when Visible or First Video */}
-            <div
-              className={`transition-all duration-300 ${
-                shouldMakeLogoBright ? 'brightness-125 drop-shadow-[0_0_8px_rgba(255,255,255,0.3)]' : ''
-              }`}
-            >
-              <Logo className="h-[50px] w-auto md:h-[100px] lg:h-[174px]" />
+            {/* Logo - Top Left */}
+            <div className="flex items-center transition-all duration-300">
+              <Logo className="h-[50px] w-auto md:h-[80px] lg:h-[174px]" />
             </div>
 
             {/* Desktop Navigation Links */}
-            <div className="hidden items-center gap-3 lg:flex">
+            <div className="hidden items-center gap-2 md:gap-3 lg:flex">
               {navigationLinks.slice(0, -1).map((link) => (
                 <Link
                   key={link.path}
                   to={link.path}
-                  className={`group relative px-4 py-2 text-sm font-medium transition-all duration-300 ease-out ${
+                  className={`group relative px-2 md:px-4 py-2 text-xs md:text-sm font-medium transition-all duration-300 ease-out ${
                     isActive(link.path)
                       ? isSecondVideo
                         ? 'text-black'
@@ -130,7 +126,7 @@ const Navbar: React.FC = () => {
               ))}
               <Link
                 to="/contact-us"
-                className={`group relative overflow-hidden rounded-full px-8 py-2.5 text-base font-semibold transition-all duration-300 ease-out ${
+                className={`group relative overflow-hidden rounded-full px-4 md:px-8 py-2 md:py-2.5 text-xs md:text-base font-semibold transition-all duration-300 ease-out ${
                   isActive('/contact-us')
                     ? isSecondVideo
                       ? 'bg-gradient-blue text-white shadow-lg shadow-primary-blue-end/50'
@@ -173,7 +169,7 @@ const Navbar: React.FC = () => {
           {/* Mobile Menu */}
           {isMobileMenuOpen && (
             <div
-              className={`absolute left-0 right-0 top-[182px] z-10 space-y-2 rounded-b-[109px] border-t px-6 pb-6 pt-4 transition-all duration-300 lg:hidden ${
+              className={`absolute left-0 right-0 top-[73px] md:top-[105px] z-10 space-y-2 rounded-b-[35px] md:rounded-b-[109px] border-t px-4 md:px-6 pb-4 md:pb-6 pt-3 md:pt-4 transition-all duration-300 lg:hidden ${
                 isTransparent
                   ? 'bg-transparent backdrop-blur-none border-transparent'
                   : 'bg-[rgba(29,29,29,0.85)] backdrop-blur-md border-gray-700'
@@ -184,7 +180,7 @@ const Navbar: React.FC = () => {
                   key={link.path}
                   to={link.path}
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className={`group relative block rounded-lg px-4 py-3 text-base font-medium transition-all duration-300 ease-out ${
+                  className={`group relative block rounded-lg px-4 py-2.5 md:py-3 text-sm md:text-base font-medium transition-all duration-300 ease-out ${
                     isActive(link.path)
                       ? isSecondVideo
                         ? 'text-black bg-gradient-to-r from-primary-blue-start/20 to-primary-blue-end/20'

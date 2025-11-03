@@ -23,36 +23,36 @@ const WhySection: React.FC = () => {
   }
 
   return (
-    <section className="relative w-full overflow-hidden bg-black py-24 md:py-32">
+    <section className="relative w-full overflow-hidden bg-black py-12 md:py-24 lg:py-32">
       {/* Background Glow Effects */}
       <div className="absolute right-1/4 top-1/4 h-[800px] w-[800px] rounded-full bg-gradient-to-br from-[rgba(96,165,250,0.2)] to-[rgba(147,51,234,0.2)] blur-[400px]"></div>
       <div className="absolute left-1/4 bottom-1/4 h-[800px] w-[800px] rounded-full bg-gradient-to-br from-[rgba(167,139,250,0.2)] to-[rgba(147,51,234,0.2)] blur-[400px]"></div>
 
-      <div className="relative container mx-auto px-6 z-10">
+      <div className="relative container mx-auto px-4 md:px-6 z-10 py-12 md:py-20">
         <div className="mx-auto max-w-[1960px]">
           {/* Modern Split Layout */}
-          <div className="grid gap-12 lg:grid-cols-2 lg:gap-16 items-center">
+          <div className="grid gap-8 md:gap-12 lg:grid-cols-2 lg:gap-16 items-center">
             {/* Left Content */}
-            <div className="space-y-8">
+            <div className="space-y-6 md:space-y-8 text-center lg:text-left">
               <div>
-                <h2 className="mb-6 text-5xl font-bold text-white md:text-6xl lg:text-7xl">
+                <h2 className="mb-4 md:mb-6 text-3xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-white">
                   Why Elara Exists
                 </h2>
                 <div
-                  className="h-1 w-24 rounded-full"
+                  className="h-1 w-20 md:w-24 rounded-full mx-auto lg:mx-0"
                   style={{
                     background: 'linear-gradient(to right, #60A5FA, #9333EA)',
                   }}
                 ></div>
               </div>
               
-              <p className="text-xl leading-relaxed text-white/90 md:text-2xl">
+              <p className="text-lg md:text-xl lg:text-2xl leading-relaxed text-white/90">
                 We combine behavioural science, workforce data, and AI Platforms
                 to help you
               </p>
 
               {/* Modern Bullet Points with SVG Icons */}
-              <ul className="space-y-6">
+              <ul className="space-y-4 md:space-y-6">
                 {[
                   {
                     text: 'Understand how your people think, decide, and perform under pressure',
@@ -64,9 +64,9 @@ const WhySection: React.FC = () => {
                     text: 'Build agile teams and leadership strategies fit for a changing world',
                   },
                 ].map((item, index) => (
-                  <li key={index} className="group flex items-start gap-6">
+                  <li key={index} className="group flex flex-col sm:flex-row items-center sm:items-start gap-4 md:gap-6 text-center sm:text-left">
                     <div
-                      className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl transition-all duration-300 group-hover:scale-110 group-hover:rotate-6"
+                      className="flex h-12 w-12 md:h-16 md:w-16 shrink-0 items-center justify-center rounded-xl md:rounded-2xl transition-all duration-300 group-hover:scale-110 group-hover:rotate-6"
                       style={{
                         background: `linear-gradient(135deg, ${
                           index === 0
@@ -80,7 +80,7 @@ const WhySection: React.FC = () => {
                     >
                       {getIcon(index)}
                     </div>
-                    <p className="flex-1 pt-2 text-lg leading-relaxed text-white/90 md:text-xl">
+                    <p className="flex-1 pt-1 md:pt-2 text-base md:text-lg lg:text-xl leading-relaxed text-white/90">
                       {item.text}
                     </p>
                   </li>

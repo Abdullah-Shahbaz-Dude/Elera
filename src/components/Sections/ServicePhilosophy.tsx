@@ -128,11 +128,11 @@ const PhilosophyCard: React.FC<PhilosophyCardProps> = ({
           }}
         />
 
-        <div className="relative p-8 h-full flex flex-col">
+        <div className="relative p-6 md:p-8 h-full flex flex-col">
           {/* Icon Container with Gradient */}
-          <div className="mb-6">
+          <div className="mb-4 md:mb-6">
             <div
-              className="inline-flex h-16 w-16 items-center justify-center rounded-xl transition-all duration-300 group-hover:scale-105 border border-white/20"
+              className="inline-flex h-12 w-12 md:h-16 md:w-16 items-center justify-center rounded-xl transition-all duration-300 group-hover:scale-105 border border-white/20"
               style={{
                 background: 'rgba(255, 255, 255, 0.05)',
                 backdropFilter: 'blur(10px)',
@@ -145,14 +145,14 @@ const PhilosophyCard: React.FC<PhilosophyCardProps> = ({
           </div>
 
           {/* Title */}
-          <h3 className="text-2xl font-bold text-white mb-4 leading-tight group-hover:text-white transition-colors duration-300">
+          <h3 className="text-xl md:text-2xl font-bold text-white mb-3 md:mb-4 leading-tight group-hover:text-white transition-colors duration-300">
             {title}
           </h3>
 
           {/* Content */}
           {children && (
-            <div className="flex-1 mb-6">
-              <p className="text-base leading-relaxed text-white/70 group-hover:text-white/90 transition-colors duration-300">
+            <div className="flex-1 mb-4 md:mb-6">
+              <p className="text-sm md:text-base leading-relaxed text-white/70 group-hover:text-white/90 transition-colors duration-300">
                 {children}
               </p>
             </div>
@@ -162,7 +162,7 @@ const PhilosophyCard: React.FC<PhilosophyCardProps> = ({
           <div className="mt-auto">
             <button
               onClick={handleReadMore}
-              className="group/btn relative overflow-hidden rounded-xl px-6 py-3 text-sm font-semibold text-white transition-all duration-300 hover:scale-105 active:scale-95 border border-white/20"
+              className="group/btn relative overflow-hidden rounded-xl px-4 md:px-6 py-2 md:py-3 text-xs md:text-sm font-semibold text-white transition-all duration-300 hover:scale-105 active:scale-95 border border-white/20"
               style={{
                 background: 'rgba(255, 255, 255, 0.05)',
                 backdropFilter: 'blur(10px)',
@@ -209,7 +209,7 @@ const PhilosophyCard: React.FC<PhilosophyCardProps> = ({
 
 const ServicePhilosophy: React.FC = () => {
   return (
-    <section className="relative w-full overflow-hidden bg-gradient-to-b from-black via-dark-page to-black py-24 md:py-32">
+    <section className="relative w-full overflow-hidden bg-gradient-to-b from-black via-dark-page to-black py-12 md:py-24 lg:py-32">
           {/* Blue and Purple Background Effects */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute -right-[300px] -top-[300px] h-[900px] w-[900px] rounded-full bg-gradient-to-br from-[rgba(95,165,251,0.15)] to-[rgba(147,51,234,0.15)] blur-[500px]"></div>
@@ -218,45 +218,31 @@ const ServicePhilosophy: React.FC = () => {
         <div className="absolute left-1/3 top-1/4 h-[700px] w-[700px] rounded-full bg-gradient-to-br from-[rgba(56,81,249,0.1)] to-[rgba(147,51,234,0.1)] blur-[400px]"></div>
       </div>
 
-      <div className="relative container mx-auto px-6 z-10">
+      <div className="relative container mx-auto px-4 md:px-6 z-10">
         <div className="mx-auto max-w-7xl">
           {/* Modern Section Header with Enhanced Styling */}
-          <div className="mb-20 text-center">
-            <div className="inline-block mb-6">
-              <span className="text-sm font-semibold text-white/60 uppercase tracking-wider">
-                Our Approach
-              </span>
+          <div className="mb-12 md:mb-16 lg:mb-20 text-center">
+            <div className="inline-block mb-4 md:mb-6">
+              <h2 className="text-3xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-white">
+                Our Philosophy
+              </h2>
             </div>
-            <h2 className="mb-6 text-5xl font-bold text-white md:text-6xl lg:text-7xl">
-              Our Philosophy
-            </h2>
-            <div className="flex items-center justify-center gap-4 mb-4">
+            
+            <div className="flex items-center justify-center mb-4">
               <div
-                className="h-1 w-20 rounded-full"
+                className="h-1 w-20 md:w-32 lg:w-80 rounded-full"
                 style={{
                   background: 'linear-gradient(to right, #5FA5FB, #9333EA)',
                 }}
               />
-              <div
-                className="h-1 w-8 rounded-full"
-                style={{
-                  background: 'linear-gradient(to right, #6197FB, #8B5CF6)',
-                }}
-              />
-              <div
-                className="h-1 w-12 rounded-full"
-                style={{
-                  background: 'linear-gradient(to right, #5FA5FB, #A78BFA)',
-                }}
-              />
             </div>
-            <p className="text-lg text-white/60 max-w-2xl mx-auto">
+            <p className="text-base md:text-lg text-white/60 max-w-2xl mx-auto px-4">
               Discover the principles that guide our innovative approach to transforming organizations
             </p>
           </div>
 
           {/* Modern Grid Layout - Responsive and Dynamic */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8">
             {/* Psychology First - Card */}
             <PhilosophyCard
               title="Psychology First"
