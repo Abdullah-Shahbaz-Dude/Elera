@@ -1,13 +1,13 @@
-import React from 'react'
-import { useNavigate } from 'react-router-dom'
-import { aiInsightEngineImage, humanServicesImage } from '@/assets/images'
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import { aiInsightEngineImage, humanServicesImage } from '@/assets/images';
 
 interface ServiceCardProps {
-  title: string
-  description: string
-  backgroundImage?: string
-  imageOpacity?: number
-  navigateTo?: string
+  title: string;
+  description: string;
+  backgroundImage?: string;
+  imageOpacity?: number;
+  navigateTo?: string;
 }
 
 const ServiceCard: React.FC<ServiceCardProps> = ({
@@ -17,18 +17,18 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
   imageOpacity = 0.42,
   navigateTo = '/our-services',
 }) => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const handleClick = () => {
-    navigate(navigateTo)
-  }
-  
+    navigate(navigateTo);
+  };
+
   const gradients = [
     'linear-gradient(135deg, #60A5FA, #9333EA)',
     'linear-gradient(135deg, #8B5CF6, #9333EA)',
-  ]
-  const cardGradient = gradients[title.includes('AI') ? 0 : 1]
-  
+  ];
+  const cardGradient = gradients[title.includes('AI') ? 0 : 1];
+
   return (
     <div className="group relative h-[400px] md:h-[508px] w-full max-w-[668px]">
       {/* Modern Card with Glass Morphism */}
@@ -53,7 +53,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
             }}
           />
         )}
-        
+
         {/* Gradient Overlay */}
         <div
           className="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-30"
@@ -96,28 +96,28 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
         ></div>
       </div>
     </div>
-  )
-}
+  );
+};
 
 const OurServicesSection: React.FC = () => {
   const services = [
     {
-      title: "Elaras AI Insight Engine",
+      title: 'AI &amp; Data Intelligence',
       description:
-        'Using psychology, data, and algorithms, our AI tools (Insight Engines) reveal the hidden strengths, thinking styles, and future skills within your workforce.',
+        'Digital tools that show you the hidden skills and strengths inside your workforce.',
       backgroundImage: aiInsightEngineImage,
       imageOpacity: 0.42,
       navigateTo: '/our-services/ai-insight-engine',
     },
     {
-      title: 'Elaras Human Services',
+      title: 'Business Psychology Consultancy',
       description:
-        'We work directly with your people to assess digital maturity, understand workforce culture, and support transformation from the ground up.',
+        'Psychology-led support to help your organisation and workforce evolve.',
       backgroundImage: humanServicesImage,
       imageOpacity: 0.36,
       navigateTo: '/our-services/business-psychology-consultancy',
     },
-  ]
+  ];
 
   return (
     <section className="relative w-full overflow-hidden bg-black py-12 md:py-24 lg:py-32">
@@ -157,8 +157,7 @@ const OurServicesSection: React.FC = () => {
         </div>
       </div>
     </section>
-  )
-}
+  );
+};
 
-export default OurServicesSection
-
+export default OurServicesSection;
