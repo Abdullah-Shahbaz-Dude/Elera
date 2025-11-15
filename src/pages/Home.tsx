@@ -1,6 +1,6 @@
 import HeroSection from '@/components/HeroSection/HeroSection'
 import WhySection from '@/components/Sections/WhySection'
-import ServicePhilosophy from '@/components/Sections/ServicePhilosophy'
+// import ServicePhilosophy from '@/components/Sections/ServicePhilosophy'
 import OurServicesSection from '@/components/Sections/OurServicesSection'
 import ContactForm from '@/components/Sections/ContactForm'
 import Newsletter from '@/components/Sections/Newsletter'
@@ -12,7 +12,7 @@ const Home = () => {
       <HeroSection />
       {/* <IntroSection /> */}
       <WhySection />
-      <ServicePhilosophy />
+      {/* <ServicePhilosophy /> */}
       <OurServicesSection />
       <ContactForm />
       <Newsletter />

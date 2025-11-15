@@ -1,26 +1,43 @@
 import { aiInsightEngineImage } from '@/assets/images'
-import React from 'react'
+import React, { useState } from 'react'
 
 const WhySection: React.FC = () => {
-  // SVG Icons for each point
-  const getIcon = (index: number) => {
-    const icons = [
-      // Understand
-      <svg key={0} className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-      </svg>,
-      // Uncover
-      <svg key={1} className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-      </svg>,
-      // Build
-      <svg key={2} className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-      </svg>,
-    ]
-    return icons[index]
+  const [expandedItems, setExpandedItems] = useState<Set<number>>(new Set())
+
+  const toggleItem = (index: number) => {
+    setExpandedItems((prev) => {
+      const newSet = new Set(prev)
+      if (newSet.has(index)) {
+        newSet.delete(index)
+      } else {
+        newSet.add(index)
+      }
+      return newSet
+    })
   }
+
+  const items = [
+    {
+      title: 'Psychology First',
+      subText: 'We start with business psychology to understand how people think, behave, and respond to change.',
+    },
+    {
+      title: 'Advanced AI and Data Intelligence',
+      subText: 'We build cutting-edge AI and data algorithms that go far beyond basic analytics. Our technology identifies hidden patterns, emerging strengths, and untapped potential across your workforce.',
+    },
+    {
+      title: 'Harnessing Neurodiversity and Different Thinkers for Real Advantage',
+      subText: 'We help organisations identify and elevate the strengths of neurodiverse individuals, unlocking problem-solving, creativity, and innovation that can go unnoticed in traditional workplaces.',
+    },
+    {
+      title: 'People-Led Transformation',
+      subText: 'We help organisations build cultures where people shape progress, not resist it making transformation smoother, faster, and more sustainable.',
+    },
+    {
+      title: 'Preparing You for What Comes Next',
+      subText: 'We equip your people, systems, and culture for the demands of the 4th Industrial Revolution helping your organisation adapt, innovate, and thrive in a rapidly shifting digital world.',
+    },
+  ]
 
   return (
     <section className="relative w-full overflow-hidden bg-black py-12 md:py-24 lg:py-32">
@@ -46,45 +63,93 @@ const WhySection: React.FC = () => {
                 ></div>
               </div>
               
-              <p className="text-lg md:text-xl lg:text-2xl leading-relaxed text-white/90">
-                We combine behavioural science, workforce data, and AI Platforms
-                to help you
-              </p>
+              {/* Expandable List Items */}
+              <ul className="space-y-3 md:space-y-4">
+                {items.map((item, index) => {
+                  const isExpanded = expandedItems.has(index)
+                  return (
+                    <li key={index} className="group">
+                      <div
+                        className="relative rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm p-4 md:p-5 transition-all duration-300 hover:border-white/20 hover:bg-white/10"
+                        style={{
+                          boxShadow: isExpanded
+                            ? '0 4px 20px rgba(96, 165, 250, 0.15)'
+                            : '0 2px 10px rgba(0, 0, 0, 0.2)',
+                        }}
+                      >
+                        {/* Gradient accent on hover */}
+                        <div
+                          className="absolute inset-0 rounded-xl opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+                          style={{
+                            background: 'linear-gradient(135deg, rgba(96, 165, 250, 0.05), rgba(147, 51, 234, 0.05))',
+                          }}
+                        ></div>
 
-              {/* Modern Bullet Points with SVG Icons */}
-              <ul className="space-y-4 md:space-y-6">
-                {[
-                  {
-                    text: 'Understand how your people think, decide, and perform under pressure',
-                  },
-                  {
-                    text: 'Uncover hidden strengths, overlooked capabilities, and future potential in your work force',
-                  },
-                  {
-                    text: 'Build agile teams and leadership strategies fit for a changing world',
-                  },
-                ].map((item, index) => (
-                  <li key={index} className="group flex flex-col sm:flex-row items-center sm:items-start gap-4 md:gap-6 text-center sm:text-left">
-                    <div
-                      className="flex h-12 w-12 md:h-16 md:w-16 shrink-0 items-center justify-center rounded-xl md:rounded-2xl transition-all duration-300 group-hover:scale-110 group-hover:rotate-6"
-                      style={{
-                        background: `linear-gradient(135deg, ${
-                          index === 0
-                            ? '#60A5FA, #3B82F6'
-                            : index === 1
-                            ? '#8B5CF6, #7C3AED'
-                            : '#A78BFA, #9333EA'
-                        })`,
-                        boxShadow: '0 8px 32px rgba(96, 165, 250, 0.4)',
-                      }}
-                    >
-                      {getIcon(index)}
-                    </div>
-                    <p className="flex-1 pt-1 md:pt-2 text-base md:text-lg lg:text-xl leading-relaxed text-white/90">
-                      {item.text}
-                    </p>
-                  </li>
-                ))}
+                        <div className="relative">
+                          <div className="flex items-start justify-between gap-4">
+                            <h3 className="font-bold text-base md:text-lg lg:text-xl text-white flex-1 leading-tight">
+                              {item.title}
+                            </h3>
+                            <button
+                              onClick={() => toggleItem(index)}
+                              className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm md:text-base font-medium transition-all duration-200 whitespace-nowrap shrink-0 ${
+                                isExpanded
+                                  ? 'text-white'
+                                  : 'text-[#60A5FA] hover:text-white'
+                              }`}
+                              style={{
+                                background: isExpanded
+                                  ? 'linear-gradient(135deg, rgba(96, 165, 250, 0.2), rgba(147, 51, 234, 0.2))'
+                                  : 'transparent',
+                              }}
+                              onMouseEnter={(e) => {
+                                if (!isExpanded) {
+                                  e.currentTarget.style.background =
+                                    'linear-gradient(135deg, rgba(96, 165, 250, 0.15), rgba(147, 51, 234, 0.15))'
+                                }
+                              }}
+                              onMouseLeave={(e) => {
+                                if (!isExpanded) {
+                                  e.currentTarget.style.background = 'transparent'
+                                }
+                              }}
+                            >
+                              <span>{isExpanded ? 'Read less' : 'Read more'}</span>
+                              <svg
+                                className={`w-4 h-4 transition-transform duration-300 ${
+                                  isExpanded ? 'rotate-180' : ''
+                                }`}
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                                strokeWidth={2.5}
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  d="M19 9l-7 7-7-7"
+                                />
+                              </svg>
+                            </button>
+                          </div>
+
+                          {/* Expandable content with smooth animation */}
+                          <div
+                            className={`overflow-hidden transition-all duration-500 ease-in-out ${
+                              isExpanded ? 'max-h-[500px] opacity-100 mt-4' : 'max-h-0 opacity-0 mt-0'
+                            }`}
+                          >
+                            <div className="pt-2">
+                              <p className="text-sm md:text-base lg:text-lg leading-relaxed text-white/80">
+                                {item.subText}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </li>
+                  )
+                })}
               </ul>
             </div>
 
