@@ -1,917 +1,632 @@
-import React from 'react'
-import Footer from '@/components/Footer/Footer'
-import Newsletter from '@/components/Sections/Newsletter'
-import { 
-    RevealHiddenBrillianceImage,
-    shutterstock2291389905,
-    shutterstock2513386035
-} from '@/assets/images'
+import React, { useState } from 'react';
+import Footer from '@/components/Footer/Footer';
+import Newsletter from '@/components/Sections/Newsletter';
+import { shutterstock2513386035 } from '@/assets/images';
 
-interface InsightEngineSectionProps {
-    engineNumber: number
-    subtitle: string
-    description: string
-    howItWorks: string[]
-    outputs: string[]
-    caseStudyTitle: string
-    caseStudyText: string
-    caseStudyImage?: string
+// Accordion component for expandable sections
+interface AccordionItemProps {
+  title: string;
+  content: string;
+  isExpanded: boolean;
+  onToggle: () => void;
 }
 
-const InsightEngineSection: React.FC<InsightEngineSectionProps> = ({
-    engineNumber,
-    subtitle,
-    description,
-    howItWorks,
-    outputs,
-    caseStudyTitle,
-    caseStudyText,
-    caseStudyImage,
+const AccordionItem: React.FC<AccordionItemProps> = ({
+  title,
+  content,
+  isExpanded,
+  onToggle,
 }) => {
-    return (
-        <div className="relative mb-24">
-            {/* Section Title */}
-            <div className="mb-12 text-center">
-                <h2 className="mb-4 text-4xl font-bold text-white md:text-5xl lg:text-6xl">
-                    INSIGHT ENGINE {engineNumber}
-                </h2>
-                <h3 className="mb-4 text-3xl font-bold text-white md:text-4xl lg:text-5xl">
-                    {subtitle}
-                </h3>
-                <p className="mx-auto mt-4 max-w-4xl text-base text-white md:text-lg lg:text-xl">
-                    {description}
-                </p>
+  return (
+    <div className="group">
+      <div
+        className="relative rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm p-4 md:p-5 transition-all duration-300 hover:border-white/20 hover:bg-white/10"
+        style={{
+          boxShadow: isExpanded
+            ? '0 4px 20px rgba(96, 165, 250, 0.15)'
+            : '0 2px 10px rgba(0, 0, 0, 0.2)',
+        }}
+      >
+        <div
+          className="absolute inset-0 rounded-xl opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+          style={{
+            background:
+              'linear-gradient(135deg, rgba(96, 165, 250, 0.05), rgba(147, 51, 234, 0.05))',
+          }}
+        ></div>
+
+        <div className="relative">
+          <div className="flex items-start justify-between gap-4">
+            <h3 className="font-bold text-base md:text-lg lg:text-xl text-white flex-1 leading-tight text-left">
+              {title}
+            </h3>
+            <button
+              onClick={onToggle}
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm md:text-base font-medium transition-all duration-200 whitespace-nowrap shrink-0 ${
+                isExpanded ? 'text-white' : 'text-[#60A5FA] hover:text-white'
+              }`}
+              style={{
+                background: isExpanded
+                  ? 'linear-gradient(135deg, rgba(96, 165, 250, 0.2), rgba(147, 51, 234, 0.2))'
+                  : 'transparent',
+              }}
+              onMouseEnter={(e) => {
+                if (!isExpanded) {
+                  e.currentTarget.style.background =
+                    'linear-gradient(135deg, rgba(96, 165, 250, 0.15), rgba(147, 51, 234, 0.15))';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!isExpanded) {
+                  e.currentTarget.style.background = 'transparent';
+                }
+              }}
+            >
+              <span>{isExpanded ? 'Read less' : 'Read more'}</span>
+              <svg
+                className={`w-4 h-4 transition-transform duration-300 ${
+                  isExpanded ? 'rotate-180' : ''
+                }`}
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2.5}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M19 9l-7 7-7-7"
+                />
+              </svg>
+            </button>
+          </div>
+
+          <div
+            className={`overflow-hidden transition-all duration-500 ease-in-out ${
+              isExpanded
+                ? 'max-h-[500px] opacity-100 mt-4'
+                : 'max-h-0 opacity-0 mt-0'
+            }`}
+          >
+            <div className="pt-2">
+              <p className="text-sm md:text-base lg:text-lg leading-relaxed text-white/80 text-left whitespace-pre-line">
+                {content}
+              </p>
             </div>
-
-            {/* Conditionally render different layouts based on engineNumber */}
-            {engineNumber === 1 ? (
-                /* Engine 1: Overlapping Boxes Design */
-                <div className="relative grid gap-8 lg:grid-cols-2">
-                    {/* Left: How it works - Timeline Design */}
-                    <div className="relative z-10">
-                        <h4 className="mb-8 text-3xl font-bold text-white tracking-tight flex items-center gap-3">
-                            <div className="h-12 w-12 rounded-xl flex items-center justify-center"
-                                 style={{
-                                     background: 'linear-gradient(135deg, #60A5FA, #9333EA)',
-                                     boxShadow: '0 4px 20px rgba(96, 165, 250, 0.4)',
-                                 }}>
-                                <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
-                                </svg>
-                            </div>
-                            How it works:
-                        </h4>
-                        
-                        {/* Timeline Container */}
-                        <div className="relative pl-8 md:pl-12">
-                            {/* Vertical Timeline Line */}
-                            <div className="absolute left-6 top-0 h-full w-1 rounded-full"
-                                 style={{
-                                     background: 'linear-gradient(to bottom, #60A5FA, #9333EA)',
-                                     boxShadow: '0 0 20px rgba(96, 165, 250, 0.5)',
-                                 }}>
-                            </div>
-                            
-                            {/* Timeline Items */}
-                            <div className="space-y-8">
-                                {howItWorks.map((item, index) => (
-                                    <div key={index} className="relative flex gap-6">
-                                        {/* Timeline Node */}
-                                        <div className="relative z-10 mt-1.5">
-                                            <div className="h-6 w-6 rounded-full border-4 border-black flex items-center justify-center"
-                                                 style={{
-                                                     background: 'linear-gradient(135deg, #60A5FA, #9333EA)',
-                                                     boxShadow: '0 0 16px rgba(96, 165, 250, 0.6)',
-                                                 }}>
-                                                <div className="h-2 w-2 rounded-full bg-white"></div>
-                                            </div>
-                                        </div>
-                                        
-                                        {/* Content Card */}
-                                        <div className="flex-1 pb-2">
-                                            <div className="rounded-xl p-6 border-l-4"
-                                                 style={{
-                                                     background: 'rgba(96, 165, 250, 0.08)',
-                                                     borderColor: '#60A5FA',
-                                                     boxShadow: '0 4px 16px rgba(96, 165, 250, 0.15)',
-                                                 }}>
-                                                <div className="mb-2 text-sm font-semibold text-white/70 uppercase tracking-wider">
-                                                    Step {index + 1}
-                                                </div>
-                                                <p className="text-base leading-relaxed text-white/95 md:text-lg">
-                                                    {item}
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Right: Outputs include - Single box with bullet list (overlaps left) */}
-                    <div className="relative z-20 -ml-8 lg:ml-[-4rem] mt-20">
-                        <h4 className="mb-4 text-2xl font-bold ml-12 text-white tracking-tight">Outputs include:</h4>
-                        {/* Gradient Border Container */}
-                        <div
-                            className="relative w-full rounded-xl p-[1px]"
-                            style={{
-                                background: 'linear-gradient(to right, #60A5FA, #A78BFA, #9333EA)',
-                                boxShadow: '0 4px 14px rgba(96, 165, 250, 0.2)',
-                            }}
-                        >
-                            {/* Inner Container */}
-                            <div
-                                className="relative w-full rounded-xl p-6 backdrop-blur-sm"
-                                style={{
-                                    background: 'rgba(0, 0, 0, 0.85)',
-                                }}
-                            >
-                                <ul className="space-y-4">
-                                    {outputs.map((item, index) => (
-                                        <li key={index} className="flex items-start gap-4">
-                                            <div className="mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full bg-white shadow-[0_0_8px_rgba(255,255,255,0.5)]"></div>
-                                            <p className="flex-1 text-base leading-relaxed text-white/95 md:text-lg">
-                                                {item}
-                                            </p>
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            ) : engineNumber === 2 ? (
-                /* Engine 2: Vertical Timeline/Step Design */
-                <div className="relative space-y-12">
-                    {/* How it works - Timeline Design */}
-                    <div className="relative">
-                        <h4 className="mb-8 text-3xl font-bold text-white tracking-tight flex items-center gap-3">
-                            <div className="h-12 w-12 rounded-xl flex items-center justify-center"
-                                 style={{
-                                     background: 'linear-gradient(135deg, #60A5FA, #9333EA)',
-                                     boxShadow: '0 4px 20px rgba(96, 165, 250, 0.4)',
-                                 }}>
-                                <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
-                                </svg>
-                            </div>
-                            How it works:
-                        </h4>
-                        
-                        {/* Timeline Container */}
-                        <div className="relative pl-8 md:pl-12">
-                            {/* Vertical Timeline Line */}
-                            <div className="absolute left-6 top-0 h-full w-1 rounded-full"
-                                 style={{
-                                     background: 'linear-gradient(to bottom, #60A5FA, #9333EA)',
-                                     boxShadow: '0 0 20px rgba(96, 165, 250, 0.5)',
-                                 }}>
-                            </div>
-                            
-                            {/* Timeline Items */}
-                            <div className="space-y-8">
-                                {howItWorks.map((item, index) => (
-                                    <div key={index} className="relative flex gap-6">
-                                        {/* Timeline Node */}
-                                        <div className="relative z-10 mt-1.5">
-                                            <div className="h-6 w-6 rounded-full border-4 border-black flex items-center justify-center"
-                                                 style={{
-                                                     background: 'linear-gradient(135deg, #60A5FA, #9333EA)',
-                                                     boxShadow: '0 0 16px rgba(96, 165, 250, 0.6)',
-                                                 }}>
-                                                <div className="h-2 w-2 rounded-full bg-white"></div>
-                                            </div>
-                                        </div>
-                                        
-                                        {/* Content Card */}
-                                        <div className="flex-1 pb-2">
-                                            <div className="rounded-xl p-6 border-l-4"
-                                                 style={{
-                                                     background: 'rgba(96, 165, 250, 0.08)',
-                                                     borderColor: '#60A5FA',
-                                                     boxShadow: '0 4px 16px rgba(96, 165, 250, 0.15)',
-                                                 }}>
-                                                <div className="mb-2 text-sm font-semibold text-white/70 uppercase tracking-wider">
-                                                    Step {index + 1}
-                                                </div>
-                                                <p className="text-base leading-relaxed text-white/95 md:text-lg">
-                                                    {item}
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Outputs - Grid Card Design */}
-                    <div className="relative">
-                        <h4 className="mb-8 text-3xl font-bold text-white tracking-tight flex items-center gap-3">
-                            <div className="h-12 w-12 rounded-xl flex items-center justify-center"
-                                 style={{
-                                     background: 'linear-gradient(135deg, #8B5CF6, #7C3AED)',
-                                     boxShadow: '0 4px 20px rgba(139, 92, 246, 0.4)',
-                                 }}>
-                                <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
-                                </svg>
-                            </div>
-                            Outputs include:
-                        </h4>
-                        
-                        {/* Grid of Output Cards */}
-                        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                            {outputs.map((item, index) => (
-                                <div key={index}
-                                     className="group relative rounded-xl p-5 transition-all hover:scale-105"
-                                     style={{
-                                         background: 'rgba(139, 92, 246, 0.1)',
-                                         border: '1px solid rgba(139, 92, 246, 0.3)',
-                                         boxShadow: '0 4px 16px rgba(139, 92, 246, 0.15)',
-                                     }}>
-                                    <div className="mb-3 flex items-center gap-2">
-                                        <div className="h-8 w-8 rounded-lg flex items-center justify-center"
-                                             style={{
-                                                 background: 'linear-gradient(135deg, #8B5CF6, #7C3AED)',
-                                             }}>
-                                            <svg className="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                                            </svg>
-                                        </div>
-                                    </div>
-                                    <p className="text-sm leading-relaxed text-white/90 md:text-base">
-                                        {item}
-                                    </p>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                </div>
-            ) : (
-                /* Engine 3: Horizontal Flow/Card Design */
-                <div className="relative space-y-12">
-                    {/* How it works - Horizontal Flow */}
-                    <div className="relative">
-                        <h4 className="mb-8 text-3xl font-bold text-white tracking-tight flex items-center gap-3">
-                            <div className="h-12 w-12 rounded-xl flex items-center justify-center"
-                                 style={{
-                                     background: 'linear-gradient(135deg, #60A5FA, #9333EA)',
-                                     boxShadow: '0 4px 20px rgba(96, 165, 250, 0.4)',
-                                 }}>
-                                <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                                </svg>
-                            </div>
-                            How it works:
-                        </h4>
-                        
-                        {/* Horizontal Flow Cards */}
-                        <div className="flex flex-col gap-6 md:flex-row md:gap-4">
-                            {howItWorks.map((item, index) => (
-                                <div key={index} className="relative flex-1 group">
-                                    {/* Connection Arrow (hidden on last item) */}
-                                    {index < howItWorks.length - 1 && (
-                                        <div className="absolute -right-2 top-1/2 z-20 hidden -translate-y-1/2 md:block">
-                                            <svg className="h-8 w-8 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
-                                                <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd" />
-                                            </svg>
-                                        </div>
-                                    )}
-                                    
-                                    {/* Card */}
-                                    <div className="relative h-full rounded-2xl p-6 transition-all group-hover:scale-105"
-                                         style={{
-                                             background: 'rgba(96, 165, 250, 0.1)',
-                                             border: '2px solid rgba(96, 165, 250, 0.4)',
-                                             boxShadow: '0 4px 20px rgba(96, 165, 250, 0.2)',
-                                         }}>
-                                        {/* Number Badge */}
-                                        <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-lg font-bold text-white"
-                                             style={{
-                                                 background: 'linear-gradient(135deg, #60A5FA, #9333EA)',
-                                                 boxShadow: '0 4px 12px rgba(96, 165, 250, 0.4)',
-                                             }}>
-                                            {index + 1}
-                                        </div>
-                                        
-                                        <p className="text-base leading-relaxed text-white/95 md:text-lg">
-                                            {item}
-                                        </p>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-
-                    {/* Outputs - Split Panel Design */}
-                    <div className="relative">
-                        <h4 className="mb-8 text-3xl font-bold text-white tracking-tight flex items-center gap-3">
-                            <div className="h-12 w-12 rounded-xl flex items-center justify-center"
-                                 style={{
-                                     background: 'linear-gradient(135deg, #A78BFA, #9333EA)',
-                                     boxShadow: '0 4px 20px rgba(167, 139, 250, 0.4)',
-                                 }}>
-                                <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                                </svg>
-                            </div>
-                            Outputs include:
-                        </h4>
-                        
-                        {/* Split Panel with Icon List */}
-                        <div className="rounded-2xl p-8"
-                             style={{
-                                 background: 'rgba(167, 139, 250, 0.08)',
-                                 border: '2px solid rgba(167, 139, 250, 0.3)',
-                                 boxShadow: '0 8px 32px rgba(167, 139, 250, 0.2)',
-                             }}>
-                            <div className="grid gap-6 md:grid-cols-2">
-                                {outputs.map((item, index) => (
-                                    <div key={index} className="flex items-start gap-4 group">
-                                        {/* Icon Badge */}
-                                        <div className="mt-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl transition-all group-hover:scale-110"
-                                             style={{
-                                                 background: 'linear-gradient(135deg, #A78BFA, #9333EA)',
-                                                 boxShadow: '0 4px 16px rgba(167, 139, 250, 0.4)',
-                                             }}>
-                                            <svg className="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                                            </svg>
-                                        </div>
-                                        
-                                        {/* Text */}
-                                        <p className="flex-1 pt-2 text-base leading-relaxed text-white/95 md:text-lg">
-                                            {item}
-                                        </p>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            {/* Case Study Section - Different Design for Each Engine */}
-            {engineNumber === 1 ? (
-                /* Engine 1: Traditional Card Design with Image on Right */
-                <div className="mt-20">
-                    <div className="relative">
-                        {/* Background Glow Effect */}
-                        <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-[rgba(96,165,250,0.1)] via-[rgba(167,139,250,0.1)] to-[rgba(147,51,234,0.1)] blur-3xl"></div>
-                        
-                        {/* Main Card Container */}
-                        <div
-                            className="relative rounded-3xl p-[2px]"
-                            style={{
-                                background: 'linear-gradient(135deg, rgba(96, 165, 250, 0.4), rgba(167, 139, 250, 0.4), rgba(147, 51, 234, 0.4))',
-                                boxShadow: '0 8px 32px rgba(96, 165, 250, 0.3), 0 0 60px rgba(147, 51, 234, 0.2)',
-                            }}
-                        >
-                            <div
-                                className="relative rounded-3xl p-8 md:p-12 backdrop-blur-md"
-                                style={{
-                                    background: 'linear-gradient(180deg, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.85))',
-                                }}
-                            >
-                                {/* Header with Icon */}
-                                <div className="mb-8 flex items-center gap-4">
-                                    <div
-                                        className="flex h-14 w-14 items-center justify-center rounded-xl"
-                                        style={{
-                                            background: 'linear-gradient(135deg, #60A5FA, #9333EA)',
-                                            boxShadow: '0 4px 20px rgba(96, 165, 250, 0.4)',
-                                        }}
-                                    >
-                                        <svg className="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                        </svg>
-                                    </div>
-                                    <div>
-                                        <h4 className="text-2xl font-bold text-white md:text-3xl tracking-tight">
-                                            {caseStudyTitle}
-                                        </h4>
-                                        <div className="mt-1 h-1 w-20 rounded-full bg-gradient-to-r from-[#60A5FA] to-[#9333EA]"></div>
-                                    </div>
-                                </div>
-
-                                {/* Content Grid */}
-                                <div className="grid gap-8 lg:grid-cols-[1fr_auto]">
-                                    {/* Text Content */}
-                                    <div className="space-y-6">
-                                        <div className="relative pl-6">
-                                            <div
-                                                className="absolute left-0 top-0 h-full w-1 rounded-full"
-                                                style={{
-                                                    background: 'linear-gradient(to bottom, #60A5FA, #9333EA)',
-                                                    boxShadow: '0 0 10px rgba(96, 165, 250, 0.5)',
-                                                }}
-                                            ></div>
-                                            <p className="text-lg leading-relaxed text-white/90 md:text-xl md:leading-8">
-                                                {caseStudyText}
-                                            </p>
-                                        </div>
-
-                                        {/* Key Highlights */}
-                                        <div className="flex flex-wrap gap-3 pt-4">
-                                            <span className="rounded-full px-4 py-2 text-sm font-semibold text-white"
-                                                  style={{
-                                                      background: 'rgba(96, 165, 250, 0.2)',
-                                                      border: '1px solid rgba(96, 165, 250, 0.4)',
-                                                  }}>
-                                                ✓ Real Results
-                                            </span>
-                                            <span className="rounded-full px-4 py-2 text-sm font-semibold text-white"
-                                                  style={{
-                                                      background: 'rgba(167, 139, 250, 0.2)',
-                                                      border: '1px solid rgba(167, 139, 250, 0.4)',
-                                                  }}>
-                                                ✓ Proven Impact
-                                            </span>
-                                            <span className="rounded-full px-4 py-2 text-sm font-semibold text-white"
-                                                  style={{
-                                                      background: 'rgba(147, 51, 234, 0.2)',
-                                                      border: '1px solid rgba(147, 51, 234, 0.4)',
-                                                  }}>
-                                                ✓ Transformative Change
-                                            </span>
-                                        </div>
-                                    </div>
-
-                                    {/* Visual Element - Right Side */}
-                                    {caseStudyImage && (
-                                        <div className="relative lg:ml-8">
-                                            <div
-                                                className="relative h-64 w-64 rounded-2xl p-[2px] lg:h-80 lg:w-80"
-                                                style={{
-                                                    background: 'linear-gradient(135deg, #60A5FA, #A78BFA, #9333EA)',
-                                                    boxShadow: '0 8px 32px rgba(96, 165, 250, 0.4)',
-                                                }}
-                                            >
-                                                <div className="relative h-full w-full overflow-hidden rounded-2xl bg-black/50">
-                                                    <img
-                                                        src={caseStudyImage}
-                                                        alt={caseStudyTitle}
-                                                        className="h-full w-full object-cover"
-                                                        style={{
-                                                            filter: 'grayscale(20%) contrast(1.1) brightness(0.8)',
-                                                            opacity: 0.85,
-                                                        }}
-                                                    />
-                                                    {/* Overlay Gradient */}
-                                                    <div
-                                                        className="absolute inset-0"
-                                                        style={{
-                                                            background: 'linear-gradient(135deg, rgba(96, 165, 250, 0.25), rgba(147, 51, 234, 0.35))',
-                                                            mixBlendMode: 'overlay',
-                                                        }}
-                                                    ></div>
-                                                </div>
-                                            </div>
-                                            
-                                            {/* Decorative Elements */}
-                                            <div className="absolute -right-4 -top-4 h-24 w-24 rounded-full bg-gradient-to-br from-[rgba(96,165,250,0.3)] to-[rgba(147,51,234,0.3)] blur-2xl"></div>
-                                            <div className="absolute -bottom-4 -left-4 h-32 w-32 rounded-full bg-gradient-to-br from-[rgba(167,139,250,0.2)] to-[rgba(147,51,234,0.2)] blur-2xl"></div>
-                                        </div>
-                                    )}
-                                </div>
-
-                                {/* Bottom Accent Line */}
-                                <div className="mt-8 flex items-center gap-4">
-                                    <div className="h-px flex-1 bg-gradient-to-r from-transparent via-[rgba(96,165,250,0.5)] to-transparent"></div>
-                                    <div className="h-2 w-2 rounded-full bg-gradient-to-br from-[#60A5FA] to-[#9333EA]"></div>
-                                    <div className="h-px flex-1 bg-gradient-to-r from-transparent via-[rgba(147,51,234,0.5)] to-transparent"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            ) : engineNumber === 2 ? (
-                /* Engine 2: Quote/Testimonial Style Design */
-                <div className="mt-20">
-                    <div className="relative">
-                        {/* Quote Mark Decorative Element */}
-                        <div className="absolute -left-4 -top-8 z-0">
-                            <svg className="h-32 w-32 text-white/5" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 9.017-9.57V2.846C23.731 2.846 20.017 1 15.017 1c-5.704 0-9.017 3.463-9.017 8.308v11.692h8.017zm-14.017 0v-7.391c0-5.704 3.731-9.57 9.017-9.57V2.846C9.731 2.846 6.017 1 1.017 1c-5.704 0-9.017 3.463-9.017 8.308v11.692H0z"/>
-                            </svg>
-                        </div>
-
-                        {/* Main Container */}
-                        <div className="relative rounded-2xl border-2 p-8 md:p-12"
-                             style={{
-                                 borderColor: 'rgba(96, 165, 250, 0.3)',
-                                 background: 'linear-gradient(135deg, rgba(96, 165, 250, 0.05), rgba(167, 139, 250, 0.05))',
-                                 boxShadow: '0 8px 32px rgba(96, 165, 250, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
-                             }}>
-                            {/* Header - Centered */}
-                            <div className="mb-8 text-center">
-                                <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-full"
-                                     style={{
-                                         background: 'linear-gradient(135deg, #60A5FA, #3B82F6)',
-                                         boxShadow: '0 4px 20px rgba(96, 165, 250, 0.4)',
-                                     }}>
-                                    <svg className="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                    </svg>
-                                </div>
-                                <h4 className="mb-2 text-2xl font-bold text-white md:text-3xl tracking-tight">
-                                    {caseStudyTitle}
-                                </h4>
-                                <div className="mx-auto mt-2 h-1 w-16 rounded-full bg-gradient-to-r from-[#60A5FA] to-[#3B82F6]"></div>
-                            </div>
-
-                            {/* Content - Centered with Quote Style */}
-                            <div className="relative">
-                                {caseStudyImage && (
-                                    <div className="mb-8 flex justify-center">
-                                        <div className="relative h-40 w-40 rounded-full p-[2px]"
-                                             style={{
-                                                 background: 'linear-gradient(135deg, #60A5FA, #3B82F6)',
-                                                 boxShadow: '0 8px 32px rgba(96, 165, 250, 0.4)',
-                                             }}>
-                                            <div className="relative h-full w-full overflow-hidden rounded-full bg-black/50">
-                                                <img
-                                                    src={caseStudyImage}
-                                                    alt={caseStudyTitle}
-                                                    className="h-full w-full object-cover"
-                                                    style={{
-                                                        filter: 'grayscale(20%) contrast(1.1) brightness(0.8)',
-                                                    }}
-                                                />
-                                            </div>
-                                        </div>
-                                    </div>
-                                )}
-
-                                {/* Text Content - Quote Style */}
-                                <div className="relative mx-auto max-w-4xl">
-                                    <div className="relative rounded-xl p-8"
-                                         style={{
-                                             background: 'rgba(0, 0, 0, 0.4)',
-                                             borderLeft: '4px solid #60A5FA',
-                                         }}>
-                                        <p className="text-lg italic leading-relaxed text-white/95 md:text-xl md:leading-8">
-                                            "{caseStudyText}"
-                                        </p>
-                                    </div>
-
-                                    {/* Key Metrics - Bottom */}
-                                    <div className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-3">
-                                        <div className="rounded-lg p-4 text-center"
-                                             style={{
-                                                 background: 'rgba(96, 165, 250, 0.1)',
-                                                 border: '1px solid rgba(96, 165, 250, 0.3)',
-                                             }}>
-                                            <div className="mb-2 text-2xl font-bold text-white">✓</div>
-                                            <div className="text-sm text-white/80">Real Results</div>
-                                        </div>
-                                        <div className="rounded-lg p-4 text-center"
-                                             style={{
-                                                 background: 'rgba(167, 139, 250, 0.1)',
-                                                 border: '1px solid rgba(167, 139, 250, 0.3)',
-                                             }}>
-                                            <div className="mb-2 text-2xl font-bold text-white">✓</div>
-                                            <div className="text-sm text-white/80">Proven Impact</div>
-                                        </div>
-                                        <div className="rounded-lg p-4 text-center"
-                                             style={{
-                                                 background: 'rgba(147, 51, 234, 0.1)',
-                                                 border: '1px solid rgba(147, 51, 234, 0.3)',
-                                             }}>
-                                            <div className="mb-2 text-2xl font-bold text-white">✓</div>
-                                            <div className="text-sm text-white/80">Transformative</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            ) : (
-                /* Engine 3: Split Panel Design with Image on Left */
-                <div className="mt-20">
-                    <div className="relative">
-                        {/* Main Container - Split Layout */}
-                        <div className="grid gap-0 lg:grid-cols-2">
-                            {/* Left: Image Panel */}
-                            {caseStudyImage && (
-                                <div className="relative order-2 lg:order-1">
-                                    <div className="relative h-full min-h-[400px] overflow-hidden rounded-l-3xl lg:rounded-l-3xl lg:rounded-r-none rounded-r-3xl"
-                                         style={{
-                                             background: 'linear-gradient(135deg, rgba(96, 165, 250, 0.2), rgba(167, 139, 250, 0.2))',
-                                         }}>
-                                        <div className="absolute inset-0 p-[2px]"
-                                             style={{
-                                                 background: 'linear-gradient(135deg, #60A5FA, #A78BFA, #9333EA)',
-                                             }}>
-                                            <div className="relative h-full w-full overflow-hidden rounded-l-3xl lg:rounded-l-3xl lg:rounded-r-none rounded-r-3xl bg-black/50">
-                                                <img
-                                                    src={caseStudyImage}
-                                                    alt={caseStudyTitle}
-                                                    className="h-full w-full object-cover"
-                                                    style={{
-                                                        filter: 'grayscale(30%) contrast(1.2) brightness(0.7)',
-                                                        opacity: 0.9,
-                                                    }}
-                                                />
-                                                {/* Overlay */}
-                                                <div className="absolute inset-0"
-                                                     style={{
-                                                         background: 'linear-gradient(135deg, rgba(96, 165, 250, 0.4), rgba(147, 51, 234, 0.5))',
-                                                     }}></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            )}
-
-                            {/* Right: Content Panel */}
-                            <div className="relative order-1 lg:order-2"
-                                 style={{
-                                     background: 'linear-gradient(180deg, rgba(0, 0, 0, 0.95), rgba(0, 0, 0, 0.9))',
-                                 }}>
-                                <div className="h-full rounded-r-3xl lg:rounded-r-3xl lg:rounded-l-none rounded-l-3xl p-8 md:p-12"
-                                     style={{
-                                         border: '2px solid rgba(96, 165, 250, 0.3)',
-                                         borderLeft: caseStudyImage ? 'none' : '2px solid rgba(96, 165, 250, 0.3)',
-                                         borderRight: !caseStudyImage ? 'none' : '2px solid rgba(96, 165, 250, 0.3)',
-                                         boxShadow: '0 8px 32px rgba(96, 165, 250, 0.2)',
-                                     }}>
-                                    {/* Header */}
-                                    <div className="mb-8">
-                                        <div className="mb-4 flex items-center gap-3">
-                                            <div className="flex h-12 w-12 items-center justify-center rounded-lg"
-                                                 style={{
-                                                     background: 'linear-gradient(135deg, #60A5FA, #9333EA)',
-                                                     boxShadow: '0 4px 16px rgba(96, 165, 250, 0.4)',
-                                                 }}>
-                                                <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                                </svg>
-                                            </div>
-                                            <h4 className="text-2xl font-bold text-white md:text-3xl tracking-tight">
-                                                {caseStudyTitle}
-                                            </h4>
-                                        </div>
-                                        <div className="h-1 w-24 rounded-full bg-gradient-to-r from-[#60A5FA] to-[#9333EA]"></div>
-                                    </div>
-
-                                    {/* Text Content */}
-                                    <div className="mb-8">
-                                        <p className="text-base leading-relaxed text-white/90 md:text-lg md:leading-7">
-                                            {caseStudyText}
-                                        </p>
-                                    </div>
-
-                                    {/* Highlights - Horizontal List */}
-                                    <div className="flex flex-wrap gap-3">
-                                        <div className="flex items-center gap-2 rounded-lg px-4 py-2"
-                                             style={{
-                                                 background: 'rgba(96, 165, 250, 0.15)',
-                                                 border: '1px solid rgba(96, 165, 250, 0.3)',
-                                             }}>
-                                            <svg className="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                                            </svg>
-                                            <span className="text-sm font-semibold text-white">Real Results</span>
-                                        </div>
-                                        <div className="flex items-center gap-2 rounded-lg px-4 py-2"
-                                             style={{
-                                                 background: 'rgba(167, 139, 250, 0.15)',
-                                                 border: '1px solid rgba(167, 139, 250, 0.3)',
-                                             }}>
-                                            <svg className="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                                            </svg>
-                                            <span className="text-sm font-semibold text-white">Proven Impact</span>
-                                        </div>
-                                        <div className="flex items-center gap-2 rounded-lg px-4 py-2"
-                                             style={{
-                                                 background: 'rgba(147, 51, 234, 0.15)',
-                                                 border: '1px solid rgba(147, 51, 234, 0.3)',
-                                             }}>
-                                            <svg className="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                                            </svg>
-                                            <span className="text-sm font-semibold text-white">Transformative</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            {/* Separator Line */}
-            <div className="my-16 h-[3px] w-full bg-gradient-to-r from-transparent via-primary-blue-accent to-transparent opacity-50"></div>
+          </div>
         </div>
-    )
+      </div>
+    </div>
+  );
+};
+
+// Service Section Component
+interface ServiceSectionProps {
+  title: string;
+  subtitle: string;
+  whatItIs: string;
+  howItWorksIntro: string;
+  howItWorksItems: string[];
+  whatYouGetItems: Array<{ title: string; content: string }>;
+  caseStudyTitle: string;
+  caseStudySubtitle: string;
+  caseStudySections: Array<{ id: string; title: string; content: string }>;
 }
+
+const ServiceSection: React.FC<ServiceSectionProps> = ({
+  title,
+  subtitle,
+  whatItIs,
+  howItWorksIntro,
+  howItWorksItems,
+  whatYouGetItems,
+  caseStudyTitle,
+  caseStudySubtitle,
+  caseStudySections,
+}) => {
+  const [expandedWhatYouGet, setExpandedWhatYouGet] = useState<Set<number>>(
+    new Set()
+  );
+  const [expandedCaseStudy, setExpandedCaseStudy] = useState<Set<string>>(
+    new Set()
+  );
+
+  // Find challenge section and filter it out from accordion items
+  const challengeSection = caseStudySections.find(
+    (section) => section.id === 'challenge'
+  );
+  const accordionSections = caseStudySections.filter(
+    (section) => section.id !== 'challenge'
+  );
+
+  const toggleWhatYouGet = (index: number) => {
+    setExpandedWhatYouGet((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(index)) {
+        newSet.delete(index);
+      } else {
+        newSet.add(index);
+      }
+      return newSet;
+    });
+  };
+
+  const toggleCaseStudy = (section: string) => {
+    setExpandedCaseStudy((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(section)) {
+        newSet.delete(section);
+      } else {
+        newSet.add(section);
+      }
+      return newSet;
+    });
+  };
+
+  return (
+    <div className="relative mb-32">
+      {/* Hero Section */}
+      <div className="mb-16">
+        <div className="grid gap-8 lg:grid-cols-2">
+          <div className="relative">
+            <div
+              className="relative h-full w-full rounded-3xl p-[3px]"
+              style={{
+                background:
+                  'linear-gradient(to right, #60A5FA, #A78BFA, #9333EA)',
+                boxShadow: '0 0 20px rgba(96, 165, 250, 0.3)',
+              }}
+            >
+              <div
+                className="relative h-full w-full rounded-3xl p-8 backdrop-blur-sm"
+                style={{
+                  background: 'rgba(0, 0, 0, 0.9)',
+                }}
+              >
+                <div className="space-y-6">
+                  <h1 className="text-5xl font-bold text-white md:text-6xl lg:text-7xl">
+                    {title}
+                  </h1>
+                  <p className="text-lg leading-relaxed text-white md:text-xl">
+                    {subtitle}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="relative">
+            <div className="relative h-full min-h-[500px] w-full rounded-3xl p-[4px]">
+              <div
+                className="relative h-full w-full overflow-hidden rounded-3xl"
+                style={{
+                  background: 'transparent',
+                  borderRadius: '2.5rem 1.5rem 1.5rem 1.5rem',
+                }}
+              >
+                <img
+                  src={shutterstock2513386035}
+                  alt={title}
+                  className="h-full w-full object-cover"
+                  style={{
+                    borderRadius: '2.5rem 1.5rem 1.5rem 1.5rem',
+                  }}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* What It Is Section */}
+      <div className="mb-16">
+        <div className="mb-8 text-center">
+          <h2 className="mb-4 text-4xl font-bold text-white md:text-5xl lg:text-6xl">
+            What It Is
+          </h2>
+        </div>
+        <div className="mx-auto max-w-4xl">
+          <p className="text-lg leading-relaxed text-white/90 md:text-xl text-center">
+            {whatItIs}
+          </p>
+        </div>
+      </div>
+
+      {/* How It Works Section */}
+      <div className="mb-16">
+        <div className="mb-8 text-center">
+          <h2 className="mb-4 text-4xl font-bold text-white md:text-5xl lg:text-6xl">
+            How It Works
+          </h2>
+        </div>
+        <div className="mx-auto max-w-4xl">
+          <p className="mb-8 text-lg leading-relaxed text-white/90 md:text-xl">
+            {howItWorksIntro}
+          </p>
+          <ul className="space-y-4 pl-6">
+            {howItWorksItems.map((item, index) => (
+              <li key={index} className="flex items-start gap-4">
+                <div className="mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full bg-white shadow-[0_0_8px_rgba(255,255,255,0.5)]"></div>
+                <p className="flex-1 text-base leading-relaxed text-white/95 md:text-lg">
+                  {item}
+                </p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+
+      {/* Separator Line */}
+      <div className="my-16 h-[3px] w-full bg-gradient-to-r from-transparent via-primary-blue-accent to-transparent opacity-50"></div>
+
+      {/* What You Get Section */}
+      <div className="mb-16">
+        <div className="mb-8 text-center">
+          <h2 className="mb-4 text-4xl font-bold text-white md:text-5xl lg:text-6xl">
+            What You Get
+          </h2>
+        </div>
+        <div className="mx-auto max-w-4xl">
+          <ul className="space-y-3 md:space-y-4">
+            {whatYouGetItems.map((item, index) => (
+              <li key={index}>
+                <AccordionItem
+                  title={item.title}
+                  content={item.content}
+                  isExpanded={expandedWhatYouGet.has(index)}
+                  onToggle={() => toggleWhatYouGet(index)}
+                />
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+
+      {/* Separator Line */}
+      <div className="my-16 h-[3px] w-full bg-gradient-to-r from-transparent via-primary-blue-accent to-transparent opacity-50"></div>
+
+      {/* Case Study Section */}
+      <div className="relative">
+        <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-[rgba(96,165,250,0.1)] via-[rgba(167,139,250,0.1)] to-[rgba(147,51,234,0.1)] blur-3xl"></div>
+        <div
+          className="relative rounded-3xl p-[2px]"
+          style={{
+            background:
+              'linear-gradient(135deg, rgba(96, 165, 250, 0.4), rgba(167, 139, 250, 0.4), rgba(147, 51, 234, 0.4))',
+            boxShadow:
+              '0 8px 32px rgba(96, 165, 250, 0.3), 0 0 60px rgba(147, 51, 234, 0.2)',
+          }}
+        >
+          <div
+            className="relative rounded-3xl p-8 md:p-12 backdrop-blur-md"
+            style={{
+              background:
+                'linear-gradient(180deg, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.85))',
+            }}
+          >
+            <div className="mb-8 flex items-center gap-4">
+              <div
+                className="flex h-14 w-14 items-center justify-center rounded-xl"
+                style={{
+                  background: 'linear-gradient(135deg, #60A5FA, #9333EA)',
+                  boxShadow: '0 4px 20px rgba(96, 165, 250, 0.4)',
+                }}
+              >
+                <svg
+                  className="h-8 w-8 text-white"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                  />
+                </svg>
+              </div>
+              <div>
+                <h4 className="text-2xl font-bold text-white md:text-3xl tracking-tight">
+                  {caseStudyTitle}
+                </h4>
+                <div className="mt-1 h-1 w-20 rounded-full bg-gradient-to-r from-[#60A5FA] to-[#9333EA]"></div>
+              </div>
+            </div>
+            <div className="mb-8">
+              <h5 className="text-xl font-semibold text-white md:text-2xl">
+                {caseStudySubtitle}
+              </h5>
+            </div>
+            {challengeSection && (
+              <div className="mb-8">
+                <p className="text-base leading-relaxed text-white/90 md:text-lg whitespace-pre-line">
+                  {challengeSection.content}
+                </p>
+              </div>
+            )}
+            <div className="space-y-4">
+              {accordionSections.map((section) => (
+                <AccordionItem
+                  key={section.id}
+                  title={section.title}
+                  content={section.content}
+                  isExpanded={expandedCaseStudy.has(section.id)}
+                  onToggle={() => toggleCaseStudy(section.id)}
+                />
+              ))}
+            </div>
+            <div className="mt-8 flex items-center gap-4">
+              <div className="h-px flex-1 bg-gradient-to-r from-transparent via-[rgba(96,165,250,0.5)] to-transparent"></div>
+              <div className="h-2 w-2 rounded-full bg-gradient-to-br from-[#60A5FA] to-[#9333EA]"></div>
+              <div className="h-px flex-1 bg-gradient-to-r from-transparent via-[rgba(147,51,234,0.5)] to-transparent"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const AIInsightEngine = () => {
-    return (
-        <main className="relative min-h-screen overflow-hidden bg-black">
-            {/* Background Blur Effects - Purple Gradient Ellipses */}
-            <div className="absolute right-[1657px] top-[916px] h-[862px] w-[862px] rounded-full bg-gradient-to-br from-[rgba(147,51,234,0.4)] to-[rgba(168,85,247,0.4)] blur-[400px]"></div>
-            <div className="absolute left-[1851px] top-[2897px] h-[1081px] w-[1132px] rounded-full bg-gradient-to-br from-[rgba(147,51,234,0.4)] to-[rgba(192,132,252,0.4)] blur-[400px]"></div>
-            <div className="absolute left-[351px] top-[5714px] h-[1116px] w-[1116px] rounded-full bg-gradient-to-br from-[rgba(126,34,206,0.35)] to-[rgba(168,85,247,0.35)] blur-[400px]"></div>
-            <div className="absolute -left-[72px] top-[1202px] h-[1114px] w-[1114px] rounded-full bg-gradient-to-br from-[rgba(192,132,252,0.3)] to-[rgba(147,51,234,0.3)] blur-[400px]"></div>
-            <div className="absolute right-[1657px] top-[4684px] h-[1106px] w-[1182px] rounded-full bg-gradient-to-br from-[rgba(168,85,247,0.4)] to-[rgba(147,51,234,0.4)] blur-[400px]"></div>
-            <div className="absolute -left-[411px] top-[4623px] h-[1106px] w-[1182px] rounded-full bg-gradient-to-br from-[rgba(192,132,252,0.35)] to-[rgba(126,34,206,0.35)] blur-[400px]"></div>
+  // Reveal Hidden Brilliance Data
+  const revealHiddenBrillianceData: ServiceSectionProps = {
+    title: 'Reveal Hidden Brilliance',
+    subtitle: 'Discover the untapped strengths already in your workforce',
+    whatItIs:
+      "Reveal Hidden Brilliance identifies the natural thinking styles, strengths, and digital confidence levels of your workforce. It uncovers hidden potential the people whose analytical, creative, practical, or hybrid abilities are not currently being used to their full advantage. It shows you the talent you already have, but haven't yet unlocked.",
+    howItWorksIntro:
+      'Employees complete a digital assessment. The engine analyses cognitive patterns across work and everyday life to reveal:',
+    howItWorksItems: [
+      'Who has hidden digital, data, or problem-solving strengths',
+      'Which strengths are being used and which are held back',
+      'Where talent is misaligned with roles or opportunities',
+      'Who has natural potential for innovation, efficiency, or technical work',
+    ],
+    whatYouGetItems: [
+      {
+        title: 'Individual Reports:',
+        content:
+          'clear breakdowns of thinking styles, strengths, and digital confidence',
+      },
+      {
+        title: 'Hidden Talent Alerts:',
+        content: ' visibility on employees with underused potential',
+      },
+      {
+        title: 'Department Dashboards:',
+        content: ' heatmaps showing cognitive strengths across teams',
+      },
+      {
+        title: 'Actionable Recommendations:',
+        content:
+          ' focused suggestions for redeployment, development, and upskilling',
+      },
+    ],
+    caseStudyTitle: 'CASE STUDY Example',
+    caseStudySubtitle:
+      'Uncovering Untapped Digital Talent in a Traditional Engineering Firm',
+    caseStudySections: [
+      {
+        id: 'challenge',
+        title: 'The Challenge',
+        content:
+          'A national engineering firm believed they needed to recruit externally for a new digital and data role. Before proceeding, they used Reveal Hidden Brilliance to assess 120 employees across admin, support, and junior operational roles.',
+      },
+      {
+        id: 'findings',
+        title: 'What the Engine Found',
+        content:
+          'The assessment uncovered a group of employees with strong analytical and digital thinking profiles none of whom were currently in technical positions.\n\nOne long-standing administrator showed exceptional potential for:\n• Analytical problem-solving\n• Systems thinking\n• Digital tool adoption\n• Data visualisation\n\nHer icapabilities had previously gone unnoticed because her role did not require them.',
+      },
+      {
+        id: 'solution',
+        title: 'What Happened Next',
+        content:
+          'She was moved onto an internal development pathway and paired with the business intelligence team.',
+      },
+      {
+        id: 'impact',
+        title: 'Impact',
+        content:
+          '• The business avoided an external recruitment process\n• Productivity in her area increased by double-digit percentages\n• Internal mobility and engagement improved across the wider team\n• Leadership gained a new model for identifying digital talent internally',
+      },
+    ],
+  };
 
-            {/* Additional Purple Glow Effects */}
-            <div className="absolute right-1/4 top-1/4 h-[600px] w-[600px] rounded-full bg-gradient-to-br from-[rgba(147,51,234,0.25)] to-[rgba(168,85,247,0.25)] blur-[300px]"></div>
-            <div className="absolute left-1/4 top-3/4 h-[700px] w-[700px] rounded-full bg-gradient-to-br from-[rgba(192,132,252,0.3)] to-[rgba(147,51,234,0.3)] blur-[350px]"></div>
-            <div className="absolute right-1/3 bottom-1/4 h-[800px] w-[800px] rounded-full bg-gradient-to-br from-[rgba(126,34,206,0.3)] to-[rgba(192,132,252,0.3)] blur-[400px]"></div>
+  // Mind Sync Data
+  const mindSyncData: ServiceSectionProps = {
+    title: 'Mind Sync',
+    subtitle: 'Understand how well your managers harness neurodiverse thinking',
+    whatItIs:
+      'Mind Sync assesses how effectively managers recognise, support, and leverage different ways of thinking particularly neurodiversity as a strategic advantage, not just an inclusion initiative. It highlights where leadership habits enable performance, and where they unintentionally hold back diverse thinkers. It gives managers a clear, honest picture of their own capability.',
+    howItWorksIntro:
+      'Managers complete a short digital self-assessment. The engine analyses leadership behaviour and mindset patterns to reveal:',
+    howItWorksItems: [
+      'How well they understand neurodiversity and different thinking styles',
+      'Whether they use these strengths intentionally in task allocation and decision-making',
+      'Where their everyday habits support or block performance',
+      'How psychologically safe their team is likely to feel',
+      'Their readiness to lead neurodiverse and cognitively diverse teams',
+    ],
+    whatYouGetItems: [
+      {
+        title: 'Leadership Capability Scores:',
+        content:
+          ' clear ratings across awareness, action, adaptability, and culture',
+      },
+      {
+        title: 'Strengths & Gaps Summary:',
+        content: " plain-English insights into what's working and what isn't",
+      },
+      {
+        title: 'Practical Development Plan:',
+        content:
+          ' targeted actions and training recommendations to improve how they support different thinkers',
+      },
+      {
+        title: 'Strategic Recommendations:',
+        content:
+          ' guidance on building high-performing, cognitively diverse teams',
+      },
+      {
+        title: 'Progress Tracking:',
+        content:
+          ' optional follow-up assessments to measure improvement over time',
+      },
+    ],
+    caseStudyTitle: 'CASE STUDY Example',
+    caseStudySubtitle:
+      'Strengthening Leadership Capability and Reducing Turnover in a Construction IT Team',
+    caseStudySections: [
+      {
+        id: 'challenge',
+        title: 'The Challenge',
+        content:
+          'A construction company had ongoing retention and communication challenges within their IT support team. Several neurodivergent team members reported feeling misunderstood or overwhelmed.\n\nTo diagnose the root cause, the organisation deployed Mind Sync across all managers and team leaders.',
+      },
+      {
+        id: 'findings',
+        title: 'What Mind Sync Revealed',
+        content:
+          "Mind Sync revealed that:\n• Managers valued cognitive diversity but weren't consistently using it in everyday leadership\n• Task allocation often clashed with natural strengths\n• Communication styles unintentionally created stress for certain thinkers\n• Psychological safety was inconsistent\n• Leadership intentions were strong, but behaviours needed refining\n\nManagers scored high on values, low on practical application.",
+      },
+      {
+        id: 'solution',
+        title: 'What Happened Next',
+        content:
+          'Using the Mind Sync report:\n• Managers introduced small but meaningful adjustments to their routines\n• Task-to-strength matching increased\n• Weekly communication was redesigned around clarity and cognitive preference\n• Structured feedback routines created more psychological safety\n• Completed training and Upskilling to support improved understanding',
+      },
+      {
+        id: 'impact',
+        title: 'Impact',
+        content:
+          'Results from the interventions included improved team communication, reduced stress levels among neurodivergent team members, and better alignment between individual strengths and assigned tasks. The organization saw a shift from good intentions to effective practices in supporting cognitive diversity.',
+      },
+    ],
+  };
 
-            {/* Hero Section - Black Background */}
-            <div className="relative bg-black pt-40 pb-16">
-                <div className="container mx-auto px-6 py-12">
-                    <div className="mx-auto ">
-                        {/* Hero Section */}
-                        <div className="mb-16">
-                            <div className="grid gap-8 lg:grid-cols-2">
-                                {/* Left: Content Box with Gradient Border */}
-                                <div className="relative w-[900px]">
-                                    {/* Gradient Border Container - Rounded rectangular frame */}
-                                    <div
-                                        className="relative h-full w-full rounded-3xl p-[3px]"
-                                        style={{
-                                            background: 'linear-gradient(to right, #60A5FA, #A78BFA, #9333EA) ',
-                                            boxShadow: '0 0 20px rgba(96, 165, 250, 0.)',
-                                        }}
-                                    >
-                                        {/* Inner Container */}
-                                        <div
-                                            className="relative h-full w-full rounded-3xl p-8 backdrop-blur-sm"
-                                            style={{
-                                                background: 'rgba(0, 0, 0, 0.9)',
-                                            }}
-                                        >
-                                            <div className="space-y-6 w-[600px]">
-                                                <h1 className="text-5xl font-bold text-white md:text-6xl lg:text-7xl">
-                                                    ELARA AI Consultancy
-                                                </h1>
-                                                <p className="text-lg leading-relaxed text-white md:text-xl">
-                                                    Elara's AI Insight Engines are a set of smart, psychology-powered tools that give you a deeper view of your workforce beyond their job titles, CVs, or formal qualifications.
-                                                </p>
-                                                <p className="text-lg font-semibold text-white md:text-xl">
-                                                    They help you answer important questions like:
-                                                </p>
-                                                <ul className="space-y-4">
-                                                    <li className="flex items-start gap-4">
-                                                        <div className="mt-1 h-[18px] w-[18px] shrink-0 rounded-full bg-white"></div>
-                                                        <p className="flex-1 text-base leading-relaxed text-white md:text-lg">
-                                                            Who on our team is ready to lead digital change?
-                                                        </p>
-                                                    </li>
-                                                    <li className="flex items-start gap-4">
-                                                        <div className="mt-1 h-[18px] w-[18px] shrink-0 rounded-full bg-white"></div>
-                                                        <p className="flex-1 text-base leading-relaxed text-white md:text-lg">
-                                                            What hidden strengths with our workforce are we not using?
-                                                        </p>
-                                                    </li>
-                                                    <li className="flex items-start gap-4">
-                                                        <div className="mt-1 h-[18px] w-[18px] shrink-0 rounded-full bg-white"></div>
-                                                        <p className="flex-1 text-base leading-relaxed text-white md:text-lg">
-                                                            How do we spot future talent not just experience?
-                                                        </p>
-                                                    </li>
-                                                    <li className="flex items-start gap-4">
-                                                        <div className="mt-1 h-[18px] w-[18px] shrink-0 rounded-full bg-white"></div>
-                                                        <p className="flex-1 text-base leading-relaxed text-white md:text-lg">
-                                                            Are we missing opportunities to support neurodivergent thinkers?
-                                                        </p>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+  // Digital Bias Engine Data
+  const digitalBiasEngineData: ServiceSectionProps = {
+    title: 'Digital Bias Engine',
+    subtitle:
+      'Find the hidden cultural blockers that slow down digital transformation',
+    whatItIs:
+      "The Digital Bias Engine exposes the invisible behaviours and attitudes that silently sabotage digital change risk aversion, fear of failure, low confidence with new tools, outdated leadership habits, or simply not understanding why change is happening. It's the cultural intelligence piece most organisations overlook.",
+    howItWorksIntro:
+      'Your workforce completes a short pulse survey or quick interviews. The engine analyses sentiment, confidence, and behaviour patterns to reveal:',
+    howItWorksItems: [
+      'Where resistance to change is strongest',
+      'Which teams feel least confident with digital tools',
+      'Whether leadership behaviours are supporting or blocking transformation',
+      'The psychological barriers slowing down adoption',
+    ],
+    whatYouGetItems: [
+      {
+        title: 'Cultural Heatmaps:',
+        content:
+          "clear hotspots showing where change will stick — and where it won't",
+      },
+      {
+        title: 'Readiness Scores:',
+        content: ' simple indicators of digital confidence and mindset gaps',
+      },
+      {
+        title: 'Practical Action Plans:',
+        content:
+          ' targeted interventions to improve adoption, confidence, and culture',
+      },
+      {
+        title: 'Quarterly Tracking:',
+        content: ' see how culture shifts over time',
+      },
+    ],
+    caseStudyTitle: 'CASE STUDY Example',
+    caseStudySubtitle:
+      'Preventing a Costly Digital Failure and Building a Culture Ready for Change',
+    caseStudySections: [
+      {
+        id: 'challenge',
+        title: 'The Challenge',
+        content:
+          'A logistics company planned to implement a new digital scheduling system across their workforce. Before committing, they used the Digital Bias Engine with a group of 50 employees to understand readiness.',
+      },
+      {
+        id: 'findings',
+        title: 'What the Engine Found',
+        content:
+          'The engine identified significant cultural and behavioural barriers:\n• Low digital confidence among frontline staff\n• High levels of risk aversion in supervisors\n• Fragmented communication from leadership\n• A belief that new systems make work harder\n• Limited psychological readiness for change\n\nReadiness scores showed the system had a high likelihood of low adoption, risking substantial waste.',
+      },
+      {
+        id: 'solution',
+        title: 'What Happened Next',
+        content:
+          'Instead of pushing ahead, leaders paused implementation and:\n• Introduced a bottom-up digital readiness programme\n• Staff completed training programmes\n• Provided targeted training based on actual workforce needs\n• Engaged respected staff as digital champions\n• Ran small operational pilots before wider rollout',
+      },
+      {
+        id: 'impact',
+        title: 'Impact',
+        content:
+          '• Workforce digital confidence increased by over 60%\n• Adoption success in pilots reached well above typical industry averages\n• The organisation selected a solution better aligned with staff readiness\n• Cultural resistance significantly reduced across several departments',
+      },
+    ],
+  };
 
-                                {/* Right: Image Box with Gradient Border */}
-                                <div className="relative">
-                                    {/* Gradient Border Container - Matching Figma design with specific corner radius */}
-                                    <div
-                                        className="relative h-full min-h-[500px] w-full rounded-3xl p-[4px]"
-                                       
-                                    >
-                                        {/* Inner Container */}
-                                        <div
-                                            className="relative h-full w-full overflow-hidden rounded-3xl"
-                                            style={{
-                                                background: 'transparent',
-                                                borderRadius: '2.5rem 1.5rem 1.5rem 1.5rem',
-                                            }}
-                                        >
-                                            <img
-                                                src={RevealHiddenBrillianceImage}
-                                                alt="ELARA AI Insight Engine"
-                                                className="h-full w-full object-cover"
-                                                style={{
-                                                    borderRadius: '2.5rem 1.5rem 1.5rem 1.5rem',
-                                                }}
-                                            />
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+  return (
+    <main className="relative min-h-screen overflow-hidden bg-black">
+      {/* Background Blur Effects - Purple Gradient Ellipses */}
+      <div className="absolute right-[1657px] top-[916px] h-[862px] w-[862px] rounded-full bg-gradient-to-br from-[rgba(147,51,234,0.4)] to-[rgba(168,85,247,0.4)] blur-[400px]"></div>
+      <div className="absolute left-[1851px] top-[2897px] h-[1081px] w-[1132px] rounded-full bg-gradient-to-br from-[rgba(147,51,234,0.4)] to-[rgba(192,132,252,0.4)] blur-[400px]"></div>
+      <div className="absolute left-[351px] top-[5714px] h-[1116px] w-[1116px] rounded-full bg-gradient-to-br from-[rgba(126,34,206,0.35)] to-[rgba(168,85,247,0.35)] blur-[400px]"></div>
+      <div className="absolute -left-[72px] top-[1202px] h-[1114px] w-[1114px] rounded-full bg-gradient-to-br from-[rgba(192,132,252,0.3)] to-[rgba(147,51,234,0.3)] blur-[400px]"></div>
+      <div className="absolute right-[1657px] top-[4684px] h-[1106px] w-[1182px] rounded-full bg-gradient-to-br from-[rgba(168,85,247,0.4)] to-[rgba(147,51,234,0.4)] blur-[400px]"></div>
+      <div className="absolute -left-[411px] top-[4623px] h-[1106px] w-[1182px] rounded-full bg-gradient-to-br from-[rgba(192,132,252,0.35)] to-[rgba(126,34,206,0.35)] blur-[400px]"></div>
 
-                        {/* Main Title */}
-                        <div className="mb-16">
-                            <h2 className="text-center text-3xl font-bold text-white md:text-4xl lg:text-5xl">
-                                We combine behavioural science, workforce data, and AI Platforms to help you
-                            </h2>
-                        </div>
-                    </div>
-                </div>
-            </div>
+      {/* Additional Purple Glow Effects */}
+      <div className="absolute right-1/4 top-1/4 h-[600px] w-[600px] rounded-full bg-gradient-to-br from-[rgba(147,51,234,0.25)] to-[rgba(168,85,247,0.25)] blur-[300px]"></div>
+      <div className="absolute left-1/4 top-3/4 h-[700px] w-[700px] rounded-full bg-gradient-to-br from-[rgba(192,132,252,0.3)] to-[rgba(147,51,234,0.3)] blur-[350px]"></div>
+      <div className="absolute right-1/3 bottom-1/4 h-[800px] w-[800px] rounded-full bg-gradient-to-br from-[rgba(126,34,206,0.3)] to-[rgba(192,132,252,0.3)] blur-[400px]"></div>
 
-            {/* Dark Background Section */}
-            <div className="relative bg-black pt-16 pb-24">
-                <div className="container mx-auto px-6">
-                    <div className="mx-auto max-w-[1960px]">
-                        {/* Insight Engine 1 - Reveal Hidden Brilliance */}
-                        <InsightEngineSection
-                            engineNumber={1}
-                            subtitle="Reveal Hidden Brilliance"
-                            description="Our tools find hidden strengths, thinking styles, and patterns within your workforce that support smarter decisions from recruitment to culture change."
-                            howItWorks={[
-                                'Simple, friendly diagnostic that explores strengths, working styles, and hidden talents',
-                                'Looks at skills used both at work and outside of work',
-                                'Produces individual profiles and team-level maps of strengths and skills gaps',
-                            ]}
-                            outputs={[
-                                'A profile of problem-solving and adaptability strengths',
-                                'Audit of hidden or outside-work skills (e.g. coding, data, creativity)',
-                                'Collaboration and communication preferences',
-                                'Digital confidence and comfort with AI/tools',
-                                'Readiness to learn and adapt to change',
-                            ]}
-                            caseStudyTitle="CASE STUDY EXAMPLE:"
-                            caseStudyText="John, a forklift truck driver on an apprenticeship, was diagnosed with Autism. He completed Reveal Hidden Brilliance and it uncovered that he built his own algorithms at home and had a strong ability with data and patterns. His managers had no idea, as John never thought these skills were relevant to his job. With Elara's insights, John was offered a role in the data team, where his strengths helped the company improve efficiency and transition into new digital systems."
-                            caseStudyImage={RevealHiddenBrillianceImage}
-                        />
+      {/* Dark Background Section */}
+      <div className="relative bg-black pt-40 pb-24">
+        <div className="container mx-auto px-6">
+          <div className="mx-auto max-w-[1960px]">
+            {/* Reveal Hidden Brilliance Section */}
+            <ServiceSection {...revealHiddenBrillianceData} />
 
-                        {/* Insight Engine 2 - Mind Sync */}
-                        <InsightEngineSection
-                            engineNumber={2}
-                            subtitle="Mind Sync"
-                            description="For managers and leaders showing how leadership style, decision-making, and communication impact teams and innovation."
-                            howItWorks={[
-                                'Leaders complete a diagnostic assessment',
-                                'They receive an individual leadership profile',
-                                'One-to-one coaching with a business psychologist interprets results',
-                                'Cluster analysis highlights patterns across leadership teams',
-                                'Training and coaching target blind spots',
-                            ]}
-                            outputs={[
-                                'Leadership decision-making style (data vs instinct, risk appetite)',
-                                'Awareness of common biases (status quo bias, optimism bias, sunk cost)',
-                                'Strengths and weaknesses in communication',
-                                'Openness to innovation and experimentation',
-                                'Impact of leadership on team motivation and trust',
-                            ]}
-                            caseStudyTitle="CASE STUDY EXAMPLE:"
-                            caseStudyText="Sarah, a site manager, completed the Mind Sync process. Results showed she often made decisions without input from her team. With coaching, Sarah began holding short 'innovation huddles,' where team members suggested process and digital improvements. Within three months, the team saved time on reporting and morale improved showing how small changes in leadership style can unlock big results."
-                            caseStudyImage={shutterstock2291389905}
-                        />
+            {/* Major Separator */}
+            <div
+              className="my-24 h-[3px] w-full opacity-70"
+              style={{
+                background:
+                  'linear-gradient(to right, transparent, #60A5FA, #9333EA, transparent)',
+              }}
+            ></div>
 
-                        {/* Insight Engine 3 - Digital Bias */}
-                        <InsightEngineSection
-                            engineNumber={3}
-                            subtitle="Digital Bias"
-                            description="For the whole organisation identifying cultural and psychological barriers that block digital adoption."
-                            howItWorks={[
-                                'Staff across all roles complete a structured set of questions',
-                                'AI analysis highlights where psychological barriers exist (resistance to change, fear of loss, choice overload, lack of trust in tech)',
-                                'Consultants design workshops, training, and culture programmes to tackle blockers',
-                            ]}
-                            outputs={[
-                                'Heatmaps showing which departments are most resistant to change',
-                                'Organisational readiness score for digital adoption',
-                                'Tailored training and communication plans',
-                                'Practical actions to increase trust in new tools and systems',
-                            ]}
-                            caseStudyTitle="CASE STUDY EXAMPLE:"
-                            caseStudyText="A large contractor used the Digital Bias engine across their business. The results showed widespread 'status quo bias,' where staff preferred older systems even when new ones were better. With targeted training and role redesign, the company improved trust in technology, and adoption rates for a new digital inspection app rose by 60% in six months."
-                            caseStudyImage={shutterstock2513386035}
-                        />
-                    </div>
-                </div>
-            </div>
+            {/* Mind Sync Section */}
+            <ServiceSection {...mindSyncData} />
 
-            {/* Newsletter Section */}
-            <Newsletter />
+            {/* Major Separator */}
+            <div
+              className="my-24 h-[3px] w-full opacity-70"
+              style={{
+                background:
+                  'linear-gradient(to right, transparent, #60A5FA, #9333EA, transparent)',
+              }}
+            ></div>
 
-            {/* Footer */}
-            <Footer />
-        </main>
-    )
-}
+            {/* Digital Bias Engine Section */}
+            <ServiceSection {...digitalBiasEngineData} />
+          </div>
+        </div>
+      </div>
 
-export default AIInsightEngine
+      {/* Newsletter Section */}
+      <Newsletter />
+
+      {/* Footer */}
+      <Footer />
+    </main>
+  );
+};
+
+export default AIInsightEngine;
