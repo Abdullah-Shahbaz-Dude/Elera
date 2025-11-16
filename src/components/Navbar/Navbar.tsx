@@ -66,7 +66,7 @@ const Navbar: React.FC = () => {
       <div className="relative mx-auto mt-3 md:mt-6 max-w-[2000px] px-3 md:px-5 pointer-events-auto">
         {/* Gradient Border Container - Outer border with gradient */}
         <div
-          className="relative h-[70px] md:h-[100px] rounded-[35px] md:rounded-[109px] p-[3px] md:p-[5px] transition-all duration-300"
+          className="relative h-[90px] md:h-[100px] rounded-[45px] md:rounded-[109px] p-[3px] md:p-[5px] transition-all duration-300"
           style={{
             background: isTransparent
               ? 'transparent'
@@ -78,7 +78,7 @@ const Navbar: React.FC = () => {
         >
           {/* Inner content container */}
           <div
-            className={`relative flex h-full items-center rounded-[32px] md:rounded-[104px] px-3 md:px-6 transition-all duration-300 ${
+            className={`relative flex h-full items-center rounded-[42px] md:rounded-[104px] px-3 md:px-6 transition-all duration-300 ${
               isTransparent
                 ? 'bg-transparent backdrop-blur-none'
                 : 'bg-[rgba(29,29,29,0.85)] backdrop-blur-md'
@@ -87,7 +87,7 @@ const Navbar: React.FC = () => {
             <div className="flex w-full items-center justify-between">
               {/* Logo - Top Left */}
               <div className="flex items-center transition-all duration-300">
-                <Logo className="h-[60px] w-auto md:h-[100px] lg:h-[200px]" />
+                <Logo className="h-[80px] w-auto md:h-[100px] lg:h-[200px]" />
               </div>
 
               {/* Desktop Navigation Links */}
@@ -168,7 +168,7 @@ const Navbar: React.FC = () => {
             {/* Mobile Menu */}
             {isMobileMenuOpen && (
               <div
-                className={`absolute left-0 right-0 top-[73px] md:top-[105px] z-10 space-y-2 rounded-b-[35px] md:rounded-b-[109px] border-t px-4 md:px-6 pb-4 md:pb-6 pt-3 md:pt-4 transition-all duration-300 lg:hidden ${
+                className={`absolute left-0 right-0 top-[93px] md:top-[105px] z-10 space-y-2 rounded-b-[45px] md:rounded-b-[109px] border-t px-4 md:px-6 pb-4 md:pb-6 pt-3 md:pt-4 transition-all duration-300 lg:hidden ${
                   isTransparent
                     ? 'bg-transparent backdrop-blur-none border-transparent'
                     : 'bg-[rgba(29,29,29,0.85)] backdrop-blur-md border-gray-700'
