@@ -50,13 +50,13 @@ const WhySection: React.FC = () => {
           {/* Modern Split Layout */}
           <div className="grid gap-8 md:gap-12 lg:grid-cols-2 lg:gap-16 items-center">
             {/* Left Content */}
-            <div className="space-y-6 md:space-y-8 text-center lg:text-left">
+            <div className="space-y-6 md:space-y-8 text-left">
               <div>
-                <h2 className="mb-4 md:mb-6 text-3xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-white">
+                <h2 className="mb-4 md:mb-6 text-3xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-white text-left">
                   Why Elara Exists
                 </h2>
                 <div
-                  className="h-1 w-20 md:w-24 rounded-full mx-auto lg:mx-0"
+                  className="h-1 w-20 md:w-24 rounded-full mx-0"
                   style={{
                     background: 'linear-gradient(to right, #60A5FA, #9333EA)',
                   }}
@@ -70,7 +70,7 @@ const WhySection: React.FC = () => {
                   return (
                     <li key={index} className="group">
                       <div
-                        className="relative rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm p-4 md:p-5 transition-all duration-300 hover:border-white/20 hover:bg-white/10"
+                        className="relative rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm p-4 md:p-5 transition-all duration-300 hover:border-white/20 hover:bg-white/10 min-h-[80px] md:min-h-[90px]"
                         style={{
                           boxShadow: isExpanded
                             ? '0 4px 20px rgba(96, 165, 250, 0.15)'
@@ -86,8 +86,8 @@ const WhySection: React.FC = () => {
                         ></div>
 
                         <div className="relative">
-                          <div className="flex items-start justify-between gap-4">
-                            <h3 className="font-bold text-base md:text-lg lg:text-xl text-white flex-1 leading-tight">
+                          <div className="flex items-start justify-between gap-4 min-h-[48px] md:min-h-[56px]">
+                            <h3 className="font-bold text-base md:text-lg lg:text-xl text-white flex-1 leading-tight text-left">
                               {item.title}
                             </h3>
                             <button
@@ -140,7 +140,7 @@ const WhySection: React.FC = () => {
                             }`}
                           >
                             <div className="pt-2">
-                              <p className="text-sm md:text-base lg:text-lg leading-relaxed text-white/80">
+                              <p className="text-sm md:text-base lg:text-lg leading-relaxed text-white/80 text-left">
                                 {item.subText}
                               </p>
                             </div>

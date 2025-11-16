@@ -21,8 +21,8 @@ const HeroSection: React.FC = () => {
 
       {/* Content Overlay - Above video, below navbar */}
       <div className="absolute inset-0 z-[40] flex items-end justify-start">
-        <div className="pl-4 md:pl-6 lg:pl-12 xl:pl-24 pb-8 md:pb-12 lg:pb-16 xl:pb-20 pr-4">
-          <h1 className="max-w-full md:max-w-5xl text-xl md:text-3xl lg:text-4xl xl:text-5xl 2xl:text-6xl font-medium leading-tight md:leading-relaxed text-white drop-shadow-lg">
+        <div className="pl-8 mb-10 md:pl-[120px] pb-8 md:pb-12 lg:pb-16 xl:pb-20 pr-4 sm:pb-[57px] ">
+          <h1 className="max-w-full md:max-w-5xl text-2xl md:text-3xl lg:text-4xl xl:text-5xl 2xl:text-6xl font-medium leading-tight md:leading-relaxed text-white drop-shadow-lg">
             Unlock Hidden Potential:
             <br /> Business Psychology and AI for Tomorrow's Workforce
           </h1>

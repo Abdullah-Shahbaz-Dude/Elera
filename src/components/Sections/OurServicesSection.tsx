@@ -66,10 +66,10 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
         {/* Content */}
         <div className="relative z-10 flex h-full flex-col p-6 md:p-8 justify-between">
           <div>
-            <h3 className="mb-4 md:mb-6 text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold text-white">
+            <h3 className="mb-4 md:mb-6 text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold text-white text-left">
               {title}
             </h3>
-            <p className="mb-6 md:mb-8 text-sm md:text-base lg:text-lg leading-relaxed text-white/90">
+            <p className="mb-6 md:mb-8 text-sm md:text-base lg:text-lg leading-relaxed text-white/90 text-left">
               {description}
             </p>
           </div>
@@ -77,7 +77,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
           {/* Modern Button */}
           <button
             onClick={handleClick}
-            className="w-fit rounded-xl px-6 md:px-10 py-3 md:py-4 text-sm md:text-base font-semibold text-white transition-all hover:scale-105 active:scale-95 cursor-pointer"
+            className="w-fit self-end md:self-start rounded-xl px-6 md:px-10 py-3 md:py-4 text-sm md:text-base font-semibold text-white transition-all hover:scale-105 active:scale-95 cursor-pointer"
             style={{
               background: cardGradient,
               boxShadow: '0 8px 32px rgba(96, 165, 250, 0.4)',
@@ -102,7 +102,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
 const OurServicesSection: React.FC = () => {
   const services = [
     {
-      title: 'AI &amp; Data Intelligence',
+      title: 'AI & Data Intelligence',
       description:
         'Digital tools that show you the hidden skills and strengths inside your workforce.',
       backgroundImage: aiInsightEngineImage,
