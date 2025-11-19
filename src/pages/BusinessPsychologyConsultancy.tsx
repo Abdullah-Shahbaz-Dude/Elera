@@ -1,3 +1,13 @@
+/**
+ * BUSINESS PSYCHOLOGY CONSULTANCY PAGE - BACKUP
+ * 
+ * This is the old Business Psychology Consultancy page kept as a backup.
+ * The new page is: PsychologyBasedTrainingAndMentoring.tsx
+ * 
+ * This file is commented out in App.tsx routing and should not be used in production.
+ * It is kept for reference purposes only.
+ */
+
 import React from 'react'
 import Footer from '@/components/Footer/Footer'
 import Newsletter from '@/components/Sections/Newsletter'
