@@ -346,7 +346,6 @@ const LeadershipCategory: React.FC<LeadershipCategoryProps> = ({
   modules,
 }) => {
   // Initialize with all modules expanded (non-collapsible)
-  const expandedSteps = new Set(modules.map((_, index) => index));
 
   return (
     <div className="mb-16">
