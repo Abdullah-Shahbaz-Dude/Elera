@@ -110,12 +110,12 @@ const OurServicesSection: React.FC = () => {
       navigateTo: '/our-services/ai-insight-engine',
     },
     {
-      title: 'Business Psychology Consultancy',
+      title: 'Psychology Based Training and Mentoring',
       description:
-        'Psychology-led support to help your organisation and workforce evolve.',
+        'Training, mentoring, leadership development. Education and insight that accelerates digital maturity, strengthens organisational thinking, and builds the psychological capability needed for the next decade of work.',
       backgroundImage: humanServicesImage,
       imageOpacity: 0.36,
-      navigateTo: '/our-services/business-psychology-consultancy',
+      navigateTo: '/our-services/psychology-based-training-and-mentoring',
     },
   ];
 

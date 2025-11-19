@@ -1,7 +1,12 @@
 import React, { useState } from 'react';
 import Footer from '@/components/Footer/Footer';
 import Newsletter from '@/components/Sections/Newsletter';
-import { shutterstock2513386035 } from '@/assets/images';
+import {
+  shutterstock2513386035,
+  shutterstock1813285633,
+  shutterstock2177507051,
+  aiInsightEngineImage,
+} from '@/assets/images';
 
 // Accordion component for expandable sections
 interface AccordionItemProps {
@@ -111,6 +116,7 @@ interface ServiceSectionProps {
   caseStudyTitle: string;
   caseStudySubtitle: string;
   caseStudySections: Array<{ id: string; title: string; content: string }>;
+  heroImage?: string;
 }
 
 const ServiceSection: React.FC<ServiceSectionProps> = ({
@@ -123,6 +129,7 @@ const ServiceSection: React.FC<ServiceSectionProps> = ({
   caseStudyTitle,
   caseStudySubtitle,
   caseStudySections,
+  heroImage = shutterstock2513386035,
 }) => {
   const [expandedWhatYouGet, setExpandedWhatYouGet] = useState<Set<number>>(
     new Set()
@@ -204,7 +211,7 @@ const ServiceSection: React.FC<ServiceSectionProps> = ({
                 }}
               >
                 <img
-                  src={shutterstock2513386035}
+                  src={heroImage}
                   alt={title}
                   className="h-full w-full object-cover"
                   style={{
@@ -372,6 +379,7 @@ const AIInsightEngine = () => {
   const revealHiddenBrillianceData: ServiceSectionProps = {
     title: 'Reveal Hidden Brilliance',
     subtitle: 'Discover the untapped strengths already in your workforce',
+    heroImage: aiInsightEngineImage,
     whatItIs:
       "Reveal Hidden Brilliance identifies the natural thinking styles, strengths, and digital confidence levels of your workforce. It uncovers hidden potential the people whose analytical, creative, practical, or hybrid abilities are not currently being used to their full advantage. It shows you the talent you already have, but haven't yet unlocked.",
     howItWorksIntro:
@@ -437,6 +445,7 @@ const AIInsightEngine = () => {
   const mindSyncData: ServiceSectionProps = {
     title: 'Mind Sync',
     subtitle: 'Understand how well your managers harness neurodiverse thinking',
+    heroImage: shutterstock1813285633,
     whatItIs:
       'Mind Sync assesses how effectively managers recognise, support, and leverage different ways of thinking particularly neurodiversity as a strategic advantage, not just an inclusion initiative. It highlights where leadership habits enable performance, and where they unintentionally hold back diverse thinkers. It gives managers a clear, honest picture of their own capability.',
     howItWorksIntro:
@@ -510,6 +519,7 @@ const AIInsightEngine = () => {
     title: 'Digital Bias Engine',
     subtitle:
       'Find the hidden cultural blockers that slow down digital transformation',
+    heroImage: shutterstock2177507051,
     whatItIs:
       "The Digital Bias Engine exposes the invisible behaviours and attitudes that silently sabotage digital change risk aversion, fear of failure, low confidence with new tools, outdated leadership habits, or simply not understanding why change is happening. It's the cultural intelligence piece most organisations overlook.",
     howItWorksIntro:
