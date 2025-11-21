@@ -217,7 +217,7 @@ const ResourceCard: React.FC<ResourceCardProps> = ({
   );
 };
 
-const WhoWeWorkWith = () => {
+const Resources = () => {
   const [expandedCards, setExpandedCards] = useState<Set<number>>(new Set());
 
   const toggleCard = (index: number) => {
@@ -391,8 +391,8 @@ const WhoWeWorkWith = () => {
           <div className="mx-auto max-w-[1960px]">
             {/* Hero Section */}
             <div className="mb-16 text-center">
-              <h1 className="mb-4 text-4xl font-bold text-white md:text-5xl lg:text-6xl">
-                Resources for Organisations
+              <h1 className="mb-4 text-5xl font-bold text-white md:text-6xl lg:text-7xl">
+                Resources
               </h1>
               <p className="text-lg leading-relaxed text-white/80 md:text-xl">
                 Explore curated resources to deepen your understanding of key
@@ -426,4 +426,4 @@ const WhoWeWorkWith = () => {
   );
 };
 
-export default WhoWeWorkWith;
+export default Resources;

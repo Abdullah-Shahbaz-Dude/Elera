@@ -8,12 +8,62 @@ import {
   shutterstock2291668783,
   shutterstock2646062685,
   humanServicesImage,
+  sideViewWomanFaceScan,
 } from '@/assets/images';
+
+// Feature Card Component with Hover Reveal
+interface FeatureCardProps {
+  title: string;
+  description: string;
+}
+
+const FeatureCard: React.FC<FeatureCardProps> = ({ title, description }) => {
+  return (
+    <div className="group h-full">
+      {/* Card Container */}
+      <div
+        className="relative w-full h-full rounded-xl p-6 md:p-8 transition-all duration-300 text-left hover:scale-[1.02] flex flex-col"
+        style={{
+          background:
+            'linear-gradient(135deg, rgba(96, 165, 250, 0.1), rgba(147, 51, 234, 0.1))',
+          border: '1px solid rgba(255, 255, 255, 0.1)',
+          backdropFilter: 'blur(20px)',
+          boxShadow: '0 4px 20px rgba(96, 165, 250, 0.15)',
+        }}
+      >
+        {/* Gradient Overlay on Hover */}
+        <div
+          className="absolute inset-0 rounded-xl opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+          style={{
+            background:
+              'linear-gradient(135deg, rgba(96, 165, 250, 0.15), rgba(147, 51, 234, 0.15))',
+          }}
+        />
+
+        {/* Content */}
+        <div className="relative z-10 flex flex-col h-full">
+          {/* Title */}
+          <h3 className="mb-4 text-xl md:text-2xl lg:text-3xl font-bold text-white leading-tight">
+            {title}
+          </h3>
+
+          {/* Hover Preview - Description Preview */}
+          <div className="overflow-hidden transition-all duration-300 max-h-0 opacity-0 group-hover:max-h-[80px] group-hover:opacity-100 mt-auto">
+            <p className="text-sm md:text-base text-white/90 line-clamp-3 pt-2">
+              {description}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 // Accordion component for expandable sections
 interface AccordionItemProps {
   title: string;
   content: string;
+  icon?: string;
   isExpanded: boolean;
   onToggle: () => void;
 }
@@ -21,6 +71,7 @@ interface AccordionItemProps {
 const AccordionItem: React.FC<AccordionItemProps> = ({
   title,
   content,
+  icon,
   isExpanded,
   onToggle,
 }) => {
@@ -44,9 +95,16 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
 
         <div className="relative">
           <div className="flex items-start justify-between gap-4">
-            <h3 className="font-bold text-base md:text-lg lg:text-xl text-white flex-1 leading-tight text-left">
-              {title}
-            </h3>
+            <div className="flex items-center gap-3 flex-1">
+              {icon && (
+                <span className="text-2xl md:text-3xl flex-shrink-0">
+                  {icon}
+                </span>
+              )}
+              <h3 className="font-bold text-base md:text-lg lg:text-xl text-white leading-tight text-left">
+                {title}
+              </h3>
+            </div>
             <button
               onClick={onToggle}
               className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm md:text-base font-medium transition-all duration-200 whitespace-nowrap shrink-0 ${
@@ -107,15 +165,47 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
   );
 };
 
-// Training Module Category Component (Accordion - for Digital Evolution)
+// Training Module Category Component (Feature Cards Grid)
 interface TrainingModuleCategoryProps {
+  title: string;
+  modules: Array<{ title: string; description: string }>;
+}
+
+const TrainingModuleCategory: React.FC<TrainingModuleCategoryProps> = ({
+  title,
+  modules,
+}) => {
+  return (
+    <div className="mb-16">
+      <div className="mb-8 text-center">
+        <h2 className="mb-4 text-4xl font-bold text-white md:text-5xl lg:text-6xl">
+          {title}
+        </h2>
+      </div>
+      <div className="mx-auto w-full">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 items-stretch">
+          {modules.map((module, index) => (
+            <FeatureCard
+              key={index}
+              title={module.title}
+              description={module.description}
+            />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Accordion List Component for Access Training
+interface AccordionListProps {
   title: string;
   modules: Array<{ title: string; description: string }>;
   expandedModules: Set<number>;
   onToggle: (index: number) => void;
 }
 
-const TrainingModuleCategory: React.FC<TrainingModuleCategoryProps> = ({
+const AccordionList: React.FC<AccordionListProps> = ({
   title,
   modules,
   expandedModules,
@@ -128,19 +218,18 @@ const TrainingModuleCategory: React.FC<TrainingModuleCategoryProps> = ({
           {title}
         </h2>
       </div>
-      <div className="mx-auto max-w-4xl">
-        <ul className="space-y-3 md:space-y-4">
+      <div className="mx-auto max-w-4xl w-full">
+        <div className="space-y-4">
           {modules.map((module, index) => (
-            <li key={index}>
-              <AccordionItem
-                title={module.title}
-                content={module.description}
-                isExpanded={expandedModules.has(index)}
-                onToggle={() => onToggle(index)}
-              />
-            </li>
+            <AccordionItem
+              key={index}
+              title={module.title}
+              content={module.description}
+              isExpanded={expandedModules.has(index)}
+              onToggle={() => onToggle(index)}
+            />
           ))}
-        </ul>
+        </div>
       </div>
     </div>
   );
@@ -266,6 +355,15 @@ const WellbeingCategory: React.FC<WellbeingCategoryProps> = ({
 }) => {
   const [activeTab, setActiveTab] = useState<number>(0);
 
+  // Map module indices to background images
+  const getBackgroundImage = (index: number): string => {
+    const imageMap: { [key: number]: string } = {
+      0: sideViewWomanFaceScan, // "Creating Open, Safe Teams Where People Speak Up"
+      1: shutterstock1813285633, // "Managing Burnout, Stress & Energy Levels"
+    };
+    return imageMap[index] || sideViewWomanFaceScan;
+  };
+
   return (
     <div className="mb-16">
       <div className="mb-8 text-center">
@@ -307,12 +405,22 @@ const WellbeingCategory: React.FC<WellbeingCategoryProps> = ({
 
         {/* Tab Content */}
         <div
-          className="relative rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm p-6 md:p-8 transition-all duration-500"
+          className="relative rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm p-6 md:p-8 transition-all duration-500 overflow-hidden"
           style={{
             boxShadow: '0 4px 20px rgba(96, 165, 250, 0.15)',
             minHeight: '200px',
+            backgroundImage: `url(${getBackgroundImage(activeTab)})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
           }}
         >
+          {/* Dark Overlay for text readability */}
+          <div
+            className="absolute inset-0 rounded-xl transition-opacity duration-500"
+            style={{
+              backgroundColor: 'rgba(0, 0, 0, 0.65)',
+            }}
+          ></div>
           <div
             className="absolute inset-0 rounded-xl opacity-0 transition-opacity duration-300"
             style={{
@@ -320,7 +428,7 @@ const WellbeingCategory: React.FC<WellbeingCategoryProps> = ({
                 'linear-gradient(135deg, rgba(96, 165, 250, 0.05), rgba(147, 51, 234, 0.05))',
             }}
           ></div>
-          <div className="relative">
+          <div className="relative z-10">
             <h3 className="mb-4 text-2xl font-bold text-white md:text-3xl">
               {modules[activeTab].title}
             </h3>
@@ -354,7 +462,7 @@ const LeadershipCategory: React.FC<LeadershipCategoryProps> = ({
           {title}
         </h2>
       </div>
-      <div className="mx-auto max-w-4xl">
+      <div className="mx-auto w-full">
         <div
           className="relative rounded-2xl p-6 md:p-8 lg:p-10 transition-all duration-500 overflow-hidden"
           style={{
@@ -446,19 +554,18 @@ const LeadershipCategory: React.FC<LeadershipCategoryProps> = ({
 };
 
 const PsychologyBasedTrainingAndMentoring = () => {
-  // State for expanded accordions
-  const [expandedDigitalEvolution, setExpandedDigitalEvolution] = useState<
-    Set<number>
-  >(new Set());
+  // State for which category is expanded (default to first tab)
+  const [expandedCategory, setExpandedCategory] = useState<string | null>(
+    'digital-evolution'
+  );
+
+  // State for expanded accordions in Access Training section
   const [expandedAccessMethods, setExpandedAccessMethods] = useState<
     Set<number>
   >(new Set());
 
-  const toggleModule = (
-    setter: React.Dispatch<React.SetStateAction<Set<number>>>,
-    index: number
-  ) => {
-    setter((prev) => {
+  const toggleAccessMethod = (index: number) => {
+    setExpandedAccessMethods((prev) => {
       const newSet = new Set(prev);
       if (newSet.has(index)) {
         newSet.delete(index);
@@ -467,6 +574,11 @@ const PsychologyBasedTrainingAndMentoring = () => {
       }
       return newSet;
     });
+  };
+
+  const handleCategoryExpand = (category: string) => {
+    // Toggle: if same category is clicked again, collapse it
+    setExpandedCategory((prev) => (prev === category ? null : category));
   };
 
   // Training Modules Data
@@ -683,81 +795,258 @@ const PsychologyBasedTrainingAndMentoring = () => {
               </div>
             </div>
 
-            {/* Training Modules Section */}
-            <div className="mb-16">
-              <div className="mb-8 text-center">
+            {/* Training Packages Section */}
+            <div id="training-packages-section" className="mb-16">
+              <div className="mb-12 text-center">
                 <h2 className="mb-4 text-4xl font-bold text-white md:text-5xl lg:text-6xl">
-                  TRAINING Modules
+                  TRAINING PACKAGES
                 </h2>
               </div>
 
-              {/* Digital Evolution */}
-              <TrainingModuleCategory
-                title="DIGITAL EVOLUTION"
-                modules={digitalEvolutionModules}
-                expandedModules={expandedDigitalEvolution}
-                onToggle={(index) =>
-                  toggleModule(setExpandedDigitalEvolution, index)
-                }
-              />
+              {/* Tab Navigation - 4 Permanent Tabs */}
+              <div className="mb-8 grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+                {/* Digital Evolution Tab */}
+                <button
+                  type="button"
+                  onClick={() => handleCategoryExpand('digital-evolution')}
+                  className={`relative rounded-xl p-6 md:p-8 transition-all duration-300 hover:scale-105 ${
+                    expandedCategory === 'digital-evolution'
+                      ? 'scale-105'
+                      : 'hover:scale-105'
+                  }`}
+                  style={{
+                    background:
+                      expandedCategory === 'digital-evolution'
+                        ? 'linear-gradient(135deg, rgba(96, 165, 250, 0.3), rgba(147, 51, 234, 0.3))'
+                        : 'rgba(255, 255, 255, 0.05)',
+                    border:
+                      expandedCategory === 'digital-evolution'
+                        ? '2px solid rgba(96, 165, 250, 0.5)'
+                        : '1px solid rgba(255, 255, 255, 0.1)',
+                    backdropFilter: 'blur(20px)',
+                    boxShadow:
+                      expandedCategory === 'digital-evolution'
+                        ? '0 4px 20px rgba(96, 165, 250, 0.4)'
+                        : '0 4px 20px rgba(96, 165, 250, 0.15)',
+                  }}
+                >
+                  {shutterstock1813285633 && (
+                    <div
+                      className="absolute inset-0 rounded-xl opacity-20"
+                      style={{
+                        backgroundImage: `url(${shutterstock1813285633})`,
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center',
+                      }}
+                    />
+                  )}
+                  <div className="relative z-10">
+                    <h3 className="text-lg md:text-xl lg:text-2xl font-bold text-white text-center mb-2">
+                      DIGITAL EVOLUTION
+                    </h3>
+                    <div
+                      className="mx-auto h-1 w-12 rounded-full"
+                      style={{
+                        background:
+                          'linear-gradient(to right, #60A5FA, #9333EA)',
+                      }}
+                    />
+                  </div>
+                </button>
 
-              {/* Separator Line */}
-              <div
-                className="my-16 h-[3px] w-full opacity-50"
-                style={{
-                  background:
-                    'linear-gradient(to right, transparent, #60A5FA, transparent)',
-                }}
-              ></div>
+                {/* Neurodiversity Tab */}
+                <button
+                  type="button"
+                  onClick={() => handleCategoryExpand('neurodiversity')}
+                  className={`relative rounded-xl p-6 md:p-8 transition-all duration-300 hover:scale-105 ${
+                    expandedCategory === 'neurodiversity'
+                      ? 'scale-105'
+                      : 'hover:scale-105'
+                  }`}
+                  style={{
+                    background:
+                      expandedCategory === 'neurodiversity'
+                        ? 'linear-gradient(135deg, rgba(96, 165, 250, 0.3), rgba(147, 51, 234, 0.3))'
+                        : 'rgba(255, 255, 255, 0.05)',
+                    border:
+                      expandedCategory === 'neurodiversity'
+                        ? '2px solid rgba(96, 165, 250, 0.5)'
+                        : '1px solid rgba(255, 255, 255, 0.1)',
+                    backdropFilter: 'blur(20px)',
+                    boxShadow:
+                      expandedCategory === 'neurodiversity'
+                        ? '0 4px 20px rgba(96, 165, 250, 0.4)'
+                        : '0 4px 20px rgba(96, 165, 250, 0.15)',
+                  }}
+                >
+                  {shutterstock2177507051 && (
+                    <div
+                      className="absolute inset-0 rounded-xl opacity-20"
+                      style={{
+                        backgroundImage: `url(${shutterstock2177507051})`,
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center',
+                      }}
+                    />
+                  )}
+                  <div className="relative z-10">
+                    <h3 className="text-base md:text-lg lg:text-xl font-bold text-white text-center mb-2 leading-tight">
+                      NEURODIVERSITY
+                    </h3>
+                    <div
+                      className="mx-auto h-1 w-12 rounded-full"
+                      style={{
+                        background:
+                          'linear-gradient(to right, #60A5FA, #9333EA)',
+                      }}
+                    />
+                  </div>
+                </button>
 
-              {/* Utilising Neurodiversity */}
-              <NeurodiversityCategory
-                title="UTILISING NEURODIVERSITY FOR STRATEGIC ADVANTAGE"
-                modules={neurodiversityModules}
-              />
+                {/* Wellbeing Tab */}
+                <button
+                  type="button"
+                  onClick={() => handleCategoryExpand('wellbeing')}
+                  className={`relative rounded-xl p-6 md:p-8 transition-all duration-300 hover:scale-105 ${
+                    expandedCategory === 'wellbeing'
+                      ? 'scale-105'
+                      : 'hover:scale-105'
+                  }`}
+                  style={{
+                    background:
+                      expandedCategory === 'wellbeing'
+                        ? 'linear-gradient(135deg, rgba(96, 165, 250, 0.3), rgba(147, 51, 234, 0.3))'
+                        : 'rgba(255, 255, 255, 0.05)',
+                    border:
+                      expandedCategory === 'wellbeing'
+                        ? '2px solid rgba(96, 165, 250, 0.5)'
+                        : '1px solid rgba(255, 255, 255, 0.1)',
+                    backdropFilter: 'blur(20px)',
+                    boxShadow:
+                      expandedCategory === 'wellbeing'
+                        ? '0 4px 20px rgba(96, 165, 250, 0.4)'
+                        : '0 4px 20px rgba(96, 165, 250, 0.15)',
+                  }}
+                >
+                  {sideViewWomanFaceScan && (
+                    <div
+                      className="absolute inset-0 rounded-xl opacity-20"
+                      style={{
+                        backgroundImage: `url(${sideViewWomanFaceScan})`,
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center',
+                      }}
+                    />
+                  )}
+                  <div className="relative z-10">
+                    <h3 className="text-base md:text-lg lg:text-xl font-bold text-white text-center mb-2 leading-tight">
+                      WELLBEING
+                    </h3>
+                    <div
+                      className="mx-auto h-1 w-12 rounded-full"
+                      style={{
+                        background:
+                          'linear-gradient(to right, #60A5FA, #9333EA)',
+                      }}
+                    />
+                  </div>
+                </button>
 
-              {/* Separator Line */}
-              <div
-                className="my-16 h-[3px] w-full opacity-50"
-                style={{
-                  background:
-                    'linear-gradient(to right, transparent, #60A5FA, transparent)',
-                }}
-              ></div>
+                {/* Leadership Tab */}
+                <button
+                  type="button"
+                  onClick={() => handleCategoryExpand('leadership')}
+                  className={`relative rounded-xl p-6 md:p-8 transition-all duration-300 hover:scale-105 ${
+                    expandedCategory === 'leadership'
+                      ? 'scale-105'
+                      : 'hover:scale-105'
+                  }`}
+                  style={{
+                    background:
+                      expandedCategory === 'leadership'
+                        ? 'linear-gradient(135deg, rgba(96, 165, 250, 0.3), rgba(147, 51, 234, 0.3))'
+                        : 'rgba(255, 255, 255, 0.05)',
+                    border:
+                      expandedCategory === 'leadership'
+                        ? '2px solid rgba(96, 165, 250, 0.5)'
+                        : '1px solid rgba(255, 255, 255, 0.1)',
+                    backdropFilter: 'blur(20px)',
+                    boxShadow:
+                      expandedCategory === 'leadership'
+                        ? '0 4px 20px rgba(96, 165, 250, 0.4)'
+                        : '0 4px 20px rgba(96, 165, 250, 0.15)',
+                  }}
+                >
+                  {shutterstock2185008323 && (
+                    <div
+                      className="absolute inset-0 rounded-xl opacity-20"
+                      style={{
+                        backgroundImage: `url(${shutterstock2185008323})`,
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center',
+                      }}
+                    />
+                  )}
+                  <div className="relative z-10">
+                    <h3 className="text-base md:text-lg lg:text-xl font-bold text-white text-center mb-2 leading-tight">
+                      LEADERSHIP
+                    </h3>
+                    <div
+                      className="mx-auto h-1 w-12 rounded-full"
+                      style={{
+                        background:
+                          'linear-gradient(to right, #60A5FA, #9333EA)',
+                      }}
+                    />
+                  </div>
+                </button>
+              </div>
 
-              {/* Wellbeing & Psychological Safety */}
-              <WellbeingCategory
-                title="WELLBEING & PSYCHOLOGICAL SAFETY"
-                modules={wellbeingModules}
-              />
+              {/* Tab Content - Shows below tabs */}
+              <div className="mt-8">
+                {/* Digital Evolution Content */}
+                {expandedCategory === 'digital-evolution' && (
+                  <TrainingModuleCategory
+                    title="DIGITAL EVOLUTION"
+                    modules={digitalEvolutionModules}
+                  />
+                )}
 
-              {/* Separator Line */}
-              <div
-                className="my-16 h-[3px] w-full opacity-50"
-                style={{
-                  background:
-                    'linear-gradient(to right, transparent, #60A5FA, transparent)',
-                }}
-              ></div>
+                {/* Neurodiversity Content */}
+                {expandedCategory === 'neurodiversity' && (
+                  <NeurodiversityCategory
+                    title="UTILISING NEURODIVERSITY FOR STRATEGIC ADVANTAGE"
+                    modules={neurodiversityModules}
+                  />
+                )}
 
-              {/* Leadership & Psychoeducation */}
-              <LeadershipCategory
-                title="LEADERSHIP & PSYCHOEDUCATION"
-                modules={leadershipModules}
-              />
+                {/* Wellbeing Content */}
+                {expandedCategory === 'wellbeing' && (
+                  <WellbeingCategory
+                    title="WELLBEING & PSYCHOLOGICAL SAFETY"
+                    modules={wellbeingModules}
+                  />
+                )}
+
+                {/* Leadership Content */}
+                {expandedCategory === 'leadership' && (
+                  <LeadershipCategory
+                    title="LEADERSHIP & PSYCHOEDUCATION"
+                    modules={leadershipModules}
+                  />
+                )}
+              </div>
             </div>
 
             {/* Separator Line */}
             <div className="my-16 h-[3px] w-full bg-gradient-to-r from-transparent via-primary-blue-accent to-transparent opacity-50"></div>
 
             {/* How Organisations Can Access Training Section */}
-            <TrainingModuleCategory
+            <AccordionList
               title="HOW ORGANISATIONS CAN ACCESS TRAINING"
               modules={accessMethods}
               expandedModules={expandedAccessMethods}
-              onToggle={(index) =>
-                toggleModule(setExpandedAccessMethods, index)
-              }
+              onToggle={toggleAccessMethod}
             />
 
             {/* Separator Line */}
@@ -776,62 +1065,75 @@ const PsychologyBasedTrainingAndMentoring = () => {
                 }}
               >
                 <div
-                  className="relative rounded-3xl p-8 md:p-12 backdrop-blur-md"
+                  className="relative rounded-3xl p-8 md:p-12 backdrop-blur-md overflow-hidden"
                   style={{
                     background:
                       'linear-gradient(180deg, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.85))',
+                    backgroundImage: `url(${shutterstock2646062685})`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
                   }}
                 >
-                  <div className="mb-8 flex items-center gap-4">
-                    <div
-                      className="flex h-14 w-14 items-center justify-center rounded-xl"
-                      style={{
-                        background: 'linear-gradient(135deg, #60A5FA, #9333EA)',
-                        boxShadow: '0 4px 20px rgba(96, 165, 250, 0.4)',
-                      }}
-                    >
-                      <svg
-                        className="h-8 w-8 text-white"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                        />
-                      </svg>
-                    </div>
-                    <div>
-                      <h4 className="text-2xl font-bold text-white md:text-3xl tracking-tight">
-                        ANTICIPATED IMPACT FOR ORGANISATIONS
-                      </h4>
-                      <div className="mt-1 h-1 w-20 rounded-full bg-gradient-to-r from-[#60A5FA] to-[#9333EA]"></div>
-                    </div>
-                  </div>
-                  <div className="grid gap-4 md:grid-cols-2">
-                    {impactOutcomes.map((outcome, index) => (
+                  {/* Dark Overlay for text readability */}
+                  <div
+                    className="absolute inset-0 rounded-3xl transition-opacity duration-500"
+                    style={{
+                      backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                    }}
+                  ></div>
+                  <div className="relative z-10">
+                    <div className="mb-8 flex items-center gap-4">
                       <div
-                        key={index}
-                        className="flex items-start gap-3 rounded-lg p-4"
+                        className="flex h-14 w-14 items-center justify-center rounded-xl"
                         style={{
-                          background: 'rgba(255, 255, 255, 0.03)',
-                          border: '1px solid rgba(255, 255, 255, 0.1)',
+                          background:
+                            'linear-gradient(135deg, #60A5FA, #9333EA)',
+                          boxShadow: '0 4px 20px rgba(96, 165, 250, 0.4)',
                         }}
                       >
-                        <div className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-gradient-to-r from-[#60A5FA] to-[#9333EA]"></div>
-                        <p className="text-base leading-relaxed text-white/90 md:text-lg">
-                          {outcome}
-                        </p>
+                        <svg
+                          className="h-8 w-8 text-white"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                          />
+                        </svg>
                       </div>
-                    ))}
-                  </div>
-                  <div className="mt-8 flex items-center gap-4">
-                    <div className="h-px flex-1 bg-gradient-to-r from-transparent via-[rgba(96,165,250,0.5)] to-transparent"></div>
-                    <div className="h-2 w-2 rounded-full bg-gradient-to-br from-[#60A5FA] to-[#9333EA]"></div>
-                    <div className="h-px flex-1 bg-gradient-to-r from-transparent via-[rgba(147,51,234,0.5)] to-transparent"></div>
+                      <div>
+                        <h4 className="text-2xl font-bold text-white md:text-3xl tracking-tight">
+                          ANTICIPATED IMPACT FOR ORGANISATIONS
+                        </h4>
+                        <div className="mt-1 h-1 w-20 rounded-full bg-gradient-to-r from-[#60A5FA] to-[#9333EA]"></div>
+                      </div>
+                    </div>
+                    <div className="grid gap-4 md:grid-cols-2">
+                      {impactOutcomes.map((outcome, index) => (
+                        <div
+                          key={index}
+                          className="flex items-start gap-3 rounded-lg p-4"
+                          style={{
+                            background: 'rgba(255, 255, 255, 0.03)',
+                            border: '1px solid rgba(255, 255, 255, 0.1)',
+                          }}
+                        >
+                          <div className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-gradient-to-r from-[#60A5FA] to-[#9333EA]"></div>
+                          <p className="text-base leading-relaxed text-white/90 md:text-lg">
+                            {outcome}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="mt-8 flex items-center gap-4">
+                      <div className="h-px flex-1 bg-gradient-to-r from-transparent via-[rgba(96,165,250,0.5)] to-transparent"></div>
+                      <div className="h-2 w-2 rounded-full bg-gradient-to-br from-[#60A5FA] to-[#9333EA]"></div>
+                      <div className="h-px flex-1 bg-gradient-to-r from-transparent via-[rgba(147,51,234,0.5)] to-transparent"></div>
+                    </div>
                   </div>
                 </div>
               </div>

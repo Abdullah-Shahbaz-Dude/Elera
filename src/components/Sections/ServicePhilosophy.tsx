@@ -1,12 +1,12 @@
-import React from 'react'
-import { useNavigate } from 'react-router-dom'
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 interface PhilosophyCardProps {
-  title: string
-  children?: React.ReactNode
-  isLarge?: boolean
-  navigateTo?: string
-  index: number
+  title: string;
+  children?: React.ReactNode;
+  isLarge?: boolean;
+  navigateTo?: string;
+  index: number;
 }
 
 const PhilosophyCard: React.FC<PhilosophyCardProps> = ({
@@ -16,11 +16,11 @@ const PhilosophyCard: React.FC<PhilosophyCardProps> = ({
   navigateTo,
   index,
 }) => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const handleReadMore = () => {
-    navigate(navigateTo || '/our-services')
-  }
+    navigate(navigateTo || '/our-services');
+  };
 
   // Blue and Purple theme gradients - soft and subtle
   const gradients = [
@@ -54,52 +54,106 @@ const PhilosophyCard: React.FC<PhilosophyCardProps> = ({
       start: '#6197FB',
       end: '#9333EA',
     },
-  ]
+  ];
 
-  const gradient = gradients[index % gradients.length]
+  const gradient = gradients[index % gradients.length];
 
   // Enhanced SVG Icons for each philosophy
   const getIcon = () => {
     if (title === 'Psychology First') {
       return (
-        <svg className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+        <svg
+          className="h-8 w-8"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={1.5}
+            d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
+          />
         </svg>
-      )
+      );
     }
     if (title === 'Neurodiversity as a Strategic Advantage') {
       return (
-        <svg className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+        <svg
+          className="h-8 w-8"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={1.5}
+            d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"
+          />
         </svg>
-      )
+      );
     }
     if (title === 'Human First Thinking') {
       return (
-        <svg className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+        <svg
+          className="h-8 w-8"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={1.5}
+            d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
+          />
         </svg>
-      )
+      );
     }
     if (title === 'AI Insights') {
       return (
-        <svg className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+        <svg
+          className="h-8 w-8"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={1.5}
+            d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+          />
         </svg>
-      )
+      );
     }
     if (title === 'Equipping You for the 4th Industrial Revolution') {
       return (
-        <svg className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
+        <svg
+          className="h-8 w-8"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={1.5}
+            d="M13 10V3L4 14h7v7l9-11h-7z"
+          />
         </svg>
-      )
+      );
     }
-    return null
-  }
+    return null;
+  };
 
   return (
-    <div className={`group relative h-full ${isLarge ? 'md:col-span-2 lg:col-span-2' : ''}`}>
+    <div
+      className={`group relative h-full ${
+        isLarge ? 'md:col-span-2 lg:col-span-2' : ''
+      }`}
+    >
       {/* Modern Card with Transparent Black and Border */}
       <div
         className="relative h-full rounded-2xl overflow-hidden transition-all duration-500 ease-out group-hover:scale-[1.02]"
@@ -138,7 +192,10 @@ const PhilosophyCard: React.FC<PhilosophyCardProps> = ({
                 backdropFilter: 'blur(10px)',
               }}
             >
-              <div className="text-white" style={{ filter: `drop-shadow(0 0 4px ${gradient.accent}40)` }}>
+              <div
+                className="text-white"
+                style={{ filter: `drop-shadow(0 0 4px ${gradient.accent}40)` }}
+              >
                 {getIcon()}
               </div>
             </div>
@@ -177,7 +234,12 @@ const PhilosophyCard: React.FC<PhilosophyCardProps> = ({
                   viewBox="0 0 24 24"
                   stroke="currentColor"
                 >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5l7 7-7 7"
+                  />
                 </svg>
               </span>
               {/* Subtle Gradient Glow on Hover */}
@@ -204,13 +266,13 @@ const PhilosophyCard: React.FC<PhilosophyCardProps> = ({
         />
       </div>
     </div>
-  )
-}
+  );
+};
 
 const ServicePhilosophy: React.FC = () => {
   return (
     <section className="relative w-full overflow-hidden bg-gradient-to-b from-black via-dark-page to-black py-12 md:py-24 lg:py-32">
-          {/* Blue and Purple Background Effects */}
+      {/* Blue and Purple Background Effects */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute -right-[300px] -top-[300px] h-[900px] w-[900px] rounded-full bg-gradient-to-br from-[rgba(95,165,251,0.15)] to-[rgba(147,51,234,0.15)] blur-[500px]"></div>
         <div className="absolute -left-[300px] top-1/2 h-[900px] w-[900px] -translate-y-1/2 rounded-full bg-gradient-to-br from-[rgba(97,151,251,0.15)] to-[rgba(139,92,246,0.15)] blur-[500px]"></div>
@@ -227,7 +289,7 @@ const ServicePhilosophy: React.FC = () => {
                 Our Philosophy
               </h2>
             </div>
-            
+
             <div className="flex items-center justify-center mb-4">
               <div
                 className="h-1 w-20 md:w-32 lg:w-80 rounded-full"
@@ -237,7 +299,8 @@ const ServicePhilosophy: React.FC = () => {
               />
             </div>
             <p className="text-base md:text-lg text-white/60 max-w-2xl mx-auto px-4">
-              Discover the principles that guide our innovative approach to transforming organizations
+              Discover the principles that guide our innovative approach to
+              transforming organizations
             </p>
           </div>
 
@@ -250,7 +313,8 @@ const ServicePhilosophy: React.FC = () => {
               navigateTo="/our-services"
               index={0}
             >
-              We use business psychology to understand how people think, work, and respond to change
+              We use business psychology to understand how people think, work,
+              and respond to change
             </PhilosophyCard>
 
             {/* Neurodiversity - Card */}
@@ -260,7 +324,9 @@ const ServicePhilosophy: React.FC = () => {
               navigateTo="/our-services"
               index={1}
             >
-              We leverage neurodiversity to create inclusive environments that unlock unique talents and innovative thinking in your organization.
+              We leverage neurodiversity to create inclusive environments that
+              unlock unique talents and innovative thinking in your
+              organization.
             </PhilosophyCard>
 
             {/* Human First Thinking - Card */}
@@ -270,7 +336,8 @@ const ServicePhilosophy: React.FC = () => {
               navigateTo="/our-services"
               index={2}
             >
-              Putting people at the center of every decision, ensuring technology serves human needs and enhances workplace well-being.
+              Putting people at the center of every decision, ensuring
+              technology serves human needs and enhances workplace well-being.
             </PhilosophyCard>
 
             {/* AI Insights - Card */}
@@ -280,7 +347,9 @@ const ServicePhilosophy: React.FC = () => {
               navigateTo="/our-services"
               index={3}
             >
-              Harness the power of artificial intelligence to gain deep insights into workforce dynamics, predict trends, and make data-driven decisions.
+              Harness the power of artificial intelligence to gain deep insights
+              into workforce dynamics, predict trends, and make data-driven
+              decisions.
             </PhilosophyCard>
 
             {/* 4th Industrial Revolution - Large Card Spanning 2 columns on large screens */}
@@ -290,13 +359,14 @@ const ServicePhilosophy: React.FC = () => {
               navigateTo="/our-services"
               index={4}
             >
-              Prepare your organization for the future with cutting-edge tools and strategies that embrace digital transformation and innovation.
+              Prepare your organization for the future with cutting-edge tools
+              and strategies that embrace digital transformation and innovation.
             </PhilosophyCard>
           </div>
         </div>
       </div>
     </section>
-  )
-}
+  );
+};
 
-export default ServicePhilosophy
+export default ServicePhilosophy;

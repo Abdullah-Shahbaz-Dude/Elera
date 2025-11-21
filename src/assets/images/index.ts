@@ -47,6 +47,12 @@ import shutterstock2185008323 from './services/new-page/shutterstock_2185008323.
 import shutterstock2291668783 from './services/new-page/shutterstock_2291668783.jpg'
 import shutterstock2646062685 from './services/new-page/shutterstock_2646062685.jpg'
 
+// Resources page images from who-we-work-with folder
+import fourthIndustrialRevolutionImage from './services/who-we-work-with/4th Industrial Revolution.jpg'
+import cognitiveBiasImage from './services/who-we-work-with/Cognitvie Bias.jpg'
+import digitalSectionImage from './services/who-we-work-with/Digital Section.jpg'
+import organisationalPsychologyImage from './services/who-we-work-with/Organisational : Business Psychology Section.webp'
+
 // Temporary placeholders - Remove these and use imports above once files are added
 const heroBackground: string | undefined = undefined
 
@@ -72,7 +78,11 @@ export {
     shutterstock2177507051,
     shutterstock2185008323,
     shutterstock2291668783,
-    shutterstock2646062685
+    shutterstock2646062685,
+    fourthIndustrialRevolutionImage,
+    cognitiveBiasImage,
+    digitalSectionImage,
+    organisationalPsychologyImage
 }
 
 // Re-export with aliases for convenience
