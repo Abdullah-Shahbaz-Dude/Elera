@@ -46,7 +46,7 @@ const Navbar: React.FC = () => {
 
   const navigationLinks = [
     { path: '/', label: 'Home' },
-    { path: '/why-elerea', label: 'Why Elerea' },
+    { path: '/why-elara', label: 'Why Elara' },
     { path: '/our-services', label: 'Our Services' },
     { path: '/who-we-are', label: 'Who we are' },
     { path: '/research-and-education', label: 'Research & Education' },

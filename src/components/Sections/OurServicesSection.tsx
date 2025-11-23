@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { aiInsightEngineImage, humanServicesImage } from '@/assets/images';
+import { shutterstock1330833800, humanServicesImage } from '@/assets/images';
 
 interface ServiceCardProps {
   title: string;
@@ -105,7 +105,7 @@ const OurServicesSection: React.FC = () => {
       title: 'AI & Data Intelligence',
       description:
         'Digital tools that show you the hidden skills and strengths inside your workforce.',
-      backgroundImage: aiInsightEngineImage,
+      backgroundImage: shutterstock1330833800,
       imageOpacity: 0.42,
       navigateTo: '/our-services/ai-insight-engine',
     },

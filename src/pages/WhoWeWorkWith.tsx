@@ -97,10 +97,10 @@ const ResourceCard: React.FC<ResourceCardProps> = ({
             style={{
               background:
                 'linear-gradient(135deg, rgba(96, 165, 250, 0.3), rgba(147, 51, 234, 0.3))',
-              boxShadow: '0 4px 20px rgba(96, 165, 250, 0.3)',
+              boxShadow: 'rgba(96, 165, 250, 0.3) 0px 4px 20px',
             }}
           >
-            <span>{isExpanded ? 'Understand Less' : 'Understand More'}</span>
+            <span>{isExpanded ? 'Close' : 'Understand More'}</span>
             <svg
               className={`w-4 h-4 transition-transform duration-300 ${
                 isExpanded ? 'rotate-180' : ''
@@ -391,7 +391,7 @@ const WhoWeWorkWith = () => {
             {/* Hero Section */}
             <div className="mb-16 text-center">
               <h1 className="mb-4 text-4xl font-bold text-white md:text-5xl lg:text-6xl">
-                Research & Educationx
+                Research & Education
               </h1>
               <p className="text-lg leading-relaxed text-white/80 md:text-xl">
                 Research papers and reports offering deeper insight into the

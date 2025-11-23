@@ -78,7 +78,7 @@ elerea-website/
 ## Navigation Pages
 
 - `/` - Home page with hero section
-- `/why-elerea` - Why Elerea
+- `/why-elara` - Why Elara
 - `/our-services` - Our Services
 - `/who-we-are` - Who we are
 - `/Research & Education` - Research & Education

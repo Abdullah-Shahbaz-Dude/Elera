@@ -15,6 +15,8 @@ interface FeatureCardProps {
   description: string;
   isExpanded: boolean;
   onToggle: () => void;
+  moduleNumber?: number;
+  subModuleIndex?: number;
 }
 
 const FeatureCard: React.FC<FeatureCardProps> = ({
@@ -22,12 +24,13 @@ const FeatureCard: React.FC<FeatureCardProps> = ({
   description,
   isExpanded,
   onToggle,
+  subModuleIndex,
 }) => {
   return (
     <div className="group h-full">
       {/* Card Container */}
       <div
-        className="relative w-full h-full rounded-xl p-6 md:p-8 transition-all duration-300 text-left hover:scale-[1.02] flex flex-col cursor-pointer"
+        className="relative w-full h-full rounded-xl p-4 sm:p-5 md:p-6 lg:p-8 transition-all duration-300 text-left hover:scale-[1.02] flex flex-col cursor-pointer"
         onClick={onToggle}
         style={{
           background:
@@ -51,9 +54,17 @@ const FeatureCard: React.FC<FeatureCardProps> = ({
 
         {/* Content */}
         <div className="relative z-10 flex flex-col h-full">
-          <div className="flex items-start justify-between gap-4">
+          {/* Module Number - Centered Above Title */}
+          {subModuleIndex !== undefined && (
+            <div className="text-center mb-2 sm:mb-3">
+              <span className="text-[#60A5FA] text-sm sm:text-base md:text-lg font-semibold">
+                Module {subModuleIndex + 1}
+              </span>
+            </div>
+          )}
+          <div className="flex items-start justify-between gap-3 sm:gap-4">
             {/* Title */}
-            <h3 className="mb-4 text-xl md:text-2xl lg:text-3xl font-bold text-white leading-tight flex-1">
+            <h3 className="mb-3 sm:mb-4 text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-white leading-tight flex-1">
               {title}
             </h3>
             {/* Toggle Icon */}
@@ -63,10 +74,10 @@ const FeatureCard: React.FC<FeatureCardProps> = ({
                 e.stopPropagation();
                 onToggle();
               }}
-              className="flex-shrink-0 mt-1"
+              className="flex-shrink-0 mt-1 min-w-[44px] min-h-[44px] flex items-center justify-center"
             >
               <svg
-                className={`w-5 h-5 text-white transition-transform duration-300 ${
+                className={`w-5 h-5 sm:w-6 sm:h-6 text-white transition-transform duration-300 ${
                   isExpanded ? 'rotate-180' : ''
                 }`}
                 fill="none"
@@ -87,11 +98,11 @@ const FeatureCard: React.FC<FeatureCardProps> = ({
           <div
             className={`overflow-hidden transition-all duration-500 ease-in-out ${
               isExpanded
-                ? 'max-h-[500px] opacity-100 mt-4'
+                ? 'max-h-[500px] opacity-100 mt-3 sm:mt-4'
                 : 'max-h-0 opacity-0 mt-0'
             }`}
           >
-            <p className="text-sm md:text-base text-white/90 pt-2">
+            <p className="text-sm sm:text-base md:text-lg text-white/90 pt-2">
               {description}
             </p>
           </div>
@@ -122,7 +133,7 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
   return (
     <div className="group">
       <div
-        className="relative rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm p-4 md:p-5 transition-all duration-300 hover:border-white/20 hover:bg-white/10 overflow-hidden"
+        className="relative rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm p-3 sm:p-4 md:p-5 transition-all duration-300 hover:border-white/20 hover:bg-white/10 overflow-hidden"
         style={{
           boxShadow: isExpanded
             ? '0 4px 20px rgba(96, 165, 250, 0.15)'
@@ -150,20 +161,20 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
         ></div>
 
         <div className="relative z-10">
-          <div className="flex items-start justify-between gap-4">
-            <div className="flex items-center gap-3 flex-1">
+          <div className="flex items-start justify-between gap-3 sm:gap-4">
+            <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
               {icon && (
-                <span className="text-2xl md:text-3xl flex-shrink-0">
+                <span className="text-xl sm:text-2xl md:text-3xl flex-shrink-0">
                   {icon}
                 </span>
               )}
-              <h3 className="font-bold text-base md:text-lg lg:text-xl text-white leading-tight text-left">
+              <h3 className="font-bold text-sm sm:text-base md:text-lg lg:text-xl text-white leading-tight text-left">
                 {title}
               </h3>
             </div>
             <button
               onClick={onToggle}
-              className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm md:text-base font-medium transition-all duration-200 whitespace-nowrap shrink-0 ${
+              className={`flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm md:text-base font-medium transition-all duration-200 whitespace-nowrap shrink-0 min-h-[44px] ${
                 isExpanded ? 'text-white' : 'text-[#60A5FA] hover:text-white'
               }`}
               style={{
@@ -183,9 +194,12 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
                 }
               }}
             >
-              <span>{isExpanded ? 'Read less' : 'Read more'}</span>
+              <span className="hidden sm:inline">
+                {isExpanded ? 'Read less' : 'Read more'}
+              </span>
+              <span className="sm:hidden">{isExpanded ? 'Less' : 'More'}</span>
               <svg
-                className={`w-4 h-4 transition-transform duration-300 ${
+                className={`w-3.5 h-3.5 sm:w-4 sm:h-4 transition-transform duration-300 ${
                   isExpanded ? 'rotate-180' : ''
                 }`}
                 fill="none"
@@ -205,12 +219,12 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
           <div
             className={`overflow-hidden transition-all duration-500 ease-in-out ${
               isExpanded
-                ? 'max-h-[500px] opacity-100 mt-4'
+                ? 'max-h-[500px] opacity-100 mt-3 sm:mt-4'
                 : 'max-h-0 opacity-0 mt-0'
             }`}
           >
             <div className="pt-2">
-              <p className="text-sm md:text-base lg:text-lg leading-relaxed text-white/80 text-left whitespace-pre-line">
+              <p className="text-sm sm:text-base md:text-lg leading-relaxed text-white/80 text-left whitespace-pre-line">
                 {content}
               </p>
             </div>
@@ -225,11 +239,13 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
 interface TrainingModuleCategoryProps {
   title: string;
   modules: Array<{ title: string; description: string }>;
+  moduleNumber?: number;
 }
 
 const TrainingModuleCategory: React.FC<TrainingModuleCategoryProps> = ({
   title,
   modules,
+  moduleNumber,
 }) => {
   const [expandedModules, setExpandedModules] = useState<Set<number>>(
     new Set()
@@ -248,14 +264,14 @@ const TrainingModuleCategory: React.FC<TrainingModuleCategoryProps> = ({
   };
 
   return (
-    <div className="mb-16">
-      <div className="mb-8 text-center">
-        <h2 className="mb-4 text-4xl font-bold text-white md:text-5xl lg:text-6xl">
+    <div className="mb-12 sm:mb-16">
+      <div className="mb-6 sm:mb-8 text-center">
+        <h2 className="mb-4 text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-white">
           {title}
         </h2>
       </div>
       <div className="mx-auto w-full">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 items-stretch">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 md:gap-6 lg:gap-8 items-stretch">
           {modules.map((module, index) => (
             <FeatureCard
               key={index}
@@ -263,6 +279,8 @@ const TrainingModuleCategory: React.FC<TrainingModuleCategoryProps> = ({
               description={module.description}
               isExpanded={expandedModules.has(index)}
               onToggle={() => toggleModule(index)}
+              moduleNumber={moduleNumber}
+              subModuleIndex={index}
             />
           ))}
         </div>
@@ -286,14 +304,14 @@ const AccordionList: React.FC<AccordionListProps> = ({
   onToggle,
 }) => {
   return (
-    <div className="mb-16">
-      <div className="mb-8 text-center">
-        <h2 className="mb-4 text-4xl font-bold text-white md:text-5xl lg:text-6xl">
+    <div className="mb-12 sm:mb-16">
+      <div className="mb-6 sm:mb-8 text-center">
+        <h2 className="mb-4 text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-white">
           {title}
         </h2>
       </div>
       <div className="mx-auto max-w-4xl w-full">
-        <div className="space-y-4">
+        <div className="space-y-2 sm:space-y-3 md:space-y-4">
           {modules.map((module, index) => (
             <AccordionItem
               key={index}
@@ -335,21 +353,21 @@ const NeurodiversityCategory: React.FC<NeurodiversityCategoryProps> = ({
   };
 
   return (
-    <div className="mb-16">
-      <div className="mb-8 text-center">
-        <h2 className="mb-4 text-4xl font-bold text-white md:text-5xl lg:text-6xl">
+    <div className="mb-12 sm:mb-16">
+      <div className="mb-6 sm:mb-8 text-center">
+        <h2 className="mb-4 text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-white">
           {title}
         </h2>
       </div>
       <div className="mx-auto max-w-6xl">
-        <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
+        <div className="flex flex-col lg:flex-row gap-4 sm:gap-6 lg:gap-8">
           {/* Module List - Left Side */}
-          <div className="w-full lg:w-2/5 space-y-3 order-2 lg:order-1">
+          <div className="w-full lg:w-2/5 space-y-2 sm:space-y-3 order-2 lg:order-1">
             {modules.map((module, index) => (
               <button
                 key={index}
                 onClick={() => setSelectedIndex(index)}
-                className={`w-full text-left rounded-xl border p-4 md:p-5 transition-all duration-300 ${
+                className={`w-full text-left rounded-xl border p-3 sm:p-4 md:p-5 transition-all duration-300 min-h-[60px] sm:min-h-[70px] ${
                   selectedIndex === index
                     ? 'border-[#60A5FA] bg-white/10 backdrop-blur-sm'
                     : 'border-white/10 bg-white/5 backdrop-blur-sm hover:border-white/20 hover:bg-white/8'
@@ -362,14 +380,14 @@ const NeurodiversityCategory: React.FC<NeurodiversityCategoryProps> = ({
                 }}
               >
                 <h3
-                  className={`font-bold text-base md:text-lg lg:text-xl leading-tight ${
+                  className={`font-bold text-sm sm:text-base md:text-lg lg:text-xl leading-tight ${
                     selectedIndex === index ? 'text-white' : 'text-white/80'
                   }`}
                 >
                   {module.title}
                 </h3>
                 {selectedIndex === index && (
-                  <div className="mt-2 h-1 w-12 rounded-full bg-gradient-to-r from-[#60A5FA] to-[#9333EA]"></div>
+                  <div className="mt-2 h-1 w-10 sm:w-12 rounded-full bg-gradient-to-r from-[#60A5FA] to-[#9333EA]"></div>
                 )}
               </button>
             ))}
@@ -378,20 +396,25 @@ const NeurodiversityCategory: React.FC<NeurodiversityCategoryProps> = ({
           {/* Preview Panel - Right Side */}
           <div className="w-full lg:w-3/5 order-1 lg:order-2">
             <div
-              className="relative rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm p-6 md:p-8 transition-all duration-500 overflow-hidden"
+              className="relative rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm p-3 sm:p-4 md:p-6 lg:p-8 transition-all duration-500 overflow-hidden"
               style={{
                 boxShadow: '0 4px 20px rgba(96, 165, 250, 0.15)',
-                minHeight: '300px',
-                backgroundImage: `url(${getBackgroundImage(selectedIndex)})`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
+                minHeight: '200px',
               }}
             >
+              <div
+                className="absolute inset-0 rounded-xl transition-opacity duration-500"
+                style={{
+                  backgroundImage: `url(${getBackgroundImage(selectedIndex)})`,
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                }}
+              />
               {/* Dark Overlay for text readability */}
               <div
                 className="absolute inset-0 rounded-xl transition-opacity duration-500"
                 style={{
-                  backgroundColor: 'rgba(0, 0, 0, 0.65)',
+                  backgroundColor: 'rgba(0, 0, 0, 0.7)',
                 }}
               ></div>
               <div
@@ -402,11 +425,11 @@ const NeurodiversityCategory: React.FC<NeurodiversityCategoryProps> = ({
                 }}
               ></div>
               <div className="relative z-10">
-                <h3 className="mb-4 text-2xl font-bold text-white md:text-3xl">
+                <h3 className="mb-3 sm:mb-4 text-xl sm:text-2xl md:text-3xl font-bold text-white">
                   {modules[selectedIndex].title}
                 </h3>
-                <div className="mb-4 h-1 w-16 rounded-full bg-gradient-to-r from-[#60A5FA] to-[#9333EA]"></div>
-                <p className="text-base leading-relaxed text-white/80 md:text-lg lg:text-xl whitespace-pre-line">
+                <div className="mb-3 sm:mb-4 h-1 w-12 sm:w-16 rounded-full bg-gradient-to-r from-[#60A5FA] to-[#9333EA]"></div>
+                <p className="text-sm sm:text-base md:text-lg lg:text-xl leading-relaxed text-white/80 whitespace-pre-line">
                   {modules[selectedIndex].description}
                 </p>
               </div>
@@ -440,20 +463,20 @@ const WellbeingCategory: React.FC<WellbeingCategoryProps> = ({
   };
 
   return (
-    <div className="mb-16">
-      <div className="mb-8 text-center">
-        <h2 className="mb-4 text-4xl font-bold text-white md:text-5xl lg:text-6xl">
+    <div className="mb-12 sm:mb-16">
+      <div className="mb-6 sm:mb-8 text-center">
+        <h2 className="mb-4 text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-white">
           {title}
         </h2>
       </div>
       <div className="mx-auto max-w-5xl">
         {/* Tab Buttons */}
-        <div className="mb-6 flex flex-wrap justify-center gap-2 md:gap-3 lg:gap-4">
+        <div className="mb-4 sm:mb-6 flex flex-wrap justify-center gap-2 sm:gap-3 md:gap-4">
           {modules.map((module, index) => (
             <button
               key={index}
               onClick={() => setActiveTab(index)}
-              className={`px-4 py-2.5 md:px-6 md:py-3 rounded-lg font-semibold text-xs md:text-sm lg:text-base transition-all duration-300 ${
+              className={`px-3 py-2 sm:px-4 sm:py-2.5 md:px-6 md:py-3 rounded-lg font-semibold text-xs sm:text-sm md:text-base transition-all duration-300 min-h-[44px] ${
                 activeTab === index
                   ? 'text-white'
                   : 'text-white/70 hover:text-white'
@@ -480,20 +503,25 @@ const WellbeingCategory: React.FC<WellbeingCategoryProps> = ({
 
         {/* Tab Content */}
         <div
-          className="relative rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm p-6 md:p-8 transition-all duration-500 overflow-hidden"
+          className="relative rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm p-3 sm:p-4 md:p-6 lg:p-8 transition-all duration-500 overflow-hidden"
           style={{
             boxShadow: '0 4px 20px rgba(96, 165, 250, 0.15)',
-            minHeight: '200px',
-            backgroundImage: `url(${getBackgroundImage(activeTab)})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
+            minHeight: '180px',
           }}
         >
+          <div
+            className="absolute inset-0 rounded-xl transition-opacity duration-500"
+            style={{
+              backgroundImage: `url(${getBackgroundImage(activeTab)})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+            }}
+          />
           {/* Dark Overlay for text readability */}
           <div
             className="absolute inset-0 rounded-xl transition-opacity duration-500"
             style={{
-              backgroundColor: 'rgba(0, 0, 0, 0.65)',
+              backgroundColor: 'rgba(0, 0, 0, 0.7)',
             }}
           ></div>
           <div
@@ -504,11 +532,11 @@ const WellbeingCategory: React.FC<WellbeingCategoryProps> = ({
             }}
           ></div>
           <div className="relative z-10">
-            <h3 className="mb-4 text-2xl font-bold text-white md:text-3xl">
+            <h3 className="mb-3 sm:mb-4 text-xl sm:text-2xl md:text-3xl font-bold text-white">
               {modules[activeTab].title}
             </h3>
-            <div className="mb-4 h-1 w-16 rounded-full bg-gradient-to-r from-[#60A5FA] to-[#9333EA]"></div>
-            <p className="text-base leading-relaxed text-white/80 md:text-lg lg:text-xl whitespace-pre-line">
+            <div className="mb-3 sm:mb-4 h-1 w-12 sm:w-16 rounded-full bg-gradient-to-r from-[#60A5FA] to-[#9333EA]"></div>
+            <p className="text-sm sm:text-base md:text-lg lg:text-xl leading-relaxed text-white/80 whitespace-pre-line">
               {modules[activeTab].description}
             </p>
           </div>
@@ -531,15 +559,15 @@ const LeadershipCategory: React.FC<LeadershipCategoryProps> = ({
   // Initialize with all modules expanded (non-collapsible)
 
   return (
-    <div className="mb-16">
-      <div className="mb-8 text-center">
-        <h2 className="mb-4 text-4xl font-bold text-white md:text-5xl lg:text-6xl">
+    <div className="mb-12 sm:mb-16">
+      <div className="mb-6 sm:mb-8 text-center">
+        <h2 className="mb-4 text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-white">
           {title}
         </h2>
       </div>
       <div className="mx-auto w-full">
         <div
-          className="relative rounded-2xl p-6 md:p-8 lg:p-10 transition-all duration-500 overflow-hidden"
+          className="relative rounded-2xl p-4 sm:p-6 md:p-8 lg:p-10 transition-all duration-500 overflow-hidden"
           style={{
             backgroundImage: `url(${shutterstock2185008323})`,
             backgroundSize: 'cover',
@@ -557,7 +585,7 @@ const LeadershipCategory: React.FC<LeadershipCategoryProps> = ({
           <div className="relative z-10">
             {/* Timeline Line */}
             <div
-              className="absolute left-8 top-0 bottom-0 w-0.5 hidden md:block"
+              className="absolute left-4 sm:left-6 md:left-8 top-0 bottom-0 w-0.5 hidden md:block"
               style={{
                 background:
                   'linear-gradient(to bottom, #60A5FA, #9333EA, #60A5FA)',
@@ -566,22 +594,25 @@ const LeadershipCategory: React.FC<LeadershipCategoryProps> = ({
             ></div>
 
             {/* Timeline Steps */}
-            <div className="space-y-8">
+            <div className="space-y-6 sm:space-y-8">
               {modules.map((module, index) => {
                 const isLast = index === modules.length - 1;
 
                 return (
-                  <div key={index} className="relative flex items-start gap-6">
+                  <div
+                    key={index}
+                    className="relative flex items-start gap-3 sm:gap-4 md:gap-6"
+                  >
                     {/* Step Indicator */}
                     <div className="relative z-10 flex-shrink-0">
                       <div
-                        className="flex h-16 w-16 items-center justify-center rounded-full border-2 border-[#60A5FA] bg-white/10 transition-all duration-300"
+                        className="flex h-12 w-12 sm:h-14 sm:w-14 md:h-16 md:w-16 items-center justify-center rounded-full border-2 border-[#60A5FA] bg-white/10 transition-all duration-300"
                         style={{
                           boxShadow: '0 0 20px rgba(96, 165, 250, 0.4)',
                         }}
                       >
                         <div
-                          className="h-3 w-3 rounded-full bg-[#60A5FA] transition-all duration-300"
+                          className="h-2.5 w-2.5 sm:h-3 sm:w-3 rounded-full bg-[#60A5FA] transition-all duration-300"
                           style={{
                             boxShadow: '0 0 10px rgba(96, 165, 250, 0.6)',
                           }}
@@ -589,7 +620,7 @@ const LeadershipCategory: React.FC<LeadershipCategoryProps> = ({
                       </div>
                       {!isLast && (
                         <div
-                          className="absolute left-1/2 top-16 h-8 w-0.5 -translate-x-1/2 md:hidden"
+                          className="absolute left-1/2 top-12 sm:top-14 md:top-16 h-6 sm:h-8 w-0.5 -translate-x-1/2 md:hidden"
                           style={{
                             background:
                               'linear-gradient(to bottom, #60A5FA, #9333EA)',
@@ -600,18 +631,18 @@ const LeadershipCategory: React.FC<LeadershipCategoryProps> = ({
                     </div>
 
                     {/* Step Content */}
-                    <div className="flex-1 pt-2">
-                      <h3 className="mb-2 text-xl font-bold text-white md:text-2xl">
+                    <div className="flex-1 pt-1 sm:pt-2">
+                      <h3 className="mb-2 text-lg sm:text-xl md:text-2xl font-bold text-white">
                         {module.title}
                       </h3>
-                      <div className="mt-4 opacity-100">
+                      <div className="mt-3 sm:mt-4 opacity-100">
                         <div
-                          className="rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm p-4 md:p-6"
+                          className="rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm p-3 sm:p-4 md:p-6"
                           style={{
                             boxShadow: '0 4px 20px rgba(96, 165, 250, 0.15)',
                           }}
                         >
-                          <p className="text-base leading-relaxed text-white/80 md:text-lg whitespace-pre-line">
+                          <p className="text-sm sm:text-base md:text-lg leading-relaxed text-white/80 whitespace-pre-line">
                             {module.description}
                           </p>
                         </div>
@@ -654,6 +685,33 @@ const PsychologyBasedTrainingAndMentoring = () => {
   const handleCategoryExpand = (category: string) => {
     // Toggle: if same category is clicked again, collapse it
     setExpandedCategory((prev) => (prev === category ? null : category));
+  };
+
+  const scrollToSection = (sectionId: string) => {
+    // Small delay to ensure section is rendered
+    setTimeout(() => {
+      const element = document.getElementById(sectionId);
+      if (element) {
+        const navbarHeight = 150; // Account for navbar height (90px-100px + margin)
+        const elementPosition = element.getBoundingClientRect().top;
+        const offsetPosition =
+          elementPosition + window.pageYOffset - navbarHeight;
+
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: 'smooth',
+        });
+      }
+    }, 100);
+  };
+
+  const handleFindOutMore = (category: string) => {
+    // Expand the category if not already expanded
+    if (expandedCategory !== category) {
+      handleCategoryExpand(category);
+    }
+    // Scroll to the section
+    scrollToSection(`${category}-section`);
   };
 
   // Training Modules Data
@@ -826,12 +884,12 @@ const PsychologyBasedTrainingAndMentoring = () => {
               </div>
 
               {/* Tab Navigation - 4 Permanent Tabs */}
-              <div className="mb-8 grid grid-cols-2 md:grid-cols-2 gap-6 md:gap-8">
+              <div className="mb-6 sm:mb-8 grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 md:gap-6 lg:gap-8">
                 {/* Digital Evolution Tab */}
                 <button
                   type="button"
                   onClick={() => handleCategoryExpand('digital-evolution')}
-                  className={`relative rounded-xl p-10 md:p-12 lg:p-14 transition-all duration-300 hover:scale-105 min-h-[250px] md:min-h-[280px] flex flex-col justify-between ${
+                  className={`relative rounded-xl p-4 sm:p-6 md:p-8 lg:p-10 xl:p-12 transition-all duration-300 hover:scale-105 active:scale-95 min-h-[180px] sm:min-h-[200px] md:min-h-[220px] lg:min-h-[250px] flex flex-col justify-between ${
                     expandedCategory === 'digital-evolution'
                       ? 'scale-105'
                       : 'hover:scale-105'
@@ -864,14 +922,11 @@ const PsychologyBasedTrainingAndMentoring = () => {
                   )}
                   <div className="relative z-10 flex flex-col h-full">
                     <div>
-                      <p className="text-sm md:text-base text-[#60A5FA] font-semibold text-center mb-2">
-                        Module 1
-                      </p>
-                      <h3 className="text-xl md:text-2xl lg:text-3xl font-bold text-white text-center mb-3">
+                      <h3 className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-bold text-white text-center mb-2 sm:mb-3 leading-tight">
                         DIGITAL EVOLUTION
                       </h3>
                       <div
-                        className="mx-auto h-1 w-16 rounded-full mb-4"
+                        className="mx-auto h-1 w-12 sm:w-16 rounded-full mb-3 sm:mb-4"
                         style={{
                           background:
                             'linear-gradient(to right, #60A5FA, #9333EA)',
@@ -881,7 +936,7 @@ const PsychologyBasedTrainingAndMentoring = () => {
                     <div className="mt-auto flex justify-center">
                       <button
                         type="button"
-                        className="rounded-xl px-8 py-4 text-base md:text-lg font-semibold text-white transition-all hover:scale-105 active:scale-95 cursor-pointer"
+                        className="rounded-xl px-3 py-2 sm:px-4 sm:py-2.5 md:px-6 md:py-3 lg:px-8 lg:py-4 text-xs sm:text-sm md:text-base lg:text-lg font-semibold text-white transition-all hover:scale-105 active:scale-95 cursor-pointer"
                         style={{
                           background:
                             'linear-gradient(135deg, rgba(96, 165, 250, 0.5), rgba(147, 51, 234, 0.5))',
@@ -889,7 +944,7 @@ const PsychologyBasedTrainingAndMentoring = () => {
                         }}
                         onClick={(e) => {
                           e.stopPropagation();
-                          handleCategoryExpand('digital-evolution');
+                          handleFindOutMore('digital-evolution');
                         }}
                       >
                         Find out more
@@ -902,7 +957,7 @@ const PsychologyBasedTrainingAndMentoring = () => {
                 <button
                   type="button"
                   onClick={() => handleCategoryExpand('neurodiversity')}
-                  className={`relative rounded-xl p-10 md:p-12 lg:p-14 transition-all duration-300 hover:scale-105 min-h-[250px] md:min-h-[280px] flex flex-col justify-between ${
+                  className={`relative rounded-xl p-4 sm:p-6 md:p-8 lg:p-10 xl:p-12 transition-all duration-300 hover:scale-105 active:scale-95 min-h-[180px] sm:min-h-[200px] md:min-h-[220px] lg:min-h-[250px] flex flex-col justify-between ${
                     expandedCategory === 'neurodiversity'
                       ? 'scale-105'
                       : 'hover:scale-105'
@@ -935,14 +990,11 @@ const PsychologyBasedTrainingAndMentoring = () => {
                   )}
                   <div className="relative z-10 flex flex-col h-full">
                     <div>
-                      <p className="text-sm md:text-base text-[#60A5FA] font-semibold text-center mb-2">
-                        Module 2
-                      </p>
-                      <h3 className="text-xl md:text-2xl lg:text-3xl font-bold text-white text-center mb-3">
+                      <h3 className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-bold text-white text-center mb-2 sm:mb-3 leading-tight">
                         NEURODIVERSITY
                       </h3>
                       <div
-                        className="mx-auto h-1 w-16 rounded-full mb-4"
+                        className="mx-auto h-1 w-12 sm:w-16 rounded-full mb-3 sm:mb-4"
                         style={{
                           background:
                             'linear-gradient(to right, #60A5FA, #9333EA)',
@@ -952,7 +1004,7 @@ const PsychologyBasedTrainingAndMentoring = () => {
                     <div className="mt-auto flex justify-center">
                       <button
                         type="button"
-                        className="rounded-xl px-8 py-4 text-base md:text-lg font-semibold text-white transition-all hover:scale-105 active:scale-95 cursor-pointer"
+                        className="rounded-xl px-3 py-2 sm:px-4 sm:py-2.5 md:px-6 md:py-3 lg:px-8 lg:py-4 text-xs sm:text-sm md:text-base lg:text-lg font-semibold text-white transition-all hover:scale-105 active:scale-95 cursor-pointer"
                         style={{
                           background:
                             'linear-gradient(135deg, rgba(96, 165, 250, 0.5), rgba(147, 51, 234, 0.5))',
@@ -960,7 +1012,7 @@ const PsychologyBasedTrainingAndMentoring = () => {
                         }}
                         onClick={(e) => {
                           e.stopPropagation();
-                          handleCategoryExpand('neurodiversity');
+                          handleFindOutMore('neurodiversity');
                         }}
                       >
                         Find out more
@@ -973,7 +1025,7 @@ const PsychologyBasedTrainingAndMentoring = () => {
                 <button
                   type="button"
                   onClick={() => handleCategoryExpand('wellbeing')}
-                  className={`relative rounded-xl p-10 md:p-12 lg:p-14 transition-all duration-300 hover:scale-105 min-h-[250px] md:min-h-[280px] flex flex-col justify-between ${
+                  className={`relative rounded-xl p-4 sm:p-6 md:p-8 lg:p-10 xl:p-12 transition-all duration-300 hover:scale-105 active:scale-95 min-h-[180px] sm:min-h-[200px] md:min-h-[220px] lg:min-h-[250px] flex flex-col justify-between ${
                     expandedCategory === 'wellbeing'
                       ? 'scale-105'
                       : 'hover:scale-105'
@@ -1006,14 +1058,11 @@ const PsychologyBasedTrainingAndMentoring = () => {
                   )}
                   <div className="relative z-10 flex flex-col h-full">
                     <div>
-                      <p className="text-sm md:text-base text-[#60A5FA] font-semibold text-center mb-2">
-                        Module 3
-                      </p>
-                      <h3 className="text-xl md:text-2xl lg:text-3xl font-bold text-white text-center mb-3">
+                      <h3 className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-bold text-white text-center mb-2 sm:mb-3 leading-tight">
                         WELLBEING
                       </h3>
                       <div
-                        className="mx-auto h-1 w-16 rounded-full mb-4"
+                        className="mx-auto h-1 w-12 sm:w-16 rounded-full mb-3 sm:mb-4"
                         style={{
                           background:
                             'linear-gradient(to right, #60A5FA, #9333EA)',
@@ -1023,7 +1072,7 @@ const PsychologyBasedTrainingAndMentoring = () => {
                     <div className="mt-auto flex justify-center">
                       <button
                         type="button"
-                        className="rounded-xl px-8 py-4 text-base md:text-lg font-semibold text-white transition-all hover:scale-105 active:scale-95 cursor-pointer"
+                        className="rounded-xl px-3 py-2 sm:px-4 sm:py-2.5 md:px-6 md:py-3 lg:px-8 lg:py-4 text-xs sm:text-sm md:text-base lg:text-lg font-semibold text-white transition-all hover:scale-105 active:scale-95 cursor-pointer"
                         style={{
                           background:
                             'linear-gradient(135deg, rgba(96, 165, 250, 0.5), rgba(147, 51, 234, 0.5))',
@@ -1031,7 +1080,7 @@ const PsychologyBasedTrainingAndMentoring = () => {
                         }}
                         onClick={(e) => {
                           e.stopPropagation();
-                          handleCategoryExpand('wellbeing');
+                          handleFindOutMore('wellbeing');
                         }}
                       >
                         Find out more
@@ -1044,7 +1093,7 @@ const PsychologyBasedTrainingAndMentoring = () => {
                 <button
                   type="button"
                   onClick={() => handleCategoryExpand('leadership')}
-                  className={`relative rounded-xl p-10 md:p-12 lg:p-14 transition-all duration-300 hover:scale-105 min-h-[250px] md:min-h-[280px] flex flex-col justify-between ${
+                  className={`relative rounded-xl p-4 sm:p-6 md:p-8 lg:p-10 xl:p-12 transition-all duration-300 hover:scale-105 active:scale-95 min-h-[180px] sm:min-h-[200px] md:min-h-[220px] lg:min-h-[250px] flex flex-col justify-between ${
                     expandedCategory === 'leadership'
                       ? 'scale-105'
                       : 'hover:scale-105'
@@ -1077,14 +1126,11 @@ const PsychologyBasedTrainingAndMentoring = () => {
                   )}
                   <div className="relative z-10 flex flex-col h-full">
                     <div>
-                      <p className="text-sm md:text-base text-[#60A5FA] font-semibold text-center mb-2">
-                        Module 4
-                      </p>
-                      <h3 className="text-xl md:text-2xl lg:text-3xl font-bold text-white text-center mb-3">
+                      <h3 className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-bold text-white text-center mb-2 sm:mb-3 leading-tight">
                         LEADERSHIP
                       </h3>
                       <div
-                        className="mx-auto h-1 w-16 rounded-full mb-4"
+                        className="mx-auto h-1 w-12 sm:w-16 rounded-full mb-3 sm:mb-4"
                         style={{
                           background:
                             'linear-gradient(to right, #60A5FA, #9333EA)',
@@ -1094,7 +1140,7 @@ const PsychologyBasedTrainingAndMentoring = () => {
                     <div className="mt-auto flex justify-center">
                       <button
                         type="button"
-                        className="rounded-xl px-8 py-4 text-base md:text-lg font-semibold text-white transition-all hover:scale-105 active:scale-95 cursor-pointer"
+                        className="rounded-xl px-3 py-2 sm:px-4 sm:py-2.5 md:px-6 md:py-3 lg:px-8 lg:py-4 text-xs sm:text-sm md:text-base lg:text-lg font-semibold text-white transition-all hover:scale-105 active:scale-95 cursor-pointer"
                         style={{
                           background:
                             'linear-gradient(135deg, rgba(96, 165, 250, 0.5), rgba(147, 51, 234, 0.5))',
@@ -1102,7 +1148,7 @@ const PsychologyBasedTrainingAndMentoring = () => {
                         }}
                         onClick={(e) => {
                           e.stopPropagation();
-                          handleCategoryExpand('leadership');
+                          handleFindOutMore('leadership');
                         }}
                       >
                         Find out more
@@ -1116,40 +1162,49 @@ const PsychologyBasedTrainingAndMentoring = () => {
               <div className="mt-8">
                 {/* Digital Evolution Content */}
                 {expandedCategory === 'digital-evolution' && (
-                  <TrainingModuleCategory
-                    title="DIGITAL EVOLUTION"
-                    modules={digitalEvolutionModules}
-                  />
+                  <div id="digital-evolution-section">
+                    <TrainingModuleCategory
+                      title="DIGITAL EVOLUTION"
+                      modules={digitalEvolutionModules}
+                      moduleNumber={1}
+                    />
+                  </div>
                 )}
 
                 {/* Neurodiversity Content */}
                 {expandedCategory === 'neurodiversity' && (
-                  <NeurodiversityCategory
-                    title="UTILISING NEURODIVERSITY FOR STRATEGIC ADVANTAGE"
-                    modules={neurodiversityModules}
-                  />
+                  <div id="neurodiversity-section">
+                    <NeurodiversityCategory
+                      title="UTILISING NEURODIVERSITY FOR STRATEGIC ADVANTAGE"
+                      modules={neurodiversityModules}
+                    />
+                  </div>
                 )}
 
                 {/* Wellbeing Content */}
                 {expandedCategory === 'wellbeing' && (
-                  <WellbeingCategory
-                    title="WELLBEING & PSYCHOLOGICAL SAFETY"
-                    modules={wellbeingModules}
-                  />
+                  <div id="wellbeing-section">
+                    <WellbeingCategory
+                      title="WELLBEING & PSYCHOLOGICAL SAFETY"
+                      modules={wellbeingModules}
+                    />
+                  </div>
                 )}
 
                 {/* Leadership Content */}
                 {expandedCategory === 'leadership' && (
-                  <LeadershipCategory
-                    title="LEADERSHIP & PSYCHOEDUCATION"
-                    modules={leadershipModules}
-                  />
+                  <div id="leadership-section">
+                    <LeadershipCategory
+                      title="LEADERSHIP & PSYCHOEDUCATION"
+                      modules={leadershipModules}
+                    />
+                  </div>
                 )}
               </div>
             </div>
 
             {/* Separator Line */}
-            <div className="my-16 h-[3px] w-full bg-gradient-to-r from-transparent via-primary-blue-accent to-transparent opacity-50"></div>
+            <div className="my-12 sm:my-16 h-[2px] sm:h-[3px] w-full bg-gradient-to-r from-transparent via-primary-blue-accent to-transparent opacity-50"></div>
 
             {/* How Organisations Can Access Training Section */}
             <AccordionList
@@ -1160,7 +1215,7 @@ const PsychologyBasedTrainingAndMentoring = () => {
             />
 
             {/* Separator Line */}
-            <div className="my-16 h-[3px] w-full bg-gradient-to-r from-transparent via-primary-blue-accent to-transparent opacity-50"></div>
+            <div className="my-12 sm:my-16 h-[2px] sm:h-[3px] w-full bg-gradient-to-r from-transparent via-primary-blue-accent to-transparent opacity-50"></div>
 
             {/* Anticipated Impact Section */}
             <div className="relative">
@@ -1175,7 +1230,7 @@ const PsychologyBasedTrainingAndMentoring = () => {
                 }}
               >
                 <div
-                  className="relative rounded-3xl p-8 md:p-12 backdrop-blur-md overflow-hidden"
+                  className="relative rounded-3xl p-4 sm:p-6 md:p-8 lg:p-12 backdrop-blur-md overflow-hidden"
                   style={{
                     background:
                       'linear-gradient(180deg, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.85))',
@@ -1192,9 +1247,9 @@ const PsychologyBasedTrainingAndMentoring = () => {
                     }}
                   ></div>
                   <div className="relative z-10">
-                    <div className="mb-8 flex items-center gap-4">
+                    <div className="mb-6 sm:mb-8 flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4">
                       <div
-                        className="flex h-14 w-14 items-center justify-center rounded-xl"
+                        className="flex h-12 w-12 sm:h-14 sm:w-14 items-center justify-center rounded-xl flex-shrink-0"
                         style={{
                           background:
                             'linear-gradient(135deg, #60A5FA, #9333EA)',
@@ -1202,7 +1257,7 @@ const PsychologyBasedTrainingAndMentoring = () => {
                         }}
                       >
                         <svg
-                          className="h-8 w-8 text-white"
+                          className="h-6 w-6 sm:h-8 sm:w-8 text-white"
                           fill="none"
                           viewBox="0 0 24 24"
                           stroke="currentColor"
@@ -1216,30 +1271,30 @@ const PsychologyBasedTrainingAndMentoring = () => {
                         </svg>
                       </div>
                       <div>
-                        <h4 className="text-2xl font-bold text-white md:text-3xl tracking-tight">
+                        <h4 className="text-xl sm:text-2xl md:text-3xl font-bold text-white tracking-tight">
                           ANTICIPATED IMPACT FOR ORGANISATIONS
                         </h4>
-                        <div className="mt-1 h-1 w-20 rounded-full bg-gradient-to-r from-[#60A5FA] to-[#9333EA]"></div>
+                        <div className="mt-1 h-1 w-16 sm:w-20 rounded-full bg-gradient-to-r from-[#60A5FA] to-[#9333EA]"></div>
                       </div>
                     </div>
-                    <div className="grid gap-4 md:grid-cols-2">
+                    <div className="grid grid-cols-1 gap-3 sm:gap-4 md:grid-cols-2">
                       {impactOutcomes.map((outcome, index) => (
                         <div
                           key={index}
-                          className="flex items-start gap-3 rounded-lg p-4"
+                          className="flex items-start gap-2 sm:gap-3 rounded-lg p-3 sm:p-4"
                           style={{
                             background: 'rgba(255, 255, 255, 0.03)',
                             border: '1px solid rgba(255, 255, 255, 0.1)',
                           }}
                         >
                           <div className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-gradient-to-r from-[#60A5FA] to-[#9333EA]"></div>
-                          <p className="text-base leading-relaxed text-white/90 md:text-lg">
+                          <p className="text-sm sm:text-base md:text-lg leading-relaxed text-white/90">
                             {outcome}
                           </p>
                         </div>
                       ))}
                     </div>
-                    <div className="mt-8 flex items-center gap-4">
+                    <div className="mt-6 sm:mt-8 flex items-center gap-3 sm:gap-4">
                       <div className="h-px flex-1 bg-gradient-to-r from-transparent via-[rgba(96,165,250,0.5)] to-transparent"></div>
                       <div className="h-2 w-2 rounded-full bg-gradient-to-br from-[#60A5FA] to-[#9333EA]"></div>
                       <div className="h-px flex-1 bg-gradient-to-r from-transparent via-[rgba(147,51,234,0.5)] to-transparent"></div>

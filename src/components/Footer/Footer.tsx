@@ -33,10 +33,10 @@ const Footer: React.FC = () => {
                 </li>
                 <li>
                   <Link
-                    to="/why-elerea-exist"
+                    to="/why-elara"
                     className="text-sm md:text-base text-white transition-colors hover:text-primary-blue-accent"
                   >
-                    Why Elerea
+                    Why Elara
                   </Link>
                 </li>
                 <li>

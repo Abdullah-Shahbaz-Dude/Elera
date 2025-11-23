@@ -4,7 +4,6 @@ import {
   shutterstock2513386035,
   shutterstock1813285633,
   shutterstock2177507051,
-  aiInsightEngineImage,
 } from '@/assets/images';
 
 // Accordion component for expandable sections
@@ -379,7 +378,7 @@ const AIInsightEngine = () => {
     title:
       'Psychology Led Tools That Help Organisations See Things Differently',
     subtitle: 'Discover the untapped strengths already in your workforce',
-    heroImage: aiInsightEngineImage,
+    heroImage: shutterstock2513386035,
     whatItIs:
       "Reveal Hidden Brilliance identifies the natural thinking styles, strengths, and digital confidence levels of your workforce. It uncovers hidden potential the people whose analytical, creative, practical, or hybrid abilities are not currently being used to their full advantage. It shows you the talent you already have, but haven't yet unlocked.",
     howItWorksIntro:
