@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import Footer from '@/components/Footer/Footer';
-import Newsletter from '@/components/Sections/Newsletter';
 import {
   fourthIndustrialRevolutionImage,
   cognitiveBiasImage,
@@ -237,7 +236,7 @@ const WhoWeWorkWith = () => {
     {
       title: 'The 4th Industrial Revolution (4IR)',
       description:
-        'These resources help you understand how AI, automation, and digital technologies are transforming industries. They are essential for anyone responsible for planning, innovation, or preparing their workforce for future skills and digital change.',
+        'These research papers provide deeper insight into how AI, automation, and emerging technologies are reshaping work.',
       image: fourthIndustrialRevolutionImage,
       resources: [
         {
@@ -269,7 +268,7 @@ const WhoWeWorkWith = () => {
     {
       title: 'Neurodiversity in the Workplace',
       description:
-        'These readings show how neurodivergent strengths can drive creativity, accuracy, and problem-solving when supported well. They help organisations improve inclusion, reduce turnover, and unlock hidden talent across teams.',
+        'These papers explore the strengths, patterns, and workplace experiences of neurodivergent individuals.',
       image: digitalSectionImage,
       resources: [
         {
@@ -307,7 +306,7 @@ const WhoWeWorkWith = () => {
     {
       title: 'Cognitive Bias in the Workplace',
       description:
-        'These resources explain how unconscious thinking patterns shape decisions, risk, hiring, and leadership behaviour. Understanding bias helps organisations make fairer, smarter, and more evidence-based decisions.',
+        'These readings examine the subtle thinking habits that influence judgement, decision-making,and organisational culture.',
       image: cognitiveBiasImage,
       resources: [
         {
@@ -339,7 +338,7 @@ const WhoWeWorkWith = () => {
     {
       title: 'Business / Organisational Psychology',
       description:
-        'These readings offer practical insights into motivation, behaviour, leadership, and workplace dynamics. They help organisations improve performance, strengthen culture, and make people-focused decisions using proven psychological principles.',
+        'These research papers offer accessible insights into behaviour, motivation, leadership and team dynamics.',
       image: organisationalPsychologyImage,
       resources: [
         {
@@ -392,11 +391,12 @@ const WhoWeWorkWith = () => {
             {/* Hero Section */}
             <div className="mb-16 text-center">
               <h1 className="mb-4 text-4xl font-bold text-white md:text-5xl lg:text-6xl">
-                Resources for Organisations
+                Research & Educationx
               </h1>
               <p className="text-lg leading-relaxed text-white/80 md:text-xl">
-                Explore curated resources to deepen your understanding of key
-                topics
+                Research papers and reports offering deeper insight into the
+                challenges, opportunities, and behaviours shaping today’s
+                workplaces.
               </p>
             </div>
 
@@ -416,9 +416,6 @@ const WhoWeWorkWith = () => {
           </div>
         </div>
       </div>
-
-      {/* Newsletter Section */}
-      <Newsletter />
 
       {/* Footer */}
       <Footer />

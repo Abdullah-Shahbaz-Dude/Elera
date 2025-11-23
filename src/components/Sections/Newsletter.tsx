@@ -17,7 +17,6 @@ const Newsletter: React.FC = () => {
           <div className="relative rounded-2xl md:rounded-[17px] border-[3px] md:border-[4px] border-transparent bg-[rgba(255,255,255,0.24)] px-4 md:px-8 py-4 md:py-6 backdrop-blur-sm">
             {/* Gradient Border Effect */}
             <div className="absolute inset-0 rounded-2xl md:rounded-[17px] border-[3px] md:border-[4px] border-transparent bg-gradient-to-br from-[rgba(95,165,251,0.6)] via-white to-[rgba(53,81,249,0.6)] opacity-100">
-              <div className="h-full w-full rounded-xl md:rounded-[13px] bg-[rgba(255,255,255,0.24)]"></div>
             </div>
 
             {/* Content */}

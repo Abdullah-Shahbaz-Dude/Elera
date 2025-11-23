@@ -78,10 +78,10 @@ elerea-website/
 ## Navigation Pages
 
 - `/` - Home page with hero section
-- `/why-elerea-exist` - Why Elerea Exist
+- `/why-elerea` - Why Elerea
 - `/our-services` - Our Services
 - `/who-we-are` - Who we are
-- `/who-we-work-with` - Who we Work With
+- `/Research & Education` - Research & Education
 - `/contact-us` - Contact Us
 
 ## Tech Stack
@@ -121,4 +121,3 @@ The production-ready files will be in the `dist` directory.
 ## License
 
 Private - Elerea
-

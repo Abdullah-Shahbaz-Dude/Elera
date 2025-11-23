@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import Footer from '@/components/Footer/Footer';
-import Newsletter from '@/components/Sections/Newsletter';
 import {
   shutterstock2513386035,
   shutterstock1813285633,
@@ -377,7 +376,8 @@ const ServiceSection: React.FC<ServiceSectionProps> = ({
 const AIInsightEngine = () => {
   // Reveal Hidden Brilliance Data
   const revealHiddenBrillianceData: ServiceSectionProps = {
-    title: 'Reveal Hidden Brilliance',
+    title:
+      'Psychology Led Tools That Help Organisations See Things Differently',
     subtitle: 'Discover the untapped strengths already in your workforce',
     heroImage: aiInsightEngineImage,
     whatItIs:
@@ -629,9 +629,6 @@ const AIInsightEngine = () => {
           </div>
         </div>
       </div>
-
-      {/* Newsletter Section */}
-      <Newsletter />
 
       {/* Footer */}
       <Footer />

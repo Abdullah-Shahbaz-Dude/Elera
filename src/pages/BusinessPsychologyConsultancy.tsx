@@ -10,7 +10,6 @@
 
 import React from 'react'
 import Footer from '@/components/Footer/Footer'
-import Newsletter from '@/components/Sections/Newsletter'
 import { 
     humanServicesImage,
     shutterstock1330833800,
@@ -1018,9 +1017,6 @@ const BusinessPsychologyConsultancy = () => {
                     </div>
                 </div>
             </div>
-
-            {/* Newsletter Section */}
-            <Newsletter />
 
             {/* Footer */}
             <Footer />

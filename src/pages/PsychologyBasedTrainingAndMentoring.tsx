@@ -1,13 +1,11 @@
 import React, { useState } from 'react';
 import Footer from '@/components/Footer/Footer';
-import Newsletter from '@/components/Sections/Newsletter';
 import {
   shutterstock1813285633,
   shutterstock2177507051,
   shutterstock2185008323,
   shutterstock2291668783,
   shutterstock2646062685,
-  humanServicesImage,
   sideViewWomanFaceScan,
 } from '@/assets/images';
 
@@ -15,41 +13,85 @@ import {
 interface FeatureCardProps {
   title: string;
   description: string;
+  isExpanded: boolean;
+  onToggle: () => void;
 }
 
-const FeatureCard: React.FC<FeatureCardProps> = ({ title, description }) => {
+const FeatureCard: React.FC<FeatureCardProps> = ({
+  title,
+  description,
+  isExpanded,
+  onToggle,
+}) => {
   return (
     <div className="group h-full">
       {/* Card Container */}
       <div
-        className="relative w-full h-full rounded-xl p-6 md:p-8 transition-all duration-300 text-left hover:scale-[1.02] flex flex-col"
+        className="relative w-full h-full rounded-xl p-6 md:p-8 transition-all duration-300 text-left hover:scale-[1.02] flex flex-col cursor-pointer"
+        onClick={onToggle}
         style={{
           background:
             'linear-gradient(135deg, rgba(96, 165, 250, 0.1), rgba(147, 51, 234, 0.1))',
           border: '1px solid rgba(255, 255, 255, 0.1)',
           backdropFilter: 'blur(20px)',
-          boxShadow: '0 4px 20px rgba(96, 165, 250, 0.15)',
+          boxShadow: isExpanded
+            ? '0 4px 20px rgba(96, 165, 250, 0.3)'
+            : '0 4px 20px rgba(96, 165, 250, 0.15)',
         }}
       >
-        {/* Gradient Overlay on Hover */}
+        {/* Gradient Overlay */}
         <div
-          className="absolute inset-0 rounded-xl opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+          className="absolute inset-0 rounded-xl transition-opacity duration-300"
           style={{
             background:
               'linear-gradient(135deg, rgba(96, 165, 250, 0.15), rgba(147, 51, 234, 0.15))',
+            opacity: isExpanded ? 1 : 0,
           }}
         />
 
         {/* Content */}
         <div className="relative z-10 flex flex-col h-full">
-          {/* Title */}
-          <h3 className="mb-4 text-xl md:text-2xl lg:text-3xl font-bold text-white leading-tight">
-            {title}
-          </h3>
+          <div className="flex items-start justify-between gap-4">
+            {/* Title */}
+            <h3 className="mb-4 text-xl md:text-2xl lg:text-3xl font-bold text-white leading-tight flex-1">
+              {title}
+            </h3>
+            {/* Toggle Icon */}
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                onToggle();
+              }}
+              className="flex-shrink-0 mt-1"
+            >
+              <svg
+                className={`w-5 h-5 text-white transition-transform duration-300 ${
+                  isExpanded ? 'rotate-180' : ''
+                }`}
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2.5}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M19 9l-7 7-7-7"
+                />
+              </svg>
+            </button>
+          </div>
 
-          {/* Hover Preview - Description Preview */}
-          <div className="overflow-hidden transition-all duration-300 max-h-0 opacity-0 group-hover:max-h-[80px] group-hover:opacity-100 mt-auto">
-            <p className="text-sm md:text-base text-white/90 line-clamp-3 pt-2">
+          {/* Accordion Content */}
+          <div
+            className={`overflow-hidden transition-all duration-500 ease-in-out ${
+              isExpanded
+                ? 'max-h-[500px] opacity-100 mt-4'
+                : 'max-h-0 opacity-0 mt-0'
+            }`}
+          >
+            <p className="text-sm md:text-base text-white/90 pt-2">
               {description}
             </p>
           </div>
@@ -64,6 +106,7 @@ interface AccordionItemProps {
   title: string;
   content: string;
   icon?: string;
+  image?: string;
   isExpanded: boolean;
   onToggle: () => void;
 }
@@ -72,19 +115,32 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
   title,
   content,
   icon,
+  image,
   isExpanded,
   onToggle,
 }) => {
   return (
     <div className="group">
       <div
-        className="relative rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm p-4 md:p-5 transition-all duration-300 hover:border-white/20 hover:bg-white/10"
+        className="relative rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm p-4 md:p-5 transition-all duration-300 hover:border-white/20 hover:bg-white/10 overflow-hidden"
         style={{
           boxShadow: isExpanded
             ? '0 4px 20px rgba(96, 165, 250, 0.15)'
             : '0 2px 10px rgba(0, 0, 0, 0.2)',
         }}
       >
+        {/* Background Image */}
+        {image && (
+          <div
+            className="absolute inset-0 rounded-xl opacity-20 transition-opacity duration-300"
+            style={{
+              backgroundImage: `url(${image})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+            }}
+          />
+        )}
+
         <div
           className="absolute inset-0 rounded-xl opacity-0 transition-opacity duration-300 group-hover:opacity-100"
           style={{
@@ -93,7 +149,7 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
           }}
         ></div>
 
-        <div className="relative">
+        <div className="relative z-10">
           <div className="flex items-start justify-between gap-4">
             <div className="flex items-center gap-3 flex-1">
               {icon && (
@@ -175,6 +231,22 @@ const TrainingModuleCategory: React.FC<TrainingModuleCategoryProps> = ({
   title,
   modules,
 }) => {
+  const [expandedModules, setExpandedModules] = useState<Set<number>>(
+    new Set()
+  );
+
+  const toggleModule = (index: number) => {
+    setExpandedModules((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(index)) {
+        newSet.delete(index);
+      } else {
+        newSet.add(index);
+      }
+      return newSet;
+    });
+  };
+
   return (
     <div className="mb-16">
       <div className="mb-8 text-center">
@@ -189,6 +261,8 @@ const TrainingModuleCategory: React.FC<TrainingModuleCategoryProps> = ({
               key={index}
               title={module.title}
               description={module.description}
+              isExpanded={expandedModules.has(index)}
+              onToggle={() => toggleModule(index)}
             />
           ))}
         </div>
@@ -200,7 +274,7 @@ const TrainingModuleCategory: React.FC<TrainingModuleCategoryProps> = ({
 // Accordion List Component for Access Training
 interface AccordionListProps {
   title: string;
-  modules: Array<{ title: string; description: string }>;
+  modules: Array<{ title: string; description: string; image?: string }>;
   expandedModules: Set<number>;
   onToggle: (index: number) => void;
 }
@@ -225,6 +299,7 @@ const AccordionList: React.FC<AccordionListProps> = ({
               key={index}
               title={module.title}
               content={module.description}
+              image={module.image}
               isExpanded={expandedModules.has(index)}
               onToggle={() => onToggle(index)}
             />
@@ -680,26 +755,31 @@ const PsychologyBasedTrainingAndMentoring = () => {
       title: 'Personalised Online Learning',
       description:
         'Individuals complete the training online via the ELARA platform at their own pace',
+      image: shutterstock1813285633,
     },
     {
       title: 'Team Development Days',
       description:
         'Teams take modules together to improve communication, digital readiness and team cohesion.',
+      image: shutterstock2177507051,
     },
     {
       title: 'Leadership Mentoring & Boardroom Support',
       description:
         'Executives receive tailored psychological insight and mentoring aligned with their Mind Sync findings.',
+      image: shutterstock2185008323,
     },
     {
       title: 'Away-Days & Immersive Capability Events',
       description:
         'Clusters of modules can be combined into powerful off-site team or leadership events.',
+      image: shutterstock2291668783,
     },
     {
       title: 'Full Organisational Development Programmes',
       description:
         'Elara can design 3-, 6- or 12-month development programmes using combinations of the cluster modules.',
+      image: shutterstock2646062685,
     },
   ];
 
@@ -737,79 +817,21 @@ const PsychologyBasedTrainingAndMentoring = () => {
       <div className="relative bg-black pt-40 pb-24">
         <div className="container mx-auto px-6">
           <div className="mx-auto max-w-[1960px]">
-            {/* Hero Section */}
-            <div className="mb-16">
-              <div className="grid gap-8 lg:grid-cols-2">
-                <div className="relative">
-                  <div
-                    className="relative h-full w-full rounded-3xl p-[3px]"
-                    style={{
-                      background:
-                        'linear-gradient(to right, #60A5FA, #A78BFA, #9333EA)',
-                      boxShadow: '0 0 20px rgba(96, 165, 250, 0.3)',
-                    }}
-                  >
-                    <div
-                      className="relative h-full w-full rounded-3xl p-8 backdrop-blur-sm"
-                      style={{
-                        background: 'rgba(0, 0, 0, 0.9)',
-                      }}
-                    >
-                      <div className="space-y-6">
-                        <h1 className="text-5xl font-bold text-white md:text-6xl lg:text-7xl">
-                          Psychology Based Training and Mentoring
-                        </h1>
-                        <p className="text-lg leading-relaxed text-white md:text-xl">
-                          Training, mentoring, leadership development
-                        </p>
-                        <p className="text-lg leading-relaxed text-white md:text-xl">
-                          Education and insight that accelerates digital
-                          maturity, strengthens organisational thinking, and
-                          builds the psychological capability needed for the
-                          next decade of work.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="relative">
-                  <div className="relative h-full min-h-[500px] w-full rounded-3xl p-[4px]">
-                    <div
-                      className="relative h-full w-full overflow-hidden rounded-3xl"
-                      style={{
-                        background: 'transparent',
-                        borderRadius: '2.5rem 1.5rem 1.5rem 1.5rem',
-                      }}
-                    >
-                      <img
-                        src={humanServicesImage}
-                        alt="Psychology Based Training and Mentoring"
-                        className="h-full w-full object-cover"
-                        style={{
-                          borderRadius: '2.5rem 1.5rem 1.5rem 1.5rem',
-                        }}
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
             {/* Training Packages Section */}
             <div id="training-packages-section" className="mb-16">
               <div className="mb-12 text-center">
                 <h2 className="mb-4 text-4xl font-bold text-white md:text-5xl lg:text-6xl">
-                  TRAINING PACKAGES
+                  Training Modules
                 </h2>
               </div>
 
               {/* Tab Navigation - 4 Permanent Tabs */}
-              <div className="mb-8 grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+              <div className="mb-8 grid grid-cols-2 md:grid-cols-2 gap-6 md:gap-8">
                 {/* Digital Evolution Tab */}
                 <button
                   type="button"
                   onClick={() => handleCategoryExpand('digital-evolution')}
-                  className={`relative rounded-xl p-6 md:p-8 transition-all duration-300 hover:scale-105 ${
+                  className={`relative rounded-xl p-10 md:p-12 lg:p-14 transition-all duration-300 hover:scale-105 min-h-[250px] md:min-h-[280px] flex flex-col justify-between ${
                     expandedCategory === 'digital-evolution'
                       ? 'scale-105'
                       : 'hover:scale-105'
@@ -832,7 +854,7 @@ const PsychologyBasedTrainingAndMentoring = () => {
                 >
                   {shutterstock1813285633 && (
                     <div
-                      className="absolute inset-0 rounded-xl opacity-20"
+                      className="absolute inset-0 rounded-xl opacity-30"
                       style={{
                         backgroundImage: `url(${shutterstock1813285633})`,
                         backgroundSize: 'cover',
@@ -840,17 +862,39 @@ const PsychologyBasedTrainingAndMentoring = () => {
                       }}
                     />
                   )}
-                  <div className="relative z-10">
-                    <h3 className="text-lg md:text-xl lg:text-2xl font-bold text-white text-center mb-2">
-                      DIGITAL EVOLUTION
-                    </h3>
-                    <div
-                      className="mx-auto h-1 w-12 rounded-full"
-                      style={{
-                        background:
-                          'linear-gradient(to right, #60A5FA, #9333EA)',
-                      }}
-                    />
+                  <div className="relative z-10 flex flex-col h-full">
+                    <div>
+                      <p className="text-sm md:text-base text-[#60A5FA] font-semibold text-center mb-2">
+                        Module 1
+                      </p>
+                      <h3 className="text-xl md:text-2xl lg:text-3xl font-bold text-white text-center mb-3">
+                        DIGITAL EVOLUTION
+                      </h3>
+                      <div
+                        className="mx-auto h-1 w-16 rounded-full mb-4"
+                        style={{
+                          background:
+                            'linear-gradient(to right, #60A5FA, #9333EA)',
+                        }}
+                      />
+                    </div>
+                    <div className="mt-auto flex justify-center">
+                      <button
+                        type="button"
+                        className="rounded-xl px-8 py-4 text-base md:text-lg font-semibold text-white transition-all hover:scale-105 active:scale-95 cursor-pointer"
+                        style={{
+                          background:
+                            'linear-gradient(135deg, rgba(96, 165, 250, 0.5), rgba(147, 51, 234, 0.5))',
+                          boxShadow: '0 4px 20px rgba(96, 165, 250, 0.4)',
+                        }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleCategoryExpand('digital-evolution');
+                        }}
+                      >
+                        Find out more
+                      </button>
+                    </div>
                   </div>
                 </button>
 
@@ -858,7 +902,7 @@ const PsychologyBasedTrainingAndMentoring = () => {
                 <button
                   type="button"
                   onClick={() => handleCategoryExpand('neurodiversity')}
-                  className={`relative rounded-xl p-6 md:p-8 transition-all duration-300 hover:scale-105 ${
+                  className={`relative rounded-xl p-10 md:p-12 lg:p-14 transition-all duration-300 hover:scale-105 min-h-[250px] md:min-h-[280px] flex flex-col justify-between ${
                     expandedCategory === 'neurodiversity'
                       ? 'scale-105'
                       : 'hover:scale-105'
@@ -881,7 +925,7 @@ const PsychologyBasedTrainingAndMentoring = () => {
                 >
                   {shutterstock2177507051 && (
                     <div
-                      className="absolute inset-0 rounded-xl opacity-20"
+                      className="absolute inset-0 rounded-xl opacity-30"
                       style={{
                         backgroundImage: `url(${shutterstock2177507051})`,
                         backgroundSize: 'cover',
@@ -889,17 +933,39 @@ const PsychologyBasedTrainingAndMentoring = () => {
                       }}
                     />
                   )}
-                  <div className="relative z-10">
-                    <h3 className="text-base md:text-lg lg:text-xl font-bold text-white text-center mb-2 leading-tight">
-                      NEURODIVERSITY
-                    </h3>
-                    <div
-                      className="mx-auto h-1 w-12 rounded-full"
-                      style={{
-                        background:
-                          'linear-gradient(to right, #60A5FA, #9333EA)',
-                      }}
-                    />
+                  <div className="relative z-10 flex flex-col h-full">
+                    <div>
+                      <p className="text-sm md:text-base text-[#60A5FA] font-semibold text-center mb-2">
+                        Module 2
+                      </p>
+                      <h3 className="text-xl md:text-2xl lg:text-3xl font-bold text-white text-center mb-3">
+                        NEURODIVERSITY
+                      </h3>
+                      <div
+                        className="mx-auto h-1 w-16 rounded-full mb-4"
+                        style={{
+                          background:
+                            'linear-gradient(to right, #60A5FA, #9333EA)',
+                        }}
+                      />
+                    </div>
+                    <div className="mt-auto flex justify-center">
+                      <button
+                        type="button"
+                        className="rounded-xl px-8 py-4 text-base md:text-lg font-semibold text-white transition-all hover:scale-105 active:scale-95 cursor-pointer"
+                        style={{
+                          background:
+                            'linear-gradient(135deg, rgba(96, 165, 250, 0.5), rgba(147, 51, 234, 0.5))',
+                          boxShadow: '0 4px 20px rgba(96, 165, 250, 0.4)',
+                        }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleCategoryExpand('neurodiversity');
+                        }}
+                      >
+                        Find out more
+                      </button>
+                    </div>
                   </div>
                 </button>
 
@@ -907,7 +973,7 @@ const PsychologyBasedTrainingAndMentoring = () => {
                 <button
                   type="button"
                   onClick={() => handleCategoryExpand('wellbeing')}
-                  className={`relative rounded-xl p-6 md:p-8 transition-all duration-300 hover:scale-105 ${
+                  className={`relative rounded-xl p-10 md:p-12 lg:p-14 transition-all duration-300 hover:scale-105 min-h-[250px] md:min-h-[280px] flex flex-col justify-between ${
                     expandedCategory === 'wellbeing'
                       ? 'scale-105'
                       : 'hover:scale-105'
@@ -930,7 +996,7 @@ const PsychologyBasedTrainingAndMentoring = () => {
                 >
                   {sideViewWomanFaceScan && (
                     <div
-                      className="absolute inset-0 rounded-xl opacity-20"
+                      className="absolute inset-0 rounded-xl opacity-30"
                       style={{
                         backgroundImage: `url(${sideViewWomanFaceScan})`,
                         backgroundSize: 'cover',
@@ -938,17 +1004,39 @@ const PsychologyBasedTrainingAndMentoring = () => {
                       }}
                     />
                   )}
-                  <div className="relative z-10">
-                    <h3 className="text-base md:text-lg lg:text-xl font-bold text-white text-center mb-2 leading-tight">
-                      WELLBEING
-                    </h3>
-                    <div
-                      className="mx-auto h-1 w-12 rounded-full"
-                      style={{
-                        background:
-                          'linear-gradient(to right, #60A5FA, #9333EA)',
-                      }}
-                    />
+                  <div className="relative z-10 flex flex-col h-full">
+                    <div>
+                      <p className="text-sm md:text-base text-[#60A5FA] font-semibold text-center mb-2">
+                        Module 3
+                      </p>
+                      <h3 className="text-xl md:text-2xl lg:text-3xl font-bold text-white text-center mb-3">
+                        WELLBEING
+                      </h3>
+                      <div
+                        className="mx-auto h-1 w-16 rounded-full mb-4"
+                        style={{
+                          background:
+                            'linear-gradient(to right, #60A5FA, #9333EA)',
+                        }}
+                      />
+                    </div>
+                    <div className="mt-auto flex justify-center">
+                      <button
+                        type="button"
+                        className="rounded-xl px-8 py-4 text-base md:text-lg font-semibold text-white transition-all hover:scale-105 active:scale-95 cursor-pointer"
+                        style={{
+                          background:
+                            'linear-gradient(135deg, rgba(96, 165, 250, 0.5), rgba(147, 51, 234, 0.5))',
+                          boxShadow: '0 4px 20px rgba(96, 165, 250, 0.4)',
+                        }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleCategoryExpand('wellbeing');
+                        }}
+                      >
+                        Find out more
+                      </button>
+                    </div>
                   </div>
                 </button>
 
@@ -956,7 +1044,7 @@ const PsychologyBasedTrainingAndMentoring = () => {
                 <button
                   type="button"
                   onClick={() => handleCategoryExpand('leadership')}
-                  className={`relative rounded-xl p-6 md:p-8 transition-all duration-300 hover:scale-105 ${
+                  className={`relative rounded-xl p-10 md:p-12 lg:p-14 transition-all duration-300 hover:scale-105 min-h-[250px] md:min-h-[280px] flex flex-col justify-between ${
                     expandedCategory === 'leadership'
                       ? 'scale-105'
                       : 'hover:scale-105'
@@ -979,7 +1067,7 @@ const PsychologyBasedTrainingAndMentoring = () => {
                 >
                   {shutterstock2185008323 && (
                     <div
-                      className="absolute inset-0 rounded-xl opacity-20"
+                      className="absolute inset-0 rounded-xl opacity-30"
                       style={{
                         backgroundImage: `url(${shutterstock2185008323})`,
                         backgroundSize: 'cover',
@@ -987,17 +1075,39 @@ const PsychologyBasedTrainingAndMentoring = () => {
                       }}
                     />
                   )}
-                  <div className="relative z-10">
-                    <h3 className="text-base md:text-lg lg:text-xl font-bold text-white text-center mb-2 leading-tight">
-                      LEADERSHIP
-                    </h3>
-                    <div
-                      className="mx-auto h-1 w-12 rounded-full"
-                      style={{
-                        background:
-                          'linear-gradient(to right, #60A5FA, #9333EA)',
-                      }}
-                    />
+                  <div className="relative z-10 flex flex-col h-full">
+                    <div>
+                      <p className="text-sm md:text-base text-[#60A5FA] font-semibold text-center mb-2">
+                        Module 4
+                      </p>
+                      <h3 className="text-xl md:text-2xl lg:text-3xl font-bold text-white text-center mb-3">
+                        LEADERSHIP
+                      </h3>
+                      <div
+                        className="mx-auto h-1 w-16 rounded-full mb-4"
+                        style={{
+                          background:
+                            'linear-gradient(to right, #60A5FA, #9333EA)',
+                        }}
+                      />
+                    </div>
+                    <div className="mt-auto flex justify-center">
+                      <button
+                        type="button"
+                        className="rounded-xl px-8 py-4 text-base md:text-lg font-semibold text-white transition-all hover:scale-105 active:scale-95 cursor-pointer"
+                        style={{
+                          background:
+                            'linear-gradient(135deg, rgba(96, 165, 250, 0.5), rgba(147, 51, 234, 0.5))',
+                          boxShadow: '0 4px 20px rgba(96, 165, 250, 0.4)',
+                        }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleCategoryExpand('leadership');
+                        }}
+                      >
+                        Find out more
+                      </button>
+                    </div>
                   </div>
                 </button>
               </div>
@@ -1043,7 +1153,7 @@ const PsychologyBasedTrainingAndMentoring = () => {
 
             {/* How Organisations Can Access Training Section */}
             <AccordionList
-              title="HOW ORGANISATIONS CAN ACCESS TRAINING"
+              title="Training Delivery Options"
               modules={accessMethods}
               expandedModules={expandedAccessMethods}
               onToggle={toggleAccessMethod}
@@ -1141,9 +1251,6 @@ const PsychologyBasedTrainingAndMentoring = () => {
           </div>
         </div>
       </div>
-
-      {/* Newsletter Section */}
-      <Newsletter />
 
       {/* Footer */}
       <Footer />

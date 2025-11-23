@@ -33,7 +33,7 @@ function App() {
               element={<PsychologyBasedTrainingAndMentoring />}
             />
             <Route path="/who-we-are" element={<WhoWeAre />} />
-            <Route path="/who-we-work-with" element={<WhoWeWorkWith />} />
+            <Route path="/research-and-education" element={<WhoWeWorkWith />} />
             <Route path="/contact-us" element={<ContactUs />} />
           </Routes>
         </div>

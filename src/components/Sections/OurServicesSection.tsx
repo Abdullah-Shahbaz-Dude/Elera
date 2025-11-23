@@ -112,7 +112,7 @@ const OurServicesSection: React.FC = () => {
     {
       title: 'Psychology Based Training and Mentoring',
       description:
-        'Training, mentoring, leadership development. Education and insight that accelerates digital maturity, strengthens organisational thinking, and builds the psychological capability needed for the next decade of work.',
+        'Training and mentoring that supports the psychological capability needed for the next decade of work.',
       backgroundImage: humanServicesImage,
       imageOpacity: 0.36,
       navigateTo: '/our-services/psychology-based-training-and-mentoring',

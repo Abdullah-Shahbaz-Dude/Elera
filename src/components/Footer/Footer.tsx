@@ -1,6 +1,6 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
-import Logo from '../Logo/Logo'
+import React from 'react';
+import { Link } from 'react-router-dom';
+import Logo from '../Logo/Logo';
 
 const Footer: React.FC = () => {
   return (
@@ -19,7 +19,9 @@ const Footer: React.FC = () => {
 
             {/* Navigation Links */}
             <div>
-              <h4 className="mb-3 md:mb-4 text-base md:text-lg font-semibold text-white">Navigation</h4>
+              <h4 className="mb-3 md:mb-4 text-base md:text-lg font-semibold text-white">
+                Navigation
+              </h4>
               <ul className="space-y-2 md:space-y-3">
                 <li>
                   <Link
@@ -34,7 +36,7 @@ const Footer: React.FC = () => {
                     to="/why-elerea-exist"
                     className="text-sm md:text-base text-white transition-colors hover:text-primary-blue-accent"
                   >
-                    Why Elerea Exist
+                    Why Elerea
                   </Link>
                 </li>
                 <li>
@@ -58,7 +60,7 @@ const Footer: React.FC = () => {
                     to="/who-we-work-with"
                     className="text-sm md:text-base text-white transition-colors hover:text-primary-blue-accent"
                   >
-                    Who we Work With
+                    WResearch & Education
                   </Link>
                 </li>
               </ul>
@@ -70,8 +72,12 @@ const Footer: React.FC = () => {
                 Contact Us
               </h4>
               <ul className="space-y-2 md:space-y-3">
-                <li className="text-sm md:text-base text-white">+44 55 66 77 88</li>
-                <li className="text-sm md:text-base text-white break-words">elayara@gmail.com</li>
+                <li className="text-sm md:text-base text-white">
+                  +44 55 66 77 88
+                </li>
+                <li className="text-sm md:text-base text-white break-words">
+                  elayara@gmail.com
+                </li>
               </ul>
             </div>
 
@@ -98,8 +104,7 @@ const Footer: React.FC = () => {
         </div>
       </div>
     </footer>
-  )
-}
+  );
+};
 
-export default Footer
-
+export default Footer;
