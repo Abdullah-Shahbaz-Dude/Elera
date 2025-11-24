@@ -15,7 +15,7 @@ const InsightEngineCard: React.FC<InsightEngineCardProps> = ({
   title,
   description,
   icon,
-  color,
+
   image,
   onClick,
 }) => {
@@ -103,4 +103,3 @@ const InsightEngineCard: React.FC<InsightEngineCardProps> = ({
 };
 
 export default InsightEngineCard;
-
