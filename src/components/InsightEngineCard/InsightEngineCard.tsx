@@ -24,9 +24,9 @@ const InsightEngineCard: React.FC<InsightEngineCardProps> = ({
   return (
     <div
       onClick={onClick}
-      className="group relative cursor-pointer h-full w-full rounded-2xl md:rounded-3xl overflow-hidden transition-all duration-300 hover:scale-[1.02]"
+      className="group relative cursor-pointer h-full w-full max-w-md mx-auto rounded-2xl md:rounded-3xl overflow-hidden transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
       style={{
-        minHeight: '400px',
+        minHeight: '320px',
       }}
     >
       {/* Gradient Border Container */}
@@ -54,11 +54,11 @@ const InsightEngineCard: React.FC<InsightEngineCardProps> = ({
           />
 
           {/* Content */}
-          <div className="relative z-10 h-full flex flex-col p-6 md:p-8">
+          <div className="relative z-10 h-full flex flex-col p-5 md:p-6 lg:p-8">
             {/* Icon/Image Container */}
             <div className="mb-4 md:mb-6 flex items-center justify-center flex-shrink-0">
               {image ? (
-                <div className="relative w-full h-32 md:h-40 rounded-xl overflow-hidden transition-transform duration-300 group-hover:scale-105">
+                <div className="relative w-full h-28 md:h-36 lg:h-40 rounded-xl overflow-hidden transition-transform duration-300 group-hover:scale-105">
                   <img
                     src={image}
                     alt={title}
@@ -67,7 +67,7 @@ const InsightEngineCard: React.FC<InsightEngineCardProps> = ({
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
                 </div>
               ) : (
-                <div className="flex h-16 w-16 md:h-20 md:w-20 items-center justify-center rounded-xl transition-transform duration-300 group-hover:scale-110">
+                <div className="flex h-14 w-14 md:h-16 md:w-16 lg:h-20 lg:w-20 items-center justify-center rounded-xl transition-transform duration-300 group-hover:scale-110">
                   {icon}
                 </div>
               )}
@@ -75,16 +75,16 @@ const InsightEngineCard: React.FC<InsightEngineCardProps> = ({
 
             {/* Title */}
             <div className="mb-3 md:mb-4 flex-shrink-0">
-              <span className="text-xs md:text-sm font-medium text-white/60 uppercase tracking-wider">
+              <span className="text-xs md:text-sm font-medium text-white/60 uppercase tracking-wider block">
                 Insight Engine {number}
               </span>
-              <h3 className="mt-2 md:mt-3 text-xl md:text-2xl lg:text-3xl font-bold text-white leading-tight">
+              <h3 className="mt-2 md:mt-3 text-lg md:text-xl lg:text-2xl xl:text-3xl font-bold text-white leading-tight">
                 {title}
               </h3>
             </div>
 
             {/* Description */}
-            <p className="text-sm md:text-base leading-relaxed text-white/90 flex-grow">
+            <p className="text-sm md:text-base leading-relaxed text-white/80 md:text-white/90 flex-grow">
               {description}
             </p>
           </div>
