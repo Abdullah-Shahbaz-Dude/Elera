@@ -195,7 +195,7 @@ const Dashboard: React.FC = () => {
       <div className="absolute left-1/4 bottom-1/4 h-[800px] w-[800px] rounded-full bg-gradient-to-br from-[rgba(167,139,250,0.2)] to-[rgba(147,51,234,0.2)] blur-[400px]"></div>
 
       {/* Header */}
-      <header className="relative z-10 px-6 py-4 md:px-8 md:py-5">
+      <header className="relative z-10 px-4 py-3 md:px-6 md:py-4 lg:px-8 lg:py-5">
         {/* Gradient Border Bottom */}
         <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
 
@@ -217,21 +217,21 @@ const Dashboard: React.FC = () => {
           }}
         />
 
-        <div className="relative mx-auto flex max-w-7xl items-center justify-between">
+        <div className="relative mx-auto flex max-w-7xl items-center justify-between gap-4">
           {/* Logo */}
-          <Link to="/" className="flex items-center group relative z-10">
+          <Link to="/" className="flex items-center group relative z-10 flex-shrink-0">
             {logoImage ? (
               <div className="relative">
                 <div className="absolute inset-0 bg-gradient-to-br from-[#60A5FA] to-[#9333EA] opacity-0 group-hover:opacity-20 blur-xl transition-opacity duration-300 rounded-full"></div>
                 <img
                   src={logoImage}
                   alt="Elara Logo"
-                  className="relative h-20 w-auto brightness-0 invert md:h-24 lg:h-32 object-contain transition-transform duration-300 group-hover:scale-105"
+                  className="relative h-12 w-auto brightness-0 invert sm:h-16 md:h-20 lg:h-24 xl:h-32 object-contain transition-transform duration-300 group-hover:scale-105"
                 />
               </div>
             ) : (
-              <div className="relative h-20 w-20 md:h-24 md:w-24 lg:h-32 lg:w-32 rounded-xl bg-gradient-to-br from-[#60A5FA] to-[#9333EA] flex items-center justify-center shadow-lg shadow-[#60A5FA]/30 transition-all duration-300 group-hover:scale-105 group-hover:shadow-[#60A5FA]/50">
-                <span className="text-white font-bold text-2xl md:text-3xl lg:text-4xl">
+              <div className="relative h-12 w-12 sm:h-16 sm:w-16 md:h-20 md:w-20 lg:h-24 lg:w-24 xl:h-32 xl:w-32 rounded-xl bg-gradient-to-br from-[#60A5FA] to-[#9333EA] flex items-center justify-center shadow-lg shadow-[#60A5FA]/30 transition-all duration-300 group-hover:scale-105 group-hover:shadow-[#60A5FA]/50">
+                <span className="text-white font-bold text-xl sm:text-2xl md:text-3xl lg:text-4xl">
                   E
                 </span>
               </div>
@@ -241,7 +241,7 @@ const Dashboard: React.FC = () => {
           {/* Logout Button */}
           <button
             onClick={handleLogout}
-            className="relative z-10 flex items-center gap-2 px-5 py-2.5 rounded-xl text-[#A78BFA] transition-all duration-300 hover:text-white hover:scale-105 active:scale-95 group"
+            className="relative z-10 flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 md:px-5 py-2 sm:py-2.5 rounded-lg sm:rounded-xl text-[#A78BFA] transition-all duration-300 hover:text-white hover:scale-105 active:scale-95 group flex-shrink-0"
             aria-label="Logout"
             title="Logout"
             style={{
@@ -251,14 +251,14 @@ const Dashboard: React.FC = () => {
               boxShadow: '0 4px 15px rgba(147, 51, 234, 0.1)',
             }}
           >
-            <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-[#60A5FA] to-[#9333EA] opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
+            <div className="absolute inset-0 rounded-lg sm:rounded-xl bg-gradient-to-r from-[#60A5FA] to-[#9333EA] opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
             <svg
-              width="18"
-              height="18"
+              width="16"
+              height="16"
               viewBox="0 0 24 24"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
-              className="relative z-10"
+              className="relative z-10 sm:w-[18px] sm:h-[18px]"
             >
               <path
                 d="M18 6L22 10M22 10L18 14M22 10H9"
@@ -274,7 +274,7 @@ const Dashboard: React.FC = () => {
                 strokeLinecap="round"
               />
             </svg>
-            <span className="relative z-10 text-sm md:text-base font-medium">
+            <span className="relative z-10 text-xs sm:text-sm md:text-base font-medium hidden sm:inline">
               Logout
             </span>
           </button>
@@ -282,15 +282,15 @@ const Dashboard: React.FC = () => {
       </header>
 
       {/* Main Content */}
-      <main className="relative z-10 mx-auto max-w-7xl px-4 py-12 md:px-8 md:py-16 lg:py-24">
+      <main className="relative z-10 mx-auto max-w-7xl px-4 py-8 md:px-8 md:py-12 lg:py-16 xl:py-24">
         <div className="mx-auto max-w-[1960px]">
           {/* Title */}
-          <div className="mb-8 md:mb-12 text-center">
-            <h1 className="mb-4 text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-white">
+          <div className="mb-6 md:mb-8 lg:mb-12 text-center">
+            <h1 className="mb-3 md:mb-4 text-2xl md:text-3xl lg:text-4xl xl:text-5xl 2xl:text-6xl font-bold text-white">
               Main Dashboard
             </h1>
             <div
-              className="mx-auto h-1 w-32 rounded-full"
+              className="mx-auto h-1 w-24 md:w-32 rounded-full"
               style={{
                 background: 'linear-gradient(to right, #60A5FA, #9333EA)',
               }}
@@ -298,14 +298,14 @@ const Dashboard: React.FC = () => {
           </div>
 
           {/* Welcome Message */}
-          <p className="mb-12 md:mb-16 text-center text-lg md:text-xl text-white/80">
+          <p className="mb-8 md:mb-12 lg:mb-16 text-center text-base md:text-lg lg:text-xl text-white/80 px-4">
             Welcome to Elara, Choose your Insight Engine below to begin.
           </p>
 
           {/* Insight Engine Cards Grid */}
-          <div className="grid gap-6 md:gap-8 md:grid-cols-2 justify-center items-stretch">
+          <div className="grid grid-cols-1 gap-6 md:gap-8 md:grid-cols-2 justify-center items-stretch max-w-5xl mx-auto">
             {insightEngines.map((engine) => (
-              <div key={engine.id} className="flex justify-center">
+              <div key={engine.id} className="flex justify-center w-full">
                 <InsightEngineCard
                   number={engine.number}
                   title={engine.title}
