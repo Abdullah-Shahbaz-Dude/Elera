@@ -303,19 +303,18 @@ const Dashboard: React.FC = () => {
           </p>
 
           {/* Insight Engine Cards Grid */}
-          <div className="grid grid-cols-1 gap-6 md:gap-8 md:grid-cols-2 justify-center items-stretch max-w-5xl mx-auto">
+          <div className="grid grid-cols-1 gap-6 md:gap-8 md:grid-cols-2 items-stretch max-w-5xl mx-auto">
             {insightEngines.map((engine) => (
-              <div key={engine.id} className="flex justify-center w-full">
-                <InsightEngineCard
-                  number={engine.number}
-                  title={engine.title}
-                  description={engine.description}
-                  icon={engine.icon}
-                  color={engine.color}
-                  image={engine.image}
-                  onClick={() => handleCardClick(engine.route)}
-                />
-              </div>
+              <InsightEngineCard
+                key={engine.id}
+                number={engine.number}
+                title={engine.title}
+                description={engine.description}
+                icon={engine.icon}
+                color={engine.color}
+                image={engine.image}
+                onClick={() => handleCardClick(engine.route)}
+              />
             ))}
           </div>
         </div>
