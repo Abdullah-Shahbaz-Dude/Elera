@@ -24,14 +24,14 @@ const InsightEngineCard: React.FC<InsightEngineCardProps> = ({
   return (
     <div
       onClick={onClick}
-      className="group relative cursor-pointer h-full w-full max-w-md mx-auto rounded-2xl md:rounded-3xl overflow-hidden transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
+      className="group relative cursor-pointer h-full w-full rounded-2xl md:rounded-3xl overflow-hidden transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
       style={{
         minHeight: '320px',
       }}
     >
       {/* Gradient Border Container */}
       <div
-        className="absolute inset-0 rounded-2xl md:rounded-3xl p-[2px] transition-all duration-300 group-hover:p-[3px]"
+        className="relative h-full w-full rounded-2xl md:rounded-3xl p-[2px] transition-all duration-300 group-hover:p-[3px]"
         style={{
           background: gradient,
           boxShadow: '0 20px 60px rgba(96, 165, 250, 0.3)',
@@ -47,7 +47,7 @@ const InsightEngineCard: React.FC<InsightEngineCardProps> = ({
         >
           {/* Gradient Overlay on Hover */}
           <div
-            className="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-20"
+            className="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-20 z-0"
             style={{
               background: gradient,
             }}
@@ -91,7 +91,7 @@ const InsightEngineCard: React.FC<InsightEngineCardProps> = ({
 
           {/* Decorative Corner Glow */}
           <div
-            className="absolute -right-16 -top-16 h-48 w-48 rounded-full blur-3xl opacity-20 transition-opacity duration-300 group-hover:opacity-40"
+            className="absolute -right-16 -top-16 h-48 w-48 rounded-full blur-3xl opacity-20 transition-opacity duration-300 group-hover:opacity-40 z-0"
             style={{
               background: gradient,
             }}
