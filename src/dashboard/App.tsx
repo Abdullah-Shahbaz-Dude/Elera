@@ -12,7 +12,7 @@ function App() {
               to="/"
               className="text-indigo-400 hover:text-indigo-300 transition-colors"
             >
-              Manager Report
+              Mind Sync
             </Link>
           </div>
         </div>
