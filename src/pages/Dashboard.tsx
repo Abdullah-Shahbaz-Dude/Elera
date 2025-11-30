@@ -219,7 +219,10 @@ const Dashboard: React.FC = () => {
 
         <div className="relative mx-auto flex max-w-7xl items-center justify-between gap-4">
           {/* Logo */}
-          <Link to="/" className="flex items-center group relative z-10 flex-shrink-0">
+          <Link
+            to="/"
+            className="flex items-center group relative z-10 flex-shrink-0"
+          >
             {logoImage ? (
               <div className="relative">
                 <div className="absolute inset-0 bg-gradient-to-br from-[#60A5FA] to-[#9333EA] opacity-0 group-hover:opacity-20 blur-xl transition-opacity duration-300 rounded-full"></div>
@@ -238,46 +241,131 @@ const Dashboard: React.FC = () => {
             )}
           </Link>
 
-          {/* Logout Button */}
-          <button
-            onClick={handleLogout}
-            className="relative z-10 flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 md:px-5 py-2 sm:py-2.5 rounded-lg sm:rounded-xl text-[#A78BFA] transition-all duration-300 hover:text-white hover:scale-105 active:scale-95 group flex-shrink-0"
-            aria-label="Logout"
-            title="Logout"
-            style={{
-              background:
-                'linear-gradient(135deg, rgba(147, 51, 234, 0.15) 0%, rgba(167, 139, 250, 0.15) 100%)',
-              border: '1px solid rgba(147, 51, 234, 0.3)',
-              boxShadow: '0 4px 15px rgba(147, 51, 234, 0.1)',
-            }}
-          >
-            <div className="absolute inset-0 rounded-lg sm:rounded-xl bg-gradient-to-r from-[#60A5FA] to-[#9333EA] opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              className="relative z-10 sm:w-[18px] sm:h-[18px]"
+          {/* Navigation Buttons Container */}
+          <div className="relative z-10 flex items-center gap-3 sm:gap-4">
+            {/* Manager Report Button */}
+            <Link
+              to="/dashboard/manager-report"
+              className="relative flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 md:px-5 py-2 sm:py-2.5 rounded-lg sm:rounded-xl text-[#A78BFA] transition-all duration-300 hover:text-white hover:scale-105 active:scale-95 group flex-shrink-0"
+              aria-label="Manager Report"
+              title="Manager Report"
+              style={{
+                background:
+                  'linear-gradient(135deg, rgba(147, 51, 234, 0.15) 0%, rgba(167, 139, 250, 0.15) 100%)',
+                border: '1px solid rgba(147, 51, 234, 0.3)',
+                boxShadow: '0 4px 15px rgba(147, 51, 234, 0.1)',
+              }}
             >
-              <path
-                d="M18 6L22 10M22 10L18 14M22 10H9"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <path
-                d="M9 2H5C3.89543 2 3 2.89543 3 4V20C3 21.1046 3.89543 22 5 22H9"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-              />
-            </svg>
-            <span className="relative z-10 text-xs sm:text-sm md:text-base font-medium hidden sm:inline">
-              Logout
-            </span>
-          </button>
+              <div className="absolute inset-0 rounded-lg sm:rounded-xl bg-gradient-to-r from-[#60A5FA] to-[#9333EA] opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                className="relative z-10 sm:w-[18px] sm:h-[18px]"
+              >
+                <path
+                  d="M9 12H15M9 16H15M17 21H7C5.89543 21 5 20.1046 5 19V5C5 3.89543 5.89543 3 7 3H12.5858C12.851 3 13.1054 3.10536 13.2929 3.29289L18.7071 8.70711C18.8946 8.89464 19 9.149 19 9.41421V19C19 20.1046 18.1046 21 17 21Z"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                />
+                <path
+                  d="M19 9H14V4"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+              <span className="relative z-10 text-xs sm:text-sm md:text-base font-medium hidden sm:inline">
+                Manager Report
+              </span>
+            </Link>
+
+            {/* Brilliance Report Button */}
+            <Link
+              to="/dashboard/brilliance-report"
+              className="relative flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 md:px-5 py-2 sm:py-2.5 rounded-lg sm:rounded-xl text-[#A78BFA] transition-all duration-300 hover:text-white hover:scale-105 active:scale-95 group flex-shrink-0"
+              aria-label="Brilliance Report"
+              title="Brilliance Report"
+              style={{
+                background:
+                  'linear-gradient(135deg, rgba(147, 51, 234, 0.15) 0%, rgba(167, 139, 250, 0.15) 100%)',
+                border: '1px solid rgba(147, 51, 234, 0.3)',
+                boxShadow: '0 4px 15px rgba(147, 51, 234, 0.1)',
+              }}
+            >
+              <div className="absolute inset-0 rounded-lg sm:rounded-xl bg-gradient-to-r from-[#60A5FA] to-[#9333EA] opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                className="relative z-10 sm:w-[18px] sm:h-[18px]"
+              >
+                <path
+                  d="M9 12H15M9 16H15M17 21H7C5.89543 21 5 20.1046 5 19V5C5 3.89543 5.89543 3 7 3H12.5858C12.851 3 13.1054 3.10536 13.2929 3.29289L18.7071 8.70711C18.8946 8.89464 19 9.149 19 9.41421V19C19 20.1046 18.1046 21 17 21Z"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                />
+                <path
+                  d="M19 9H14V4"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+              <span className="relative z-10 text-xs sm:text-sm md:text-base font-medium hidden sm:inline">
+                Brilliance Report
+              </span>
+            </Link>
+
+            {/* Logout Button */}
+            <button
+              onClick={handleLogout}
+              className="relative z-10 flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 md:px-5 py-2 sm:py-2.5 rounded-lg sm:rounded-xl text-[#A78BFA] transition-all duration-300 hover:text-white hover:scale-105 active:scale-95 group flex-shrink-0"
+              aria-label="Logout"
+              title="Logout"
+              style={{
+                background:
+                  'linear-gradient(135deg, rgba(147, 51, 234, 0.15) 0%, rgba(167, 139, 250, 0.15) 100%)',
+                border: '1px solid rgba(147, 51, 234, 0.3)',
+                boxShadow: '0 4px 15px rgba(147, 51, 234, 0.1)',
+              }}
+            >
+              <div className="absolute inset-0 rounded-lg sm:rounded-xl bg-gradient-to-r from-[#60A5FA] to-[#9333EA] opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                className="relative z-10 sm:w-[18px] sm:h-[18px]"
+              >
+                <path
+                  d="M18 6L22 10M22 10L18 14M22 10H9"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M9 2H5C3.89543 2 3 2.89543 3 4V20C3 21.1046 3.89543 22 5 22H9"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                />
+              </svg>
+              <span className="relative z-10 text-xs sm:text-sm md:text-base font-medium hidden sm:inline">
+                Logout
+              </span>
+            </button>
+          </div>
         </div>
       </header>
 
