@@ -15,6 +15,8 @@ import RevealHiddenBrillianceSurvey from './pages/RevealHiddenBrillianceSurvey';
 import MindSync from './pages/MindSync';
 import MindSyncSurvey from './pages/MindSyncSurvey';
 import MindSyncModuleResults from './pages/MindSyncModuleResults';
+import ManagerReport from './dashboard/pages/ManagerReport';
+import BrillianceReport from './dashboard/pages/BrillianceReport';
 import { VideoProvider } from './contexts/VideoContext';
 
 function AppContent() {
@@ -41,6 +43,14 @@ function AppContent() {
             <Route path="/research-and-education" element={<WhoWeWorkWith />} />
             <Route path="/contact-us" element={<ContactUs />} />
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route
+              path="/dashboard/manager-report"
+              element={<ManagerReport />}
+            />
+            <Route
+              path="/dashboard/brilliance-report"
+              element={<BrillianceReport />}
+            />
             <Route
               path="/survey/reveal-hidden-brilliance"
               element={<RevealHiddenBrillianceSurvey />}
