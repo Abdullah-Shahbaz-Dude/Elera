@@ -247,8 +247,8 @@ const Dashboard: React.FC = () => {
             <Link
               to="/dashboard/manager-report"
               className="relative flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 md:px-5 py-2 sm:py-2.5 rounded-lg sm:rounded-xl text-[#A78BFA] transition-all duration-300 hover:text-white hover:scale-105 active:scale-95 group flex-shrink-0"
-              aria-label="Manager Report"
-              title="Manager Report"
+              aria-label="Mind Sync"
+              title="Mind Sync"
               style={{
                 background:
                   'linear-gradient(135deg, rgba(147, 51, 234, 0.15) 0%, rgba(167, 139, 250, 0.15) 100%)',
@@ -280,7 +280,7 @@ const Dashboard: React.FC = () => {
                 />
               </svg>
               <span className="relative z-10 text-xs sm:text-sm md:text-base font-medium hidden sm:inline">
-                Manager Report
+                Mind Sync
               </span>
             </Link>
 
