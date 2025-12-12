@@ -1,4 +1,3 @@
-import React from 'react';
 import TeamMemberCard from '@/components/TeamMemberCard/TeamMemberCard';
 import { teamMembers } from '@/data/teamMembers';
 import Footer from '@/components/Footer/Footer';
@@ -47,4 +46,3 @@ const WhoWeAre = () => {
 };
 
 export default WhoWeAre;
-
