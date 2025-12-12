@@ -1,5 +1,4 @@
 // Team member images
-import alexImage from '@/assets/team/alex.avif'
 import ursulaImage from '@/assets/team/Ursula Phot.jpg'
 import danielImage from '@/assets/team/daniel-carroll.ec9a6354.jpg'
 import kaelaImage from '@/assets/team/kaela-shuttleworth.ce25f590.jpg'
@@ -15,7 +14,7 @@ export interface TeamMember {
 export const teamMembers: TeamMember[] = [
   {
     name: 'Alexander Church',
-    image: alexImage,
+    image: null,
     initials: 'AC',
     passions: 'Business psychology, human behaviour, Brain and behaviour, helping people and organisations understand how thinking styles affect performance, communication and change.',
   },
