@@ -19,7 +19,7 @@ export const teamMembers: TeamMember[] = [
     passions: 'Business psychology, human behaviour, Brain and behaviour, helping people and organisations understand how thinking styles affect performance, communication and change.',
   },
   {
-    name: 'Suzanne Heywood-Everett',
+    name: 'Dr Suzanne Heywood-Everett',
     image: null,
     initials: 'SH',
     passions: 'Clinical psychology, behaviour patterns, and helping people understand neurodiversity in a clear, practical way.',
