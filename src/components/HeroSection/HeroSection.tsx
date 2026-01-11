@@ -23,8 +23,10 @@ const HeroSection: React.FC = () => {
       <div className="absolute inset-0 z-[40] flex items-end justify-start">
         <div className="pl-8 mb-10 md:pl-[120px] pb-8 md:pb-12 lg:pb-16 xl:pb-20 pr-4 sm:pb-[57px] ">
           <h1 className="max-w-full md:max-w-5xl text-2xl md:text-3xl lg:text-4xl xl:text-5xl 2xl:text-6xl font-medium leading-tight md:leading-relaxed text-white drop-shadow-lg">
-            Unlock Hiddent Potential:
-            <br /> Business Psychology and AI Tools for a Changing World Of Work
+            Seeing Things Differently:
+            <br />
+            Human-centred business psychology and AI solutions for a digital
+            future
           </h1>
         </div>
       </div>
