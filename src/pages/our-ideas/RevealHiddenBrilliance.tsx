@@ -380,7 +380,7 @@ const RevealHiddenBrilliance = () => {
       'Employees complete a short, structured digital assessment that identifies:',
     howItWorksItems: [
       'Hidden cognitive strengths that may show up outside work but not inside work',
-      'Digital, data, systems, and problem-solving capability that is not currently being used',
+      'Digital, data, systems, and problem solving capability that is not currently being used',
       'Where strengths are visible, partially hidden, or actively held back',
       'Which individuals have natural potential for innovation, efficiency, or technical contribution, regardless of job title',
     ],

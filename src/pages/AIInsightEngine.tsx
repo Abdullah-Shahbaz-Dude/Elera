@@ -384,7 +384,7 @@ const AIInsightEngine = () => {
     howItWorksIntro:
       'Employees complete a digital assessment. The engine analyses cognitive patterns across work and everyday life to reveal:',
     howItWorksItems: [
-      'Who has hidden digital, data, or problem-solving strengths',
+      'Who has hidden digital, data, or problem solving strengths',
       'Which strengths are being used and which are held back',
       'Where talent is misaligned with roles or opportunities',
       'Who has natural potential for innovation, efficiency, or technical work',
@@ -423,7 +423,7 @@ const AIInsightEngine = () => {
         id: 'findings',
         title: 'What the Engine Found',
         content:
-          'The assessment uncovered a group of employees with strong analytical and digital thinking profiles none of whom were currently in technical positions.\n\nOne long-standing administrator showed exceptional potential for:\n• Analytical problem-solving\n• Systems thinking\n• Digital tool adoption\n• Data visualisation\n\nHer icapabilities had previously gone unnoticed because her role did not require them.',
+          'The assessment uncovered a group of employees with strong analytical and digital thinking profiles none of whom were currently in technical positions.\n\nOne long-standing administrator showed exceptional potential for:\n• Analytical problem solving\n• Systems thinking\n• Digital tool adoption\n• Data visualisation\n\nHer icapabilities had previously gone unnoticed because her role did not require them.',
       },
       {
         id: 'solution',
