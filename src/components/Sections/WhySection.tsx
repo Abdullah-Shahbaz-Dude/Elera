@@ -170,6 +170,7 @@ const WhySection: React.FC = () => {
                     loading="lazy"
                     decoding="async"
                     className="h-full w-full object-cover transition-transform duration-500 hover:scale-105"
+                    sizes="(max-width: 1024px) 100vw, 50vw"
                   />
                   
                   {/* Overlay Gradient on Hover */}

@@ -15,5 +15,26 @@ export default defineConfig({
       '@/utils': path.resolve(__dirname, './src/utils'),
     },
   },
+  build: {
+    // Optimize chunk splitting for better code splitting
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          // Separate vendor chunks
+          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+          // Separate large dependencies
+          'charts-vendor': ['recharts'],
+        },
+      },
+    },
+    // Increase chunk size warning limit (videos are now on CDN, so this is fine)
+    chunkSizeWarningLimit: 1000,
+    // Optimize asset handling
+    assetsInlineLimit: 4096, // Inline small assets (< 4KB) as base64
+  },
+  // Optimize dependencies
+  optimizeDeps: {
+    include: ['react', 'react-dom', 'react-router-dom'],
+  },
 })
 
