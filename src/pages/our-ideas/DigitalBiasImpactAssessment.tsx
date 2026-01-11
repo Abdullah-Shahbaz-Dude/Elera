@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Footer from '@/components/Footer/Footer';
-import { shutterstock2177507051 } from '@/assets/images';
+import { shutterstock682503142 } from '@/assets/images';
 
 // Accordion component for expandable sections
 interface AccordionItemProps {
@@ -123,7 +123,7 @@ const ServiceSection: React.FC<ServiceSectionProps> = ({
   caseStudyTitle,
   caseStudySubtitle,
   caseStudySections,
-  heroImage = shutterstock2177507051,
+  heroImage = shutterstock682503142,
 }) => {
   const [expandedWhatYouGet, setExpandedWhatYouGet] = useState<Set<number>>(
     new Set()
@@ -373,7 +373,7 @@ const DigitalBiasImpactAssessment = () => {
     title: 'Digital Bias Impact Assessment',
     subtitle:
       'Find the hidden cultural blockers that slow down digital transformation',
-    heroImage: shutterstock2177507051,
+    heroImage: shutterstock682503142,
     whatItIs:
       "The Digital Bias Engine exposes the invisible behaviours and attitudes that silently sabotage digital change risk aversion, fear of failure, low confidence with new tools, outdated leadership habits, or simply not understanding why change is happening. It's the cultural intelligence piece most organisations overlook.",
     howItWorksIntro:

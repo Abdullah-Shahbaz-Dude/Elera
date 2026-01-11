@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Footer from '@/components/Footer/Footer';
-import { shutterstock1813285633 } from '@/assets/images';
+import { shutterstock1717584028 } from '@/assets/images';
 
 // Accordion component for expandable sections
 interface AccordionItemProps {
@@ -123,7 +123,7 @@ const ServiceSection: React.FC<ServiceSectionProps> = ({
   caseStudyTitle,
   caseStudySubtitle,
   caseStudySections,
-  heroImage = shutterstock1813285633,
+  heroImage = shutterstock1717584028,
 }) => {
   const [expandedWhatYouGet, setExpandedWhatYouGet] = useState<Set<number>>(
     new Set()
@@ -372,7 +372,7 @@ const MindSync = () => {
   const mindSyncData: ServiceSectionProps = {
     title: 'Mind Sync',
     subtitle: 'Understand how well your managers harness neurodiverse thinking',
-    heroImage: shutterstock1813285633,
+    heroImage: shutterstock1717584028,
     whatItIs:
       'Mind Sync assesses how effectively managers recognise, support, and leverage different ways of thinking particularly neurodiversity as a strategic advantage, not just an inclusion initiative. It highlights where leadership habits enable performance, and where they unintentionally hold back diverse thinkers. It gives managers a clear, honest picture of their own capability.',
     howItWorksIntro:

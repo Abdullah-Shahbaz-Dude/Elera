@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Footer from '@/components/Footer/Footer';
-import { shutterstock2513386035 } from '@/assets/images';
+import { shutterstock1330833800 } from '@/assets/images';
 
 // Accordion component for expandable sections
 interface AccordionItemProps {
@@ -123,7 +123,7 @@ const ServiceSection: React.FC<ServiceSectionProps> = ({
   caseStudyTitle,
   caseStudySubtitle,
   caseStudySections,
-  heroImage = shutterstock2513386035,
+  heroImage = shutterstock1330833800,
 }) => {
   const [expandedWhatYouGet, setExpandedWhatYouGet] = useState<Set<number>>(
     new Set()
@@ -373,7 +373,7 @@ const RevealHiddenBrilliance = () => {
     title: 'Discover the capability already inside your organisation',
     subtitle:
       'Reveal Hidden Brilliance is a psychology led insight engine that helps organisations see how their people naturally think, solve problems, and engage with digital systems / transformation.',
-    heroImage: shutterstock2513386035,
+    heroImage: shutterstock1330833800,
     whatItIs:
       'Some organisations may assume innovation, data, or digital capability must be hired externally. Reveal Hidden Brilliance shows you what already exists inside your',
     howItWorksIntro:
