@@ -61,6 +61,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
                 style={{
                   height: '310px',
                 }}
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 668px"
               />
             </div>
           </div>

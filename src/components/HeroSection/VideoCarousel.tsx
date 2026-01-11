@@ -2,6 +2,7 @@ import { useVideoCarousel } from '@/hooks/useVideoCarousel';
 import { heroVideo1, heroVideo2 } from '@/assets/videos';
 import { useEffect, useRef } from 'react';
 import { useVideoContext } from '@/contexts/VideoContext';
+import { getCloudinaryVideoPoster } from '@/config/cloudinary';
 
 interface VideoCarouselProps {
   className?: string;
@@ -11,6 +12,21 @@ const VideoCarousel: React.FC<VideoCarouselProps> = ({ className = '' }) => {
   const videos = [heroVideo1, heroVideo2].filter(
     (video): video is string => video !== undefined
   );
+
+  // Generate poster images from Cloudinary for faster initial render
+  const videoPosters = [
+    getCloudinaryVideoPoster('7020022_Brain_Science_3840x2160_dwnwse', {
+      format: 'auto',
+      quality: 'auto',
+      width: 1920,
+    }),
+    getCloudinaryVideoPoster('shutterstock_1057813618_a62hry', {
+      format: 'auto',
+      quality: 'auto',
+      width: 1920,
+    }),
+  ];
+
   const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
   const prevIndexRef = useRef<number>(0);
 
@@ -126,6 +142,8 @@ const VideoCarousel: React.FC<VideoCarouselProps> = ({ className = '' }) => {
         {videos.map((video, index) => {
           // First video loads immediately, others load lazily
           const preloadValue = index === 0 ? 'auto' : 'none';
+          // Use poster image for faster initial render
+          const poster = videoPosters[index] || undefined;
 
           return (
             <video
@@ -134,6 +152,7 @@ const VideoCarousel: React.FC<VideoCarouselProps> = ({ className = '' }) => {
                 videoRefs.current[index] = el;
               }}
               src={video}
+              poster={poster}
               loop
               muted
               playsInline
