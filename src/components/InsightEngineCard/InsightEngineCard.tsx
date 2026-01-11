@@ -11,11 +11,11 @@ interface InsightEngineCardProps {
 }
 
 const InsightEngineCard: React.FC<InsightEngineCardProps> = ({
-  number,
+  number: _number,
   title,
   description,
   icon,
-
+  color: _color,
   image,
   onClick,
 }) => {

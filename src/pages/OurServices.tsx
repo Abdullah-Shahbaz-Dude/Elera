@@ -23,10 +23,10 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
   title,
   description,
   backgroundImage,
-  imageOpacity = 1,
+  imageOpacity: _imageOpacity = 1,
   navigateTo = '/our-services',
   isComingSoon = false,
-  insightEngineNumber,
+  insightEngineNumber: _insightEngineNumber,
 }) => {
   const navigate = useNavigate();
 
