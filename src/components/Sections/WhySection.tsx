@@ -167,6 +167,8 @@ const WhySection: React.FC = () => {
                   <img
                     src={aiInsightEngineImage}
                     alt="Why Elara Exists"
+                    loading="lazy"
+                    decoding="async"
                     className="h-full w-full object-cover transition-transform duration-500 hover:scale-105"
                   />
                   

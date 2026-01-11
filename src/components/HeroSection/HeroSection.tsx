@@ -4,6 +4,9 @@ import { heroBackground } from '@/assets/images';
 const HeroSection: React.FC = () => {
   return (
     <section className="relative h-screen min-h-[500px] md:min-h-[600px] w-full overflow-hidden pt-0">
+      {/* Loading Placeholder Background - Shows while videos/images load */}
+      <div className="absolute inset-0 z-0 bg-gradient-to-br from-gray-900 via-gray-800 to-black"></div>
+      
       {/* Background Image Layer */}
       {heroBackground && (
         <div

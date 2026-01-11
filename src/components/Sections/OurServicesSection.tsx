@@ -49,14 +49,20 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
         {backgroundImage && (
           <div className="px-[28px] pt-[28px]">
             <div
-              className="w-full rounded-[16px] overflow-hidden"
-              style={{
-                height: '310px',
-                backgroundImage: `url(${backgroundImage})`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-              }}
-            />
+              className="relative w-full rounded-[16px] overflow-hidden bg-gray-800"
+              style={{ height: '310px' }}
+            >
+              <img
+                src={backgroundImage}
+                alt={title}
+                loading="lazy"
+                decoding="async"
+                className="w-full h-full object-cover"
+                style={{
+                  height: '310px',
+                }}
+              />
+            </div>
           </div>
         )}
 
