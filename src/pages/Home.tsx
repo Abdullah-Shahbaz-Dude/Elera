@@ -2,7 +2,7 @@ import HeroSection from '@/components/HeroSection/HeroSection'
 import WhySection from '@/components/Sections/WhySection'
 // import ServicePhilosophy from '@/components/Sections/ServicePhilosophy'
 import OurServicesSection from '@/components/Sections/OurServicesSection'
-import ContactForm from '@/components/Sections/ContactForm'
+import SpeakToUs from '@/components/Sections/ContactForm'
 import Footer from '@/components/Footer/Footer'
 
 const Home = () => {
@@ -13,7 +13,7 @@ const Home = () => {
       <WhySection />
       {/* <ServicePhilosophy /> */}
       <OurServicesSection />
-      <ContactForm />
+      <SpeakToUs />
       <Footer />
     </main>
   )

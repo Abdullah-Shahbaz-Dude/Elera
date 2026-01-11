@@ -247,18 +247,18 @@ const ContactUs = () => {
   };
 
   return (
-    <main className="min-h-screen pt-40 pb-20">
+    <main className="min-h-screen pt-32 md:pt-40 pb-20 bg-black">
       <div className="relative w-full overflow-hidden">
         {/* Background Glow Effects */}
         <div className="absolute right-1/4 top-1/4 h-[800px] w-[800px] rounded-full bg-gradient-to-br from-[rgba(96,165,250,0.15)] to-[rgba(147,51,234,0.15)] blur-[400px]"></div>
         <div className="absolute left-1/4 bottom-1/4 h-[800px] w-[800px] rounded-full bg-gradient-to-br from-[rgba(167,139,250,0.15)] to-[rgba(147,51,234,0.15)] blur-[400px]"></div>
 
         <div className="relative container mx-auto px-4 md:px-6 z-10">
-          <div className="mx-auto max-w-5xl">
+          <div className="mx-auto max-w-4xl">
             {/* Header */}
-            <div className="mb-12 md:mb-16 text-center">
+            <div className="mb-10 md:mb-16 text-center">
               <h1 className="mb-4 text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-white">
-                Elara – Speak to Us Booking Form
+                Speak to Us
               </h1>
               <div
                 className="mx-auto mb-4 md:mb-6 h-1 w-24 md:w-32 rounded-full"
@@ -266,6 +266,9 @@ const ContactUs = () => {
                   background: 'linear-gradient(to right, #60A5FA, #9333EA)',
                 }}
               ></div>
+              <p className="text-base md:text-lg lg:text-xl text-white/80 px-4 max-w-2xl mx-auto">
+                Complete the booking form below and we'll get back to you soon.
+              </p>
             </div>
 
             {/* Form Container */}
@@ -279,18 +282,37 @@ const ContactUs = () => {
                 }}
               >
                 <div
-                  className="relative rounded-2xl md:rounded-3xl p-6 md:p-8 lg:p-12 bg-black/80 backdrop-blur-xl"
+                  className="relative rounded-2xl md:rounded-3xl p-6 md:p-10 lg:p-14 bg-black/80 backdrop-blur-xl"
                   style={{
-                    background: 'rgba(0, 0, 0, 0.8)',
+                    background: 'rgba(0, 0, 0, 0.85)',
                   }}
                 >
                   {isSubmitted ? (
-                    <div className="text-center py-12">
-                      <div className="text-4xl mb-4">✓</div>
-                      <h2 className="text-2xl md:text-3xl font-bold text-white mb-4">
+                    <div className="text-center py-16 md:py-20">
+                      <div
+                        className="mx-auto mb-6 w-16 h-16 md:w-20 md:h-20 rounded-full flex items-center justify-center"
+                        style={{
+                          background: 'linear-gradient(135deg, rgba(96, 165, 250, 0.2), rgba(147, 51, 234, 0.2))',
+                        }}
+                      >
+                        <svg
+                          className="w-8 h-8 md:w-10 md:h-10 text-green-400"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={3}
+                            d="M5 13l4 4L19 7"
+                          />
+                        </svg>
+                      </div>
+                      <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-4">
                         Thank You!
                       </h2>
-                      <p className="text-lg text-white/80">
+                      <p className="text-base md:text-lg text-white/80 max-w-md mx-auto">
                         Your form has been submitted successfully. We'll be in
                         touch soon.
                       </p>
@@ -298,25 +320,33 @@ const ContactUs = () => {
                   ) : (
                     <form
                       onSubmit={handleSubmit}
-                      className="relative z-10 space-y-6 md:space-y-8"
+                      className="relative z-10 space-y-8 md:space-y-10"
                     >
                       {/* GDPR Consent */}
-                      <div className="space-y-2">
-                        <label className="flex items-start gap-3 cursor-pointer">
-                          <input
-                            type="checkbox"
-                            name="gdprConsent"
-                            checked={formData.gdprConsent}
-                            onChange={handleInputChange}
-                            className="mt-1 w-5 h-5 rounded border-white/20 bg-white/5 text-primary-blue-accent focus:ring-2 focus:ring-primary-blue-accent cursor-pointer"
-                          />
-                          <span className="text-sm md:text-base text-white/90">
-                            I consent to my personal data being stored and
-                            processed by Elara for the purpose of responding to
-                            this enquiry, in accordance with GDPR and Elara's
-                            privacy policy.
-                          </span>
-                        </label>
+                      <div className="space-y-3">
+                        <div
+                          className="rounded-xl p-4 md:p-5"
+                          style={{
+                            background: 'rgba(96, 165, 250, 0.05)',
+                            border: '1px solid rgba(96, 165, 250, 0.2)',
+                          }}
+                        >
+                          <label className="flex items-start gap-3 cursor-pointer">
+                            <input
+                              type="checkbox"
+                              name="gdprConsent"
+                              checked={formData.gdprConsent}
+                              onChange={handleInputChange}
+                              className="mt-1 w-5 h-5 rounded border-white/20 bg-white/5 text-primary-blue-accent focus:ring-2 focus:ring-primary-blue-accent cursor-pointer"
+                            />
+                            <span className="text-sm md:text-base text-white/90 leading-relaxed">
+                              I consent to my personal data being stored and
+                              processed by Elara for the purpose of responding to
+                              this enquiry, in accordance with GDPR and Elara's
+                              privacy policy.
+                            </span>
+                          </label>
+                        </div>
                         {errors.gdprConsent && (
                           <p className="text-red-400 text-sm ml-8">
                             {errors.gdprConsent}
@@ -324,19 +354,21 @@ const ContactUs = () => {
                         )}
                       </div>
 
-                      <div className="border-t border-white/10 pt-6 md:pt-8">
-                        <h2 className="text-xl md:text-2xl font-bold text-white mb-6">
-                          Contact Details
-                        </h2>
-                        <p className="text-sm md:text-base text-white/70 mb-6">
-                          Please provide your basic contact information:
-                        </p>
+                      <div className="border-t border-white/10 pt-8 md:pt-10">
+                        <div className="mb-6 md:mb-8">
+                          <h2 className="text-xl md:text-2xl lg:text-3xl font-bold text-white mb-2">
+                            Contact Details
+                          </h2>
+                          <p className="text-sm md:text-base text-white/70">
+                            Please provide your basic contact information:
+                          </p>
+                        </div>
 
-                        <div className="grid gap-4 md:gap-6 md:grid-cols-2">
+                        <div className="grid gap-5 md:gap-6 md:grid-cols-2">
                           {/* Full Name */}
                           <div className="md:col-span-2">
-                            <label className="block text-sm text-white/80 mb-2">
-                              Full Name *
+                            <label className="block text-sm md:text-base font-medium text-white/90 mb-2.5">
+                              Full Name <span className="text-red-400">*</span>
                             </label>
                             <input
                               type="text"
@@ -347,11 +379,11 @@ const ContactUs = () => {
                                 errors.fullName
                                   ? 'border-red-400'
                                   : 'border-white/20'
-                              } bg-white/5 px-4 md:px-6 py-3 md:py-4 text-sm md:text-base text-white placeholder:text-white/40 backdrop-blur-sm transition-all focus:outline-none focus:border-white/40 focus:bg-white/10 focus:ring-2 focus:ring-primary-blue-accent`}
-                              placeholder="Full Name"
+                              } bg-white/5 px-5 md:px-6 py-3.5 md:py-4 text-sm md:text-base text-white placeholder:text-white/40 backdrop-blur-sm transition-all focus:outline-none focus:border-[#60A5FA] focus:bg-white/10 focus:ring-2 focus:ring-[#60A5FA]/50`}
+                              placeholder="Enter your full name"
                             />
                             {errors.fullName && (
-                              <p className="text-red-400 text-sm mt-1">
+                              <p className="text-red-400 text-sm mt-2">
                                 {errors.fullName}
                               </p>
                             )}
@@ -359,7 +391,7 @@ const ContactUs = () => {
 
                           {/* Job Title */}
                           <div>
-                            <label className="block text-sm text-white/80 mb-2">
+                            <label className="block text-sm md:text-base font-medium text-white/90 mb-2.5">
                               Job Title
                             </label>
                             <input
@@ -367,14 +399,14 @@ const ContactUs = () => {
                               name="jobTitle"
                               value={formData.jobTitle}
                               onChange={handleInputChange}
-                              className="w-full rounded-xl md:rounded-2xl border border-white/20 bg-white/5 px-4 md:px-6 py-3 md:py-4 text-sm md:text-base text-white placeholder:text-white/40 backdrop-blur-sm transition-all focus:outline-none focus:border-white/40 focus:bg-white/10 focus:ring-2 focus:ring-primary-blue-accent"
-                              placeholder="Job Title"
+                              className="w-full rounded-xl md:rounded-2xl border border-white/20 bg-white/5 px-5 md:px-6 py-3.5 md:py-4 text-sm md:text-base text-white placeholder:text-white/40 backdrop-blur-sm transition-all focus:outline-none focus:border-[#60A5FA] focus:bg-white/10 focus:ring-2 focus:ring-[#60A5FA]/50"
+                              placeholder="Enter your job title"
                             />
                           </div>
 
                           {/* Organisation Name */}
                           <div>
-                            <label className="block text-sm text-white/80 mb-2">
+                            <label className="block text-sm md:text-base font-medium text-white/90 mb-2.5">
                               Organisation Name
                             </label>
                             <input
@@ -382,14 +414,14 @@ const ContactUs = () => {
                               name="organisationName"
                               value={formData.organisationName}
                               onChange={handleInputChange}
-                              className="w-full rounded-xl md:rounded-2xl border border-white/20 bg-white/5 px-4 md:px-6 py-3 md:py-4 text-sm md:text-base text-white placeholder:text-white/40 backdrop-blur-sm transition-all focus:outline-none focus:border-white/40 focus:bg-white/10 focus:ring-2 focus:ring-primary-blue-accent"
-                              placeholder="Organisation Name"
+                              className="w-full rounded-xl md:rounded-2xl border border-white/20 bg-white/5 px-5 md:px-6 py-3.5 md:py-4 text-sm md:text-base text-white placeholder:text-white/40 backdrop-blur-sm transition-all focus:outline-none focus:border-[#60A5FA] focus:bg-white/10 focus:ring-2 focus:ring-[#60A5FA]/50"
+                              placeholder="Enter organisation name"
                             />
                           </div>
 
                           {/* Department/Team */}
                           <div>
-                            <label className="block text-sm text-white/80 mb-2">
+                            <label className="block text-sm md:text-base font-medium text-white/90 mb-2.5">
                               Department/Team
                             </label>
                             <input
@@ -397,15 +429,15 @@ const ContactUs = () => {
                               name="departmentTeam"
                               value={formData.departmentTeam}
                               onChange={handleInputChange}
-                              className="w-full rounded-xl md:rounded-2xl border border-white/20 bg-white/5 px-4 md:px-6 py-3 md:py-4 text-sm md:text-base text-white placeholder:text-white/40 backdrop-blur-sm transition-all focus:outline-none focus:border-white/40 focus:bg-white/10 focus:ring-2 focus:ring-primary-blue-accent"
-                              placeholder="Department/Team"
+                              className="w-full rounded-xl md:rounded-2xl border border-white/20 bg-white/5 px-5 md:px-6 py-3.5 md:py-4 text-sm md:text-base text-white placeholder:text-white/40 backdrop-blur-sm transition-all focus:outline-none focus:border-[#60A5FA] focus:bg-white/10 focus:ring-2 focus:ring-[#60A5FA]/50"
+                              placeholder="Enter department/team"
                             />
                           </div>
 
                           {/* Email Address */}
                           <div>
-                            <label className="block text-sm text-white/80 mb-2">
-                              Email Address *
+                            <label className="block text-sm md:text-base font-medium text-white/90 mb-2.5">
+                              Email Address <span className="text-red-400">*</span>
                             </label>
                             <input
                               type="email"
@@ -416,16 +448,16 @@ const ContactUs = () => {
                                 errors.email || errors.emailFormat
                                   ? 'border-red-400'
                                   : 'border-white/20'
-                              } bg-white/5 px-4 md:px-6 py-3 md:py-4 text-sm md:text-base text-white placeholder:text-white/40 backdrop-blur-sm transition-all focus:outline-none focus:border-white/40 focus:bg-white/10 focus:ring-2 focus:ring-primary-blue-accent`}
-                              placeholder="Email Address"
+                              } bg-white/5 px-5 md:px-6 py-3.5 md:py-4 text-sm md:text-base text-white placeholder:text-white/40 backdrop-blur-sm transition-all focus:outline-none focus:border-[#60A5FA] focus:bg-white/10 focus:ring-2 focus:ring-[#60A5FA]/50`}
+                              placeholder="Enter your email address"
                             />
                             {errors.email && (
-                              <p className="text-red-400 text-sm mt-1">
+                              <p className="text-red-400 text-sm mt-2">
                                 {errors.email}
                               </p>
                             )}
                             {errors.emailFormat && (
-                              <p className="text-red-400 text-sm mt-1">
+                              <p className="text-red-400 text-sm mt-2">
                                 {errors.emailFormat}
                               </p>
                             )}
@@ -433,8 +465,8 @@ const ContactUs = () => {
 
                           {/* Phone Number */}
                           <div>
-                            <label className="block text-sm text-white/80 mb-2">
-                              Phone Number *
+                            <label className="block text-sm md:text-base font-medium text-white/90 mb-2.5">
+                              Phone Number <span className="text-red-400">*</span>
                             </label>
                             <input
                               type="tel"
@@ -445,11 +477,11 @@ const ContactUs = () => {
                                 errors.phone
                                   ? 'border-red-400'
                                   : 'border-white/20'
-                              } bg-white/5 px-4 md:px-6 py-3 md:py-4 text-sm md:text-base text-white placeholder:text-white/40 backdrop-blur-sm transition-all focus:outline-none focus:border-white/40 focus:bg-white/10 focus:ring-2 focus:ring-primary-blue-accent`}
-                              placeholder="Phone Number"
+                              } bg-white/5 px-5 md:px-6 py-3.5 md:py-4 text-sm md:text-base text-white placeholder:text-white/40 backdrop-blur-sm transition-all focus:outline-none focus:border-[#60A5FA] focus:bg-white/10 focus:ring-2 focus:ring-[#60A5FA]/50`}
+                              placeholder="Enter your phone number"
                             />
                             {errors.phone && (
-                              <p className="text-red-400 text-sm mt-1">
+                              <p className="text-red-400 text-sm mt-2">
                                 {errors.phone}
                               </p>
                             )}
@@ -457,14 +489,14 @@ const ContactUs = () => {
 
                           {/* Preferred Method of Contact */}
                           <div className="md:col-span-2">
-                            <label className="block text-sm text-white/80 mb-2">
+                            <label className="block text-sm md:text-base font-medium text-white/90 mb-2.5">
                               Preferred Method of Contact
                             </label>
                             <select
                               name="preferredContact"
                               value={formData.preferredContact}
                               onChange={handleInputChange}
-                              className="w-full rounded-xl md:rounded-2xl border border-white/20 bg-white/5 px-4 md:px-6 py-3 md:py-4 text-sm md:text-base text-white backdrop-blur-sm transition-all focus:outline-none focus:border-white/40 focus:bg-white/10 focus:ring-2 focus:ring-primary-blue-accent"
+                              className="w-full rounded-xl md:rounded-2xl border border-white/20 bg-white/5 px-5 md:px-6 py-3.5 md:py-4 text-sm md:text-base text-white backdrop-blur-sm transition-all focus:outline-none focus:border-[#60A5FA] focus:bg-white/10 focus:ring-2 focus:ring-[#60A5FA]/50"
                             >
                               <option value="Email" className="bg-black">
                                 Email
@@ -481,10 +513,15 @@ const ContactUs = () => {
                       </div>
 
                       {/* What Are You Interested In? */}
-                      <div className="border-t border-white/10 pt-6 md:pt-8">
-                        <h2 className="text-xl md:text-2xl font-bold text-white mb-6">
-                          What Are You Interested In?
-                        </h2>
+                      <div className="border-t border-white/10 pt-8 md:pt-10">
+                        <div className="mb-6 md:mb-8">
+                          <h2 className="text-xl md:text-2xl lg:text-3xl font-bold text-white mb-2">
+                            What Are You Interested In?
+                          </h2>
+                          <p className="text-sm md:text-base text-white/70">
+                            Select the services or support you'd like to explore:
+                          </p>
+                        </div>
 
                         <div className="space-y-4">
                           {/* Not sure yet */}
@@ -651,15 +688,15 @@ const ContactUs = () => {
                           </div>
                         </div>
                         {errors.interests && (
-                          <p className="text-red-400 text-sm mt-2">
+                          <p className="text-red-400 text-sm mt-3">
                             {errors.interests}
                           </p>
                         )}
                       </div>
 
                       {/* Description */}
-                      <div className="border-t border-white/10 pt-6 md:pt-8">
-                        <label className="block text-sm md:text-base text-white/80 mb-2">
+                      <div className="border-t border-white/10 pt-8 md:pt-10">
+                        <label className="block text-sm md:text-base font-medium text-white/90 mb-2.5">
                           Please briefly describe what you're hoping to achieve
                           or the challenge you're exploring:
                         </label>
@@ -668,23 +705,38 @@ const ContactUs = () => {
                           value={formData.description}
                           onChange={handleInputChange}
                           rows={6}
-                          className="w-full rounded-xl md:rounded-2xl border border-white/20 bg-white/5 px-4 md:px-6 py-3 md:py-4 text-sm md:text-base text-white placeholder:text-white/40 backdrop-blur-sm transition-all focus:outline-none focus:border-white/40 focus:bg-white/10 focus:ring-2 focus:ring-primary-blue-accent resize-none"
+                          className="w-full rounded-xl md:rounded-2xl border border-white/20 bg-white/5 px-5 md:px-6 py-3.5 md:py-4 text-sm md:text-base text-white placeholder:text-white/40 backdrop-blur-sm transition-all focus:outline-none focus:border-[#60A5FA] focus:bg-white/10 focus:ring-2 focus:ring-[#60A5FA]/50 resize-none"
                           placeholder="Describe your goals or challenges..."
                         />
                       </div>
 
                       {/* Submit Button */}
-                      <div className="flex justify-center pt-4 md:pt-6">
+                      <div className="flex justify-center pt-6 md:pt-8">
                         <button
                           type="submit"
-                          className="rounded-xl px-8 md:px-12 py-3 md:py-4 text-base md:text-lg font-semibold text-white shadow-xl transition-all hover:scale-105 active:scale-95"
+                          className="group relative rounded-xl px-10 md:px-14 py-4 md:py-5 text-base md:text-lg font-semibold text-white shadow-xl transition-all hover:scale-105 active:scale-95 min-w-[200px]"
                           style={{
                             background:
                               'linear-gradient(135deg, #60A5FA, #9333EA)',
                             boxShadow: '0 8px 32px rgba(96, 165, 250, 0.4)',
                           }}
                         >
-                          Submit Form →
+                          <span className="flex items-center justify-center gap-2">
+                            Submit Form
+                            <svg
+                              className="w-5 h-5 transition-transform duration-200 group-hover:translate-x-1"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M13 7l5 5m0 0l-5 5m5-5H6"
+                              />
+                            </svg>
+                          </span>
                         </button>
                       </div>
                     </form>

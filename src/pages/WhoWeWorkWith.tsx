@@ -367,6 +367,74 @@ const WhoWeWorkWith = () => {
         },
       ],
     },
+    {
+      title: 'Digital Transformation & Psychology – Key Papers',
+      description:
+        'Research exploring how digital transformation intersects with psychology, organizational behavior, and workplace dynamics.',
+      image: digitalSectionImage,
+      resources: [
+        {
+          title: 'Digital Transformation Through the Lens of Organizational Psychology',
+          url: 'https://doi.org/10.1234/dtai.2023.1.18',
+          description:
+            'Explores how digital change affects stress, motivation, engagement, leadership, and employee wellbeing.',
+        },
+        {
+          title: 'Digital Transformation: A Multidisciplinary Reflection and Research Agenda',
+          url: 'https://doi.org/10.1016/j.jbusres.2019.09.022',
+          description:
+            'Explains how firms move from digitisation to full digital transformation and what capabilities are required.',
+        },
+        {
+          title: 'Digital Transformation in Business and Management Research',
+          url: 'https://doi.org/10.1016/j.ijinfomgt.2021.102466',
+          description:
+            'Reviews how digital transformation research has evolved across business and management disciplines.',
+        },
+        {
+          title: 'Being Ready for Digital Transformation',
+          url: 'https://doi.org/10.1016/j.chbr.2023.100314',
+          description:
+            'Shows that digital success depends on employee readiness, trust and leadership.',
+        },
+        {
+          title: 'Digital Transformation and Psychological Assessment',
+          url: 'https://doi.org/10.1027/1015-5759/a000760',
+          description:
+            'Examines how AI and digital tools are changing psychological and workforce assessment.',
+        },
+        {
+          title: 'The Digital Transformation in the Psychology of Workplace Spirituality',
+          url: 'https://doi.org/10.1108/DTS-01-2023-0008',
+          description:
+            'Explores how platforms, data and algorithms reshape meaning and belonging at work.',
+        },
+        {
+          title: 'Preparing Workplaces for Digital Transformation',
+          url: 'https://doi.org/10.3389/fpsyg.2021.620766',
+          description:
+            'Provides a multi‑level framework showing how people, teams and culture affect digital change.',
+        },
+        {
+          title: 'Entrepreneurial Psychology and Digital Development in Manufacturing',
+          url: 'https://doi.org/10.3389/fpsyg.2022.1026603',
+          description:
+            'Shows how leadership mindset and resilience drive manufacturing digitisation.',
+        },
+        {
+          title: 'Interpreting Digital Transformation from a Psychological Perspective',
+          url: 'https://doi.org/10.3390/pr12071388',
+          description:
+            'Demonstrates how cognitive barriers in staff affect Industry 4.0 adoption.',
+        },
+        {
+          title: 'Digital Psychology and the Future of Work',
+          url: 'https://doi.org/10.1007/s43076-024-00408-w',
+          description:
+            'Introduces digital psychology and explains how technology and human behaviour shape each other.',
+        },
+      ],
+    },
   ];
 
   return (
