@@ -75,9 +75,6 @@ const InsightEngineCard: React.FC<InsightEngineCardProps> = ({
 
             {/* Title */}
             <div className="mb-3 md:mb-4 flex-shrink-0">
-              <span className="text-xs md:text-sm font-medium text-white/60 uppercase tracking-wider block">
-                Insight Engine {number}
-              </span>
               <h3 className="mt-2 md:mt-3 text-lg md:text-xl lg:text-2xl xl:text-3xl font-bold text-white leading-tight">
                 {title}
               </h3>
