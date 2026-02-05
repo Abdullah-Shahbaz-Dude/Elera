@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import ProtectedRoute from './components/ProtectedRoute';
 import Navbar from './components/Navbar/Navbar';
 import ScrollToTop from './components/ScrollToTop';
 import Home from './pages/Home';
@@ -10,21 +11,24 @@ import PsychologyBasedTrainingAndMentoring from './pages/PsychologyBasedTraining
 import WhoWeAre from './pages/WhoWeAre';
 import WhoWeWorkWith from './pages/WhoWeWorkWith';
 import ContactUs from './pages/ContactUs';
-import Dashboard from './pages/Dashboard';
+import DashboardLayout from './dashboard/DashboardLayout';
+import Dashboard from './dashboard/pages/Dashboard';
+import ManagerReport from './dashboard/pages/ManagerReport';
+import BrillianceReport from './dashboard/pages/BrillianceReport';
 import RevealHiddenBrillianceSurvey from './pages/RevealHiddenBrillianceSurvey';
 import MindSync from './pages/MindSync';
 import MindSyncSurvey from './pages/MindSyncSurvey';
 import MindSyncModuleResults from './pages/MindSyncModuleResults';
-import ManagerReport from './dashboard/pages/ManagerReport';
-import BrillianceReport from './dashboard/pages/BrillianceReport';
 import RevealHiddenBrilliance from './pages/our-ideas/RevealHiddenBrilliance';
 import MindSyncIdea from './pages/our-ideas/MindSync';
 import DigitalBiasImpactAssessment from './pages/our-ideas/DigitalBiasImpactAssessment';
+import Login from './components/Login';
+import Signup from './components/Signup';
 import { VideoProvider } from './contexts/VideoContext';
 
 function AppContent() {
   const location = useLocation();
-  const isDashboard = location.pathname.startsWith('/dashboard') || location.pathname.startsWith('/survey');
+  const isDashboard = location.pathname.startsWith('/dashboard') || location.pathname.startsWith('/survey') || location.pathname === '/login' || location.pathname === '/signup';
 
   return (
     <div className="min-h-screen">
@@ -57,15 +61,20 @@ function AppContent() {
             <Route path="/who-we-are" element={<WhoWeAre />} />
             <Route path="/research-and-education" element={<WhoWeWorkWith />} />
             <Route path="/contact-us" element={<ContactUs />} />
-            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
             <Route
-              path="/dashboard/manager-report"
-              element={<ManagerReport />}
-            />
-            <Route
-              path="/dashboard/brilliance-report"
-              element={<BrillianceReport />}
-            />
+              path="/dashboard"
+              element={
+                <ProtectedRoute>
+                  <DashboardLayout />
+                </ProtectedRoute>
+              }
+            >
+              <Route index element={<Dashboard />} />
+              <Route path="manager-report" element={<ManagerReport />} />
+              <Route path="brilliance-report" element={<BrillianceReport />} />
+            </Route>
             <Route
               path="/survey/reveal-hidden-brilliance"
               element={<RevealHiddenBrillianceSurvey />}

@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { useContext } from 'react';
 import {
   logoImage,
   shutterstock1330833800,
@@ -8,9 +9,11 @@ import {
   shutterstock726121441,
 } from '@/assets/images';
 import InsightEngineCard from '@/components/InsightEngineCard/InsightEngineCard';
+import { AuthContext } from '@/contexts/AuthContext';
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
+  const auth = useContext(AuthContext);
 
   // Icon components for each Insight Engine
   const LightbulbIcon = () => (
@@ -184,8 +187,8 @@ const Dashboard: React.FC = () => {
   };
 
   const handleLogout = () => {
-    // TODO: Implement logout functionality
-    navigate('/');
+    auth?.logout();
+    navigate('/login', { replace: true });
   };
 
   return (
