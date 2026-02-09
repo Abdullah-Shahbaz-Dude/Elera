@@ -139,6 +139,21 @@ const Navbar: React.FC = () => {
                   {/* Shimmer effect on hover */}
                   <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-700 ease-in-out group-hover:translate-x-full" />
                 </Link>
+                <Link
+                  to="/login"
+                  className={`group relative overflow-hidden rounded-full px-4 md:px-6 py-2 md:py-2.5 text-xs md:text-base font-semibold transition-all duration-300 ease-out ${
+                    isActive('/login')
+                      ? isSecondVideo
+                        ? 'bg-gradient-blue text-white shadow-lg shadow-primary-blue-end/50'
+                        : 'bg-gradient-blue text-white shadow-lg shadow-primary-blue-accent/50'
+                      : isSecondVideo
+                      ? 'border-2 border-primary-blue-end bg-transparent text-primary-blue-end hover:border-primary-blue-accent hover:bg-gradient-blue hover:text-white hover:shadow-lg hover:shadow-primary-blue-end/50'
+                      : 'border-2 border-primary-blue-accent bg-transparent text-primary-blue-accent hover:bg-gradient-blue hover:text-white hover:shadow-lg hover:shadow-primary-blue-accent/50'
+                  }`}
+                >
+                  <span className="relative z-10">Login</span>
+                  <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-700 ease-in-out group-hover:translate-x-full" />
+                </Link>
               </div>
 
               {/* Mobile Menu Button */}
@@ -195,6 +210,24 @@ const Navbar: React.FC = () => {
                     )}
                   </Link>
                 ))}
+                <Link
+                  to="/login"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className={`group relative block rounded-lg px-4 py-2.5 md:py-3 text-sm md:text-base font-medium transition-all duration-300 ease-out ${
+                    isActive('/login')
+                      ? isSecondVideo
+                        ? 'text-black bg-gradient-to-r from-primary-blue-start/20 to-primary-blue-end/20'
+                        : 'text-white bg-gradient-to-r from-primary-blue-start/20 to-primary-blue-end/20'
+                      : isSecondVideo
+                      ? 'text-black/80 hover:text-black hover:bg-gradient-to-r hover:from-primary-blue-start/10 hover:to-primary-blue-end/10'
+                      : 'text-white/80 hover:text-white hover:bg-gradient-to-r hover:from-primary-blue-start/10 hover:to-primary-blue-end/10'
+                  }`}
+                >
+                  <span className="relative z-10">Login</span>
+                  {isActive('/login') && (
+                    <span className="absolute left-0 top-0 h-full w-1 rounded-r-full bg-gradient-blue" />
+                  )}
+                </Link>
               </div>
             )}
           </div>
