@@ -2,7 +2,12 @@ import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ModuleFiltersSidebar from '@/dashboard/components/ModuleFiltersSidebar';
 
-type Category = 'Data Science' | 'Leadership' | 'Engineering' | 'UX Design' | 'Product Mgmt';
+type Category =
+  | 'Data Science'
+  | 'Leadership'
+  | 'Engineering'
+  | 'UX Design'
+  | 'Product Mgmt';
 type Level = 'Foundational' | 'Intermediate' | 'Advanced' | 'Expert';
 
 interface LibraryModule {
@@ -24,11 +29,16 @@ const MODULES: LibraryModule[] = [
     title: 'Cognitive Bias in Data Science Architecture',
     category: 'Data Science',
     level: 'Intermediate',
-    instructor: { name: 'Dr. Sarah Montgomery', avatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBYU57HKLRmf5WdwmsopikqI402D07j-i_BU3JlsYc9AvITUj8HGAR0lu6LLNRUvSFs5KuODCDeuzN6PabkM_zOPGaJYu1ajsNp7Fjr85cbXQZeBee1RBI-5Ifc_qVCbLigk3kfED27RFvr-cAu6Y2QjPgdSi6XEXAM-tHfluj7i8tSIkoU0LenK1HBOtHuFHm-EUVtFkMy9t17ySQLm8-C0UChtYOo0IzT-fU9TTheajqksb7M2HvSjPt6bqpHwACZW0SZv2d7RwJ2' },
+    instructor: {
+      name: 'Dr. Sarah Montgomery',
+      avatar:
+        'https://lh3.googleusercontent.com/aida-public/AB6AXuBYU57HKLRmf5WdwmsopikqI402D07j-i_BU3JlsYc9AvITUj8HGAR0lu6LLNRUvSFs5KuODCDeuzN6PabkM_zOPGaJYu1ajsNp7Fjr85cbXQZeBee1RBI-5Ifc_qVCbLigk3kfED27RFvr-cAu6Y2QjPgdSi6XEXAM-tHfluj7i8tSIkoU0LenK1HBOtHuFHm-EUVtFkMy9t17ySQLm8-C0UChtYOo0IzT-fU9TTheajqksb7M2HvSjPt6bqpHwACZW0SZv2d7RwJ2',
+    },
     duration: '2h 45m',
     progress: 72,
     lastAccessed: '2 hours ago',
-    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBVSIptsR6tyP5SNmJmbayfwG--bPgaX2o-6DiAe7gDZtGqRR6b2zAMyUSmYVEE4Y1ScapuYCZ_Bki0iVFM_Ml-Hpt8ntvSiKrDXGMqCmjkYExpXYPzwLcUudrWNRDYocY8O_uWOiH7PTBnoSaEsXXekdyLH4w_SYTIFzF5l023iG_K8AOEP8QdBBT65NaGVTum_U6mj3NyT8YvTxgjqmmXwAMo-E7DDVllem_A2wMBLDJZAiomr-Pj9HWKdjcn-in5Ej8Ab97ruD8j',
+    image:
+      'https://lh3.googleusercontent.com/aida-public/AB6AXuBVSIptsR6tyP5SNmJmbayfwG--bPgaX2o-6DiAe7gDZtGqRR6b2zAMyUSmYVEE4Y1ScapuYCZ_Bki0iVFM_Ml-Hpt8ntvSiKrDXGMqCmjkYExpXYPzwLcUudrWNRDYocY8O_uWOiH7PTBnoSaEsXXekdyLH4w_SYTIFzF5l023iG_K8AOEP8QdBBT65NaGVTum_U6mj3NyT8YvTxgjqmmXwAMo-E7DDVllem_A2wMBLDJZAiomr-Pj9HWKdjcn-in5Ej8Ab97ruD8j',
   },
   {
     id: '2',
@@ -39,14 +49,19 @@ const MODULES: LibraryModule[] = [
     duration: '1h 12m',
     progress: 15,
     lastAccessed: 'Yesterday',
-    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuA8Xor0hLRSs-ZBsXdlrfgRCC-MLz9TYUhAMUorMQ_TjBYSR-CjlChb-KdtU3QbCLz9twXWIqlSYOCWFrdl_86Q1AvKtsEvXZ1fnpKxrbgIWt9NMbCQVYgec6vd1MdTvfDdvrPa-9tUAhMpRimwBHqlSS55EI3edpyibXracr1eK5boIye_U5Lz_y5DERcEzO6Bn1HU8XQd46JpWI7cURc7kDXRBpXpGkNpqLyo3N0uIwqfJnnrE5J1kR5dH1UEYKiwZWHMLDhcUwQo',
+    image:
+      'https://lh3.googleusercontent.com/aida-public/AB6AXuA8Xor0hLRSs-ZBsXdlrfgRCC-MLz9TYUhAMUorMQ_TjBYSR-CjlChb-KdtU3QbCLz9twXWIqlSYOCWFrdl_86Q1AvKtsEvXZ1fnpKxrbgIWt9NMbCQVYgec6vd1MdTvfDdvrPa-9tUAhMpRimwBHqlSS55EI3edpyibXracr1eK5boIye_U5Lz_y5DERcEzO6Bn1HU8XQd46JpWI7cURc7kDXRBpXpGkNpqLyo3N0uIwqfJnnrE5J1kR5dH1UEYKiwZWHMLDhcUwQo',
   },
   {
     id: '3',
     title: 'Microservices Pattern Implementation',
     category: 'Engineering',
     level: 'Advanced',
-    instructor: { name: 'Jordan Smith', avatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCnoIqIET21xTSpPj6ExMQ_7ttadHVHYjkD5ZY19Ge91HvO_LmIB95ojC7RqtMN9WEXkb7I1zoCY7KZZKGYWYFc1ZkK8vzDKyBtdDA-pMxzcywtFpk98k7JNdVeFaXjwNp_Fm2Va0kfgURE7kSadVSilm6SsC782MhK-Q3WwuqxFE1CAGGDo9KhpjpNTLA7EWtyw2JOOUKmZ3AcqraV-HZXgZaNpzgDEhDrAgCCjTWUtLMyi3xHIqU6KRsr0qh9CTMoklDoNaDkMF68' },
+    instructor: {
+      name: 'Jordan Smith',
+      avatar:
+        'https://lh3.googleusercontent.com/aida-public/AB6AXuCnoIqIET21xTSpPj6ExMQ_7ttadHVHYjkD5ZY19Ge91HvO_LmIB95ojC7RqtMN9WEXkb7I1zoCY7KZZKGYWYFc1ZkK8vzDKyBtdDA-pMxzcywtFpk98k7JNdVeFaXjwNp_Fm2Va0kfgURE7kSadVSilm6SsC782MhK-Q3WwuqxFE1CAGGDo9KhpjpNTLA7EWtyw2JOOUKmZ3AcqraV-HZXgZaNpzgDEhDrAgCCjTWUtLMyi3xHIqU6KRsr0qh9CTMoklDoNaDkMF68',
+    },
     duration: '4h 20m',
     progress: 'Done',
     lastAccessed: 'Oct 12, 2023',
@@ -61,7 +76,8 @@ const MODULES: LibraryModule[] = [
     duration: '3h 50m',
     progress: 45,
     lastAccessed: '3 days ago',
-    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBFzyE5FKHpfR57kzIS6oW-G4bXkIfdc1hKC3QCn64muaNmBUN72--ivR3tgQuNBPN09FV1xiuN2znGmqAQ7qVUtx9R2Td9O5CkZtX-ak4iDUW30rTolD5h2CZH_Ih9v2CNsUO-Homk1vS6P6J4LcBK02ekIfFdcMgkN6B7CSEYjGbLGi5QkBz_8IPsooEP_2gq2_mqxjYEYSilV6VV2huVkRLmW2W3SM-tJR19Pb_tYUA8FAhE6RcBHp2YyrzVU8Q2qSI6je2jQb7E',
+    image:
+      'https://lh3.googleusercontent.com/aida-public/AB6AXuBFzyE5FKHpfR57kzIS6oW-G4bXkIfdc1hKC3QCn64muaNmBUN72--ivR3tgQuNBPN09FV1xiuN2znGmqAQ7qVUtx9R2Td9O5CkZtX-ak4iDUW30rTolD5h2CZH_Ih9v2CNsUO-Homk1vS6P6J4LcBK02ekIfFdcMgkN6B7CSEYjGbLGi5QkBz_8IPsooEP_2gq2_mqxjYEYSilV6VV2huVkRLmW2W3SM-tJR19Pb_tYUA8FAhE6RcBHp2YyrzVU8Q2qSI6je2jQb7E',
   },
   {
     id: '5',
@@ -116,23 +132,41 @@ export default function ModuleLibrary() {
         m.title.toLowerCase().includes(search.toLowerCase()) ||
         m.instructor.name.toLowerCase().includes(search.toLowerCase());
       const matchCategory = !category || m.category === category;
-      const anyStatusChecked = statusInProgress || statusCompleted || statusNotStarted;
+      const anyStatusChecked =
+        statusInProgress || statusCompleted || statusNotStarted;
       const matchStatus =
         !anyStatusChecked ||
-        (statusInProgress && m.progress > 0 && m.progress !== 'Done') ||
+        (statusInProgress &&
+          typeof m.progress === 'number' &&
+          m.progress > 0) ||
+        (statusInProgress && m.progress === 'Done') ||
+        m.progress !== 'Done' ||
         (statusCompleted && m.progress === 'Done') ||
-        (statusNotStarted && m.progress === 0);
-      const matchDifficulty = !difficulty || (difficulty === 'Lvl 1' && m.level === 'Foundational') ||
+        (statusNotStarted &&
+          typeof m.progress === 'number' &&
+          m.progress === 0);
+      const matchDifficulty =
+        !difficulty ||
+        (difficulty === 'Lvl 1' && m.level === 'Foundational') ||
         (difficulty === 'Lvl 2' && m.level === 'Intermediate') ||
-        (difficulty === 'Lvl 3' && (m.level === 'Advanced' || m.level === 'Expert'));
+        (difficulty === 'Lvl 3' &&
+          (m.level === 'Advanced' || m.level === 'Expert'));
       return matchSearch && matchCategory && matchStatus && matchDifficulty;
     });
-  }, [search, category, statusInProgress, statusCompleted, statusNotStarted, difficulty]);
+  }, [
+    search,
+    category,
+    statusInProgress,
+    statusCompleted,
+    statusNotStarted,
+    difficulty,
+  ]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const currentPage = Math.min(page, totalPages);
   const paginated = useMemo(
-    () => filtered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE),
+    () =>
+      filtered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE),
     [filtered, currentPage]
   );
 
@@ -140,9 +174,13 @@ export default function ModuleLibrary() {
     <div className="flex flex-col h-full overflow-hidden text-slate-100">
       <header className="h-20 flex items-center justify-between px-8 z-20 border-b border-white/5 glass-panel shrink-0">
         <div className="flex items-center gap-8">
-          <h1 className="text-xl font-bold tracking-tight text-white">Module Library</h1>
+          <h1 className="text-xl font-bold tracking-tight text-white">
+            Module Library
+          </h1>
           <div className="flex items-center gap-4 bg-white/5 border border-white/10 px-4 py-2 rounded-full w-96 focus-within:border-indigo-500/50 transition-all">
-            <span className="material-symbols-outlined text-slate-400 text-xl">search</span>
+            <span className="material-symbols-outlined text-slate-400 text-xl">
+              search
+            </span>
             <input
               type="text"
               placeholder="Filter modules by name, instructor, or tag..."
@@ -164,7 +202,9 @@ export default function ModuleLibrary() {
               }`}
               aria-label={filtersOpen ? 'Hide filters' : 'Show filters'}
             >
-              <span className="material-symbols-outlined text-lg">filter_list</span>
+              <span className="material-symbols-outlined text-lg">
+                filter_list
+              </span>
               Filters
             </button>
             <button
@@ -178,7 +218,9 @@ export default function ModuleLibrary() {
               type="button"
               className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-indigo-600/20 border border-indigo-500/30 text-indigo-400 text-sm"
             >
-              <span className="material-symbols-outlined text-lg">view_list</span>
+              <span className="material-symbols-outlined text-lg">
+                view_list
+              </span>
               High-Density
             </button>
           </div>
@@ -242,8 +284,13 @@ export default function ModuleLibrary() {
                     key={mod.id}
                     role="button"
                     tabIndex={0}
-                    onClick={() => navigate(`/dashboard/my-learning/modules/${mod.id}`)}
-                    onKeyDown={(e) => e.key === 'Enter' && navigate(`/dashboard/my-learning/modules/${mod.id}`)}
+                    onClick={() =>
+                      navigate(`/dashboard/my-learning/modules/${mod.id}`)
+                    }
+                    onKeyDown={(e) =>
+                      e.key === 'Enter' &&
+                      navigate(`/dashboard/my-learning/modules/${mod.id}`)
+                    }
                     className="module-row group transition-all cursor-pointer border-b border-white/5 last:border-0"
                   >
                     <td className="px-6 py-3.5">
@@ -264,7 +311,9 @@ export default function ModuleLibrary() {
                               }`}
                             >
                               <span className="material-symbols-outlined text-white/50 text-sm">
-                                {mod.imagePlaceholder === 'code' ? 'code' : 'terminal'}
+                                {mod.imagePlaceholder === 'code'
+                                  ? 'code'
+                                  : 'terminal'}
                               </span>
                             </div>
                           )}
@@ -308,11 +357,15 @@ export default function ModuleLibrary() {
                             </span>
                           </div>
                         )}
-                        <span className="text-xs text-slate-300">{mod.instructor.name}</span>
+                        <span className="text-xs text-slate-300">
+                          {mod.instructor.name}
+                        </span>
                       </div>
                     </td>
                     <td className="px-6 py-3.5">
-                      <span className="text-xs text-slate-400">{mod.duration}</span>
+                      <span className="text-xs text-slate-400">
+                        {mod.duration}
+                      </span>
                     </td>
                     <td className="px-6 py-3.5">
                       <div className="w-32 flex items-center gap-3">
@@ -327,7 +380,9 @@ export default function ModuleLibrary() {
                             }`}
                             style={{
                               width:
-                                mod.progress === 'Done' ? '100%' : `${mod.progress}%`,
+                                mod.progress === 'Done'
+                                  ? '100%'
+                                  : `${mod.progress}%`,
                             }}
                           />
                         </div>
@@ -338,14 +393,19 @@ export default function ModuleLibrary() {
                               : 'text-slate-300'
                           }`}
                         >
-                          {mod.progress === 'Done' ? 'Done' : `${mod.progress}%`}
+                          {mod.progress === 'Done'
+                            ? 'Done'
+                            : `${mod.progress}%`}
                         </span>
                       </div>
                     </td>
                     <td className="px-6 py-3.5 text-xs text-slate-400">
                       {mod.lastAccessed}
                     </td>
-                    <td className="px-6 py-3.5 text-right" onClick={(e) => e.stopPropagation()}>
+                    <td
+                      className="px-6 py-3.5 text-right"
+                      onClick={(e) => e.stopPropagation()}
+                    >
                       <button
                         type="button"
                         className="opacity-0 group-hover:opacity-100 transition-opacity p-1.5 hover:bg-white/10 rounded-lg"
@@ -369,7 +429,11 @@ export default function ModuleLibrary() {
                 {(currentPage - 1) * PAGE_SIZE + 1}-
                 {Math.min(currentPage * PAGE_SIZE, filtered.length)}
               </span>{' '}
-              of <span className="text-slate-300 font-medium">{filtered.length}</span> modules
+              of{' '}
+              <span className="text-slate-300 font-medium">
+                {filtered.length}
+              </span>{' '}
+              modules
             </p>
             <div className="flex items-center gap-2">
               <button
@@ -378,7 +442,9 @@ export default function ModuleLibrary() {
                 disabled={currentPage <= 1}
                 className="p-2 rounded-lg border border-white/5 text-slate-500 hover:text-white hover:bg-white/5 disabled:opacity-50 transition-colors"
               >
-                <span className="material-symbols-outlined text-lg">chevron_left</span>
+                <span className="material-symbols-outlined text-lg">
+                  chevron_left
+                </span>
               </button>
               {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
                 <button
@@ -400,7 +466,9 @@ export default function ModuleLibrary() {
                 disabled={currentPage >= totalPages}
                 className="p-2 rounded-lg border border-white/5 text-slate-300 hover:text-white hover:bg-white/5 disabled:opacity-50 transition-colors"
               >
-                <span className="material-symbols-outlined text-lg">chevron_right</span>
+                <span className="material-symbols-outlined text-lg">
+                  chevron_right
+                </span>
               </button>
             </div>
           </div>
