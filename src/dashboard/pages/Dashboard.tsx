@@ -16,8 +16,12 @@ export default function Dashboard() {
               Welcome back, {displayName}
             </h2>
             <div className="flex items-center space-x-2 text-slate-500">
-              <span className="material-symbols-outlined text-sm">auto_awesome</span>
-              <p className="text-sm">You&apos;ve completed 75% of your weekly learning goal.</p>
+              <span className="material-symbols-outlined text-sm">
+                auto_awesome
+              </span>
+              <p className="text-sm">
+                You&apos;ve completed 75% of your weekly learning goal.
+              </p>
             </div>
           </div>
           <Link
@@ -44,7 +48,9 @@ export default function Dashboard() {
                     </p>
                   </div>
                   <div className="text-right">
-                    <span className="text-3xl font-bold text-accent-blue">72%</span>
+                    <span className="text-3xl font-bold text-accent-blue">
+                      72%
+                    </span>
                     <p className="text-xs text-slate-500 uppercase font-bold tracking-widest">
                       Progress
                     </p>
@@ -61,21 +67,27 @@ export default function Dashboard() {
                     <span className="material-symbols-outlined text-accent-purple mb-2">
                       menu_book
                     </span>
-                    <h4 className="text-sm font-semibold text-white">12 Modules</h4>
+                    <h4 className="text-sm font-semibold text-white">
+                      12 Modules
+                    </h4>
                     <p className="text-xs text-slate-500">8 Completed</p>
                   </div>
                   <div className="bg-white/5 p-4 rounded-xl border border-white/5">
                     <span className="material-symbols-outlined text-accent-blue mb-2">
                       assignment
                     </span>
-                    <h4 className="text-sm font-semibold text-white">4 Quizzes</h4>
+                    <h4 className="text-sm font-semibold text-white">
+                      4 Quizzes
+                    </h4>
                     <p className="text-xs text-slate-500">3 Mastered</p>
                   </div>
                   <div className="bg-white/5 p-4 rounded-xl border border-white/5">
                     <span className="material-symbols-outlined text-emerald-400 mb-2">
                       verified
                     </span>
-                    <h4 className="text-sm font-semibold text-white">Certification</h4>
+                    <h4 className="text-sm font-semibold text-white">
+                      Certification
+                    </h4>
                     <p className="text-xs text-slate-500">Pending final exam</p>
                   </div>
                 </div>
@@ -85,21 +97,27 @@ export default function Dashboard() {
             {/* Featured Training */}
             <section>
               <div className="flex items-center justify-between mb-6">
-                <h3 className="text-xl font-bold text-white">Featured Training</h3>
+                <h3 className="text-xl font-bold text-white">
+                  Featured Training
+                </h3>
                 <div className="flex space-x-2">
                   <button
                     type="button"
                     className="p-2 rounded-full border border-white/10 hover:bg-white/5"
                     aria-label="Previous"
                   >
-                    <span className="material-symbols-outlined">chevron_left</span>
+                    <span className="material-symbols-outlined">
+                      chevron_left
+                    </span>
                   </button>
                   <button
                     type="button"
                     className="p-2 rounded-full border border-white/10 hover:bg-white/5"
                     aria-label="Next"
                   >
-                    <span className="material-symbols-outlined">chevron_right</span>
+                    <span className="material-symbols-outlined">
+                      chevron_right
+                    </span>
                   </button>
                 </div>
               </div>
@@ -118,11 +136,17 @@ export default function Dashboard() {
                     <div className="bg-primary/20 text-primary text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded w-fit mb-2">
                       New Course
                     </div>
-                    <h4 className="text-lg font-bold text-white">Cyber Resilience in AI</h4>
+                    <h4 className="text-lg font-bold text-white">
+                      Cyber Resilience in AI
+                    </h4>
                     <div className="flex items-center justify-between mt-4">
-                      <span className="text-sm text-slate-400">4.5 hours • Advanced</span>
+                      <span className="text-sm text-slate-400">
+                        4.5 hours • Advanced
+                      </span>
                       <span className="h-10 w-10 bg-white/10 group-hover:bg-white/20 rounded-full flex items-center justify-center transition-colors">
-                        <span className="material-symbols-outlined text-sm">arrow_forward</span>
+                        <span className="material-symbols-outlined text-sm">
+                          arrow_forward
+                        </span>
                       </span>
                     </div>
                   </div>
@@ -141,11 +165,17 @@ export default function Dashboard() {
                     <div className="bg-accent-purple/20 text-accent-purple text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded w-fit mb-2">
                       Popular
                     </div>
-                    <h4 className="text-lg font-bold text-white">Collaborative Intelligence</h4>
+                    <h4 className="text-lg font-bold text-white">
+                      Collaborative Intelligence
+                    </h4>
                     <div className="flex items-center justify-between mt-4">
-                      <span className="text-sm text-slate-400">2.5 hours • Intermediate</span>
+                      <span className="text-sm text-slate-400">
+                        2.5 hours • Intermediate
+                      </span>
                       <span className="h-10 w-10 bg-white/10 group-hover:bg-white/20 rounded-full flex items-center justify-center transition-colors">
-                        <span className="material-symbols-outlined text-sm">arrow_forward</span>
+                        <span className="material-symbols-outlined text-sm">
+                          arrow_forward
+                        </span>
                       </span>
                     </div>
                   </div>
@@ -155,7 +185,9 @@ export default function Dashboard() {
 
             {/* Upcoming in your Journey */}
             <section>
-              <h3 className="text-xl font-bold mb-6 text-white">Upcoming in your Journey</h3>
+              <h3 className="text-xl font-bold mb-6 text-white">
+                Upcoming in your Journey
+              </h3>
               <div className="space-y-4">
                 <Link
                   to="/dashboard/my-learning/modules/1"
@@ -163,13 +195,17 @@ export default function Dashboard() {
                 >
                   <div className="flex items-center space-x-4">
                     <div className="h-12 w-12 rounded-xl bg-white/5 flex items-center justify-center text-accent-blue">
-                      <span className="material-symbols-outlined">psychology</span>
+                      <span className="material-symbols-outlined">
+                        psychology
+                      </span>
                     </div>
                     <div>
                       <h4 className="font-semibold text-slate-200">
                         Neural Network Basics for Leaders
                       </h4>
-                      <p className="text-xs text-slate-500">Scheduled for Tomorrow, 10:00 AM</p>
+                      <p className="text-xs text-slate-500">
+                        Scheduled for Tomorrow, 10:00 AM
+                      </p>
                     </div>
                   </div>
                   <div className="flex items-center space-x-4">
@@ -184,15 +220,23 @@ export default function Dashboard() {
                 <div className="bg-surface-dark border border-white/5 rounded-2xl p-5 flex items-center justify-between hover:bg-white/5 transition-colors cursor-pointer group">
                   <div className="flex items-center space-x-4">
                     <div className="h-12 w-12 rounded-xl bg-white/5 flex items-center justify-center text-accent-purple">
-                      <span className="material-symbols-outlined">insights</span>
+                      <span className="material-symbols-outlined">
+                        insights
+                      </span>
                     </div>
                     <div>
-                      <h4 className="font-semibold text-slate-200">Ethical AI Frameworks</h4>
-                      <p className="text-xs text-slate-500">Unlocks on Friday</p>
+                      <h4 className="font-semibold text-slate-200">
+                        Ethical AI Frameworks
+                      </h4>
+                      <p className="text-xs text-slate-500">
+                        Unlocks on Friday
+                      </p>
                     </div>
                   </div>
                   <div className="flex items-center space-x-4">
-                    <span className="material-symbols-outlined text-slate-600">lock</span>
+                    <span className="material-symbols-outlined text-slate-600">
+                      lock
+                    </span>
                   </div>
                 </div>
                 <div className="bg-surface-dark border border-white/5 rounded-2xl p-5 flex items-center justify-between hover:bg-white/5 transition-colors cursor-pointer group">
@@ -201,8 +245,12 @@ export default function Dashboard() {
                       <span className="material-symbols-outlined">hub</span>
                     </div>
                     <div>
-                      <h4 className="font-semibold text-slate-200">Systemic Thinking Workshop</h4>
-                      <p className="text-xs text-slate-500">Group session • July 12th</p>
+                      <h4 className="font-semibold text-slate-200">
+                        Systemic Thinking Workshop
+                      </h4>
+                      <p className="text-xs text-slate-500">
+                        Group session • July 12th
+                      </p>
                     </div>
                   </div>
                   <div className="flex items-center space-x-4 text-slate-500 group-hover:text-primary">
@@ -216,12 +264,16 @@ export default function Dashboard() {
           {/* Right sidebar */}
           <aside className="lg:col-span-4 space-y-8">
             <div className="bg-surface-dark border border-white/10 rounded-2xl p-6">
-              <h3 className="text-lg font-bold mb-6 text-white">Quick Performance</h3>
+              <h3 className="text-lg font-bold mb-6 text-white">
+                Quick Performance
+              </h3>
               <div className="space-y-6">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
                     <div className="h-10 w-10 rounded-full bg-blue-500/10 flex items-center justify-center">
-                      <span className="material-symbols-outlined text-blue-400">done_all</span>
+                      <span className="material-symbols-outlined text-blue-400">
+                        done_all
+                      </span>
                     </div>
                     <div>
                       <p className="text-2xl font-bold text-white">24</p>
@@ -231,14 +283,18 @@ export default function Dashboard() {
                     </div>
                   </div>
                   <div className="text-xs text-emerald-400 font-bold flex items-center">
-                    <span className="material-symbols-outlined text-xs mr-1">trending_up</span>
+                    <span className="material-symbols-outlined text-xs mr-1">
+                      trending_up
+                    </span>
                     +4
                   </div>
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
                     <div className="h-10 w-10 rounded-full bg-purple-500/10 flex items-center justify-center">
-                      <span className="material-symbols-outlined text-purple-400">timer</span>
+                      <span className="material-symbols-outlined text-purple-400">
+                        timer
+                      </span>
                     </div>
                     <div>
                       <p className="text-2xl font-bold text-white">18.5h</p>
@@ -252,7 +308,9 @@ export default function Dashboard() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
                     <div className="h-10 w-10 rounded-full bg-amber-500/10 flex items-center justify-center">
-                      <span className="material-symbols-outlined text-amber-400">military_tech</span>
+                      <span className="material-symbols-outlined text-amber-400">
+                        military_tech
+                      </span>
                     </div>
                     <div>
                       <p className="text-2xl font-bold text-white">92%</p>
@@ -261,7 +319,9 @@ export default function Dashboard() {
                       </p>
                     </div>
                   </div>
-                  <div className="text-xs text-emerald-400 font-bold">Top 5%</div>
+                  <div className="text-xs text-emerald-400 font-bold">
+                    Top 5%
+                  </div>
                 </div>
               </div>
               <div className="mt-8 pt-8 border-t border-white/5">
@@ -284,30 +344,10 @@ export default function Dashboard() {
               </div>
             </div>
 
-            <div className="bg-gradient-to-br from-primary to-accent-purple rounded-2xl p-6 text-white relative overflow-hidden">
-              <div className="relative z-10">
-                <h3 className="font-bold text-lg mb-2">Learning Streak</h3>
-                <p className="text-sm opacity-90 mb-4">
-                  You&apos;ve learned for 5 days straight! Keep it up to earn the &apos;Deep
-                  Diver&apos; badge.
-                </p>
-                <div className="flex space-x-2 items-center">
-                  <div className="h-2 flex-1 bg-white/20 rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-white rounded-full"
-                      style={{ width: '71%' }}
-                    />
-                  </div>
-                  <span className="text-xs font-bold whitespace-nowrap">5 / 7</span>
-                </div>
-              </div>
-              <span className="material-symbols-outlined absolute -right-4 -bottom-4 opacity-20 transform rotate-12 text-9xl">
-                workspace_premium
-              </span>
-            </div>
-
             <div className="bg-surface-dark border border-white/10 rounded-2xl p-6">
-              <h3 className="text-lg font-bold mb-6 text-white">Expert Mentors</h3>
+              <h3 className="text-lg font-bold mb-6 text-white">
+                Expert Mentors
+              </h3>
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
@@ -317,7 +357,9 @@ export default function Dashboard() {
                       src="https://lh3.googleusercontent.com/aida-public/AB6AXuDkvajZ-_8ti2aCujgeJSrXzxpoidYE0u2ILGuLHUTFXfgU8By8THHe4gpcrNIQpQsL2ouPD0VrpHfWcWw2GctjMGXthOTu6trBU8gdAPg7pRAJiNUwD_PF8GRt3ofvx6QlR5FhnreoHfOMfcMWwpXhZSTAWMhqHnTphDVhUMmFVRA7og1RCGWemf44cynNICdI_GWJV4DkgeFXDpEIq-_Kep8NHy5PpvSYGeszeC6EhXsih5_z3O74lLAM8XGrp5RzFN-xcIECZNk_"
                     />
                     <div>
-                      <h4 className="text-sm font-semibold text-white">Dr. Marcus Chen</h4>
+                      <h4 className="text-sm font-semibold text-white">
+                        Dr. Marcus Chen
+                      </h4>
                       <p className="text-xs text-slate-500">AI Specialist</p>
                     </div>
                   </div>
@@ -326,7 +368,9 @@ export default function Dashboard() {
                     className="p-2 text-primary hover:bg-primary/10 rounded-full transition-colors"
                     aria-label="Chat with Dr. Marcus Chen"
                   >
-                    <span className="material-symbols-outlined text-sm">chat</span>
+                    <span className="material-symbols-outlined text-sm">
+                      chat
+                    </span>
                   </button>
                 </div>
                 <div className="flex items-center justify-between">
@@ -337,8 +381,12 @@ export default function Dashboard() {
                       src="https://lh3.googleusercontent.com/aida-public/AB6AXuCAyrKKa64BVUghFhu-rlspH6aZym8yquJMEvUqUjIs2NgoJNLEwmKx57Y7xLa7a3Xvzi1lXZp_X49nkop4wuLb0Zwoxd7uLCX1hQZjvmce01HVbDKKsFSzV4xP37iH6W3mR9xrYburuZmTDZwNjxBhWr4nPHwBcWJ1Zt3w47eO2_5zoa0ll0eUcsUqbry815D3VyTJ1i_yjEDRUGNj3U8x8D6oJeLmspef48DYJNP21IwCJhQ0We6UYnv5YHGDW0JgW-ARvlLmhnub"
                     />
                     <div>
-                      <h4 className="text-sm font-semibold text-white">Elena Rodriguez</h4>
-                      <p className="text-xs text-slate-500">Behavioral Design</p>
+                      <h4 className="text-sm font-semibold text-white">
+                        Elena Rodriguez
+                      </h4>
+                      <p className="text-xs text-slate-500">
+                        Behavioral Design
+                      </p>
                     </div>
                   </div>
                   <button
@@ -346,7 +394,9 @@ export default function Dashboard() {
                     className="p-2 text-primary hover:bg-primary/10 rounded-full transition-colors"
                     aria-label="Chat with Elena Rodriguez"
                   >
-                    <span className="material-symbols-outlined text-sm">chat</span>
+                    <span className="material-symbols-outlined text-sm">
+                      chat
+                    </span>
                   </button>
                 </div>
               </div>

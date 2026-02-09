@@ -7,6 +7,8 @@ import {
 } from 'react-router-dom';
 import { useContext } from 'react';
 import { AuthContext } from '@/contexts/AuthContext';
+import logoImage from '@/assets/images/logo/logo.png';
+import logoFav from '@/assets/images/logo/logo-favicon-white.png';
 
 const isLessonViewRoute = (pathname: string) =>
   /^\/dashboard\/my-learning\/modules\/[^/]+\/lessons\/[^/]+$/.test(pathname);
@@ -45,25 +47,45 @@ export default function DashboardLayout() {
         } sidebar-glass flex flex-col h-full z-20 shrink-0 transition-[width] duration-200`}
       >
         <div
-          className={`flex items-center gap-3 ${
-            isLessonView ? 'justify-center p-4' : 'p-6'
+          className={`flex items-center ${
+            isLessonView ? 'justify-center p-4' : 'justify-center py-0 px-2'
           }`}
         >
-          <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center shrink-0">
-            <span className="material-symbols-outlined text-white text-2xl">
-              auto_awesome
-            </span>
-          </div>
-          {!isLessonView && (
-            <span className="text-xl font-bold tracking-tight text-white">
-              Elara
-            </span>
+          {(isLessonView ? logoFav : logoImage) ? (
+            <Link
+              to="/dashboard"
+              className={`flex items-center justify-center shrink-0 ${
+                isLessonView
+                  ? 'h-12 w-12'
+                  : 'w-full max-w-[15rem] h-auto min-h-0'
+              }`}
+            >
+              <img
+                src={isLessonView ? logoFav : logoImage}
+                alt="Elara"
+                className={`object-contain ${
+                  isLessonView
+                    ? 'h-full w-full'
+                    : 'max-h-32 w-full brightness-0 invert'
+                }`}
+              />
+            </Link>
+          ) : (
+            <div
+              className={`bg-primary rounded-lg flex items-center justify-center shrink-0 ${
+                isLessonView ? 'h-12 w-12' : 'h-20 w-20'
+              }`}
+            >
+              <span className="material-symbols-outlined text-white text-2xl">
+                auto_awesome
+              </span>
+            </div>
           )}
         </div>
         <nav
           className={`flex-1 ${
             isLessonView ? 'px-2' : 'px-4'
-          } space-y-2 mt-4 overflow-y-auto`}
+          } space-y-2 overflow-y-auto`}
         >
           <NavLink
             to="/dashboard"

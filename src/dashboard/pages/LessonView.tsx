@@ -124,6 +124,37 @@ export default function LessonView() {
             </div>
           </div>
 
+          {/* Self-Reflection */}
+          <section className="glass-panel rounded-2xl p-8 border border-white/10">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 rounded-full bg-purple-500/20 border border-purple-500/30 flex items-center justify-center">
+                <span className="material-symbols-outlined text-purple-400">psychology</span>
+              </div>
+              <div>
+                <h2 className="text-xl font-bold text-white">Self-Reflection</h2>
+                <p className="text-sm text-slate-400 text-balance">Take a moment to solidify your understanding by reflecting on today&apos;s concepts.</p>
+              </div>
+            </div>
+            <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">How will you apply this to your work?</label>
+                  <textarea className="w-full reflection-input rounded-xl p-4 text-sm text-slate-200 min-h-[120px] resize-none" placeholder="Consider current projects where hyperparameter search could be automated..." />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">What was the most challenging part?</label>
+                  <textarea className="w-full reflection-input rounded-xl p-4 text-sm text-slate-200 min-h-[120px] resize-none" placeholder="Identify concepts that might need a second review..." />
+                </div>
+              </div>
+              <div className="flex justify-end">
+                <button className="px-8 py-3 bg-indigo-600 hover:bg-indigo-500 transition-all rounded-xl text-sm font-bold flex items-center gap-2 shadow-lg shadow-indigo-600/20" type="submit">
+                  Save Reflection
+                  <span className="material-symbols-outlined text-sm">auto_fix_high</span>
+                </button>
+              </div>
+            </form>
+          </section>
+
           {/* Tabs: Lesson Notes | Transcript | Resources */}
           <div className="flex flex-col">
             <div className="flex border-b border-white/5 mb-6">
