@@ -32,3 +32,153 @@
 .animate-shimmer {
   animation: shimmer 2s infinite;
 }
+
+/* Dashboard layout utilities */
+.glass-nav {
+  background: rgba(18, 18, 29, 0.7);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+.sidebar-glass {
+  background: #161625;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+}
+.glow-border {
+  position: relative;
+}
+.glow-border::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  background: linear-gradient(to right, #7C3AED, #3B82F6);
+  z-index: -1;
+  border-radius: inherit;
+  opacity: 0.5;
+  filter: blur(2px);
+}
+.card-glow {
+  box-shadow: 0 0 20px rgba(124, 58, 237, 0.1);
+}
+.stat-card:hover {
+  transform: translateY(-2px);
+  transition: all 0.3s ease;
+  box-shadow: 0 10px 25px -5px rgba(124, 58, 237, 0.2);
+}
+.gradient-bg {
+  background-color: #0B0B13;
+  background-image: radial-gradient(circle at top right, rgba(124, 58, 237, 0.06), transparent 50%),
+    radial-gradient(circle at bottom left, rgba(59, 130, 246, 0.05), transparent 50%);
+}
+.dashboard-card {
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+/* Dashboard reference: gradient border and glow */
+.gradient-border {
+  position: relative;
+  background: #161625;
+  border-radius: 16px;
+}
+.gradient-border::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: 17px;
+  padding: 1px;
+  background: linear-gradient(45deg, #8b5cf6, #3b82f6);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+.glow-soft {
+  box-shadow: 0 0 20px rgba(99, 102, 241, 0.15);
+}
+.dashboard-card:hover {
+  border-color: rgba(255, 255, 255, 0.12);
+}
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+/* Module catalog */
+.module-card-overlay {
+  background: linear-gradient(to top, rgba(15, 23, 42, 0.9) 0%, rgba(15, 23, 42, 0.4) 50%, transparent 100%);
+  backdrop-filter: blur(4px);
+}
+.progress-glow {
+  box-shadow: 0 0 10px rgba(124, 58, 237, 0.6);
+}
+.scroll-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Module Library (table view) */
+.glass-panel {
+  background: rgba(15, 15, 25, 0.7);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+.module-row:hover {
+  background: rgba(99, 102, 241, 0.12);
+  box-shadow: inset 0 0 20px rgba(168, 85, 247, 0.1);
+  border-color: rgba(99, 102, 241, 0.3);
+}
+
+/* Lesson view – active lesson in syllabus nav */
+.lesson-active {
+  background: linear-gradient(90deg, rgba(99, 102, 241, 0.15) 0%, transparent 100%);
+  border-left: 3px solid #6366f1;
+}
+
+/* Module lessons – hero and lesson cards */
+.hero-gradient {
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #2563eb 100%);
+  position: relative;
+  overflow: hidden;
+}
+.hero-gradient::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url("https://www.transparenttextures.com/patterns/carbon-fibre.png");
+  opacity: 0.1;
+  pointer-events: none;
+}
+.lesson-card {
+  min-width: 320px;
+  background: rgba(30, 41, 59, 0.5);
+  border: 1px solid rgba(168, 85, 247, 0.2);
+  box-shadow: 0 0 15px rgba(168, 85, 247, 0.1);
+}
+.lesson-card:hover {
+  border-color: rgba(168, 85, 247, 0.6);
+  box-shadow: 0 0 25px rgba(168, 85, 247, 0.2);
+}
+.scroll-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Lesson view – video, quiz, module contents */
+.video-gradient {
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, transparent 40%);
+}
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.02);
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+}
+.active-lesson-glow {
+  box-shadow: 0 0 20px rgba(168, 85, 247, 0.4);
+  border-color: #a855f7 !important;
+}
+.neon-border-b {
+  border-bottom: 1px solid rgba(99, 102, 241, 0.15);
+  box-shadow: 0 1px 0 0 rgba(99, 102, 241, 0.05);
+}

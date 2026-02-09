@@ -15,6 +15,10 @@ import DashboardLayout from './dashboard/DashboardLayout';
 import Dashboard from './dashboard/pages/Dashboard';
 import ManagerReport from './dashboard/pages/ManagerReport';
 import BrillianceReport from './dashboard/pages/BrillianceReport';
+import ModuleCatalog from './dashboard/pages/ModuleCatalog';
+import ModuleLibrary from './dashboard/pages/ModuleLibrary';
+import ModuleLessons from './dashboard/pages/ModuleLessons';
+import LessonView from './dashboard/pages/LessonView';
 import RevealHiddenBrillianceSurvey from './pages/RevealHiddenBrillianceSurvey';
 import MindSync from './pages/MindSync';
 import MindSyncSurvey from './pages/MindSyncSurvey';
@@ -72,6 +76,10 @@ function AppContent() {
               }
             >
               <Route index element={<Dashboard />} />
+              <Route path="my-learning" element={<ModuleCatalog />} />
+              <Route path="my-learning/modules/:moduleId/lessons/:lessonId" element={<LessonView />} />
+              <Route path="my-learning/modules/:moduleId" element={<ModuleLessons />} />
+              <Route path="my-learning/modules" element={<ModuleLibrary />} />
               <Route path="manager-report" element={<ManagerReport />} />
               <Route path="brilliance-report" element={<BrillianceReport />} />
             </Route>

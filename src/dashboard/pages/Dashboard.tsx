@@ -1,417 +1,365 @@
-import React from 'react';
-import { useNavigate, Link } from 'react-router-dom';
 import { useContext } from 'react';
-import {
-  logoImage,
-  shutterstock1330833800,
-  shutterstock1717584028,
-  shutterstock682503142,
-  shutterstock726121441,
-} from '@/assets/images';
-import InsightEngineCard from '@/components/InsightEngineCard/InsightEngineCard';
+import { Link } from 'react-router-dom';
 import { AuthContext } from '@/contexts/AuthContext';
 
-const Dashboard: React.FC = () => {
-  const navigate = useNavigate();
+export default function Dashboard() {
   const auth = useContext(AuthContext);
-
-  // Icon components for each Insight Engine
-  const LightbulbIcon = () => (
-    <svg
-      width="64"
-      height="64"
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path
-        d="M12 2C8.13 2 5 5.13 5 9C5 11.38 6.19 13.47 8 14.74V17C8 17.55 8.45 18 9 18H15C15.55 18 16 17.55 16 17V14.74C17.81 13.47 19 11.38 19 9C19 5.13 15.87 2 12 2ZM15 13.7L14 14.5V16H10V14.5L9 13.7C7.8 12.86 7 11.5 7 10C7 7.24 9.24 5 12 5C14.76 5 17 7.24 17 10C17 11.5 16.2 12.86 15 13.7Z"
-        fill="#FCD34D"
-      />
-      <path
-        d="M9 21C9 21.55 9.45 22 10 22H14C14.55 22 15 21.55 15 21V20H9V21Z"
-        fill="#FCD34D"
-      />
-    </svg>
-  );
-
-  const MindSyncIcon = () => (
-    <svg
-      width="64"
-      height="64"
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <circle
-        cx="12"
-        cy="12"
-        r="10"
-        stroke="#3B82F6"
-        strokeWidth="2"
-        fill="none"
-      />
-      <circle cx="12" cy="8" r="2" fill="#3B82F6" />
-      <path
-        d="M8 14C8 11.79 9.79 10 12 10C14.21 10 16 11.79 16 14"
-        stroke="#3B82F6"
-        strokeWidth="2"
-        strokeLinecap="round"
-      />
-      <circle cx="7" cy="7" r="1.5" fill="#3B82F6" />
-      <circle cx="17" cy="7" r="1.5" fill="#3B82F6" />
-      <circle cx="7" cy="17" r="1.5" fill="#3B82F6" />
-      <circle cx="17" cy="17" r="1.5" fill="#3B82F6" />
-      <path
-        d="M9 9L7 7M15 9L17 7M9 15L7 17M15 15L17 17"
-        stroke="#3B82F6"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-      />
-    </svg>
-  );
-
-  const DigitalBiasIcon = () => (
-    <svg
-      width="64"
-      height="64"
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <rect
-        x="4"
-        y="4"
-        width="16"
-        height="16"
-        rx="2"
-        stroke="#3B82F6"
-        strokeWidth="2"
-        fill="none"
-      />
-      <path
-        d="M8 8C8 8 10 10 12 10C14 10 16 8 16 8"
-        stroke="#3B82F6"
-        strokeWidth="2"
-        strokeLinecap="round"
-      />
-      <circle cx="9" cy="14" r="1.5" fill="#3B82F6" />
-      <circle cx="15" cy="14" r="1.5" fill="#3B82F6" />
-      <path
-        d="M6 6L4 4M20 6L22 4M6 18L4 20M20 18L22 20"
-        stroke="#3B82F6"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-      />
-    </svg>
-  );
-
-  const DataEngineIcon = () => (
-    <svg
-      width="64"
-      height="64"
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <rect x="4" y="16" width="4" height="4" fill="#3B82F6" />
-      <rect x="10" y="12" width="4" height="8" fill="#3B82F6" />
-      <rect x="16" y="8" width="4" height="12" fill="#3B82F6" />
-      <path
-        d="M6 16L8 14L10 16L14 12L18 16"
-        stroke="#3B82F6"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        fill="none"
-      />
-      <path
-        d="M18 16L20 14L22 16"
-        stroke="#3B82F6"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        fill="none"
-      />
-    </svg>
-  );
-
-  const insightEngines = [
-    {
-      id: 1,
-      number: 1,
-      title: 'Reveal Hidden Brilliance',
-      description: 'Unlock hidden talents across the workforce.',
-      icon: <LightbulbIcon />,
-      color: '#FCD34D',
-      image: shutterstock1330833800,
-      route: '/survey/reveal-hidden-brilliance',
-    },
-    {
-      id: 2,
-      number: 2,
-      title: 'Mind Sync',
-      description:
-        'Helping Managers & Team Leaders understand neurodiversity to support strategic advantage.',
-      icon: <MindSyncIcon />,
-      color: '#3B82F6',
-      image: shutterstock1717584028,
-      route: '/survey/mind-sync',
-    },
-    {
-      id: 3,
-      number: 3,
-      title: 'Digital Bias',
-      description:
-        'For the whole organization identifying cultural and psychological barriers that block digital adoption.',
-      icon: <DigitalBiasIcon />,
-      color: '#3B82F6',
-      image: shutterstock682503142,
-      route: '/survey/digital-bias',
-    },
-    {
-      id: 4,
-      number: 4,
-      title: 'Elara Data Engine',
-      description:
-        'Supporting organizational understanding for neurodiverse individuals.',
-      icon: <DataEngineIcon />,
-      color: '#3B82F6',
-      image: shutterstock726121441,
-      route: '/survey/elara-data-engine',
-    },
-  ];
-
-  const handleCardClick = (route: string) => {
-    navigate(route);
-  };
-
-  const handleLogout = () => {
-    auth?.logout();
-    navigate('/login', { replace: true });
-  };
+  const user = auth?.user as { userName?: string; email?: string } | null;
+  const displayName = user?.userName ?? user?.email ?? 'there';
 
   return (
-    <div className="relative min-h-screen w-full overflow-hidden bg-black">
-      {/* Background Blur Effects - Gradient Ellipses */}
-      <div className="absolute right-1/4 top-1/4 h-[800px] w-[800px] rounded-full bg-gradient-to-br from-[rgba(96,165,250,0.2)] to-[rgba(147,51,234,0.2)] blur-[400px]"></div>
-      <div className="absolute left-1/4 bottom-1/4 h-[800px] w-[800px] rounded-full bg-gradient-to-br from-[rgba(167,139,250,0.2)] to-[rgba(147,51,234,0.2)] blur-[400px]"></div>
-
-      {/* Header */}
-      <header className="relative z-10 px-4 py-3 md:px-6 md:py-4 lg:px-8 lg:py-5">
-        {/* Gradient Border Bottom */}
-        <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
-
-        {/* Glass Morphism Background */}
-        <div
-          className="absolute inset-0 backdrop-blur-2xl"
-          style={{
-            background:
-              'linear-gradient(180deg, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.75) 50%, rgba(0, 0, 0, 0.65) 100%)',
-          }}
-        />
-
-        {/* Subtle Gradient Overlay */}
-        <div
-          className="absolute inset-0 opacity-30"
-          style={{
-            background:
-              'linear-gradient(135deg, rgba(96, 165, 250, 0.1) 0%, rgba(147, 51, 234, 0.1) 100%)',
-          }}
-        />
-
-        <div className="relative mx-auto flex max-w-7xl items-center justify-between gap-4">
-          {/* Logo */}
+    <div className="min-h-full gradient-bg">
+      <main className="max-w-7xl mx-auto px-6 py-10 space-y-10">
+        <header className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+          <div>
+            <h2 className="text-4xl font-bold tracking-tight mb-2 text-white">
+              Welcome back, {displayName}
+            </h2>
+            <div className="flex items-center space-x-2 text-slate-500">
+              <span className="material-symbols-outlined text-sm">auto_awesome</span>
+              <p className="text-sm">You&apos;ve completed 75% of your weekly learning goal.</p>
+            </div>
+          </div>
           <Link
-            to="/"
-            className="flex items-center group relative z-10 flex-shrink-0"
+            to="/dashboard/my-learning/modules/1"
+            className="px-6 py-3 bg-primary hover:bg-indigo-500 text-white rounded-full font-semibold flex items-center space-x-2 transition-all glow-soft"
           >
-            {logoImage ? (
-              <div className="relative">
-                <div className="absolute inset-0 bg-gradient-to-br from-[#60A5FA] to-[#9333EA] opacity-0 group-hover:opacity-20 blur-xl transition-opacity duration-300 rounded-full"></div>
-                <img
-                  src={logoImage}
-                  alt="Elara Logo"
-                  className="relative h-12 w-auto brightness-0 invert sm:h-16 md:h-20 lg:h-24 xl:h-32 object-contain transition-transform duration-300 group-hover:scale-105"
-                />
-              </div>
-            ) : (
-              <div className="relative h-12 w-12 sm:h-16 sm:w-16 md:h-20 md:w-20 lg:h-24 lg:w-24 xl:h-32 xl:w-32 rounded-xl bg-gradient-to-br from-[#60A5FA] to-[#9333EA] flex items-center justify-center shadow-lg shadow-[#60A5FA]/30 transition-all duration-300 group-hover:scale-105 group-hover:shadow-[#60A5FA]/50">
-                <span className="text-white font-bold text-xl sm:text-2xl md:text-3xl lg:text-4xl">
-                  E
-                </span>
-              </div>
-            )}
+            <span>Resume Learning</span>
+            <span className="material-symbols-outlined">play_arrow</span>
           </Link>
+        </header>
 
-          {/* Navigation Buttons Container */}
-          <div className="relative z-10 flex items-center gap-3 sm:gap-4">
-            {/* Manager Report Button */}
-            <Link
-              to="/dashboard/manager-report"
-              className="relative flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 md:px-5 py-2 sm:py-2.5 rounded-lg sm:rounded-xl text-[#A78BFA] transition-all duration-300 hover:text-white hover:scale-105 active:scale-95 group flex-shrink-0"
-              aria-label="Mind Sync"
-              title="Mind Sync"
-              style={{
-                background:
-                  'linear-gradient(135deg, rgba(147, 51, 234, 0.15) 0%, rgba(167, 139, 250, 0.15) 100%)',
-                border: '1px solid rgba(147, 51, 234, 0.3)',
-                boxShadow: '0 4px 15px rgba(147, 51, 234, 0.1)',
-              }}
-            >
-              <div className="absolute inset-0 rounded-lg sm:rounded-xl bg-gradient-to-r from-[#60A5FA] to-[#9333EA] opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                className="relative z-10 sm:w-[18px] sm:h-[18px]"
-              >
-                <path
-                  d="M9 12H15M9 16H15M17 21H7C5.89543 21 5 20.1046 5 19V5C5 3.89543 5.89543 3 7 3H12.5858C12.851 3 13.1054 3.10536 13.2929 3.29289L18.7071 8.70711C18.8946 8.89464 19 9.149 19 9.41421V19C19 20.1046 18.1046 21 17 21Z"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                />
-                <path
-                  d="M19 9H14V4"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-              <span className="relative z-10 text-xs sm:text-sm md:text-base font-medium hidden sm:inline">
-                Mind Sync
-              </span>
-            </Link>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          <div className="lg:col-span-8 space-y-10">
+            {/* Current path / course progress */}
+            <section>
+              <div className="gradient-border p-8 overflow-hidden group">
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+                  <div>
+                    <h3 className="text-xl font-bold mb-1 text-white">
+                      Advanced Neuro-Leadership
+                    </h3>
+                    <p className="text-slate-400 text-sm">
+                      Current Path: Executive Management Tier 2
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <span className="text-3xl font-bold text-accent-blue">72%</span>
+                    <p className="text-xs text-slate-500 uppercase font-bold tracking-widest">
+                      Progress
+                    </p>
+                  </div>
+                </div>
+                <div className="w-full bg-white/5 h-3 rounded-full overflow-hidden mb-8">
+                  <div
+                    className="bg-gradient-to-r from-accent-purple to-accent-blue h-full rounded-full shadow-[0_0_10px_rgba(59,130,246,0.5)]"
+                    style={{ width: '72%' }}
+                  />
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <div className="bg-white/5 p-4 rounded-xl border border-white/5">
+                    <span className="material-symbols-outlined text-accent-purple mb-2">
+                      menu_book
+                    </span>
+                    <h4 className="text-sm font-semibold text-white">12 Modules</h4>
+                    <p className="text-xs text-slate-500">8 Completed</p>
+                  </div>
+                  <div className="bg-white/5 p-4 rounded-xl border border-white/5">
+                    <span className="material-symbols-outlined text-accent-blue mb-2">
+                      assignment
+                    </span>
+                    <h4 className="text-sm font-semibold text-white">4 Quizzes</h4>
+                    <p className="text-xs text-slate-500">3 Mastered</p>
+                  </div>
+                  <div className="bg-white/5 p-4 rounded-xl border border-white/5">
+                    <span className="material-symbols-outlined text-emerald-400 mb-2">
+                      verified
+                    </span>
+                    <h4 className="text-sm font-semibold text-white">Certification</h4>
+                    <p className="text-xs text-slate-500">Pending final exam</p>
+                  </div>
+                </div>
+              </div>
+            </section>
 
-            {/* Brilliance Report Button */}
-            <Link
-              to="/dashboard/brilliance-report"
-              className="relative flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 md:px-5 py-2 sm:py-2.5 rounded-lg sm:rounded-xl text-[#A78BFA] transition-all duration-300 hover:text-white hover:scale-105 active:scale-95 group flex-shrink-0"
-              aria-label="Brilliance Report"
-              title="Brilliance Report"
-              style={{
-                background:
-                  'linear-gradient(135deg, rgba(147, 51, 234, 0.15) 0%, rgba(167, 139, 250, 0.15) 100%)',
-                border: '1px solid rgba(147, 51, 234, 0.3)',
-                boxShadow: '0 4px 15px rgba(147, 51, 234, 0.1)',
-              }}
-            >
-              <div className="absolute inset-0 rounded-lg sm:rounded-xl bg-gradient-to-r from-[#60A5FA] to-[#9333EA] opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                className="relative z-10 sm:w-[18px] sm:h-[18px]"
-              >
-                <path
-                  d="M9 12H15M9 16H15M17 21H7C5.89543 21 5 20.1046 5 19V5C5 3.89543 5.89543 3 7 3H12.5858C12.851 3 13.1054 3.10536 13.2929 3.29289L18.7071 8.70711C18.8946 8.89464 19 9.149 19 9.41421V19C19 20.1046 18.1046 21 17 21Z"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                />
-                <path
-                  d="M19 9H14V4"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-              <span className="relative z-10 text-xs sm:text-sm md:text-base font-medium hidden sm:inline">
-                Brilliance Report
-              </span>
-            </Link>
+            {/* Featured Training */}
+            <section>
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-xl font-bold text-white">Featured Training</h3>
+                <div className="flex space-x-2">
+                  <button
+                    type="button"
+                    className="p-2 rounded-full border border-white/10 hover:bg-white/5"
+                    aria-label="Previous"
+                  >
+                    <span className="material-symbols-outlined">chevron_left</span>
+                  </button>
+                  <button
+                    type="button"
+                    className="p-2 rounded-full border border-white/10 hover:bg-white/5"
+                    aria-label="Next"
+                  >
+                    <span className="material-symbols-outlined">chevron_right</span>
+                  </button>
+                </div>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <Link
+                  to="/dashboard/my-learning/modules/1"
+                  className="group relative overflow-hidden rounded-2xl bg-surface-dark border border-white/10 aspect-video flex items-end"
+                >
+                  <img
+                    alt="Cybersecurity training abstract image"
+                    className="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:scale-105 transition-transform duration-500"
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuAJOHBD4BDAdUf6l0ySajyyLfHtX7N4U9zLHSb-OqpAY-pQM1Xm6vo3sOD4Uvoy5lvovxObOX429hy9aiLhYRATN0sq46BUzSiS75ZeUS-HnGVZ3r3W9PUZXqob7DUsBQugBITHdCD2-3pI6lM-Hn9iLmDR0g0EXCGXoYuY2qz8m23GwgavnrUTUqMDkWyvLSy37PT8z433CGasEIDs87-Jau6VoCWIWzk5NsinFzfHbHnixLPhBYX0nOqM-QQ9HIDQsLsHIee98E2c"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#0B0B13] via-transparent to-transparent" />
+                  <div className="relative p-6 w-full">
+                    <div className="bg-primary/20 text-primary text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded w-fit mb-2">
+                      New Course
+                    </div>
+                    <h4 className="text-lg font-bold text-white">Cyber Resilience in AI</h4>
+                    <div className="flex items-center justify-between mt-4">
+                      <span className="text-sm text-slate-400">4.5 hours • Advanced</span>
+                      <span className="h-10 w-10 bg-white/10 group-hover:bg-white/20 rounded-full flex items-center justify-center transition-colors">
+                        <span className="material-symbols-outlined text-sm">arrow_forward</span>
+                      </span>
+                    </div>
+                  </div>
+                </Link>
+                <Link
+                  to="#"
+                  className="group relative overflow-hidden rounded-2xl bg-surface-dark border border-white/10 aspect-video flex items-end"
+                >
+                  <img
+                    alt="Robotics and human collaboration"
+                    className="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:scale-105 transition-transform duration-500"
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuBN3QGSgsFCQ_zuWhUC3TyCyoCCQNnUmLpzJOnQ3XikE2yk_CZWrus4D1Z8FylhYBLJWHvWHwYeDfmsMvSu_zb7SBhuEFVLGy_r-rOK7YD0Pui2lNJVRsG8SXYm8G8f-Ur2Bo2jK3SnBlAypYK-INQ3HQ1SUK9aTZIsgBJvghb4nI2AQT2DE87DyayHn3nZtHLU8lwO4CqU7VSBZF_aFkktbjcqA1H27lrk8trfRsgn5CrahxJcUzjDOY7Ynqj-kSOWBHTRtnlAoaDO"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#0B0B13] via-transparent to-transparent" />
+                  <div className="relative p-6 w-full">
+                    <div className="bg-accent-purple/20 text-accent-purple text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded w-fit mb-2">
+                      Popular
+                    </div>
+                    <h4 className="text-lg font-bold text-white">Collaborative Intelligence</h4>
+                    <div className="flex items-center justify-between mt-4">
+                      <span className="text-sm text-slate-400">2.5 hours • Intermediate</span>
+                      <span className="h-10 w-10 bg-white/10 group-hover:bg-white/20 rounded-full flex items-center justify-center transition-colors">
+                        <span className="material-symbols-outlined text-sm">arrow_forward</span>
+                      </span>
+                    </div>
+                  </div>
+                </Link>
+              </div>
+            </section>
 
-            {/* Logout Button */}
-            <button
-              onClick={handleLogout}
-              className="relative z-10 flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 md:px-5 py-2 sm:py-2.5 rounded-lg sm:rounded-xl text-[#A78BFA] transition-all duration-300 hover:text-white hover:scale-105 active:scale-95 group flex-shrink-0"
-              aria-label="Logout"
-              title="Logout"
-              style={{
-                background:
-                  'linear-gradient(135deg, rgba(147, 51, 234, 0.15) 0%, rgba(167, 139, 250, 0.15) 100%)',
-                border: '1px solid rgba(147, 51, 234, 0.3)',
-                boxShadow: '0 4px 15px rgba(147, 51, 234, 0.1)',
-              }}
-            >
-              <div className="absolute inset-0 rounded-lg sm:rounded-xl bg-gradient-to-r from-[#60A5FA] to-[#9333EA] opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                className="relative z-10 sm:w-[18px] sm:h-[18px]"
-              >
-                <path
-                  d="M18 6L22 10M22 10L18 14M22 10H9"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-                <path
-                  d="M9 2H5C3.89543 2 3 2.89543 3 4V20C3 21.1046 3.89543 22 5 22H9"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                />
-              </svg>
-              <span className="relative z-10 text-xs sm:text-sm md:text-base font-medium hidden sm:inline">
-                Logout
-              </span>
-            </button>
+            {/* Upcoming in your Journey */}
+            <section>
+              <h3 className="text-xl font-bold mb-6 text-white">Upcoming in your Journey</h3>
+              <div className="space-y-4">
+                <Link
+                  to="/dashboard/my-learning/modules/1"
+                  className="bg-surface-dark border border-white/5 rounded-2xl p-5 flex items-center justify-between hover:bg-white/5 transition-colors cursor-pointer group"
+                >
+                  <div className="flex items-center space-x-4">
+                    <div className="h-12 w-12 rounded-xl bg-white/5 flex items-center justify-center text-accent-blue">
+                      <span className="material-symbols-outlined">psychology</span>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-slate-200">
+                        Neural Network Basics for Leaders
+                      </h4>
+                      <p className="text-xs text-slate-500">Scheduled for Tomorrow, 10:00 AM</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-4">
+                    <span className="text-xs text-slate-500 font-medium group-hover:text-primary transition-colors">
+                      Start module
+                    </span>
+                    <span className="material-symbols-outlined text-slate-500 group-hover:text-primary transition-colors">
+                      chevron_right
+                    </span>
+                  </div>
+                </Link>
+                <div className="bg-surface-dark border border-white/5 rounded-2xl p-5 flex items-center justify-between hover:bg-white/5 transition-colors cursor-pointer group">
+                  <div className="flex items-center space-x-4">
+                    <div className="h-12 w-12 rounded-xl bg-white/5 flex items-center justify-center text-accent-purple">
+                      <span className="material-symbols-outlined">insights</span>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-slate-200">Ethical AI Frameworks</h4>
+                      <p className="text-xs text-slate-500">Unlocks on Friday</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-4">
+                    <span className="material-symbols-outlined text-slate-600">lock</span>
+                  </div>
+                </div>
+                <div className="bg-surface-dark border border-white/5 rounded-2xl p-5 flex items-center justify-between hover:bg-white/5 transition-colors cursor-pointer group">
+                  <div className="flex items-center space-x-4">
+                    <div className="h-12 w-12 rounded-xl bg-white/5 flex items-center justify-center text-amber-400">
+                      <span className="material-symbols-outlined">hub</span>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-slate-200">Systemic Thinking Workshop</h4>
+                      <p className="text-xs text-slate-500">Group session • July 12th</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-4 text-slate-500 group-hover:text-primary">
+                    <span className="material-symbols-outlined">event</span>
+                  </div>
+                </div>
+              </div>
+            </section>
           </div>
-        </div>
-      </header>
 
-      {/* Main Content */}
-      <main className="relative z-10 mx-auto max-w-7xl px-4 py-8 md:px-8 md:py-12 lg:py-16 xl:py-24">
-        <div className="mx-auto max-w-[1960px]">
-          {/* Title */}
-          <div className="mb-6 md:mb-8 lg:mb-12 text-center">
-            <h1 className="mb-3 md:mb-4 text-2xl md:text-3xl lg:text-4xl xl:text-5xl 2xl:text-6xl font-bold text-white">
-              Main Dashboard
-            </h1>
-            <div
-              className="mx-auto h-1 w-24 md:w-32 rounded-full"
-              style={{
-                background: 'linear-gradient(to right, #60A5FA, #9333EA)',
-              }}
-            ></div>
-          </div>
+          {/* Right sidebar */}
+          <aside className="lg:col-span-4 space-y-8">
+            <div className="bg-surface-dark border border-white/10 rounded-2xl p-6">
+              <h3 className="text-lg font-bold mb-6 text-white">Quick Performance</h3>
+              <div className="space-y-6">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <div className="h-10 w-10 rounded-full bg-blue-500/10 flex items-center justify-center">
+                      <span className="material-symbols-outlined text-blue-400">done_all</span>
+                    </div>
+                    <div>
+                      <p className="text-2xl font-bold text-white">24</p>
+                      <p className="text-[10px] uppercase font-bold text-slate-500">
+                        Modules Completed
+                      </p>
+                    </div>
+                  </div>
+                  <div className="text-xs text-emerald-400 font-bold flex items-center">
+                    <span className="material-symbols-outlined text-xs mr-1">trending_up</span>
+                    +4
+                  </div>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <div className="h-10 w-10 rounded-full bg-purple-500/10 flex items-center justify-center">
+                      <span className="material-symbols-outlined text-purple-400">timer</span>
+                    </div>
+                    <div>
+                      <p className="text-2xl font-bold text-white">18.5h</p>
+                      <p className="text-[10px] uppercase font-bold text-slate-500">
+                        Learning Time
+                      </p>
+                    </div>
+                  </div>
+                  <div className="text-xs text-slate-400 font-bold">Total</div>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <div className="h-10 w-10 rounded-full bg-amber-500/10 flex items-center justify-center">
+                      <span className="material-symbols-outlined text-amber-400">military_tech</span>
+                    </div>
+                    <div>
+                      <p className="text-2xl font-bold text-white">92%</p>
+                      <p className="text-[10px] uppercase font-bold text-slate-500">
+                        Avg. Quiz Score
+                      </p>
+                    </div>
+                  </div>
+                  <div className="text-xs text-emerald-400 font-bold">Top 5%</div>
+                </div>
+              </div>
+              <div className="mt-8 pt-8 border-t border-white/5">
+                <h4 className="text-xs font-bold uppercase text-slate-500 tracking-widest mb-4">
+                  Quiz Heatmap
+                </h4>
+                <div className="flex gap-1">
+                  <div className="flex-1 bg-emerald-500 h-8 rounded-sm opacity-20" />
+                  <div className="flex-1 bg-emerald-500 h-8 rounded-sm opacity-40" />
+                  <div className="flex-1 bg-emerald-500 h-8 rounded-sm opacity-100" />
+                  <div className="flex-1 bg-emerald-500 h-8 rounded-sm opacity-60" />
+                  <div className="flex-1 bg-emerald-500 h-8 rounded-sm opacity-80" />
+                  <div className="flex-1 bg-emerald-500 h-8 rounded-sm opacity-30" />
+                  <div className="flex-1 bg-emerald-500 h-8 rounded-sm opacity-90" />
+                </div>
+                <div className="flex justify-between mt-2 text-[10px] text-slate-500 font-medium">
+                  <span>Mon</span>
+                  <span>Today</span>
+                </div>
+              </div>
+            </div>
 
-          {/* Welcome Message */}
-          <p className="mb-8 md:mb-12 lg:mb-16 text-center text-base md:text-lg lg:text-xl text-white/80 px-4">
-            Welcome to Elara, Choose your Insight Engine below to begin.
-          </p>
+            <div className="bg-gradient-to-br from-primary to-accent-purple rounded-2xl p-6 text-white relative overflow-hidden">
+              <div className="relative z-10">
+                <h3 className="font-bold text-lg mb-2">Learning Streak</h3>
+                <p className="text-sm opacity-90 mb-4">
+                  You&apos;ve learned for 5 days straight! Keep it up to earn the &apos;Deep
+                  Diver&apos; badge.
+                </p>
+                <div className="flex space-x-2 items-center">
+                  <div className="h-2 flex-1 bg-white/20 rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-white rounded-full"
+                      style={{ width: '71%' }}
+                    />
+                  </div>
+                  <span className="text-xs font-bold whitespace-nowrap">5 / 7</span>
+                </div>
+              </div>
+              <span className="material-symbols-outlined absolute -right-4 -bottom-4 opacity-20 transform rotate-12 text-9xl">
+                workspace_premium
+              </span>
+            </div>
 
-          {/* Insight Engine Cards Grid */}
-          <div className="grid grid-cols-1 gap-6 md:gap-8 md:grid-cols-2 items-stretch max-w-5xl mx-auto">
-            {insightEngines.map((engine) => (
-              <InsightEngineCard
-                key={engine.id}
-                number={engine.number}
-                title={engine.title}
-                description={engine.description}
-                icon={engine.icon}
-                color={engine.color}
-                image={engine.image}
-                onClick={() => handleCardClick(engine.route)}
-              />
-            ))}
-          </div>
+            <div className="bg-surface-dark border border-white/10 rounded-2xl p-6">
+              <h3 className="text-lg font-bold mb-6 text-white">Expert Mentors</h3>
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <img
+                      alt="Mentor portrait"
+                      className="h-10 w-10 rounded-full object-cover border border-white/10"
+                      src="https://lh3.googleusercontent.com/aida-public/AB6AXuDkvajZ-_8ti2aCujgeJSrXzxpoidYE0u2ILGuLHUTFXfgU8By8THHe4gpcrNIQpQsL2ouPD0VrpHfWcWw2GctjMGXthOTu6trBU8gdAPg7pRAJiNUwD_PF8GRt3ofvx6QlR5FhnreoHfOMfcMWwpXhZSTAWMhqHnTphDVhUMmFVRA7og1RCGWemf44cynNICdI_GWJV4DkgeFXDpEIq-_Kep8NHy5PpvSYGeszeC6EhXsih5_z3O74lLAM8XGrp5RzFN-xcIECZNk_"
+                    />
+                    <div>
+                      <h4 className="text-sm font-semibold text-white">Dr. Marcus Chen</h4>
+                      <p className="text-xs text-slate-500">AI Specialist</p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    className="p-2 text-primary hover:bg-primary/10 rounded-full transition-colors"
+                    aria-label="Chat with Dr. Marcus Chen"
+                  >
+                    <span className="material-symbols-outlined text-sm">chat</span>
+                  </button>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <img
+                      alt="Mentor portrait"
+                      className="h-10 w-10 rounded-full object-cover border border-white/10"
+                      src="https://lh3.googleusercontent.com/aida-public/AB6AXuCAyrKKa64BVUghFhu-rlspH6aZym8yquJMEvUqUjIs2NgoJNLEwmKx57Y7xLa7a3Xvzi1lXZp_X49nkop4wuLb0Zwoxd7uLCX1hQZjvmce01HVbDKKsFSzV4xP37iH6W3mR9xrYburuZmTDZwNjxBhWr4nPHwBcWJ1Zt3w47eO2_5zoa0ll0eUcsUqbry815D3VyTJ1i_yjEDRUGNj3U8x8D6oJeLmspef48DYJNP21IwCJhQ0We6UYnv5YHGDW0JgW-ARvlLmhnub"
+                    />
+                    <div>
+                      <h4 className="text-sm font-semibold text-white">Elena Rodriguez</h4>
+                      <p className="text-xs text-slate-500">Behavioral Design</p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    className="p-2 text-primary hover:bg-primary/10 rounded-full transition-colors"
+                    aria-label="Chat with Elena Rodriguez"
+                  >
+                    <span className="material-symbols-outlined text-sm">chat</span>
+                  </button>
+                </div>
+              </div>
+              <button
+                type="button"
+                className="w-full mt-6 py-2 text-xs font-bold text-slate-400 uppercase tracking-widest hover:text-white transition-colors"
+              >
+                View All Mentors
+              </button>
+            </div>
+          </aside>
         </div>
       </main>
     </div>
   );
-};
-
-export default Dashboard;
+}
