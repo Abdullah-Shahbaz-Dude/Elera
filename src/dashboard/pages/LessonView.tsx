@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import {
   getLesson,
   getNextLesson,
@@ -15,8 +15,19 @@ function getVideoThumbnail(lesson: Lesson): string {
 
 export default function LessonView() {
   const { moduleId, lessonId } = useParams<{ moduleId: string; lessonId: string }>();
+  const navigate = useNavigate();
   const data = moduleId && lessonId ? getLesson(moduleId, lessonId) : null;
   const [activeTab, setActiveTab] = useState<'notes' | 'transcript' | 'resources'>('notes');
+
+  useEffect(() => {
+    if (moduleId === '1') {
+      navigate('/dashboard/my-learning/programme/neurodiversity', { replace: true });
+    }
+  }, [moduleId, navigate]);
+
+  if (moduleId === '1') {
+    return null;
+  }
 
   if (!data) {
     return (
@@ -75,6 +86,36 @@ export default function LessonView() {
         {/* Left column - scrollable content */}
         <div className="w-3/4 flex flex-col min-h-0 overflow-y-auto custom-scrollbar p-6 pb-32">
           <div className="flex flex-col space-y-8">
+          {/* Lesson hero banner */}
+          <section className="relative rounded-3xl hero-gradient p-8 border border-white/10 shadow-xl overflow-hidden">
+            <div className="relative z-10 max-w-3xl space-y-4">
+              <div className="flex items-center gap-3 text-xs text-white/80">
+                {module.category && (
+                  <>
+                    <span className="px-3 py-1 rounded-full bg-white/20 backdrop-blur-md text-[10px] font-bold uppercase tracking-[0.2em]">
+                      {module.category}
+                    </span>
+                    <span className="w-1.5 h-1.5 rounded-full bg-white/40" />
+                  </>
+                )}
+                <span className="text-[11px] uppercase tracking-widest text-white/80">
+                  Module Insight Overview
+                </span>
+              </div>
+              <h2 className="text-3xl md:text-4xl font-black text-white leading-tight tracking-tight">
+                {lesson.title}
+              </h2>
+              <p className="text-sm md:text-base text-white/80 max-w-2xl leading-relaxed">
+                {lesson.overview ??
+                  module.description ??
+                  'Explore how this insight shows up in day-to-day work and in digital, AI-enabled environments.'}
+              </p>
+            </div>
+            <div className="absolute right-0 bottom-0 w-1/3 h-full pointer-events-none opacity-40">
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[420px] h-[420px] bg-white/10 rounded-full blur-[100px]" />
+            </div>
+          </section>
+
           {/* Large video player */}
           <div className="relative aspect-video w-full rounded-2xl overflow-hidden glass-panel border border-white/10 shadow-2xl shrink-0">
             <img
