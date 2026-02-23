@@ -19,6 +19,8 @@ import ModuleCatalog from './dashboard/pages/ModuleCatalog';
 import ModuleLibrary from './dashboard/pages/ModuleLibrary';
 import ModuleLessons from './dashboard/pages/ModuleLessons';
 import LessonView from './dashboard/pages/LessonView';
+import ProgrammePage from './dashboard/pages/ProgrammePage';
+import InsightModuleView from './dashboard/pages/InsightModuleView';
 import RevealHiddenBrillianceSurvey from './pages/RevealHiddenBrillianceSurvey';
 import MindSync from './pages/MindSync';
 import MindSyncSurvey from './pages/MindSyncSurvey';
@@ -77,6 +79,8 @@ function AppContent() {
             >
               <Route index element={<Dashboard />} />
               <Route path="my-learning" element={<ModuleCatalog />} />
+              <Route path="my-learning/programme/neurodiversity" element={<ProgrammePage />} />
+              <Route path="my-learning/programme/neurodiversity/insights/:insightSlug" element={<InsightModuleView />} />
               <Route path="my-learning/modules/:moduleId/lessons/:lessonId" element={<LessonView />} />
               <Route path="my-learning/modules/:moduleId" element={<ModuleLessons />} />
               <Route path="my-learning/modules" element={<ModuleLibrary />} />
