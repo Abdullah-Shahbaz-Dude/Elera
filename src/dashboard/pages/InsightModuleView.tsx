@@ -312,6 +312,11 @@ export default function InsightModuleView() {
     1: 'questions', 
     2: 'questions'
   });
+  const [videoLoading, setVideoLoading] = useState<{[key: number]: boolean}>({
+    0: false,
+    1: false,
+    2: false
+  });
 
   const allThreeCompleted = completedInsights.every(Boolean);
 
@@ -353,6 +358,25 @@ export default function InsightModuleView() {
       ...prev,
       videos: prev.videos.map((completed, i) => i === idx ? true : completed),
     }));
+    setVideoLoading((prev) => ({
+      ...prev,
+      [idx]: false
+    }));
+  };
+
+  const startVideoLoading = (idx: number) => {
+    setVideoLoading((prev) => ({
+      ...prev,
+      [idx]: true
+    }));
+    
+    // Auto-hide loader after 5 seconds as fallback
+    setTimeout(() => {
+      setVideoLoading((prev) => ({
+        ...prev,
+        [idx]: false
+      }));
+    }, 5000);
   };
 
   // Scroll to top only when navigating to this page from external sources (dashboard main is the scroll container)
@@ -378,6 +402,25 @@ export default function InsightModuleView() {
       [activeInsightIndex]: newTab
     }));
   };
+
+  // Start video loading when switching insights or when videos are available
+  useEffect(() => {
+    const moduleVideos: { [key: string]: string[] } = {
+      'thinking-differently-at-work': [
+        'https://drive.google.com/file/d/1VnNxw9NXGcDp9RkXCfuZAhQN6kamxNNA/view?usp=drive_link',
+        'https://drive.google.com/file/d/1fZvwZJNZBSy_FJjZgplXaBgpcuoVDyMW/view?usp=drive_link',
+        'https://drive.google.com/file/d/1FkVrCoOKloLhF30SNHTNCMIEN3ROXE9d/view?usp=drive_link'
+      ],
+      'attention-focus-mental-energy': ['', '', '']
+    };
+    
+    const currentModuleVideos = moduleVideos[insight?.slug || ''] || [];
+    const hasVideo = Boolean(currentModuleVideos[activeInsightIndex]);
+    
+    if (hasVideo && !sectionStates.videos[activeInsightIndex]) {
+      startVideoLoading(activeInsightIndex);
+    }
+  }, [activeInsightIndex, insight?.slug]);
 
   // Note: Removed scroll-to-top for sidebar navigation to maintain user's scroll position
 
@@ -469,61 +512,88 @@ export default function InsightModuleView() {
                 </h3>
 
                 {/* Video */}
-                <div className={`relative aspect-video w-full rounded-2xl overflow-hidden glass-panel border shadow-2xl mb-6 ${
-                  !sectionStates.questions[idx] 
-                    ? 'border-white/10 opacity-60' 
-                    : 'border-white/10'
-                }`}>
-                  <div className="absolute inset-0 bg-gradient-to-br from-indigo-700/40 via-purple-700/40 to-indigo-700/40" />
-                  {!sectionStates.questions[idx] && (
-                    <div className="absolute inset-0 bg-black/50 flex items-center justify-center z-10">
-                      <div className="text-center">
-                        <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-white/10 border border-white/20 flex items-center justify-center">
-                          <span className="material-symbols-outlined text-white text-2xl">lock</span>
+                {(() => {
+                  // Module-specific video URLs
+                  const moduleVideos: { [key: string]: string[] } = {
+                    'thinking-differently-at-work': [
+                      'https://drive.google.com/file/d/1VnNxw9NXGcDp9RkXCfuZAhQN6kamxNNA/view?usp=drive_link',
+                      'https://drive.google.com/file/d/1fZvwZJNZBSy_FJjZgplXaBgpcuoVDyMW/view?usp=drive_link',
+                      'https://drive.google.com/file/d/1FkVrCoOKloLhF30SNHTNCMIEN3ROXE9d/view?usp=drive_link'
+                    ],
+                    'attention-focus-mental-energy': [
+                      '', // Placeholder for Video 1
+                      '', // Placeholder for Video 2  
+                      ''  // Placeholder for Video 3
+                    ]
+                  };
+                  
+                  const currentModuleVideos = moduleVideos[insight.slug] || [];
+                  const videoUrl = currentModuleVideos[idx];
+                  const hasVideo = Boolean(videoUrl);
+                  
+                  // Convert Google Drive share URL to embeddable format
+                  const getEmbedUrl = (shareUrl: string) => {
+                    const fileId = shareUrl.match(/\/d\/([a-zA-Z0-9-_]+)/)?.[1];
+                    return fileId ? `https://drive.google.com/file/d/${fileId}/preview` : shareUrl;
+                  };
+                  
+                  return (
+                    <div className="relative aspect-video w-full rounded-2xl overflow-hidden glass-panel border border-white/10 shadow-2xl mb-6">
+                      {hasVideo ? (
+                        <>
+                          <iframe
+                            src={getEmbedUrl(videoUrl)}
+                            className="w-full h-full rounded-2xl"
+                            allow="autoplay; encrypted-media"
+                            allowFullScreen
+                            title={`${section.title} - Video ${idx + 1}`}
+                            onLoad={() => handleVideoComplete(idx)}
+                          />
+                          {videoLoading[idx] && (
+                            <div className="absolute inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-10">
+                              <div className="text-center">
+                                <div className="relative mb-4">
+                                  {/* Circular ring */}
+                                  <div className="w-16 h-16 rounded-full border-2 border-white/20 border-t-blue-400 animate-spin mx-auto"></div>
+                                  
+                                  {/* Animated dots */}
+                                  <div className="flex items-center justify-center gap-1 mt-4">
+                                    <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                                    <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                                    <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                                  </div>
+                                </div>
+                                
+                                <p className="text-white font-medium text-sm">Loading video</p>
+                              </div>
+                            </div>
+                          )}
+                        </>
+                      ) : (
+                        // Placeholder for videos not yet available
+                        <div className="w-full h-full bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center">
+                          <div className="text-center">
+                            <div className="w-20 h-20 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center mb-4 mx-auto">
+                              <span className="material-symbols-outlined text-white text-2xl">play_circle</span>
+                            </div>
+                            <h3 className="text-lg font-bold text-white mb-2">{section.title}</h3>
+                            <p className="text-slate-400 text-sm">Video coming soon</p>
+                          </div>
                         </div>
-                        <p className="text-white font-medium">Complete questions to unlock video</p>
+                      )}
+                      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4 rounded-b-2xl">
+                        <div className="flex items-center justify-between text-white">
+                          <span className="text-xs text-white/90 font-medium">
+                            Video {idx + 1}: {section.title}
+                          </span>
+                          <span className="text-xs text-emerald-400 font-medium">
+                            {videoLoading[idx] ? 'Loading...' : hasVideo ? 'Watch & Learn' : 'Coming Soon'}
+                          </span>
+                        </div>
                       </div>
                     </div>
-                  )}
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <button
-                      type="button"
-                      onClick={() => handleVideoComplete(idx)}
-                      disabled={!sectionStates.questions[idx] || sectionStates.videos[idx]}
-                      className={`w-16 h-16 flex items-center justify-center rounded-full text-black shadow-xl transition-all ${
-                        !sectionStates.questions[idx]
-                          ? 'bg-white/30 cursor-not-allowed'
-                          : sectionStates.videos[idx]
-                          ? 'bg-emerald-500 text-white'
-                          : 'bg-white hover:scale-105'
-                      }`}
-                      aria-label={`Play video for ${section.title}`}
-                    >
-                      <span
-                        className="material-symbols-outlined text-4xl"
-                        style={{ fontVariationSettings: "'FILL' 1" }}
-                      >
-                        {sectionStates.videos[idx] ? 'check' : 'play_arrow'}
-                      </span>
-                    </button>
-                  </div>
-                  <div className="absolute inset-0 video-gradient flex flex-col justify-end p-6 pointer-events-none">
-                    <div className="relative w-full h-1 bg-white/20 rounded-full">
-                      <div 
-                        className="absolute h-full bg-indigo-500 rounded-full transition-all duration-300" 
-                        style={{ width: sectionStates.videos[idx] ? '100%' : '0%' }} 
-                      />
-                    </div>
-                    <div className="flex justify-between mt-2">
-                      <span className="text-[10px] text-white/70">
-                        {sectionStates.videos[idx] ? '1:40 / 1:40' : '0:00 / 1:40'}
-                      </span>
-                      {sectionStates.videos[idx] && (
-                        <span className="text-[10px] text-emerald-400 font-medium">Completed</span>
-                      )}
-                    </div>
-                  </div>
-                </div>
+                  );
+                })()}
 
                 {/* Tab Navigation */}
                 <div className="flex space-x-1 mb-8">
