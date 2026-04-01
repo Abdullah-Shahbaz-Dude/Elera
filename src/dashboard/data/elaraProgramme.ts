@@ -16,40 +16,70 @@ export interface InsightSection {
   questions: string[];
 }
 
-/** Self-reflection questions for "Thinking Differently at Work" (and reused for other modules until copy is added). */
-const THINKING_DIFFERENTLY_SECTIONS: InsightSection[] = [
-  {
-    title: 'THINKING DIFFERENTLY AT WORK.',
-    questions: [
-      'What stood out to you most in this video, and why?',
-      'What thinking style described in this video do you recognise most in yourself and how does it show up in your day-to-day work?',
-      'Can you think of one way digital tools or systems currently support how you think and one way they make work harder for you or others?',
-    ],
-  },
-  {
-    title: 'UNDERSTANDING HOW THINKING WORKS AT WORK',
-    questions: [
-      'Which part of thinking do you find most demanding at work, taking in information, organising it, holding it in mind, or moving into action?',
-      "Can you give an example of a task where thinking feels smooth for you, and one where it feels harder? What's different between them?",
-      'Are there particular types of tasks that consistently require more mental effort from you? Why do you think that is?',
-      'What does this help you notice about how others might experience the same task differently, even when the role is the same?',
-    ],
-  },
-  {
-    title: 'WHAT THIS LOOKS LIKE AT WORK',
-    questions: [
-      "Where might there be strengths or interests in your workplace that aren't visible through job titles alone?",
-      "Have you ever assumed something wasn't relevant to your role, even though it might have been useful at work?",
-      'How might curiosity about how people think change the way work, decisions, or change are approached in your organisation?',
-      'As digital tools and AI become more common, how could different thinkers be better supported to contribute effectively?',
-    ],
-  },
-];
+/** Self-reflection questions organized by module */
+const MODULE_REFLECTION_QUESTIONS: { [key: string]: InsightSection[] } = {
+  'thinking-differently-at-work': [
+    {
+      title: 'THINKING DIFFERENTLY AT WORK.',
+      questions: [
+        'What stood out to you most in this video, and why?',
+        'What thinking style described in this video do you recognise most in yourself and how does it show up in your day-to-day work?',
+        'Can you think of one way digital tools or systems currently support how you think and one way they make work harder for you or others?',
+      ],
+    },
+    {
+      title: 'UNDERSTANDING HOW THINKING WORKS AT WORK',
+      questions: [
+        'Which part of thinking do you find most demanding at work, taking in information, organising it, holding it in mind, or moving into action?',
+        "Can you give an example of a task where thinking feels smooth for you, and one where it feels harder? What's different between them?",
+        'Are there particular types of tasks that consistently require more mental effort from you? Why do you think that is?',
+        'What does this help you notice about how others might experience the same task differently, even when the role is the same?',
+      ],
+    },
+    {
+      title: 'WHAT THIS LOOKS LIKE AT WORK',
+      questions: [
+        "Where might there be strengths or interests in your workplace that aren't visible through job titles alone?",
+        "Have you ever assumed something wasn't relevant to your role, even though it might have been useful at work?",
+        'How might curiosity about how people think change the way work, decisions, or change are approached in your organisation?',
+        'As digital tools and AI become more common, how could different thinkers be better supported to contribute effectively?',
+      ],
+    },
+  ],
+  'attention-focus-mental-energy': [
+    {
+      title: 'THE ATTENTION ECONOMY',
+      questions: [
+        'What sensory inputs most affect your concentration at work?',
+        'When does stimulation increase your engagement?',
+        'When does it reduce clarity?',
+        'Where might your workplace unintentionally overload certain thinking styles?',
+      ],
+    },
+    {
+      title: 'THE BRAIN UNDER DIGITAL PRESSURE',
+      questions: [
+        'When during the day is your mental energy strongest?',
+        'What types of interruptions cost you the most energy?',
+        'Do you feel energised or drained by rapid switching?',
+        'Where might your organisation be confusing busyness with effectiveness?',
+      ],
+    },
+    {
+      title: 'WORKPLACE EXAMPLE',
+      questions: [
+        'Which employee do you identify with?',
+        'How does your workplace reward speed versus depth?',
+        'Where could better balance improve performance in your team?',
+      ],
+    },
+  ],
+};
 
 export function getInsightSectionsForModule(
-  _insightSlug: string
+  insightSlug: string
 ): InsightSection[] {
-  return THINKING_DIFFERENTLY_SECTIONS;
+  return MODULE_REFLECTION_QUESTIONS[insightSlug] || MODULE_REFLECTION_QUESTIONS['thinking-differently-at-work'];
 }
 
 /** Optional extended intro and learning gains shown on the insight module page (e.g. below the hero). */
