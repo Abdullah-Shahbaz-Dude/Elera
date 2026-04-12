@@ -1,4 +1,9 @@
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useLocation,
+} from 'react-router-dom';
 import Navbar from './components/Navbar/Navbar';
 import ScrollToTop from './components/ScrollToTop';
 import Home from './pages/Home';
@@ -20,64 +25,64 @@ import BrillianceReport from './dashboard/pages/BrillianceReport';
 import RevealHiddenBrilliance from './pages/our-ideas/RevealHiddenBrilliance';
 import MindSyncIdea from './pages/our-ideas/MindSync';
 import DigitalBiasImpactAssessment from './pages/our-ideas/DigitalBiasImpactAssessment';
+import ElaraChatAgentUIDemo from './pages/ElaraChatAgentUIDemo';
+import ReportPopupsUIDemo from './pages/ReportPopupsUIDemo';
 import { VideoProvider } from './contexts/VideoContext';
 
 function AppContent() {
   const location = useLocation();
-  const isDashboard = location.pathname.startsWith('/dashboard') || location.pathname.startsWith('/survey');
+  const isDashboard =
+    location.pathname.startsWith('/dashboard') ||
+    location.pathname.startsWith('/survey');
 
   return (
     <div className="min-h-screen">
       {!isDashboard && <Navbar />}
       <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/why-elerea-exist" element={<WhyElereaExist />} />
-            <Route path="/our-services" element={<OurServices />} />
-            <Route
-              path="/our-services/ai-insight-engine"
-              element={<AIInsightEngine />}
-            />
-            <Route
-              path="/our-services/reveal-hidden-brilliance"
-              element={<RevealHiddenBrilliance />}
-            />
-            <Route
-              path="/our-services/mind-sync"
-              element={<MindSyncIdea />}
-            />
-            <Route
-              path="/our-services/digital-bias"
-              element={<DigitalBiasImpactAssessment />}
-            />
-            {/* <Route path="/our-services/business-psychology-consultancy" element={<BusinessPsychologyConsultancy />} /> */}
-            <Route
-              path="/our-services/psychology-based-training-and-mentoring"
-              element={<PsychologyBasedTrainingAndMentoring />}
-            />
-            <Route path="/who-we-are" element={<WhoWeAre />} />
-            <Route path="/research-and-education" element={<WhoWeWorkWith />} />
-            <Route path="/contact-us" element={<ContactUs />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route
-              path="/dashboard/manager-report"
-              element={<ManagerReport />}
-            />
-            <Route
-              path="/dashboard/brilliance-report"
-              element={<BrillianceReport />}
-            />
-            <Route
-              path="/survey/reveal-hidden-brilliance"
-              element={<RevealHiddenBrillianceSurvey />}
-            />
-            <Route path="/survey/mind-sync" element={<MindSync />} />
-            <Route path="/survey/mind-sync/start" element={<MindSyncSurvey />} />
-            <Route
-              path="/survey/mind-sync/module/:moduleNumber"
-              element={<MindSyncModuleResults />}
-            />
-          </Routes>
-        </div>
+        <Route path="/" element={<Home />} />
+        <Route path="/why-elerea-exist" element={<WhyElereaExist />} />
+        <Route path="/our-services" element={<OurServices />} />
+        <Route
+          path="/our-services/ai-insight-engine"
+          element={<AIInsightEngine />}
+        />
+        <Route path="/ui/chat-agent" element={<ElaraChatAgentUIDemo />} />
+        <Route path="/ui/report-popups" element={<ReportPopupsUIDemo />} />
+        <Route
+          path="/our-services/reveal-hidden-brilliance"
+          element={<RevealHiddenBrilliance />}
+        />
+        <Route path="/our-services/mind-sync" element={<MindSyncIdea />} />
+        <Route
+          path="/our-services/digital-bias"
+          element={<DigitalBiasImpactAssessment />}
+        />
+        {/* <Route path="/our-services/business-psychology-consultancy" element={<BusinessPsychologyConsultancy />} /> */}
+        <Route
+          path="/our-services/psychology-based-training-and-mentoring"
+          element={<PsychologyBasedTrainingAndMentoring />}
+        />
+        <Route path="/who-we-are" element={<WhoWeAre />} />
+        <Route path="/research-and-education" element={<WhoWeWorkWith />} />
+        <Route path="/contact-us" element={<ContactUs />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/dashboard/manager-report" element={<ManagerReport />} />
+        <Route
+          path="/dashboard/brilliance-report"
+          element={<BrillianceReport />}
+        />
+        <Route
+          path="/survey/reveal-hidden-brilliance"
+          element={<RevealHiddenBrillianceSurvey />}
+        />
+        <Route path="/survey/mind-sync" element={<MindSync />} />
+        <Route path="/survey/mind-sync/start" element={<MindSyncSurvey />} />
+        <Route
+          path="/survey/mind-sync/module/:moduleNumber"
+          element={<MindSyncModuleResults />}
+        />
+      </Routes>
+    </div>
   );
 }
 
