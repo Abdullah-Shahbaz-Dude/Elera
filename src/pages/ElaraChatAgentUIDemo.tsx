@@ -10,7 +10,7 @@ const initialAssistantMessage: ChatMessage = {
   id: 'm0',
   role: 'assistant',
   content:
-    "Hi, I’m Elara. Ask a question, or pick a prompt on the left to explore insights.",
+    'Hi, I’m Elara. Ask a question, or pick a prompt on the left to explore insights.',
 };
 
 export default function ElaraChatAgentUIDemo() {
@@ -60,7 +60,7 @@ export default function ElaraChatAgentUIDemo() {
       id: `a_${Date.now()}`,
       role: 'assistant',
       content:
-        "This is a UI design preview. When connected to the backend, I’ll generate a real response here and optionally attach a report popup with visuals.",
+        'This is a UI design preview. When connected to the backend, I’ll generate a real response here and optionally attach a report popup with visuals.',
     };
 
     setMessages((prev) => [...prev, userMessage, assistantMessage]);
@@ -120,9 +120,26 @@ export default function ElaraChatAgentUIDemo() {
                       </div>
                     </div>
                     <span className="mt-0.5 inline-flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-blue text-white shadow-sm shadow-primary-blue-end/30 opacity-90 group-hover:opacity-100 transition">
-                      <span className="material-symbols-outlined text-[18px]">
-                        arrow_forward
-                      </span>
+                      <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        className="h-[18px] w-[18px]"
+                        aria-hidden="true"
+                      >
+                        <path
+                          d="M5 12h12"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                        />
+                        <path
+                          d="M13 6l6 6-6 6"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
                     </span>
                   </div>
                 </button>
@@ -154,9 +171,61 @@ export default function ElaraChatAgentUIDemo() {
             <div className="flex items-center justify-between border-b border-white/10 px-4 py-3">
               <div className="flex items-center gap-3">
                 <div className="h-9 w-9 rounded-xl bg-gradient-blue flex items-center justify-center shadow-sm shadow-primary-blue-end/30">
-                  <span className="material-symbols-outlined text-white">
-                    smart_toy
-                  </span>
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    className="h-5 w-5 text-white"
+                    aria-hidden="true"
+                  >
+                    <path
+                      d="M9 18h6"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                    />
+                    <path
+                      d="M10 22h4"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                    />
+                    <path
+                      d="M7 11a5 5 0 0110 0v3a3 3 0 01-3 3H10a3 3 0 01-3-3v-3z"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinejoin="round"
+                    />
+                    <path
+                      d="M12 6V4"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                    />
+                    <path
+                      d="M5 12H4"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                    />
+                    <path
+                      d="M20 12h-1"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                    />
+                    <path
+                      d="M10 12h.01"
+                      stroke="currentColor"
+                      strokeWidth="3"
+                      strokeLinecap="round"
+                    />
+                    <path
+                      d="M14 12h.01"
+                      stroke="currentColor"
+                      strokeWidth="3"
+                      strokeLinecap="round"
+                    />
+                  </svg>
                 </div>
                 <div>
                   <div className="text-sm font-semibold">Elara Agent</div>
@@ -205,10 +274,37 @@ export default function ElaraChatAgentUIDemo() {
                           className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs text-white/80 hover:bg-white/10 transition text-left"
                         >
                           <div className="flex items-center justify-between gap-2">
-                            <span className="font-medium">Open report popup</span>
-                            <span className="material-symbols-outlined text-[18px]">
-                              open_in_new
+                            <span className="font-medium">
+                              Open report popup
                             </span>
+                            <svg
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              className="h-[18px] w-[18px]"
+                              aria-hidden="true"
+                            >
+                              <path
+                                d="M14 4h6v6"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              />
+                              <path
+                                d="M10 14L20 4"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              />
+                              <path
+                                d="M20 14v5a1 1 0 01-1 1H6a2 2 0 01-2-2V5a1 1 0 011-1h5"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              />
+                            </svg>
                           </div>
                           <div className="mt-1 text-[11px] text-white/60">
                             Preview the visuals + report actions
@@ -258,8 +354,8 @@ export default function ElaraChatAgentUIDemo() {
               </div>
 
               <div className="mt-3 text-[11px] text-white/50">
-                This page is UI-only. Backend integration can be wired to your API
-                later.
+                This page is UI-only. Backend integration can be wired to your
+                API later.
               </div>
             </div>
           </section>

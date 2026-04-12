@@ -144,7 +144,43 @@ export default function ReportPopupsUIDemo() {
             <div className="relative border-b border-white/10 px-5 py-4 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="h-10 w-10 rounded-2xl bg-gradient-blue flex items-center justify-center shadow-sm shadow-primary-blue-end/30">
-                  <span className="material-symbols-outlined">analytics</span>
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    className="h-5 w-5 text-white"
+                    aria-hidden="true"
+                  >
+                    <path
+                      d="M4 19V5"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                    />
+                    <path
+                      d="M20 19H4"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                    />
+                    <path
+                      d="M8 17v-6"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                    />
+                    <path
+                      d="M12 17V8"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                    />
+                    <path
+                      d="M16 17v-3"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                    />
+                  </svg>
                 </div>
                 <div>
                   <div className="text-sm font-semibold">Elara Report</div>
