@@ -6,8 +6,7 @@ import {
   getInsightSectionsForModule,
   INSIGHT_SIDEBAR_TITLES,
 } from '../data/elaraProgramme';
-
-const PROGRAMME_BASE = '/dashboard/my-learning/programme/neurodiversity';
+import { getModuleById, getAllLessons } from '../data/moduleSyllabus';
 
 // Type definitions for questions and transcripts
 interface Question {
@@ -23,44 +22,87 @@ interface Question {
 const PRE_VIDEO_QUESTIONS_BY_MODULE: { [key: string]: Question[][] } = {
   'thinking-differently-at-work': [
     [
-      { question: "How would you describe your thinking style at work?", type: "multiple-choice", options: ["Quick and decisive", "Deep and thorough", "Pattern-focused", "Structure-oriented", "Creative and flexible"] },
-      { question: "What percentage of people do you think have different thinking styles?", type: "slider", min: 5, max: 50, unit: "%" },
-      { question: "How do you think digital tools affect different thinkers? (One sentence)", type: "text", maxLength: 100 }
+      {
+        question: 'How would you describe your thinking style at work?',
+        type: 'multiple-choice',
+        options: [
+          'Quick and decisive',
+          'Deep and thorough',
+          'Pattern-focused',
+          'Structure-oriented',
+          'Creative and flexible',
+        ],
+      },
+      {
+        question:
+          'What percentage of people do you think have different thinking styles?',
+        type: 'slider',
+        min: 5,
+        max: 50,
+        unit: '%',
+      },
+      {
+        question:
+          'How do you think digital tools affect different thinkers? (One sentence)',
+        type: 'text',
+        maxLength: 100,
+      },
     ],
     [
-      { question: "Which thinking process feels most demanding for you?", type: "multiple-choice", options: ["Taking in information", "Organizing information", "Holding information in mind", "Moving from thought to action"] },
-      { question: "Rate your comfort with multitasking", type: "slider", min: 1, max: 10, unit: "/10" },
-      { question: "Describe a work task that feels mentally smooth for you", type: "text", maxLength: 80 }
+      {
+        question: 'Which thinking process feels most demanding for you?',
+        type: 'multiple-choice',
+        options: [
+          'Taking in information',
+          'Organizing information',
+          'Holding information in mind',
+          'Moving from thought to action',
+        ],
+      },
+      {
+        question: 'Rate your comfort with multitasking',
+        type: 'slider',
+        min: 1,
+        max: 10,
+        unit: '/10',
+      },
+      {
+        question: 'Describe a work task that feels mentally smooth for you',
+        type: 'text',
+        maxLength: 80,
+      },
     ],
     [
-      { question: "Do you think job titles fully capture what people can contribute?", type: "multiple-choice", options: ["Always", "Usually", "Sometimes", "Rarely", "Never"] },
-      { question: "How often do you notice hidden skills in colleagues?", type: "slider", min: 1, max: 10, unit: "/10" },
-      { question: "What's one skill you have that's not in your job description?", type: "text", maxLength: 60 }
-    ]
+      {
+        question:
+          'Do you think job titles fully capture what people can contribute?',
+        type: 'multiple-choice',
+        options: ['Always', 'Usually', 'Sometimes', 'Rarely', 'Never'],
+      },
+      {
+        question: 'How often do you notice hidden skills in colleagues?',
+        type: 'slider',
+        min: 1,
+        max: 10,
+        unit: '/10',
+      },
+      {
+        question:
+          "What's one skill you have that's not in your job description?",
+        type: 'text',
+        maxLength: 60,
+      },
+    ],
   ],
-  'attention-focus-mental-energy': [
-    [
-      { question: "How well do you handle multiple information sources at once?", type: "multiple-choice", options: ["Very well", "Well", "Moderately", "Poorly", "Very poorly"] },
-      { question: "Rate how much digital notifications affect your focus", type: "slider", min: 1, max: 10, unit: "/10" },
-      { question: "What's your biggest attention challenge at work?", type: "text", maxLength: 80 }
-    ],
-    [
-      { question: "How do you feel after frequent task switching?", type: "multiple-choice", options: ["Energized", "Neutral", "Slightly drained", "Very drained", "Exhausted"] },
-      { question: "Rate your preference for stimulation vs quiet focus", type: "slider", min: 1, max: 10, unit: " (1=Quiet, 10=Stimulating)" },
-      { question: "Describe your ideal work environment for deep thinking", type: "text", maxLength: 100 }
-    ],
-    [
-      { question: "Which employee do you identify with more?", type: "multiple-choice", options: ["Employee A (ADHD - fast, exploratory)", "Employee B (Autistic - deep, analytical)", "A mix of both", "Neither", "Not sure"] },
-      { question: "How does your workplace balance speed vs depth?", type: "slider", min: 1, max: 10, unit: " (1=All Speed, 10=All Depth)" },
-      { question: "What's one way your team could better balance different thinking styles?", type: "text", maxLength: 120 }
-    ]
-  ]
+  'attention-focus-mental-energy': [[], [], []],
+  // Alias: Future Sync syllabus slug
+  'attention-focus-and-mental-energy': [[], [], []],
 };
 
 // Video transcripts for each module
 const VIDEO_TRANSCRIPTS_BY_MODULE: { [key: string]: string[] } = {
   'thinking-differently-at-work': [
-  `In this video, you'll understand what neurodiversity means and why different thinking styles matter more than ever in modern work.
+    `In this video, you'll understand what neurodiversity means and why different thinking styles matter more than ever in modern work.
 
 Human brains naturally vary in how they think, focus, and process information.
 • Some people think quickly.
@@ -93,7 +135,7 @@ Understanding how different minds work, and how they interact with technology, h
 
 So as you move through this module, consider: Where does your thinking style help you most and where might the modern workplace make it harder?`,
 
-  `In this video, you'll understand why the same task can feel easy for one person and mentally exhausting for another, even when the role is the same.
+    `In this video, you'll understand why the same task can feel easy for one person and mentally exhausting for another, even when the role is the same.
 
 People often talk about "thinking" as if it's a single process. But in reality, **thinking is made up of several mental processes working together**.
 
@@ -122,7 +164,7 @@ The key point to remember is this: understanding how thinking works helps explai
 
 As you move on, consider: Which parts of thinking does your work rely on most and how well does that match how your brain works?`,
 
-  `In this video, you'll see how neurodiversity can show up in everyday work and how organisations can overlook valuable thinking by focusing only on job roles.
+    `In this video, you'll see how neurodiversity can show up in everyday work and how organisations can overlook valuable thinking by focusing only on job roles.
 
 Some people focus very clearly on the task they were hired to do.
 They take their role seriously.
@@ -158,167 +200,101 @@ The key point to remember is this: **People don't only contribute through their 
 
 When organisations become curious about how people process information, solve problems, and approach work, they are far more likely to spot strengths that would otherwise remain invisible.
 
-As you move on, consider: Where might valuable ways of thinking be present in your workplace but currently overlooked?`
+As you move on, consider: Where might valuable ways of thinking be present in your workplace but currently overlooked?`,
   ],
   'attention-focus-mental-energy': [
-    `**Video 1 – The Attention Economy**
-
-In Module 1, we explored what neurodiversity is and why different thinking styles exist. In this module, we explore why those differences matter more than ever in today's digital workplace.
-
-**Work is not just changing in what we do. It is changing in how our brains are required to function while doing it.**
-
-**The Knowledge Hierarchy – How Thinking Actually Starts**
-
-Every second, your brain receives sensory data:
-• Light
-• Sound  
-• Movement
-• Language
-
-This is raw data. On its own, it has no meaning.
-
-Your brain filters what's relevant. It connects it to what you already know. It builds meaning.
-
-That's how **information becomes knowledge. And knowledge becomes judgement**.
-
-This process depends on one thing: **Attention**.
-
-Without attention, data never becomes insight.
-
-**The Volume Problem**
-
-The human brain processes millions of bits of sensory data per second. In modern workplaces, the volume of incoming data has increased dramatically.
-
-• Emails • Meetings • Dashboards • AI tools • Open-plan offices • Live data • Constant updates
-
-Every system is designed to move faster. And every system is competing for one thing: **Your attention**.
-
-**Research shows:**
-• After an interruption, it can take more than 20 minutes to fully return to deep focus
-• Frequent task switching reduces efficiency and increases cognitive fatigue
-
-We are now operating in what many call **the attention economy**. **Attention has become the scarce resource**.
-
-**Where Thinking Styles Begin to Diverge**
-
-When incoming data exceeds the brain's processing capacity, cognitive strain increases. **Different brains regulate this differently**.
-
-Some people naturally filter noise quickly. Others process input more deeply. Some thrive on stimulation. Others need protected focus to perform at their best.
-
-**Understanding different attention styles is no longer just helpful – it can support strategic thinking and efficiencies in the workplace**.`,
-
-    `**Video 2 – The Brain Under Digital Pressure**
-
-**Attention Is Fuel**
-
-Attention isn't just focus. **It's fuel**.
-
-Your brain makes up about 2% of your body weight, but it uses around **20% of your energy**. Thinking deeply costs energy.
-
-When you're focused, your brain settles into a rhythm. It connects ideas. It filters out distractions. It works smoothly.
-
-But when you're interrupted, your brain has to: **Stop. Switch. And restart**.
-
-That restart uses mental energy. Research shows **it takes around 23 minutes to fully return to a task after an interruption**.
-
-**Cognitive Load – The Brain Has Limits**
-
-Your working memory can only hold a small amount of information at once. **Around four to seven pieces of information**.
-
-When we exceed that limit: We forget things. We make mistakes. We struggle to prioritise. We feel stressed.
-
-**This isn't a resilience issue. It's a capacity issue**.
-
-**Different Brains, Different Regulation Patterns**
-
-**For someone with ADHD**, higher stimulation can increase engagement, especially when something feels interesting or meaningful. Fast environments can feel activating. But constant low-level digital noise can fragment focus and make prioritising harder.
-
-**For someone with Autism**, depth and detail often matter more. Clear expectations, uninterrupted time and predictability can support strong analytical thinking and pattern recognition. But sudden changes and constant switching may increase cognitive strain.
-
-**Everyone has a different threshold – it's about understanding and supporting it, that matters**.
-
-**Digital Tools and Thinking**
-
-When we rely too heavily on technology to process information for us, we can reduce our own deep engagement. **Your brain still needs challenge. It still needs protected thinking time**.
-
-**Why This Matters**
-
-Digital demands are increasing. AI is accelerating. But **our cognitive limits haven't changed**.
-
-If organisations want good decisions and real innovation, they need to protect focus. **And cognitive diversity only becomes an advantage when the environment allows it to work**.`,
-
-    `**Video 3 – Workplace Example: Adopting a New AI System**
-
-Imagine a company introducing a new AI analytics platform to support decision-making. Two employees are part of the rollout team. Both are intelligent. Both are motivated. **But their brains work differently**.
-
-**Employee A has ADHD.**
-• They thrive in fast-moving environments
-• They move quickly between features  
-• They explore instinctively
-• They test multiple scenarios in rapid cycles
-• New systems energise them
-
-During implementation, they're invaluable. They find usability flaws quickly. They surface issues in real time others might miss. **In early-stage AI adoption, that energy accelerates progress**.
-
-**Employee B is Autistic.**
-• They prefer uninterrupted time to analyse outputs
-• They notice patterns in the AI's logic
-• They detect patterns and inconsistencies others overlook
-
-While Employee A stress-tests the interface, **Employee B interrogates the intelligence**.
-
-They ask:
-• What assumptions is this AI making?
-• Where could bias enter the system?  
-• How reliable are these predictions?
-• What happens at scale?
-
-**Their strength is depth, structure and precision**. They slow things down not to resist change, but to make sure it's sound.
-
-**What This Shows**
-
-Together, they create intelligent adoption. Employee A helps the organisation move quickly. Employee B ensures it moves responsibly.
-
-**If a workplace only rewards speed, it risks flawed decisions. If it only rewards caution, it risks stagnation**.
-
-The real advantage comes from combining both. **Different thinking styles aren't problems to manage. They're strengths to design around**.
-
-**Digital transformation doesn't require identical thinking. It requires complementary thinking**.`
-  ]
+    'Sample transcript (Insight 1): This video explores how attention is shaped by environment, task design, and digital interruption. In fast-paced settings, different brains regulate focus differently, and performance can fluctuate based on cognitive load.',
+    'Sample transcript (Insight 2): This video looks at mental energy and switching costs. Notifications, context switching, and unclear priorities can drain working memory and reduce quality of thinking over time.',
+    'Sample transcript (Insight 3): This video covers practical support. Small changes—clearer priorities, fewer interruptions, and better structure—can improve sustained focus and reduce cognitive strain across a team.',
+  ],
+  // Alias: Future Sync syllabus slug
+  'attention-focus-and-mental-energy': [
+    'Sample transcript (Insight 1): This video explores how attention is shaped by environment, task design, and digital interruption. In fast-paced settings, different brains regulate focus differently, and performance can fluctuate based on cognitive load.',
+    'Sample transcript (Insight 2): This video looks at mental energy and switching costs. Notifications, context switching, and unclear priorities can drain working memory and reduce quality of thinking over time.',
+    'Sample transcript (Insight 3): This video covers practical support. Small changes—clearer priorities, fewer interruptions, and better structure—can improve sustained focus and reduce cognitive strain across a team.',
+  ],
 };
 
 export default function InsightModuleView() {
-  const { insightSlug } = useParams<{ insightSlug: string }>();
-  const programme = getProgramme();
-  const insight = insightSlug ? getInsightBySlug(insightSlug) : null;
-  const sections = insight ? getInsightSectionsForModule(insight.slug) : [];
+  const { programmeId, insightSlug } = useParams<{
+    programmeId: string;
+    insightSlug: string;
+  }>();
+  const programmeBase = `/dashboard/my-learning/programme/${programmeId ?? '1'}`;
+  const insightProgramme = getProgramme();
+  const syllabusProgramme = programmeId ? getModuleById(programmeId) : null;
+  const syllabusLesson =
+    syllabusProgramme && insightSlug
+      ? (getAllLessons(syllabusProgramme).find((l) => l.slug === insightSlug) ??
+        null)
+      : null;
 
+  const insightFromData = insightSlug ? getInsightBySlug(insightSlug) : null;
+  const syllabusDescription = syllabusLesson
+    ? syllabusLesson.objectives.join(' ')
+    : '';
+  const insight =
+    insightFromData ??
+    (syllabusLesson
+      ? {
+          id: syllabusLesson.id,
+          slug: syllabusLesson.slug,
+          title: syllabusLesson.title,
+          description: syllabusDescription,
+          longDescription: syllabusDescription,
+        }
+      : null);
+
+  const fallbackInsightCount = insightFromData
+    ? INSIGHT_SIDEBAR_TITLES.length
+    : insightSlug === 'attention-focus-mental-energy' ||
+        insightSlug === 'attention-focus-and-mental-energy'
+      ? 3
+      : 1;
+
+  const sidebarTitles = insightFromData
+    ? [...INSIGHT_SIDEBAR_TITLES]
+    : Array.from(
+        { length: fallbackInsightCount },
+        (_, i) => `INSIGHT ${String(i + 1).padStart(2, '0')}`
+      );
+
+  const sections = insightFromData
+    ? insight
+      ? getInsightSectionsForModule(insight.slug)
+      : []
+    : sidebarTitles.map((t) => ({ title: t, questions: [] }));
+
+  const insightCount = Math.max(1, sidebarTitles.length);
   const [activeInsightIndex, setActiveInsightIndex] = useState(0);
-  const [completedInsights, setCompletedInsights] = useState<boolean[]>([false, false, false]);
+  const [completedInsights, setCompletedInsights] = useState<boolean[]>(
+    Array.from({ length: insightCount }, () => false)
+  );
   const [sectionStates, setSectionStates] = useState<{
     questions: boolean[];
     videos: boolean[];
     reflections: boolean[];
   }>({
-    questions: [false, false, false],
-    videos: [false, false, false],
-    reflections: [false, false, false],
+    questions: Array.from({ length: insightCount }, () => false),
+    videos: Array.from({ length: insightCount }, () => false),
+    reflections: Array.from({ length: insightCount }, () => false),
   });
-  const [activeTab, setActiveTab] = useState<'questions' | 'reflection' | 'transcript'>('questions');
+  const [activeTab, setActiveTab] = useState<
+    'questions' | 'reflection' | 'transcript'
+  >('questions');
   const [tabStatePerInsight, setTabStatePerInsight] = useState<{
     [key: number]: 'questions' | 'reflection' | 'transcript';
   }>({
     0: 'questions',
-    1: 'questions', 
-    2: 'questions'
   });
-  const [videoLoading, setVideoLoading] = useState<{[key: number]: boolean}>({
-    0: false,
-    1: false,
-    2: false
-  });
+  const [videoLoading, setVideoLoading] = useState<{ [key: number]: boolean }>(
+    () =>
+      Object.fromEntries(
+        Array.from({ length: insightCount }, (_, i) => [i, false])
+      )
+  );
 
-  const allThreeCompleted = completedInsights.every(Boolean);
+  const allInsightsCompleted = completedInsights.every(Boolean);
 
   const handleSaveAndContinue = (idx: number) => {
     setCompletedInsights((prev) => {
@@ -328,14 +304,16 @@ export default function InsightModuleView() {
     });
     setSectionStates((prev) => ({
       ...prev,
-      reflections: prev.reflections.map((completed, i) => i === idx ? true : completed),
+      reflections: prev.reflections.map((completed, i) =>
+        i === idx ? true : completed
+      ),
     }));
     if (idx < 2) setActiveInsightIndex(idx + 1);
   };
 
   const handleInsightNavigation = (idx: number) => {
     setActiveInsightIndex(idx);
-    
+
     // Smooth scroll to Module Lessons section
     const moduleLessonsElement = document.getElementById('module-lessons');
     if (moduleLessonsElement) {
@@ -349,32 +327,34 @@ export default function InsightModuleView() {
   const handleQuestionsComplete = (idx: number) => {
     setSectionStates((prev) => ({
       ...prev,
-      questions: prev.questions.map((completed, i) => i === idx ? true : completed),
+      questions: prev.questions.map((completed, i) =>
+        i === idx ? true : completed
+      ),
     }));
   };
 
   const handleVideoComplete = (idx: number) => {
     setSectionStates((prev) => ({
       ...prev,
-      videos: prev.videos.map((completed, i) => i === idx ? true : completed),
+      videos: prev.videos.map((completed, i) => (i === idx ? true : completed)),
     }));
     setVideoLoading((prev) => ({
       ...prev,
-      [idx]: false
+      [idx]: false,
     }));
   };
 
   const startVideoLoading = (idx: number) => {
     setVideoLoading((prev) => ({
       ...prev,
-      [idx]: true
+      [idx]: true,
     }));
-    
+
     // Auto-hide loader after 5 seconds as fallback
     setTimeout(() => {
       setVideoLoading((prev) => ({
         ...prev,
-        [idx]: false
+        [idx]: false,
       }));
     }, 5000);
   };
@@ -395,11 +375,13 @@ export default function InsightModuleView() {
   }, [activeInsightIndex, tabStatePerInsight]);
 
   // Save tab state when user switches tabs
-  const handleTabChange = (newTab: 'questions' | 'reflection' | 'transcript') => {
+  const handleTabChange = (
+    newTab: 'questions' | 'reflection' | 'transcript'
+  ) => {
     setActiveTab(newTab);
-    setTabStatePerInsight(prev => ({
+    setTabStatePerInsight((prev) => ({
       ...prev,
-      [activeInsightIndex]: newTab
+      [activeInsightIndex]: newTab,
     }));
   };
 
@@ -409,14 +391,24 @@ export default function InsightModuleView() {
       'thinking-differently-at-work': [
         'https://drive.google.com/file/d/1VnNxw9NXGcDp9RkXCfuZAhQN6kamxNNA/view?usp=drive_link',
         'https://drive.google.com/file/d/1fZvwZJNZBSy_FJjZgplXaBgpcuoVDyMW/view?usp=drive_link',
-        'https://drive.google.com/file/d/1FkVrCoOKloLhF30SNHTNCMIEN3ROXE9d/view?usp=drive_link'
+        'https://drive.google.com/file/d/1FkVrCoOKloLhF30SNHTNCMIEN3ROXE9d/view?usp=drive_link',
       ],
-      'attention-focus-mental-energy': ['', '', '']
+      'attention-focus-mental-energy': [
+        'https://drive.google.com/file/d/1nM33RGIgQqPVSQFbydCaAYiYNlZc2Gff/view?usp=drive_link',
+        'https://drive.google.com/file/d/1AeH8w5MrKi6A0phhtPZc0-exP437BBn9/view?usp=drive_link',
+        'https://drive.google.com/file/d/106DcHCXiHIt9JePL68pMU791oLMpMqyp/view?usp=drive_link',
+      ],
+      // Alias: Future Sync syllabus slug
+      'attention-focus-and-mental-energy': [
+        'https://drive.google.com/file/d/1nM33RGIgQqPVSQFbydCaAYiYNlZc2Gff/view?usp=drive_link',
+        'https://drive.google.com/file/d/1AeH8w5MrKi6A0phhtPZc0-exP437BBn9/view?usp=drive_link',
+        'https://drive.google.com/file/d/106DcHCXiHIt9JePL68pMU791oLMpMqyp/view?usp=drive_link',
+      ],
     };
-    
+
     const currentModuleVideos = moduleVideos[insight?.slug || ''] || [];
     const hasVideo = Boolean(currentModuleVideos[activeInsightIndex]);
-    
+
     if (hasVideo && !sectionStates.videos[activeInsightIndex]) {
       startVideoLoading(activeInsightIndex);
     }
@@ -429,7 +421,7 @@ export default function InsightModuleView() {
       <div className="flex-1 overflow-y-auto p-8 scroll-hide flex flex-col items-center justify-center gap-4">
         <p className="text-slate-400">Insight module not found.</p>
         <Link
-          to={PROGRAMME_BASE}
+          to={programmeBase}
           className="text-indigo-400 hover:text-indigo-300 text-sm font-medium"
         >
           Back to Programme
@@ -446,7 +438,7 @@ export default function InsightModuleView() {
             Module Insight Overview
           </span>
           <Link
-            to={PROGRAMME_BASE}
+            to={programmeBase}
             className="flex items-center gap-2 text-white/80 hover:text-white transition-colors group"
           >
             <span className="material-symbols-outlined text-lg group-hover:-translate-x-1 transition-transform">
@@ -459,7 +451,8 @@ export default function InsightModuleView() {
         </div>
         <div className="absolute top-6 right-10 text-right">
           <span className="text-xs text-white/70 font-medium">
-            3 Insights • Part of {programme.title}
+            {sidebarTitles.length} Insights • Part of{' '}
+            {syllabusProgramme?.title ?? insightProgramme.title}
           </span>
         </div>
         <div className="relative z-10 max-w-4xl mt-10">
@@ -478,24 +471,32 @@ export default function InsightModuleView() {
       <main className="flex w-full">
         <div className="w-3/4 flex flex-col p-8 space-y-10">
           {/* Intro: What Learners Will Gain (when available) */}
-          {insight.whatLearnersWillGain && insight.whatLearnersWillGain.length > 0 && (
-            <section className="space-y-6">
-              <div>
-                <h3 className="text-xl font-bold text-white mb-3">What Learners Will Gain</h3>
-                <ul className="space-y-2 text-slate-300">
-                  {insight.whatLearnersWillGain.map((item, i) => (
-                    <li key={i} className="flex gap-3">
-                      <span className="text-primary shrink-0 mt-0.5">•</span>
-                      <span>{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </section>
-          )}
+          {insight.whatLearnersWillGain &&
+            insight.whatLearnersWillGain.length > 0 && (
+              <section className="space-y-6">
+                <div>
+                  <h3 className="text-xl font-bold text-white mb-3">
+                    What Learners Will Gain
+                  </h3>
+                  <ul className="space-y-2 text-slate-300">
+                    {insight.whatLearnersWillGain.map((item, i) => (
+                      <li key={i} className="flex gap-3">
+                        <span className="text-primary shrink-0 mt-0.5">•</span>
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </section>
+            )}
 
           {/* Module Lessons: show only the active insight (Video + Self-Reflection) */}
-          <h2 id="module-lessons" className="text-2xl font-bold text-white scroll-mt-6">Module Lessons</h2>
+          <h2
+            id="module-lessons"
+            className="text-2xl font-bold text-white scroll-mt-6"
+          >
+            Module Lessons
+          </h2>
 
           {(() => {
             const idx = activeInsightIndex;
@@ -508,7 +509,7 @@ export default function InsightModuleView() {
                 className="scroll-mt-6 space-y-6"
               >
                 <h3 className="text-lg font-bold text-white">
-                  {idx + 1}. {INSIGHT_SIDEBAR_TITLES[idx]}
+                  {idx + 1}. {sidebarTitles[idx]}
                 </h3>
 
                 {/* Video */}
@@ -518,25 +519,33 @@ export default function InsightModuleView() {
                     'thinking-differently-at-work': [
                       'https://drive.google.com/file/d/1VnNxw9NXGcDp9RkXCfuZAhQN6kamxNNA/view?usp=drive_link',
                       'https://drive.google.com/file/d/1fZvwZJNZBSy_FJjZgplXaBgpcuoVDyMW/view?usp=drive_link',
-                      'https://drive.google.com/file/d/1FkVrCoOKloLhF30SNHTNCMIEN3ROXE9d/view?usp=drive_link'
+                      'https://drive.google.com/file/d/1FkVrCoOKloLhF30SNHTNCMIEN3ROXE9d/view?usp=drive_link',
                     ],
                     'attention-focus-mental-energy': [
-                      '', // Placeholder for Video 1
-                      '', // Placeholder for Video 2  
-                      ''  // Placeholder for Video 3
-                    ]
+                      'https://drive.google.com/file/d/1nM33RGIgQqPVSQFbydCaAYiYNlZc2Gff/view?usp=drive_link',
+                      'https://drive.google.com/file/d/1AeH8w5MrKi6A0phhtPZc0-exP437BBn9/view?usp=drive_link',
+                      'https://drive.google.com/file/d/106DcHCXiHIt9JePL68pMU791oLMpMqyp/view?usp=drive_link',
+                    ],
+                    // Alias: Future Sync syllabus slug
+                    'attention-focus-and-mental-energy': [
+                      'https://drive.google.com/file/d/1nM33RGIgQqPVSQFbydCaAYiYNlZc2Gff/view?usp=drive_link',
+                      'https://drive.google.com/file/d/1AeH8w5MrKi6A0phhtPZc0-exP437BBn9/view?usp=drive_link',
+                      'https://drive.google.com/file/d/106DcHCXiHIt9JePL68pMU791oLMpMqyp/view?usp=drive_link',
+                    ],
                   };
-                  
+
                   const currentModuleVideos = moduleVideos[insight.slug] || [];
                   const videoUrl = currentModuleVideos[idx];
                   const hasVideo = Boolean(videoUrl);
-                  
+
                   // Convert Google Drive share URL to embeddable format
                   const getEmbedUrl = (shareUrl: string) => {
                     const fileId = shareUrl.match(/\/d\/([a-zA-Z0-9-_]+)/)?.[1];
-                    return fileId ? `https://drive.google.com/file/d/${fileId}/preview` : shareUrl;
+                    return fileId
+                      ? `https://drive.google.com/file/d/${fileId}/preview`
+                      : shareUrl;
                   };
-                  
+
                   return (
                     <div className="relative aspect-video w-full rounded-2xl overflow-hidden glass-panel border border-white/10 shadow-2xl mb-6">
                       {hasVideo ? (
@@ -555,16 +564,27 @@ export default function InsightModuleView() {
                                 <div className="relative mb-4">
                                   {/* Circular ring */}
                                   <div className="w-16 h-16 rounded-full border-2 border-white/20 border-t-blue-400 animate-spin mx-auto"></div>
-                                  
+
                                   {/* Animated dots */}
                                   <div className="flex items-center justify-center gap-1 mt-4">
-                                    <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                                    <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-                                    <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                                    <div
+                                      className="w-2 h-2 bg-blue-400 rounded-full animate-bounce"
+                                      style={{ animationDelay: '0ms' }}
+                                    ></div>
+                                    <div
+                                      className="w-2 h-2 bg-blue-400 rounded-full animate-bounce"
+                                      style={{ animationDelay: '150ms' }}
+                                    ></div>
+                                    <div
+                                      className="w-2 h-2 bg-blue-400 rounded-full animate-bounce"
+                                      style={{ animationDelay: '300ms' }}
+                                    ></div>
                                   </div>
                                 </div>
-                                
-                                <p className="text-white font-medium text-sm">Loading video</p>
+
+                                <p className="text-white font-medium text-sm">
+                                  Loading video
+                                </p>
                               </div>
                             </div>
                           )}
@@ -574,10 +594,16 @@ export default function InsightModuleView() {
                         <div className="w-full h-full bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center">
                           <div className="text-center">
                             <div className="w-20 h-20 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center mb-4 mx-auto">
-                              <span className="material-symbols-outlined text-white text-2xl">play_circle</span>
+                              <span className="material-symbols-outlined text-white text-2xl">
+                                play_circle
+                              </span>
                             </div>
-                            <h3 className="text-lg font-bold text-white mb-2">{section.title}</h3>
-                            <p className="text-slate-400 text-sm">Video coming soon</p>
+                            <h3 className="text-lg font-bold text-white mb-2">
+                              {section.title}
+                            </h3>
+                            <p className="text-slate-400 text-sm">
+                              Video coming soon
+                            </p>
                           </div>
                         </div>
                       )}
@@ -587,7 +613,11 @@ export default function InsightModuleView() {
                             Video {idx + 1}: {section.title}
                           </span>
                           <span className="text-xs text-emerald-400 font-medium">
-                            {videoLoading[idx] ? 'Loading...' : hasVideo ? 'Watch & Learn' : 'Coming Soon'}
+                            {videoLoading[idx]
+                              ? 'Loading...'
+                              : hasVideo
+                                ? 'Watch & Learn'
+                                : 'Coming Soon'}
                           </span>
                         </div>
                       </div>
@@ -606,13 +636,17 @@ export default function InsightModuleView() {
                         : 'bg-white/5 border border-white/10 text-slate-400 hover:text-white hover:bg-white/10'
                     }`}
                   >
-                    <span className="material-symbols-outlined text-sm">quiz</span>
+                    <span className="material-symbols-outlined text-sm">
+                      quiz
+                    </span>
                     Pre-Video Questions
                     {sectionStates.questions[idx] && (
-                      <span className="material-symbols-outlined text-sm text-blue-400">check_circle</span>
+                      <span className="material-symbols-outlined text-sm text-blue-400">
+                        check_circle
+                      </span>
                     )}
                   </button>
-                  
+
                   <button
                     type="button"
                     onClick={() => handleTabChange('reflection')}
@@ -622,13 +656,17 @@ export default function InsightModuleView() {
                         : 'bg-white/5 border border-white/10 text-slate-400 hover:text-white hover:bg-white/10'
                     }`}
                   >
-                    <span className="material-symbols-outlined text-sm">psychology</span>
+                    <span className="material-symbols-outlined text-sm">
+                      psychology
+                    </span>
                     Self-Reflection
                     {sectionStates.reflections[idx] && (
-                      <span className="material-symbols-outlined text-sm text-purple-400">check_circle</span>
+                      <span className="material-symbols-outlined text-sm text-purple-400">
+                        check_circle
+                      </span>
                     )}
                   </button>
-                  
+
                   <button
                     type="button"
                     onClick={() => handleTabChange('transcript')}
@@ -638,207 +676,256 @@ export default function InsightModuleView() {
                         : 'bg-white/5 border border-white/10 text-slate-400 hover:text-white hover:bg-white/10'
                     }`}
                   >
-                    <span className="material-symbols-outlined text-sm">subtitles</span>
+                    <span className="material-symbols-outlined text-sm">
+                      subtitles
+                    </span>
                     Transcript
                   </button>
                 </div>
 
                 {/* Questions Section (Pre-Video Assessment) */}
                 {activeTab === 'questions' && (
-                <section className="glass-panel rounded-2xl p-8 border border-white/10 mb-6">
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className="w-10 h-10 rounded-full bg-blue-500/20 border border-blue-500/30 flex items-center justify-center">
-                      <span className="material-symbols-outlined text-blue-400">quiz</span>
-                    </div>
-                    <div>
-                      <h4 className="text-lg font-bold text-white">Pre-Video Questions</h4>
-                      <p className="text-sm text-slate-400">
-                        Test your current knowledge before watching the video.
-                      </p>
-                    </div>
-                    <div className="ml-auto">
-                      {sectionStates.questions[idx] && (
-                        <div className="flex items-center gap-2 text-blue-400">
-                          <span className="material-symbols-outlined text-sm">check_circle</span>
-                          <span className="text-xs font-medium">Completed</span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                  <div className="space-y-6">
-                    {PRE_VIDEO_QUESTIONS_BY_MODULE[insight.slug]?.[idx]?.map((q: Question, qIdx: number) => (
-                      <div key={qIdx} className="space-y-3">
-                        <label className="text-sm font-medium text-slate-200">
-                          {qIdx + 1}. {q.question}
-                        </label>
-                        {q.type === 'multiple-choice' && (
-                          <div className="space-y-2">
-                            {q.options?.map((option: string, oIdx: number) => (
-                              <label key={oIdx} className="flex items-center gap-3 cursor-pointer group">
-                                <input
-                                  type="radio"
-                                  name={`question-${idx}-${qIdx}`}
-                                  className="w-4 h-4 text-blue-500 bg-white/5 border-white/20 focus:ring-blue-500 focus:ring-2"
-                                />
-                                <span className="text-sm text-slate-300 group-hover:text-white transition-colors">
-                                  {option}
-                                </span>
-                              </label>
-                            ))}
+                  <section className="glass-panel rounded-2xl p-8 border border-white/10 mb-6">
+                    <div className="flex items-center gap-3 mb-6">
+                      <div className="w-10 h-10 rounded-full bg-blue-500/20 border border-blue-500/30 flex items-center justify-center">
+                        <span className="material-symbols-outlined text-blue-400">
+                          quiz
+                        </span>
+                      </div>
+                      <div>
+                        <h4 className="text-lg font-bold text-white">
+                          Pre-Video Questions
+                        </h4>
+                        <p className="text-sm text-slate-400">
+                          Test your current knowledge before watching the video.
+                        </p>
+                      </div>
+                      <div className="ml-auto">
+                        {sectionStates.questions[idx] && (
+                          <div className="flex items-center gap-2 text-blue-400">
+                            <span className="material-symbols-outlined text-sm">
+                              check_circle
+                            </span>
+                            <span className="text-xs font-medium">
+                              Completed
+                            </span>
                           </div>
-                        )}
-                        {q.type === 'slider' && (
-                          <div className="space-y-2">
-                            <input
-                              type="range"
-                              min={q.min}
-                              max={q.max}
-                              className="w-full h-2 bg-white/10 rounded-lg appearance-none cursor-pointer"
-                            />
-                            <div className="flex justify-between text-xs text-slate-400">
-                              <span>{q.min}{q.unit}</span>
-                              <span>{q.max}{q.unit}</span>
-                            </div>
-                          </div>
-                        )}
-                        {q.type === 'text' && (
-                          <input
-                            type="text"
-                            maxLength={q.maxLength}
-                            className="w-full rounded-xl p-3 text-sm text-slate-200 bg-white/5 border border-white/10 focus:border-blue-500/50 outline-none transition-colors"
-                            placeholder="Type your answer..."
-                          />
                         )}
                       </div>
-                    ))}
-                    <div className="flex justify-end pt-4">
-                      <button
-                        type="button"
-                        onClick={() => handleQuestionsComplete(idx)}
-                        disabled={sectionStates.questions[idx]}
-                        className={`px-6 py-3 transition-all rounded-xl text-sm font-bold flex items-center gap-2 shadow-lg ${
-                          sectionStates.questions[idx]
-                            ? 'bg-blue-600/50 text-blue-200 cursor-not-allowed'
-                            : 'bg-blue-600 hover:bg-blue-500 text-white shadow-blue-600/20'
-                        }`}
-                      >
-                        {sectionStates.questions[idx] ? 'Questions Completed' : 'Complete Questions'}
-                        <span className="material-symbols-outlined text-sm">
-                          {sectionStates.questions[idx] ? 'check' : 'arrow_forward'}
-                        </span>
-                      </button>
                     </div>
-                  </div>
-                </section>
+                    <div className="space-y-6">
+                      {PRE_VIDEO_QUESTIONS_BY_MODULE[insight.slug]?.[idx]?.map(
+                        (q: Question, qIdx: number) => (
+                          <div key={qIdx} className="space-y-3">
+                            <label className="text-sm font-medium text-slate-200">
+                              {qIdx + 1}. {q.question}
+                            </label>
+                            {q.type === 'multiple-choice' && (
+                              <div className="space-y-2">
+                                {q.options?.map(
+                                  (option: string, oIdx: number) => (
+                                    <label
+                                      key={oIdx}
+                                      className="flex items-center gap-3 cursor-pointer group"
+                                    >
+                                      <input
+                                        type="radio"
+                                        name={`question-${idx}-${qIdx}`}
+                                        className="w-4 h-4 text-blue-500 bg-white/5 border-white/20 focus:ring-blue-500 focus:ring-2"
+                                      />
+                                      <span className="text-sm text-slate-300 group-hover:text-white transition-colors">
+                                        {option}
+                                      </span>
+                                    </label>
+                                  )
+                                )}
+                              </div>
+                            )}
+                            {q.type === 'slider' && (
+                              <div className="space-y-2">
+                                <input
+                                  type="range"
+                                  min={q.min}
+                                  max={q.max}
+                                  className="w-full h-2 bg-white/10 rounded-lg appearance-none cursor-pointer"
+                                />
+                                <div className="flex justify-between text-xs text-slate-400">
+                                  <span>
+                                    {q.min}
+                                    {q.unit}
+                                  </span>
+                                  <span>
+                                    {q.max}
+                                    {q.unit}
+                                  </span>
+                                </div>
+                              </div>
+                            )}
+                            {q.type === 'text' && (
+                              <input
+                                type="text"
+                                maxLength={q.maxLength}
+                                className="w-full rounded-xl p-3 text-sm text-slate-200 bg-white/5 border border-white/10 focus:border-blue-500/50 outline-none transition-colors"
+                                placeholder="Type your answer..."
+                              />
+                            )}
+                          </div>
+                        )
+                      )}
+                      <div className="flex justify-end pt-4">
+                        <button
+                          type="button"
+                          onClick={() => handleQuestionsComplete(idx)}
+                          disabled={sectionStates.questions[idx]}
+                          className={`px-6 py-3 transition-all rounded-xl text-sm font-bold flex items-center gap-2 shadow-lg ${
+                            sectionStates.questions[idx]
+                              ? 'bg-blue-600/50 text-blue-200 cursor-not-allowed'
+                              : 'bg-blue-600 hover:bg-blue-500 text-white shadow-blue-600/20'
+                          }`}
+                        >
+                          {sectionStates.questions[idx]
+                            ? 'Questions Completed'
+                            : 'Complete Questions'}
+                          <span className="material-symbols-outlined text-sm">
+                            {sectionStates.questions[idx]
+                              ? 'check'
+                              : 'arrow_forward'}
+                          </span>
+                        </button>
+                      </div>
+                    </div>
+                  </section>
                 )}
 
                 {/* Self-Reflection Section (Post-Video) */}
                 {activeTab === 'reflection' && (
-                <section className="glass-panel rounded-2xl p-8 border border-white/10 mb-6">
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className="w-10 h-10 rounded-full bg-purple-500/20 border border-purple-500/30 flex items-center justify-center">
-                      <span className="material-symbols-outlined text-purple-400">psychology</span>
+                  <section className="glass-panel rounded-2xl p-8 border border-white/10 mb-6">
+                    <div className="flex items-center gap-3 mb-6">
+                      <div className="w-10 h-10 rounded-full bg-purple-500/20 border border-purple-500/30 flex items-center justify-center">
+                        <span className="material-symbols-outlined text-purple-400">
+                          psychology
+                        </span>
+                      </div>
+                      <div>
+                        <h4 className="text-lg font-bold text-white">
+                          Self-Reflection
+                        </h4>
+                        <p className="text-sm text-slate-400">
+                          {section.title} – Reflect on what you've learned from
+                          the video.
+                        </p>
+                      </div>
+                      <div className="ml-auto">
+                        {sectionStates.reflections[idx] && (
+                          <div className="flex items-center gap-2 text-purple-400">
+                            <span className="material-symbols-outlined text-sm">
+                              check_circle
+                            </span>
+                            <span className="text-xs font-medium">
+                              Completed
+                            </span>
+                          </div>
+                        )}
+                      </div>
                     </div>
-                    <div>
-                      <h4 className="text-lg font-bold text-white">Self-Reflection</h4>
-                      <p className="text-sm text-slate-400">
-                        {section.title} – Reflect on what you've learned from the video.
-                      </p>
-                    </div>
-                    <div className="ml-auto">
-                      {sectionStates.reflections[idx] && (
-                        <div className="flex items-center gap-2 text-purple-400">
-                          <span className="material-symbols-outlined text-sm">check_circle</span>
-                          <span className="text-xs font-medium">Completed</span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                  <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
-                    <div className="space-y-4">
-                      {section.questions.map((question, qIdx) => (
-                        <div key={qIdx} className="space-y-2">
-                          <label className="text-sm font-medium text-slate-200">
-                            {qIdx + 1}. {question}
-                          </label>
-                          <div className="relative">
-                            <textarea
-                              className="w-full reflection-input rounded-xl p-4 text-sm text-slate-200 min-h-[120px] resize-none bg-white/5 border border-white/10 focus:border-purple-500/50 outline-none transition-colors"
-                              placeholder="Write your reflection... (50-150 words recommended)"
-                            />
-                            <div className="absolute bottom-3 right-3 text-xs text-slate-500">
-                              0/150
+                    <form
+                      className="space-y-6"
+                      onSubmit={(e) => e.preventDefault()}
+                    >
+                      <div className="space-y-4">
+                        {section.questions.map((question, qIdx) => (
+                          <div key={qIdx} className="space-y-2">
+                            <label className="text-sm font-medium text-slate-200">
+                              {qIdx + 1}. {question}
+                            </label>
+                            <div className="relative">
+                              <textarea
+                                className="w-full reflection-input rounded-xl p-4 text-sm text-slate-200 min-h-[120px] resize-none bg-white/5 border border-white/10 focus:border-purple-500/50 outline-none transition-colors"
+                                placeholder="Write your reflection... (50-150 words recommended)"
+                              />
+                              <div className="absolute bottom-3 right-3 text-xs text-slate-500">
+                                0/150
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      ))}
-                    </div>
-                    <div className="flex justify-end pt-4">
-                      <button
-                        type="button"
-                        onClick={() => handleSaveAndContinue(idx)}
-                        disabled={completedInsights[idx]}
-                        className={`px-6 py-3 transition-all rounded-xl text-sm font-bold flex items-center gap-2 shadow-lg ${
-                          completedInsights[idx]
-                            ? 'bg-purple-600/50 text-purple-200 cursor-not-allowed'
-                            : 'bg-purple-600 hover:bg-purple-500 text-white shadow-purple-600/20'
-                        }`}
-                      >
-                        {completedInsights[idx] ? 'Reflection Completed' : 'Save Reflection & Continue'}
-                        <span className="material-symbols-outlined text-sm">
-                          {completedInsights[idx] ? 'check' : 'arrow_forward'}
-                        </span>
-                      </button>
-                    </div>
-                  </form>
-                </section>
+                        ))}
+                      </div>
+                      <div className="flex justify-end pt-4">
+                        <button
+                          type="button"
+                          onClick={() => handleSaveAndContinue(idx)}
+                          disabled={completedInsights[idx]}
+                          className={`px-6 py-3 transition-all rounded-xl text-sm font-bold flex items-center gap-2 shadow-lg ${
+                            completedInsights[idx]
+                              ? 'bg-purple-600/50 text-purple-200 cursor-not-allowed'
+                              : 'bg-purple-600 hover:bg-purple-500 text-white shadow-purple-600/20'
+                          }`}
+                        >
+                          {completedInsights[idx]
+                            ? 'Reflection Completed'
+                            : 'Save Reflection & Continue'}
+                          <span className="material-symbols-outlined text-sm">
+                            {completedInsights[idx] ? 'check' : 'arrow_forward'}
+                          </span>
+                        </button>
+                      </div>
+                    </form>
+                  </section>
                 )}
 
                 {/* Video Transcript Section (Reference) */}
                 {activeTab === 'transcript' && (
-                <section className="glass-panel rounded-2xl border border-white/10">
-                  <div className="flex items-center gap-3 p-6 border-b border-white/10">
-                    <div className="w-10 h-10 rounded-full bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center">
-                      <span className="material-symbols-outlined text-emerald-400">subtitles</span>
+                  <section className="glass-panel rounded-2xl border border-white/10">
+                    <div className="flex items-center gap-3 p-6 border-b border-white/10">
+                      <div className="w-10 h-10 rounded-full bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center">
+                        <span className="material-symbols-outlined text-emerald-400">
+                          subtitles
+                        </span>
+                      </div>
+                      <div className="flex-1">
+                        <h4 className="text-lg font-bold text-white">
+                          Video Transcript
+                        </h4>
+                        <p className="text-sm text-slate-400">
+                          Full transcript for reference and accessibility.
+                        </p>
+                      </div>
+                      <button
+                        type="button"
+                        className="flex items-center gap-2 text-emerald-400 hover:text-emerald-300 transition-colors"
+                      >
+                        <span className="material-symbols-outlined text-sm">
+                          content_copy
+                        </span>
+                        <span className="text-xs font-medium">Copy</span>
+                      </button>
                     </div>
-                    <div className="flex-1">
-                      <h4 className="text-lg font-bold text-white">Video Transcript</h4>
-                      <p className="text-sm text-slate-400">
-                        Full transcript for reference and accessibility.
-                      </p>
-                    </div>
-                    <button
-                      type="button"
-                      className="flex items-center gap-2 text-emerald-400 hover:text-emerald-300 transition-colors"
-                    >
-                      <span className="material-symbols-outlined text-sm">content_copy</span>
-                      <span className="text-xs font-medium">Copy</span>
-                    </button>
-                  </div>
-                  <div className="p-6">
-                    <div className="prose prose-invert prose-sm max-w-none">
-                      <div className="text-slate-300 leading-relaxed whitespace-pre-line text-sm">
-                        {VIDEO_TRANSCRIPTS_BY_MODULE[insight.slug]?.[idx]}
+                    <div className="p-6">
+                      <div className="prose prose-invert prose-sm max-w-none">
+                        <div className="text-slate-300 leading-relaxed whitespace-pre-line text-sm">
+                          {VIDEO_TRANSCRIPTS_BY_MODULE[insight.slug]?.[idx]}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </section>
+                  </section>
                 )}
               </article>
             );
           })()}
         </div>
 
-        {/* Right sidebar – Module Contents: 3 Insights + Test Your Knowledge (gated) */}
+        {/* Right sidebar – Module Contents + Test Your Knowledge (gated) */}
         <aside className="w-1/4 border-l border-white/5 glass-panel flex flex-col shrink-0 sticky top-0 self-start">
           <div className="p-6 border-b border-white/5">
             <h2 className="text-sm font-bold uppercase tracking-widest text-slate-500 mb-1">
               Module Contents
             </h2>
-            <p className="text-xs text-slate-400">3 Insights</p>
+            <p className="text-xs text-slate-400">
+              {sidebarTitles.length} Insights
+            </p>
           </div>
           <div className="flex-1 custom-scrollbar">
-            {INSIGHT_SIDEBAR_TITLES.map((title, idx) => {
+            {sidebarTitles.map((title, idx) => {
               const isCurrent = activeInsightIndex === idx;
               const isCompleted = completedInsights[idx];
               return (
@@ -855,7 +942,9 @@ export default function InsightModuleView() {
                   <div className="w-6 h-6 rounded-full flex items-center justify-center shrink-0 mt-0.5">
                     {isCompleted && (
                       <div className="w-6 h-6 rounded-full bg-emerald-500/20 border border-emerald-500/50 flex items-center justify-center">
-                        <span className="material-symbols-outlined text-[16px] text-emerald-500 font-bold">check</span>
+                        <span className="material-symbols-outlined text-[16px] text-emerald-500 font-bold">
+                          check
+                        </span>
                       </div>
                     )}
                     {!isCompleted && isCurrent && (
@@ -865,33 +954,45 @@ export default function InsightModuleView() {
                     )}
                     {!isCompleted && !isCurrent && (
                       <div className="w-6 h-6 rounded-full border border-white/20 flex items-center justify-center">
-                        <span className="text-[10px] text-slate-500 font-bold">{idx + 1}</span>
+                        <span className="text-[10px] text-slate-500 font-bold">
+                          {idx + 1}
+                        </span>
                       </div>
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className={`text-xs truncate ${isCurrent ? 'font-bold text-white' : 'font-medium text-slate-300'}`}>
+                    <p
+                      className={`text-xs truncate ${isCurrent ? 'font-bold text-white' : 'font-medium text-slate-300'}`}
+                    >
                       {idx + 1}. {title}
                     </p>
-                    <p className={`text-[10px] ${isCurrent ? 'text-indigo-400 font-semibold uppercase' : 'text-slate-500'}`}>
-                      {isCompleted ? 'Completed' : isCurrent ? 'Currently Playing' : 'Click to view'}
+                    <p
+                      className={`text-[10px] ${isCurrent ? 'text-indigo-400 font-semibold uppercase' : 'text-slate-500'}`}
+                    >
+                      {isCompleted
+                        ? 'Completed'
+                        : isCurrent
+                          ? 'Currently Playing'
+                          : 'Click to view'}
                     </p>
                   </div>
                 </button>
               );
             })}
             <div
-              className={`p-4 border-b border-white/5 flex items-start gap-3 ${!allThreeCompleted ? 'opacity-60' : 'opacity-90'}`}
+              className={`p-4 border-b border-white/5 flex items-start gap-3 ${!allInsightsCompleted ? 'opacity-60' : 'opacity-90'}`}
             >
               <div className="w-6 h-6 rounded-full border border-white/20 flex items-center justify-center shrink-0 mt-0.5">
                 <span className="text-[10px] text-slate-500 font-bold">4</span>
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-xs font-medium text-slate-300">4. TEST YOUR KNOWLEDGE</p>
+                <p className="text-xs font-medium text-slate-300">
+                  4. TEST YOUR KNOWLEDGE
+                </p>
                 <p className="text-[10px] text-slate-500">
-                  {allThreeCompleted
+                  {allInsightsCompleted
                     ? 'The test has yet to be completed, but will comprise 12 questions, all multiple choice.'
-                    : 'Complete all 3 insights to unlock'}
+                    : `Complete all ${sidebarTitles.length} insights to unlock`}
                 </p>
               </div>
             </div>

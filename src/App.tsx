@@ -1,4 +1,9 @@
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useLocation,
+} from 'react-router-dom';
 import ProtectedRoute from './components/ProtectedRoute';
 import Navbar from './components/Navbar/Navbar';
 import ScrollToTop from './components/ScrollToTop';
@@ -34,71 +39,84 @@ import { VideoProvider } from './contexts/VideoContext';
 
 function AppContent() {
   const location = useLocation();
-  const isDashboard = location.pathname.startsWith('/dashboard') || location.pathname.startsWith('/survey') || location.pathname === '/login' || location.pathname === '/signup';
+  const isDashboard =
+    location.pathname.startsWith('/dashboard') ||
+    location.pathname.startsWith('/survey') ||
+    location.pathname === '/login' ||
+    location.pathname === '/signup';
 
   return (
     <div className="min-h-screen">
       {!isDashboard && <Navbar />}
       <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/why-elerea-exist" element={<WhyElereaExist />} />
-            <Route path="/our-services" element={<OurServices />} />
-            <Route
-              path="/our-services/ai-insight-engine"
-              element={<AIInsightEngine />}
-            />
-            <Route
-              path="/our-services/reveal-hidden-brilliance"
-              element={<RevealHiddenBrilliance />}
-            />
-            <Route
-              path="/our-services/mind-sync"
-              element={<MindSyncIdea />}
-            />
-            <Route
-              path="/our-services/digital-bias"
-              element={<DigitalBiasImpactAssessment />}
-            />
-            {/* <Route path="/our-services/business-psychology-consultancy" element={<BusinessPsychologyConsultancy />} /> */}
-            <Route
-              path="/our-services/psychology-based-training-and-mentoring"
-              element={<PsychologyBasedTrainingAndMentoring />}
-            />
-            <Route path="/who-we-are" element={<WhoWeAre />} />
-            <Route path="/research-and-education" element={<WhoWeWorkWith />} />
-            <Route path="/contact-us" element={<ContactUs />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
-            <Route
-              path="/dashboard"
-              element={
-                <ProtectedRoute>
-                  <DashboardLayout />
-                </ProtectedRoute>
-              }
-            >
-              <Route index element={<Dashboard />} />
-              <Route path="my-learning" element={<ModuleCatalog />} />
-              <Route path="my-learning/programme/neurodiversity" element={<ProgrammePage />} />
-              <Route path="my-learning/programme/neurodiversity/insights/:insightSlug" element={<InsightModuleView />} />
-              <Route path="my-learning/modules/:moduleId/lessons/:lessonId" element={<LessonView />} />
-              <Route path="my-learning/modules/:moduleId" element={<ModuleLessons />} />
-              <Route path="my-learning/modules" element={<ModuleLibrary />} />
-              <Route path="manager-report" element={<ManagerReport />} />
-              <Route path="brilliance-report" element={<BrillianceReport />} />
-            </Route>
-            <Route
-              path="/survey/reveal-hidden-brilliance"
-              element={<RevealHiddenBrillianceSurvey />}
-            />
-            <Route path="/survey/mind-sync" element={<MindSync />} />
-            <Route path="/survey/mind-sync/start" element={<MindSyncSurvey />} />
-            <Route
-              path="/survey/mind-sync/module/:moduleNumber"
-              element={<MindSyncModuleResults />}
-            />
-          </Routes>
-        </div>
+        <Route path="/" element={<Home />} />
+        <Route path="/why-elerea-exist" element={<WhyElereaExist />} />
+        <Route path="/our-services" element={<OurServices />} />
+        <Route
+          path="/our-services/ai-insight-engine"
+          element={<AIInsightEngine />}
+        />
+        <Route
+          path="/our-services/reveal-hidden-brilliance"
+          element={<RevealHiddenBrilliance />}
+        />
+        <Route path="/our-services/mind-sync" element={<MindSyncIdea />} />
+        <Route
+          path="/our-services/digital-bias"
+          element={<DigitalBiasImpactAssessment />}
+        />
+        {/* <Route path="/our-services/business-psychology-consultancy" element={<BusinessPsychologyConsultancy />} /> */}
+        <Route
+          path="/our-services/psychology-based-training-and-mentoring"
+          element={<PsychologyBasedTrainingAndMentoring />}
+        />
+        <Route path="/who-we-are" element={<WhoWeAre />} />
+        <Route path="/research-and-education" element={<WhoWeWorkWith />} />
+        <Route path="/contact-us" element={<ContactUs />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <DashboardLayout />
+            </ProtectedRoute>
+          }
+        >
+          <Route index element={<Dashboard />} />
+          <Route path="my-learning" element={<ModuleCatalog />} />
+          <Route
+            path="my-learning/programme/:programmeId"
+            element={<ProgrammePage />}
+          />
+          <Route
+            path="my-learning/programme/:programmeId/insights/:insightSlug"
+            element={<InsightModuleView />}
+          />
+          <Route
+            path="my-learning/modules/:moduleId/lessons/:lessonId"
+            element={<LessonView />}
+          />
+          <Route
+            path="my-learning/modules/:moduleId"
+            element={<ModuleLessons />}
+          />
+          <Route path="my-learning/modules" element={<ModuleLibrary />} />
+          <Route path="manager-report" element={<ManagerReport />} />
+          <Route path="brilliance-report" element={<BrillianceReport />} />
+        </Route>
+        <Route
+          path="/survey/reveal-hidden-brilliance"
+          element={<RevealHiddenBrillianceSurvey />}
+        />
+        <Route path="/survey/mind-sync" element={<MindSync />} />
+        <Route path="/survey/mind-sync/start" element={<MindSyncSurvey />} />
+        <Route
+          path="/survey/mind-sync/module/:moduleNumber"
+          element={<MindSyncModuleResults />}
+        />
+      </Routes>
+    </div>
   );
 }
 

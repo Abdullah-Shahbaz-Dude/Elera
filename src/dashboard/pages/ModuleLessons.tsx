@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react';
+import { useRef } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import {
   getModuleById,
@@ -34,16 +34,6 @@ export default function ModuleLessons() {
   const navigate = useNavigate();
   const scrollRef = useRef<HTMLDivElement>(null);
   const module = moduleId ? getModuleById(moduleId) : null;
-
-  useEffect(() => {
-    if (moduleId === '1') {
-      navigate('/dashboard/my-learning/programme/neurodiversity', { replace: true });
-    }
-  }, [moduleId, navigate]);
-
-  if (moduleId === '1') {
-    return null;
-  }
 
   if (!module) {
     return (
@@ -263,8 +253,8 @@ export default function ModuleLessons() {
                         lesson.status === 'completed'
                           ? 'text-emerald-400'
                           : lesson.status === 'active'
-                          ? 'text-orange-400'
-                          : 'text-slate-500'
+                            ? 'text-orange-400'
+                            : 'text-slate-500'
                       }`}
                     >
                       {lesson.status === 'completed' && (

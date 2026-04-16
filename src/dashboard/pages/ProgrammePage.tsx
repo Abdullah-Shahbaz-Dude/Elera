@@ -1,11 +1,17 @@
-import { Link } from 'react-router-dom';
-import { getProgramme } from '../data/elaraProgramme';
-
-const PROGRAMME_BASE = '/dashboard/my-learning/programme/neurodiversity';
+import { Link, useParams } from 'react-router-dom';
+import {
+  getModuleById,
+  getAllLessons,
+  getModuleLessonSummary,
+  getResumeLesson,
+} from '../data/moduleSyllabus';
 
 export default function ProgrammePage() {
-  const programme = getProgramme();
-  const firstSlug = programme.insightModules[0]?.slug;
+  const { programmeId } = useParams<{ programmeId: string }>();
+  const programme = programmeId ? getModuleById(programmeId) : null;
+  const lessons = programme ? getAllLessons(programme) : [];
+  const summary = programme ? getModuleLessonSummary(programme) : null;
+  const resumeLesson = programme ? getResumeLesson(programme) : null;
 
   return (
     <div className="flex-1 overflow-y-auto min-h-0">
@@ -19,7 +25,7 @@ export default function ProgrammePage() {
         <div className="relative z-10 flex justify-between items-start mb-10 md:mb-12">
           <div className="flex flex-col gap-2">
             <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/70">
-              {programme.category}
+              {programme?.category ?? 'Programme'}
             </span>
             <Link
               to="/dashboard/my-learning"
@@ -34,7 +40,9 @@ export default function ProgrammePage() {
             </Link>
           </div>
           <span className="text-xs text-white/70 font-medium whitespace-nowrap">
-            {programme.insightModules.length} Insight Modules
+            {summary
+              ? `${summary.count} Lessons • ${summary.totalDuration} total`
+              : ''}
           </span>
         </div>
 
@@ -44,15 +52,15 @@ export default function ProgrammePage() {
         {/* Hero: title, description, CTAs */}
         <div className="relative z-10 max-w-4xl">
           <h1 className="text-4xl md:text-5xl font-black text-white mb-4 leading-tight tracking-tight">
-            {programme.title}
+            {programme?.title ?? 'Programme'}
           </h1>
           <p className="text-base md:text-lg text-white/80 max-w-2xl font-light leading-relaxed mb-8">
-            {programme.shortDescription}
+            {programme?.description ?? ''}
           </p>
           <div className="flex flex-wrap items-center gap-4">
-            {firstSlug && (
+            {resumeLesson && programmeId && (
               <Link
-                to={`${PROGRAMME_BASE}/insights/${firstSlug}`}
+                to={`/dashboard/my-learning/modules/${programmeId}/lessons/${resumeLesson.id}`}
                 className="px-8 py-4 bg-white text-indigo-700 rounded-2xl font-bold flex items-center gap-3 hover:bg-indigo-50 transition-all shadow-xl shadow-black/20"
               >
                 <span
@@ -88,7 +96,7 @@ export default function ProgrammePage() {
             Programme Overview
           </h3>
           <div className="text-slate-300 leading-relaxed whitespace-pre-line">
-            {programme.programmeOverview}
+            {(programme?.overviewBody ?? []).join('\n\n')}
           </div>
         </section>
 
@@ -97,7 +105,7 @@ export default function ProgrammePage() {
             What Learners Will Gain
           </h3>
           <ul className="space-y-3">
-            {programme.whatLearnersWillGain.map((item, i) => (
+            {(programme?.learnerGains ?? []).map((item, i) => (
               <li key={i} className="flex gap-3 text-slate-300">
                 <span className="text-primary shrink-0 mt-1">•</span>
                 <span>{item}</span>
@@ -108,16 +116,19 @@ export default function ProgrammePage() {
       </main>
 
       <section className="w-full max-w-6xl mx-auto px-8 py-12 md:px-12">
-        <h3 className="text-2xl font-bold text-white mb-8">
-          Insight Modules
-        </h3>
+        <h3 className="text-2xl font-bold text-white mb-8">Modules</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-9">
-          {programme.insightModules.map((insight, index) => {
+          {lessons.map((lesson, index) => {
             const moduleNum = String(index + 1).padStart(2, '0');
+            const to = programmeId
+              ? `/dashboard/my-learning/programme/${programmeId}/insights/${lesson.slug}`
+              : '/dashboard/my-learning';
+            const body = lesson.objectives.join(' ');
+
             return (
               <Link
-                key={insight.id}
-                to={`${PROGRAMME_BASE}/insights/${insight.slug}`}
+                key={lesson.id}
+                to={to}
                 className="lesson-card p-6 rounded-[32px] flex flex-col gap-4 group transition-all duration-300 cursor-pointer"
               >
                 <div className="relative aspect-video rounded-2xl overflow-hidden mb-2">
@@ -129,25 +140,26 @@ export default function ProgrammePage() {
                       </span>
                     </div>
                   </div>
-                  <div className="absolute bottom-2 right-2 px-2 py-0.5 bg-black/60 backdrop-blur-sm rounded-md text-[10px] font-bold text-white">
-                    3 Insights
-                  </div>
                 </div>
+
                 <div className="flex flex-col gap-2">
                   <div className="flex items-center gap-2">
                     <span className="text-[10px] font-bold uppercase tracking-widest text-indigo-400">
-                      Insight Module {moduleNum}
+                      Module {moduleNum}
                     </span>
                   </div>
                   <h4 className="text-lg font-bold leading-snug group-hover:text-indigo-400 transition-colors text-white">
-                    {insight.title}
+                    {lesson.title}
                   </h4>
+                  <p className="text-sm text-slate-300 leading-relaxed whitespace-pre-line">
+                    {body}
+                  </p>
                   <div className="flex items-center justify-between mt-2 pt-4 border-t border-white/5">
                     <div className="flex items-center gap-1 text-slate-400">
                       <span className="material-symbols-outlined text-sm">
                         schedule
                       </span>
-                      <span className="text-[10px]">3 Insights</span>
+                      <span className="text-[10px]">{lesson.duration}</span>
                     </div>
                   </div>
                 </div>

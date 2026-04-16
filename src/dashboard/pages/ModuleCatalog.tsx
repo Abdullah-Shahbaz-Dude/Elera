@@ -1,6 +1,10 @@
 import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ModuleFiltersSidebar from '@/dashboard/components/ModuleFiltersSidebar';
+import {
+  getModuleById,
+  getModuleLessonSummary,
+} from '@/dashboard/data/moduleSyllabus';
 
 type Level = 'Beginner' | 'Intermediate' | 'Advanced';
 type Category =
@@ -21,16 +25,37 @@ interface CatalogModule {
 
 const MODULES: CatalogModule[] = [
   {
-    id: 'neurodiversity',
-    title: 'Seeing Things Differently: Neurodiversity in the Digital Future of Work',
-    duration: '5h',
+    id: '1',
+    title: 'Neurodiversity for Strategic Advantage',
+    duration: '3h',
     level: 'Beginner',
     progress: 0,
     category: 'Other',
     image:
       'https://lh3.googleusercontent.com/aida-public/AB6AXuBVSIptsR6tyP5SNmJmbayfwG--bPgaX2o-6DiAe7gDZtGqRR6b2zAMyUSmYVEE4Y1ScapuYCZ_Bki0iVFM_Ml-Hpt8ntvSiKrDXGMqCmjkYExpXYPzwLcUudrWNRDYocY8O_uWOiH7PTBnoSaEsXXekdyLH4w_SYTIFzF5l023iG_K8AOEP8QdBBT65NaGVTum_U6mj3NyT8YvTxgjqmmXwAMo-E7DDVllem_A2wMBLDJZAiomr-Pj9HWKdjcn-in5Ej8Ab97ruD8j',
   },
-  // Commented out other cards – show only neurodiversity programme
+  {
+    id: '2',
+    title: 'Why Work Stalls: The Psychology Behind Slow Progress',
+    duration: '3h',
+    level: 'Beginner',
+    progress: 0,
+    category: 'Other',
+    image:
+      'https://lh3.googleusercontent.com/aida-public/AB6AXuBVSIptsR6tyP5SNmJmbayfwG--bPgaX2o-6DiAe7gDZtGqRR6b2zAMyUSmYVEE4Y1ScapuYCZ_Bki0iVFM_Ml-Hpt8ntvSiKrDXGMqCmjkYExpXYPzwLcUudrWNRDYocY8O_uWOiH7PTBnoSaEsXXekdyLH4w_SYTIFzF5l023iG_K8AOEP8QdBBT65NaGVTum_U6mj3NyT8YvTxgjqmmXwAMo-E7DDVllem_A2wMBLDJZAiomr-Pj9HWKdjcn-in5Ej8Ab97ruD8j',
+  },
+  {
+    id: '3',
+    title:
+      'Getting Digital Right: Preparing for the Future Without Costly Mistakes',
+    duration: '3h',
+    level: 'Beginner',
+    progress: 0,
+    category: 'Other',
+    image:
+      'https://lh3.googleusercontent.com/aida-public/AB6AXuBVSIptsR6tyP5SNmJmbayfwG--bPgaX2o-6DiAe7gDZtGqRR6b2zAMyUSmYVEE4Y1ScapuYCZ_Bki0iVFM_Ml-Hpt8ntvSiKrDXGMqCmjkYExpXYPzwLcUudrWNRDYocY8O_uWOiH7PTBnoSaEsXXekdyLH4w_SYTIFzF5l023iG_K8AOEP8QdBBT65NaGVTum_U6mj3NyT8YvTxgjqmmXwAMo-E7DDVllem_A2wMBLDJZAiomr-Pj9HWKdjcn-in5Ej8Ab97ruD8j',
+  },
+  // Commented out other cards – show only ELARA Future Sync programmes
   // {
   //   id: '1',
   //   title: 'Neural Architecture Search',
@@ -247,50 +272,60 @@ export default function ModuleCatalog() {
         )}
         <main className="flex-1 overflow-y-auto p-8 scroll-hide">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filtered.map((mod) => (
-              <div
-                key={mod.id}
-                role="button"
-                tabIndex={0}
-                onClick={() =>
-                  navigate(mod.id === 'neurodiversity' ? '/dashboard/my-learning/programme/neurodiversity' : `/dashboard/my-learning/modules/${mod.id}`)
-                }
-                onKeyDown={(e) =>
-                  e.key === 'Enter' &&
-                  navigate(mod.id === 'neurodiversity' ? '/dashboard/my-learning/programme/neurodiversity' : `/dashboard/my-learning/modules/${mod.id}`)
-                }
-                className="group relative aspect-[4/3] rounded-3xl overflow-hidden dashboard-card border border-white/10 hover:border-primary/50 transition-all duration-500 shadow-2xl bg-card-dark cursor-pointer"
-              >
-                <img
-                  alt={mod.title}
-                  src={mod.image}
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                />
-                <div className="absolute top-4 right-4 flex gap-2">
-                  <span className="px-2 py-1 rounded-lg bg-black/60 backdrop-blur-md text-[10px] font-bold text-white uppercase tracking-wider border border-white/10">
-                    {mod.duration}
-                  </span>
-                  <span
-                    className={`px-2 py-1 rounded-lg backdrop-blur-md text-[10px] font-bold text-white uppercase tracking-wider border border-white/10 ${levelBadgeClass(
-                      mod.level
-                    )}`}
+            {filtered.map((mod) =>
+              (() => {
+                const syllabus = getModuleById(mod.id);
+                const summary = syllabus
+                  ? getModuleLessonSummary(syllabus)
+                  : null;
+                const durationLabel = summary?.totalDuration ?? mod.duration;
+
+                return (
+                  <div
+                    key={mod.id}
+                    role="button"
+                    tabIndex={0}
+                    onClick={() =>
+                      navigate(`/dashboard/my-learning/programme/${mod.id}`)
+                    }
+                    onKeyDown={(e) =>
+                      e.key === 'Enter' &&
+                      navigate(`/dashboard/my-learning/programme/${mod.id}`)
+                    }
+                    className="group relative aspect-[4/3] rounded-3xl overflow-hidden dashboard-card border border-white/10 hover:border-primary/50 transition-all duration-500 shadow-2xl bg-card-dark cursor-pointer"
                   >
-                    {mod.level}
-                  </span>
-                </div>
-                <div className="absolute inset-x-0 bottom-0 p-6 module-card-overlay flex flex-col justify-end">
-                  <h3 className="text-lg font-bold text-white mb-4 group-hover:text-primary transition-colors">
-                    {mod.title}
-                  </h3>
-                  <div className="relative w-full h-1 bg-white/10 rounded-full overflow-hidden">
-                    <div
-                      className="absolute left-0 top-0 h-full bg-gradient-to-r from-primary to-accent-blue progress-glow rounded-full"
-                      style={{ width: `${mod.progress}%` }}
+                    <img
+                      alt={mod.title}
+                      src={mod.image}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                     />
+                    <div className="absolute top-4 right-4 flex gap-2">
+                      <span className="px-2 py-1 rounded-lg bg-black/60 backdrop-blur-md text-[10px] font-bold text-white uppercase tracking-wider border border-white/10">
+                        {durationLabel}
+                      </span>
+                      <span
+                        className={`px-2 py-1 rounded-lg backdrop-blur-md text-[10px] font-bold text-white uppercase tracking-wider border border-white/10 ${levelBadgeClass(
+                          mod.level
+                        )}`}
+                      >
+                        {mod.level}
+                      </span>
+                    </div>
+                    <div className="absolute inset-x-0 bottom-0 p-6 module-card-overlay flex flex-col justify-end">
+                      <h3 className="text-lg font-bold text-white mb-4 group-hover:text-primary transition-colors">
+                        {mod.title}
+                      </h3>
+                      <div className="relative w-full h-1 bg-white/10 rounded-full overflow-hidden">
+                        <div
+                          className="absolute left-0 top-0 h-full bg-gradient-to-r from-primary to-accent-blue progress-glow rounded-full"
+                          style={{ width: `${mod.progress}%` }}
+                        />
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-            ))}
+                );
+              })()
+            )}
           </div>
         </main>
       </div>
