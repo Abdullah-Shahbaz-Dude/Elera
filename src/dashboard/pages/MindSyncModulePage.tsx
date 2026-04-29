@@ -490,30 +490,50 @@ export default function MindSyncModulePage() {
                 <h3 className="text-2xl font-bold text-white mb-4">
                   {MIND_SYNC_MODULE_01.learn.coRegulationScript.heading}
                 </h3>
-                <div className="glass-panel rounded-2xl border border-white/10 overflow-hidden">
-                  <div className="grid grid-cols-3 gap-0 text-[11px] uppercase tracking-widest text-slate-400 border-b border-white/5">
-                    <div className="p-4">Step</div>
-                    <div className="p-4">What to say</div>
-                    <div className="p-4">Why this matters</div>
-                  </div>
-                  {MIND_SYNC_MODULE_01.learn.coRegulationScript.rows.map(
-                    (row) => (
-                      <div
-                        key={row.step}
-                        className="grid grid-cols-3 gap-0 border-b border-white/5"
-                      >
-                        <div className="p-4 text-sm text-slate-200 font-semibold">
-                          {row.step}
-                        </div>
-                        <div className="p-4 text-sm text-slate-300 whitespace-pre-line">
-                          {row.whatToSay}
-                        </div>
-                        <div className="p-4 text-sm text-slate-300 leading-relaxed">
-                          {row.whyItMatters}
-                        </div>
-                      </div>
-                    )
-                  )}
+                <p className="text-slate-300 leading-relaxed max-w-4xl mb-6">
+                  Sometimes, even after catching the rise, you'll need to say
+                  something out loud to your child or to yourself. The script
+                  below has been tested in real ADHD households. It's not magic
+                  words; it's a structure. The structure works because each part
+                  does a specific thing in your child's brain.
+                </p>
+
+                <div className="glass-panel rounded-xl overflow-hidden border border-white/10">
+                  <table className="w-full text-left border-collapse">
+                    <thead>
+                      <tr className="border-b border-white/10 bg-white/5">
+                        <th className="p-6 text-[11px] uppercase tracking-widest text-primary">
+                          Step
+                        </th>
+                        <th className="p-6 text-[11px] uppercase tracking-widest text-primary">
+                          What to say
+                        </th>
+                        <th className="p-6 text-[11px] uppercase tracking-widest text-primary">
+                          Why this part matters
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-white/10">
+                      {MIND_SYNC_MODULE_01.learn.coRegulationScript.rows.map(
+                        (row) => (
+                          <tr
+                            key={row.step}
+                            className="hover:bg-white/5 transition-colors"
+                          >
+                            <td className="p-6 text-slate-200 font-semibold whitespace-nowrap">
+                              {row.step}
+                            </td>
+                            <td className="p-6 text-slate-300 whitespace-pre-line italic">
+                              {row.whatToSay}
+                            </td>
+                            <td className="p-6 text-slate-300 leading-relaxed">
+                              {row.whyItMatters}
+                            </td>
+                          </tr>
+                        )
+                      )}
+                    </tbody>
+                  </table>
                 </div>
               </div>
 
@@ -521,14 +541,21 @@ export default function MindSyncModulePage() {
                 <h3 className="text-xl font-bold text-white mb-3">
                   What not to do
                 </h3>
-                <ul className="space-y-2 text-slate-300">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {MIND_SYNC_MODULE_01.learn.whatNotToDo.map((item) => (
-                    <li key={item} className="flex gap-3">
-                      <span className="text-primary shrink-0 mt-0.5">•</span>
-                      <span>{item}</span>
-                    </li>
+                    <div
+                      key={item}
+                      className="flex items-start gap-4 p-6 rounded-2xl border border-red-500/20 bg-red-500/5"
+                    >
+                      <span className="material-symbols-outlined text-red-300 shrink-0">
+                        cancel
+                      </span>
+                      <p className="text-sm text-slate-300 leading-relaxed">
+                        {item}
+                      </p>
+                    </div>
                   ))}
-                </ul>
+                </div>
               </div>
             </section>
           )}
