@@ -26,6 +26,9 @@ import ModuleLessons from './dashboard/pages/ModuleLessons';
 import LessonView from './dashboard/pages/LessonView';
 import ProgrammePage from './dashboard/pages/ProgrammePage';
 import InsightModuleView from './dashboard/pages/InsightModuleView';
+import MyLearningLanding from './dashboard/pages/MyLearningLanding';
+import MindSyncProgrammePage from './dashboard/pages/MindSyncProgrammePage';
+import MindSyncModulePage from './dashboard/pages/MindSyncModulePage';
 import RevealHiddenBrillianceSurvey from './pages/RevealHiddenBrillianceSurvey';
 import MindSync from './pages/MindSync';
 import MindSyncSurvey from './pages/MindSyncSurvey';
@@ -84,7 +87,16 @@ function AppContent() {
           }
         >
           <Route index element={<Dashboard />} />
-          <Route path="my-learning" element={<ModuleCatalog />} />
+          <Route path="my-learning" element={<MyLearningLanding />} />
+          <Route path="my-learning/future-sync" element={<ModuleCatalog />} />
+          <Route
+            path="my-learning/mind-sync"
+            element={<MindSyncProgrammePage />}
+          />
+          <Route
+            path="my-learning/mind-sync/modules/1"
+            element={<MindSyncModulePage />}
+          />
           <Route
             path="my-learning/programme/:programmeId"
             element={<ProgrammePage />}

@@ -213,6 +213,13 @@ export default function ModuleCatalog() {
           <h1 className="text-xl font-bold tracking-tight text-white">
             My Learning
           </h1>
+          <button
+            type="button"
+            onClick={() => navigate('/dashboard/my-learning')}
+            className="text-xs text-white/70 hover:text-white transition-colors"
+          >
+            Back
+          </button>
           <div className="flex items-center gap-4 bg-white/5 border border-white/10 px-4 py-2 rounded-full w-80 focus-within:border-primary/50 transition-all">
             <span className="material-symbols-outlined text-slate-400 text-sm">
               search
