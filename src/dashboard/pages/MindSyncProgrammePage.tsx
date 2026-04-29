@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { MIND_SYNC_MODULE_01 } from '../data/mindSyncSyllabus';
 import image from '../../assets/images/futuresync/module-1/Parenting-a-Child-1.jpg';
 

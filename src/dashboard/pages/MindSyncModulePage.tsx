@@ -28,6 +28,7 @@ const TOC: TocItem[] = [
 
 export default function MindSyncModulePage() {
   const [active, setActive] = useState<TabKey>('introduction');
+  const [isScriptOpen, setIsScriptOpen] = useState(false);
 
   const activeItem = useMemo(() => {
     return TOC.find((t) => t.key === active) ?? TOC[0];
@@ -221,10 +222,11 @@ export default function MindSyncModulePage() {
 
           {active === 'video' && (
             <section className="space-y-8">
-              <div>
-                <h3 className="text-2xl font-bold text-white mb-4">
+              <div className="space-y-6">
+                <h3 className="text-2xl font-bold text-white">
                   VIDEO SCRIPT & SCENE
                 </h3>
+
                 <div className="glass-panel rounded-2xl overflow-hidden border border-white/10 shadow-2xl">
                   <div className="relative aspect-video w-full bg-black/40 flex items-center justify-center">
                     <div className="text-center">
@@ -236,65 +238,51 @@ export default function MindSyncModulePage() {
                       </div>
                     </div>
                   </div>
-                  <div className="p-6 space-y-6">
-                    <div>
-                      <h4 className="text-lg font-bold text-white mb-3">
-                        This video will help you (put these on screen)
-                      </h4>
-                      <ul className="space-y-2 text-slate-300">
-                        {MIND_SYNC_MODULE_01.videoScriptScene.bullets.map(
-                          (b) => (
-                            <li key={b} className="flex gap-3">
-                              <span className="text-primary shrink-0 mt-0.5">
-                                •
-                              </span>
-                              <span>{b}</span>
-                            </li>
-                          )
-                        )}
-                      </ul>
-                    </div>
+                </div>
 
-                    <div className="space-y-3">
-                      <div className="text-sm text-slate-300 leading-relaxed whitespace-pre-line">
-                        {
-                          MIND_SYNC_MODULE_01.videoScriptScene
-                            .productionApproach
+                <section className="glass-panel rounded-2xl overflow-hidden border border-white/10">
+                  <div className="px-6 py-5 border-b border-white/5 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <span className="material-symbols-outlined text-primary">
+                        description
+                      </span>
+                      <h4 className="text-lg font-bold text-white">
+                        Live Script
+                      </h4>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <div className="text-[10px] uppercase tracking-[0.2em] text-white/50">
+                        Full video script
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setIsScriptOpen((o) => !o)}
+                        className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-white/5 transition-colors text-white/60 hover:text-white"
+                        aria-label={
+                          isScriptOpen ? 'Collapse script' : 'Expand script'
                         }
-                      </div>
-                      <div className="text-sm text-slate-300 leading-relaxed whitespace-pre-line">
-                        {MIND_SYNC_MODULE_01.videoScriptScene.suggestedStyle}
-                      </div>
+                      >
+                        <span className="material-symbols-outlined">
+                          {isScriptOpen ? 'expand_less' : 'expand_more'}
+                        </span>
+                      </button>
                     </div>
+                  </div>
 
-                    <div>
-                      <h4 className="text-lg font-bold text-white mb-3">
-                        Characters
-                      </h4>
-                      <ul className="space-y-2 text-slate-300">
-                        {MIND_SYNC_MODULE_01.videoScriptScene.characters.map(
-                          (c) => (
-                            <li key={c} className="flex gap-3">
-                              <span className="text-primary shrink-0 mt-0.5">
-                                •
-                              </span>
-                              <span>{c}</span>
-                            </li>
-                          )
-                        )}
-                      </ul>
-                    </div>
-
-                    <div>
-                      <h4 className="text-lg font-bold text-white mb-3">
-                        Full video script (no more than 2 mins 30)
-                      </h4>
+                  <div
+                    className={`transition-[max-height,opacity] duration-300 ease-out ${
+                      isScriptOpen
+                        ? 'max-h-[520px] opacity-100'
+                        : 'max-h-0 opacity-0'
+                    } overflow-hidden`}
+                  >
+                    <div className="max-h-[520px] overflow-y-auto px-6 md:px-10 py-8 space-y-6 custom-scrollbar">
                       <div className="text-sm text-slate-300 leading-relaxed whitespace-pre-line">
                         {MIND_SYNC_MODULE_01.videoScriptScene.fullScript}
                       </div>
                     </div>
                   </div>
-                </div>
+                </section>
               </div>
             </section>
           )}
