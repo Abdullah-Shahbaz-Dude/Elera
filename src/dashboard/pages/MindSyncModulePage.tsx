@@ -1191,36 +1191,154 @@ export default function MindSyncModulePage() {
 
                 <div />
               </div>
+
+              <div className="glass-panel rounded-2xl p-6 md:p-8 border border-white/10 space-y-4">
+                <h4 className="text-2xl font-bold text-white">
+                  Before you close this module
+                </h4>
+                <p className="text-slate-300 leading-relaxed">
+                  Two things worth knowing before you go.
+                </p>
+                <p className="text-slate-300 leading-relaxed">
+                  The first is that this skill takes time. You'll catch the rise
+                  in week one. You'll forget it in week two. You'll catch it
+                  again in week three. That's normal. ADHD brains learn through
+                  repetition, not insight, so the technique only really lands
+                  once you've practised it across many real moments. Be patient
+                  with yourself.
+                </p>
+                <p className="text-slate-300 leading-relaxed">
+                  The second is that the goal isn't to never escalate again.
+                  It's to escalate less often, recover faster, and repair more
+                  cleanly. A house with no shouting is not a realistic target. A
+                  house with quicker repair after the shouting that's the actual
+                  goal, and it's well within reach.
+                </p>
+                <p className="text-slate-300 leading-relaxed">
+                  In the next module, we'll build on what you've learned here
+                  and apply it to one of the most common flashpoints in ADHD
+                  households: ending screen time. See you there.
+                </p>
+              </div>
+
+              <footer className="pt-6 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-4">
+                <button
+                  type="button"
+                  onClick={() => setActive('reflection')}
+                  className="flex items-center gap-3 px-6 py-3 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-white/90 transition-all"
+                >
+                  <span className="text-sm font-semibold">Next</span>
+                  <span className="material-symbols-outlined">
+                    arrow_forward
+                  </span>
+                </button>
+
+                <button
+                  type="button"
+                  className="flex items-center gap-3 px-8 py-3 rounded-full bg-gradient-to-r from-indigo-500 to-emerald-500 text-white font-semibold shadow-xl hover:shadow-indigo-500/20 transition-all"
+                >
+                  <span>Finish Module</span>
+                  <span className="material-symbols-outlined">
+                    arrow_forward
+                  </span>
+                </button>
+              </footer>
             </section>
           )}
 
           {active === 'reflection' && (
-            <section className="space-y-8">
-              <div>
-                <h3 className="text-2xl font-bold text-white mb-4">
-                  {MIND_SYNC_MODULE_01.takeaway.optionalReflectionHeading}
+            <section className="space-y-10">
+              <div className="text-center space-y-4">
+                <h3 className="text-3xl md:text-5xl font-black text-white">
+                  Optional Reflection
                 </h3>
-                <ul className="space-y-3">
-                  {MIND_SYNC_MODULE_01.takeaway.optionalReflectionQuestions.map(
-                    (q) => (
-                      <li key={q} className="flex gap-3 text-slate-300">
-                        <span className="text-primary shrink-0 mt-1">•</span>
-                        <span>{q}</span>
-                      </li>
-                    )
-                  )}
-                </ul>
+                <p className="text-slate-300 text-lg leading-relaxed max-w-2xl mx-auto">
+                  These questions are entirely optional. Some parents find it
+                  useful to write things down at the end of a module others
+                  would rather just absorb the content. Either is fine. If you'd
+                  like to reflect, here are a few questions to take with you.
+                </p>
               </div>
 
-              <div>
-                <h3 className="text-2xl font-bold text-white mb-4">
-                  {MIND_SYNC_MODULE_01.takeaway.beforeYouCloseHeading}
-                </h3>
-                <div className="text-slate-300 leading-relaxed whitespace-pre-line space-y-4">
-                  {MIND_SYNC_MODULE_01.takeaway.beforeYouCloseBody.map((p) => (
-                    <p key={p}>{p}</p>
-                  ))}
+              <div className="space-y-8">
+                <div className="glass-panel p-6 rounded-2xl border border-white/10 card-glow transition-all">
+                  <label className="block text-2xl md:text-3xl font-bold text-indigo-300 mb-4">
+                    What does "the rise" feel like in your body? Where do you
+                    notice it first?
+                  </label>
+                  <textarea
+                    className="w-full bg-transparent border-b border-white/10 py-4 px-0 text-lg text-slate-200 placeholder:text-white/25 resize-none outline-none focus:border-emerald-400/60 transition-all h-32"
+                    placeholder="Close your eyes for a moment and notice the physical sensations..."
+                  />
                 </div>
+
+                <div className="glass-panel p-6 rounded-2xl border border-white/10 card-glow transition-all">
+                  <label className="block text-2xl md:text-3xl font-bold text-indigo-300 mb-4">
+                    Think of a recent moment that escalated. Looking back, where
+                    was the earliest point you could have caught it?
+                  </label>
+                  <textarea
+                    className="w-full bg-transparent border-b border-white/10 py-4 px-0 text-lg text-slate-200 placeholder:text-white/25 resize-none outline-none focus:border-emerald-400/60 transition-all h-32"
+                    placeholder="Trace the thread back to the first subtle spark of tension..."
+                  />
+                </div>
+
+                <div className="glass-panel p-6 rounded-2xl border border-white/10 card-glow transition-all">
+                  <label className="block text-2xl md:text-3xl font-bold text-indigo-300 mb-4">
+                    Which of the four scenarios felt most like your real life?
+                    What does that tell you about where to focus first?
+                  </label>
+                  <textarea
+                    className="w-full bg-transparent border-b border-white/10 py-4 px-0 text-lg text-slate-200 placeholder:text-white/25 resize-none outline-none focus:border-emerald-400/60 transition-all h-32"
+                    placeholder="Honesty is the first step toward clarity. Which scenario resonated?"
+                  />
+                </div>
+
+                <div className="glass-panel p-6 rounded-2xl border border-white/10 card-glow transition-all">
+                  <label className="block text-2xl md:text-3xl font-bold text-indigo-300 mb-4">
+                    What's one small commitment you can make for the next seven
+                    days? (Not a big change — just one small thing you'll try.)
+                  </label>
+                  <div className="flex flex-wrap gap-3 mb-4">
+                    <button
+                      type="button"
+                      className="px-4 py-2 rounded-full border border-indigo-300/20 bg-indigo-400/10 text-xs font-semibold tracking-wider text-indigo-200 hover:bg-indigo-400/20 transition-all"
+                    >
+                      Pause &amp; Breathe
+                    </button>
+                    <button
+                      type="button"
+                      className="px-4 py-2 rounded-full border border-indigo-300/20 bg-indigo-400/10 text-xs font-semibold tracking-wider text-indigo-200 hover:bg-indigo-400/20 transition-all"
+                    >
+                      Daily Check-in
+                    </button>
+                    <button
+                      type="button"
+                      className="px-4 py-2 rounded-full border border-indigo-300/20 bg-indigo-400/10 text-xs font-semibold tracking-wider text-indigo-200 hover:bg-indigo-400/20 transition-all"
+                    >
+                      Evening Journal
+                    </button>
+                  </div>
+                  <textarea
+                    className="w-full bg-transparent border-b border-white/10 py-4 px-0 text-lg text-slate-200 placeholder:text-white/25 resize-none outline-none focus:border-emerald-400/60 transition-all h-24"
+                    placeholder="Choose a simple, sustainable anchor..."
+                  />
+                </div>
+              </div>
+
+              <div className="flex flex-col items-center gap-4 pt-6">
+                <button
+                  type="button"
+                  className="px-12 py-4 rounded-full bg-gradient-to-r from-indigo-500 to-emerald-500 text-white font-semibold text-lg shadow-[0_0_20px_rgba(116,136,251,0.22)] hover:scale-[1.02] active:scale-95 transition-all duration-300"
+                >
+                  Complete Reflection
+                </button>
+                <button
+                  type="button"
+                  className="text-xs text-white/40 uppercase tracking-[0.2em] hover:text-white/70 transition-colors"
+                >
+                  Skip for now
+                </button>
               </div>
             </section>
           )}
