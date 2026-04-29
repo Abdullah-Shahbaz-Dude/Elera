@@ -289,14 +289,96 @@ export default function MindSyncModulePage() {
 
           {active === 'learn' && (
             <section className="space-y-8">
-              <div>
-                <h3 className="text-2xl font-bold text-white mb-4">
-                  {MIND_SYNC_MODULE_01.learn.heading}
-                </h3>
-                <div className="text-slate-300 leading-relaxed whitespace-pre-line">
-                  {MIND_SYNC_MODULE_01.learn.body}
+              <div className="relative overflow-hidden rounded-3xl border border-white/10 glass-panel">
+                <div className="absolute inset-0 bg-gradient-to-b from-white/[0.06] via-transparent to-transparent" />
+                <div className="relative px-6 md:px-12 py-14 md:py-20 text-center">
+                  <h3 className="text-4xl md:text-6xl font-semibold tracking-tight text-white">
+                    Part 2 – Learn (Text on screen)
+                  </h3>
+                  <p className="mt-6 text-base md:text-lg text-white/60 max-w-3xl mx-auto leading-relaxed">
+                    Now that you've watched the video, let's go a little deeper.
+                    This part of the module gives you the underlying technique
+                    you'll be practising in the scenarios that follow.
+                  </p>
                 </div>
               </div>
+
+              <section className="space-y-6">
+                <div className="space-y-4">
+                  <h2 className="text-3xl md:text-4xl font-semibold tracking-tight text-white">
+                    Why two ADHD brains may clash
+                  </h2>
+                  <div className="text-slate-300 leading-relaxed max-w-6xl space-y-4">
+                    <p>
+                      In a typical parent-child conflict, there's usually a
+                      small emotional gap between what the child does and how
+                      the parent responds. The parent has a moment to think,
+                      choose, and reply. In ADHD-on-ADHD situations it is even
+                      harder to imagine
+                    </p>
+                  </div>
+                </div>
+
+                <div className="glass-panel rounded-3xl p-8 md:p-12 border border-white/10 overflow-hidden">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
+                    <div className="space-y-6">
+                      <h3 className="text-2xl font-semibold ">
+                        ADHD brains process emotional cues tone of voice, body
+                        language, facial expressions, much faster than they
+                        process the words people say. When your child speaks to
+                        you in way you feel is disrespectful or rude, your
+                        nervous system can react before the words have fully
+                        landed. You're not choosing to react. You're already
+                        reacting.
+                      </h3>
+
+                      <p className="text-slate-300 leading-relaxed">
+                        This is the part most parenting advice misses. "Stay
+                        calm" isn't a useful instruction when your nervous
+                        system is already three steps ahead of your thinking
+                        brain.
+                      </p>
+                    </div>
+
+                    <div className="relative w-full aspect-square rounded-2xl bg-neutral-900/50 border border-white/5 p-8 flex items-center justify-center overflow-hidden">
+                      <div className="absolute inset-0 bg-gradient-to-tr from-primary/5 to-emerald-400/5 pointer-events-none" />
+
+                      <div className="flex items-center justify-around w-full">
+                        <div className="flex flex-col items-center gap-2">
+                          <div className="w-20 h-20 rounded-full border-2 border-dashed border-primary/40 flex items-center justify-center">
+                            <span className="material-symbols-outlined text-primary">
+                              neurology
+                            </span>
+                          </div>
+                          <span className="text-xs text-neutral-500">
+                            Brain A
+                          </span>
+                        </div>
+
+                        <div className="flex-grow h-px bg-gradient-to-r from-primary via-red-400/80 to-emerald-300 relative mx-4">
+                          <div className="absolute -top-10 left-1/2 -translate-x-1/2 text-center">
+                            <span className="text-red-300 italic text-sm">
+                              Escalation Zone
+                            </span>
+                          </div>
+                          <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-red-400 rounded-full animate-pulse shadow-[0_0_15px_rgba(248,113,113,0.6)]" />
+                        </div>
+
+                        <div className="flex flex-col items-center gap-2">
+                          <div className="w-20 h-20 rounded-full border-2 border-dashed border-emerald-300/40 flex items-center justify-center">
+                            <span className="material-symbols-outlined text-emerald-300">
+                              neurology
+                            </span>
+                          </div>
+                          <span className="text-xs text-neutral-500">
+                            Brain B
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </section>
 
               <div>
                 <h3 className="text-2xl font-bold text-white mb-4">
