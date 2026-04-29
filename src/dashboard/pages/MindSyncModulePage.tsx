@@ -381,24 +381,100 @@ export default function MindSyncModulePage() {
               </section>
 
               <div>
-                <h3 className="text-2xl font-bold text-white mb-4">
-                  {MIND_SYNC_MODULE_01.learn.techniqueHeading}
-                </h3>
-                <div className="space-y-4">
-                  {MIND_SYNC_MODULE_01.learn.steps.map((s) => (
-                    <div
-                      key={s.title}
-                      className="glass-panel rounded-2xl p-6 border border-white/10"
-                    >
-                      <h4 className="text-lg font-bold text-white mb-2">
-                        {s.title}
-                      </h4>
-                      <div className="text-sm text-slate-300 leading-relaxed whitespace-pre-line">
-                        {s.body}
+                <div className="mb-12">
+                  <h2 className="text-3xl md:text-4xl font-semibold tracking-tight text-white mb-2">
+                    The technique: Catch the Rise
+                  </h2>
+                  <p className="text-slate-300 leading-relaxed max-w-3xl">
+                    This module's core skill is called Catch the Rise. It's not
+                    about reacting. It's about noticing your reaction earlier
+                    than you used to. Just three seconds earlier is usually
+                    enough to change the entire outcome.
+                    <br />
+                    It works in three short steps.
+                  </p>
+                </div>
+
+                <section className="grid grid-cols-1 gap-16 md:gap-24">
+                  <div className="flex flex-col md:flex-row items-center gap-12 group">
+                    <div className="relative">
+                      <span className="text-[9rem] md:text-[12rem] font-semibold leading-none text-primary/10 select-none group-hover:text-primary/20 transition-colors">
+                        1
+                      </span>
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <span className="material-symbols-outlined text-5xl md:text-6xl text-primary">
+                          air
+                        </span>
                       </div>
                     </div>
-                  ))}
-                </div>
+                    <div className="flex-1 text-center md:text-left">
+                      <h3 className="text-2xl md:text-3xl font-semibold text-primary mb-4">
+                        Notice the body before the words
+                      </h3>
+                      <p className="text-slate-300 leading-relaxed">
+                        Your body always knows before your mouth does. The signs
+                        are small but specific to you. Common ones: jaw
+                        tightens, shoulders lift, breath gets shallow, hands
+                        tense, a feeling of heat in the chest. Your job isn't to
+                        stop these signs from happening. Your job is to notice
+                        them happening even one of them before you speak.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col md:flex-row-reverse items-center gap-12 group">
+                    <div className="relative">
+                      <span className="text-[9rem] md:text-[12rem] font-semibold leading-none text-indigo-300/10 select-none group-hover:text-indigo-300/20 transition-colors">
+                        2
+                      </span>
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <span className="material-symbols-outlined text-5xl md:text-6xl text-indigo-300">
+                          waves
+                        </span>
+                      </div>
+                    </div>
+                    <div className="flex-1 text-center md:text-right">
+                      <h3 className="text-2xl md:text-3xl font-semibold text-indigo-300 mb-4">
+                        Buy three seconds
+                      </h3>
+                      <p className="text-slate-300 leading-relaxed">
+                        When you notice the rise, do anything that takes three
+                        seconds and puts something between you and the next
+                        sentence. The most reliable options: take one slow
+                        breath, count silently from three to one, place an
+                        object you're holding deliberately on a surface, take a
+                        half-step backwards. The point isn't relaxation. The
+                        point is interruption.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col md:flex-row items-center gap-12 group">
+                    <div className="relative">
+                      <span className="text-[9rem] md:text-[12rem] font-semibold leading-none text-violet-300/10 select-none group-hover:text-violet-300/20 transition-colors">
+                        3
+                      </span>
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <span className="material-symbols-outlined text-5xl md:text-6xl text-violet-300">
+                          anchor
+                        </span>
+                      </div>
+                    </div>
+                    <div className="flex-1 text-center md:text-left">
+                      <h3 className="text-2xl md:text-3xl font-semibold text-violet-300 mb-4">
+                        Speak from the calmer body
+                      </h3>
+                      <p className="text-slate-300 leading-relaxed">
+                        After the three-second pause, your nervous system has
+                        dropped just enough for your thinking brain to come back
+                        online. Speak shorter, lower, slower. You don't have to
+                        say something brilliant. "I need a moment" is enough.
+                        "Let's come back to this in five" is enough. Walking out
+                        of the room saying nothing is enough.
+                      </p>
+                    </div>
+                  </div>
+                </section>
               </div>
 
               <div>
