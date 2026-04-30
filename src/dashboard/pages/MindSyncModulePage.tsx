@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { MIND_SYNC_MODULE_01 } from '../data/mindSyncSyllabus';
+import VideoLessonPlayer from '../components/VideoLessonPlayer';
 import image from '../../assets/images/futuresync/module-1/Parenting-a-Child-1.jpg';
 import aboutImage from '../../assets/images/mindsync/module-1/image-2.jpg';
 
@@ -270,6 +271,13 @@ export default function MindSyncModulePage() {
     return TOC.find((t) => t.key === active) ?? TOC[0];
   }, [active]);
 
+  const activeIndex = useMemo(() => {
+    return Math.max(
+      0,
+      TOC.findIndex((t) => t.key === active)
+    );
+  }, [active]);
+
   return (
     <div className="flex flex-col min-h-full bg-[#020617] text-white">
       <header className="relative shrink-0 min-h-[260px] flex flex-col justify-end p-24 overflow-hidden">
@@ -398,25 +406,25 @@ export default function MindSyncModulePage() {
                     {
                       part: 'Part 01',
                       title: 'Watch',
-                      desc: 'Visual guidance on trigger spotting',
+                      desc: "A short video introducing the core idea, with a real family scenario you'll likely recognise.",
                       icon: 'play_circle',
                     },
                     {
                       part: 'Part 02',
                       title: 'Learn',
-                      desc: 'Science of the ADHD clash',
+                      desc: 'The science and the technique, broken down clearly. No jargon. Real scripts you can use today.',
                       icon: 'menu_book',
                     },
                     {
                       part: 'Part 03',
                       title: 'Practice',
-                      desc: 'Interactive regulation scenarios',
+                      desc: "Four interactive scenarios where you'll be tested on what you've learned. Each scenario gives feedback on every option you choose, so you understand why some responses work better than others.",
                       icon: 'psychology',
                     },
                     {
                       part: 'Part 04',
                       title: 'Take away',
-                      desc: 'Downloadable daily calm guide',
+                      desc: ' A one-page summary, plus optional reflection questions to deepen the learning.',
                       icon: 'assignment_turned_in',
                     },
                   ].map((s) => (
@@ -463,18 +471,10 @@ export default function MindSyncModulePage() {
                   VIDEO SCRIPT & SCENE
                 </h3>
 
-                <div className="glass-panel rounded-2xl overflow-hidden border border-white/10 shadow-2xl">
-                  <div className="relative aspect-video w-full bg-black/40 flex items-center justify-center">
-                    <div className="text-center">
-                      <div className="text-sm text-white/80 font-semibold">
-                        Video placeholder
-                      </div>
-                      <div className="text-xs text-white/60 mt-1">
-                        You’ll paste the video link later
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                <VideoLessonPlayer
+                  title={`Video: ${MIND_SYNC_MODULE_01.title}`}
+                  videoUrl={null}
+                />
 
                 <section className="glass-panel rounded-2xl overflow-hidden border border-white/10">
                   <div className="px-6 py-5 border-b border-white/5 flex items-center justify-between">
@@ -528,9 +528,6 @@ export default function MindSyncModulePage() {
               <div className="relative overflow-hidden rounded-3xl border border-white/10 glass-panel">
                 <div className="absolute inset-0 bg-gradient-to-b from-white/[0.06] via-transparent to-transparent" />
                 <div className="relative px-6 md:px-12 py-14 md:py-20 text-center">
-                  <h3 className="text-4xl md:text-6xl font-semibold tracking-tight text-white">
-                    Part 2 – Learn (Text on screen)
-                  </h3>
                   <p className="mt-6 text-base md:text-lg text-white/60 max-w-3xl mx-auto leading-relaxed">
                     Now that you've watched the video, let's go a little deeper.
                     This part of the module gives you the underlying technique
@@ -558,7 +555,7 @@ export default function MindSyncModulePage() {
                 <div className="glass-panel rounded-3xl p-8 md:p-12 border border-white/10 overflow-hidden">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
                     <div className="space-y-6">
-                      <h3 className="text-2xl font-semibold ">
+                      <h3 className="text-xl font-semibold ">
                         ADHD brains process emotional cues tone of voice, body
                         language, facial expressions, much faster than they
                         process the words people say. When your child speaks to
@@ -723,53 +720,104 @@ export default function MindSyncModulePage() {
               </div>
 
               <div>
-                <h3 className="text-2xl font-bold text-white mb-4">
-                  {MIND_SYNC_MODULE_01.learn.coRegulationScript.heading}
-                </h3>
-                <p className="text-slate-300 leading-relaxed max-w-4xl mb-6">
-                  Sometimes, even after catching the rise, you'll need to say
-                  something out loud to your child or to yourself. The script
-                  below has been tested in real ADHD households. It's not magic
-                  words; it's a structure. The structure works because each part
-                  does a specific thing in your child's brain.
-                </p>
+                <div className="text-center  space-y-4 mb-10">
+                  <h3 className="text-3xl md:text-4xl font-bold text-white">
+                    {MIND_SYNC_MODULE_01.learn.coRegulationScript.heading}
+                  </h3>
+                  <p className="text-slate-300 leading-relaxed max-w-6xl mx-auto">
+                    Sometimes, even after catching the rise, you'll need to say
+                    something out loud to your child or to yourself. The script
+                    below has been tested in real ADHD households. It's not
+                    magic words; it's a structure. The structure works because
+                    each part does a specific thing in your child's brain.
+                  </p>
+                </div>
 
-                <div className="glass-panel rounded-xl overflow-hidden border border-white/10">
-                  <table className="w-full text-left border-collapse">
-                    <thead>
-                      <tr className="border-b border-white/10 bg-white/5">
-                        <th className="p-6 text-[11px] uppercase tracking-widest text-primary">
-                          Step
-                        </th>
-                        <th className="p-6 text-[11px] uppercase tracking-widest text-primary">
-                          What to say
-                        </th>
-                        <th className="p-6 text-[11px] uppercase tracking-widest text-primary">
-                          Why this part matters
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-white/10">
-                      {MIND_SYNC_MODULE_01.learn.coRegulationScript.rows.map(
-                        (row) => (
-                          <tr
+                <div className="relative py-10">
+                  <div className="absolute left-1/2 -translate-x-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-indigo-500 to-emerald-400 shadow-[0_0_15px_rgba(94,114,228,0.3)]" />
+
+                  <div className="space-y-10 relative z-10">
+                    {MIND_SYNC_MODULE_01.learn.coRegulationScript.rows.map(
+                      (row, idx) => {
+                        const isLeft = idx % 2 === 0;
+                        const stepImage = idx % 2 === 0 ? aboutImage : image;
+                        const stepNumber = String(idx + 1).padStart(2, '0');
+
+                        return (
+                          <div
                             key={row.step}
-                            className="hover:bg-white/5 transition-colors"
+                            className="relative z-10 flex flex-col md:flex-row items-center justify-center"
                           >
-                            <td className="p-6 text-slate-200 font-semibold whitespace-nowrap">
-                              {row.step}
-                            </td>
-                            <td className="p-6 text-slate-300 whitespace-pre-line italic">
-                              {row.whatToSay}
-                            </td>
-                            <td className="p-6 text-slate-300 leading-relaxed">
-                              {row.whyItMatters}
-                            </td>
-                          </tr>
-                        )
-                      )}
-                    </tbody>
-                  </table>
+                            <div className="md:w-1/2 md:pr-12 flex justify-end">
+                              {isLeft ? (
+                                <div className="glass-panel p-6 rounded-2xl max-w-xl border border-white/10 hover:border-indigo-400/30 transition-colors">
+                                  <span className="text-emerald-300 text-[11px] uppercase tracking-widest font-semibold mb-2 block">
+                                    Step {stepNumber}
+                                  </span>
+                                  <h4 className="text-2xl font-bold text-white mb-4">
+                                    {row.step}
+                                  </h4>
+                                  <div className="text-[11px] uppercase tracking-widest text-white/60 mb-2">
+                                    What to say
+                                  </div>
+                                  <div className="text-slate-200 italic whitespace-pre-line mb-4">
+                                    {row.whatToSay}
+                                  </div>
+                                  <div className="text-[11px] uppercase tracking-widest text-white/60 mb-2">
+                                    Why this part matters
+                                  </div>
+                                  <div className="text-sm text-slate-300 leading-relaxed whitespace-pre-line">
+                                    {row.whyItMatters}
+                                  </div>
+                                </div>
+                              ) : (
+                                <img
+                                  alt={row.step}
+                                  src={stepImage}
+                                  className="hidden md:block w-48 h-32 object-cover rounded-2xl opacity-60 grayscale hover:grayscale-0 transition-all duration-700 border border-white/10"
+                                />
+                              )}
+                            </div>
+
+                            <div className="my-4 md:my-0 flex items-center justify-center">
+                              <div className="w-4 h-4 rounded-full bg-emerald-400 shadow-[0_0_20px_rgba(45,212,191,0.5)] border-2 border-white/20" />
+                            </div>
+
+                            <div className="md:w-1/2 md:pl-12 flex justify-start">
+                              {!isLeft ? (
+                                <div className="glass-panel p-6 rounded-2xl max-w-xl border border-white/10 hover:border-indigo-400/30 transition-colors">
+                                  <span className="text-emerald-300 text-[11px] uppercase tracking-widest font-semibold mb-2 block">
+                                    Step {stepNumber}
+                                  </span>
+                                  <h4 className="text-2xl font-bold text-white mb-4">
+                                    {row.step}
+                                  </h4>
+                                  <div className="text-[11px] uppercase tracking-widest text-white/60 mb-2">
+                                    What to say
+                                  </div>
+                                  <div className="text-slate-200 italic whitespace-pre-line mb-4">
+                                    {row.whatToSay}
+                                  </div>
+                                  <div className="text-[11px] uppercase tracking-widest text-white/60 mb-2">
+                                    Why this part matters
+                                  </div>
+                                  <div className="text-sm text-slate-300 leading-relaxed whitespace-pre-line">
+                                    {row.whyItMatters}
+                                  </div>
+                                </div>
+                              ) : (
+                                <img
+                                  alt={row.step}
+                                  src={stepImage}
+                                  className="hidden md:block w-48 h-32 object-cover rounded-2xl opacity-60 grayscale hover:grayscale-0 transition-all duration-700 border border-white/10"
+                                />
+                              )}
+                            </div>
+                          </div>
+                        );
+                      }
+                    )}
+                  </div>
                 </div>
               </div>
 
@@ -781,7 +829,7 @@ export default function MindSyncModulePage() {
                   {MIND_SYNC_MODULE_01.learn.whatNotToDo.map((item) => (
                     <div
                       key={item}
-                      className="flex items-start gap-4 p-6 rounded-2xl border border-red-500/20 bg-red-500/5"
+                      className="flex items-start gap-4 p-6 rounded-2xl border border-red-500/20 bg-red-500/20"
                     >
                       <span className="material-symbols-outlined text-red-300 shrink-0">
                         cancel
@@ -1108,21 +1156,6 @@ export default function MindSyncModulePage() {
                   );
                 })()}
               </div>
-
-              <div className="hidden lg:block fixed bottom-10 right-10 max-w-xs glass-panel p-6 rounded-xl border border-emerald-400/20 shadow-[0_0_30px_rgba(1,168,157,0.12)]">
-                <div className="flex items-center gap-3 mb-2">
-                  <span className="material-symbols-outlined text-emerald-300">
-                    info
-                  </span>
-                  <span className="font-semibold text-emerald-200 text-sm">
-                    Pro Tip
-                  </span>
-                </div>
-                <p className="text-xs text-white/60 leading-relaxed">
-                  Noticing physical cues (like a tight jaw) is the first step in
-                  catching the emotional rise before it becomes an outburst.
-                </p>
-              </div>
             </section>
           )}
 
@@ -1220,29 +1253,6 @@ export default function MindSyncModulePage() {
                   households: ending screen time. See you there.
                 </p>
               </div>
-
-              <footer className="pt-6 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-4">
-                <button
-                  type="button"
-                  onClick={() => setActive('reflection')}
-                  className="flex items-center gap-3 px-6 py-3 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-white/90 transition-all"
-                >
-                  <span className="text-sm font-semibold">Next</span>
-                  <span className="material-symbols-outlined">
-                    arrow_forward
-                  </span>
-                </button>
-
-                <button
-                  type="button"
-                  className="flex items-center gap-3 px-8 py-3 rounded-full bg-gradient-to-r from-indigo-500 to-emerald-500 text-white font-semibold shadow-xl hover:shadow-indigo-500/20 transition-all"
-                >
-                  <span>Finish Module</span>
-                  <span className="material-symbols-outlined">
-                    arrow_forward
-                  </span>
-                </button>
-              </footer>
             </section>
           )}
 
@@ -1252,7 +1262,7 @@ export default function MindSyncModulePage() {
                 <h3 className="text-3xl md:text-5xl font-black text-white">
                   Optional Reflection
                 </h3>
-                <p className="text-slate-300 text-lg leading-relaxed max-w-2xl mx-auto">
+                <p className="text-slate-300 text-lg leading-relaxed max-w-4xl mx-auto">
                   These questions are entirely optional. Some parents find it
                   useful to write things down at the end of a module others
                   would rather just absorb the content. Either is fine. If you'd
@@ -1262,40 +1272,40 @@ export default function MindSyncModulePage() {
 
               <div className="space-y-8">
                 <div className="glass-panel p-6 rounded-2xl border border-white/10 card-glow transition-all">
-                  <label className="block text-2xl md:text-3xl font-bold text-indigo-300 mb-4">
+                  <label className="block text-2xl md:text-3xl font-bold text-white mb-4">
                     What does "the rise" feel like in your body? Where do you
                     notice it first?
                   </label>
                   <textarea
-                    className="w-full bg-transparent border-b border-white/10 py-4 px-0 text-lg text-slate-200 placeholder:text-white/25 resize-none outline-none focus:border-emerald-400/60 transition-all h-32"
+                    className="w-full bg-transparent border-b border-white/10 py-4 px-0 text-lg text-slate-200 placeholder:text-white/25 resize-none outline-none focus:border-purple-400/40 transition-all h-32"
                     placeholder="Close your eyes for a moment and notice the physical sensations..."
                   />
                 </div>
 
                 <div className="glass-panel p-6 rounded-2xl border border-white/10 card-glow transition-all">
-                  <label className="block text-2xl md:text-3xl font-bold text-indigo-300 mb-4">
+                  <label className="block text-2xl md:text-3xl font-bold text-white mb-4">
                     Think of a recent moment that escalated. Looking back, where
                     was the earliest point you could have caught it?
                   </label>
                   <textarea
-                    className="w-full bg-transparent border-b border-white/10 py-4 px-0 text-lg text-slate-200 placeholder:text-white/25 resize-none outline-none focus:border-emerald-400/60 transition-all h-32"
+                    className="w-full bg-transparent border-b border-white/10 py-4 px-0 text-lg text-slate-200 placeholder:text-white/25 resize-none outline-none focus:border-purple-400/40 transition-all h-32"
                     placeholder="Trace the thread back to the first subtle spark of tension..."
                   />
                 </div>
 
                 <div className="glass-panel p-6 rounded-2xl border border-white/10 card-glow transition-all">
-                  <label className="block text-2xl md:text-3xl font-bold text-indigo-300 mb-4">
+                  <label className="block text-2xl md:text-3xl font-bold text-white mb-4">
                     Which of the four scenarios felt most like your real life?
                     What does that tell you about where to focus first?
                   </label>
                   <textarea
-                    className="w-full bg-transparent border-b border-white/10 py-4 px-0 text-lg text-slate-200 placeholder:text-white/25 resize-none outline-none focus:border-emerald-400/60 transition-all h-32"
+                    className="w-full bg-transparent border-b border-white/10 py-4 px-0 text-lg text-slate-200 placeholder:text-white/25 resize-none outline-none focus:border-purple-400/40 transition-all h-32"
                     placeholder="Honesty is the first step toward clarity. Which scenario resonated?"
                   />
                 </div>
 
                 <div className="glass-panel p-6 rounded-2xl border border-white/10 card-glow transition-all">
-                  <label className="block text-2xl md:text-3xl font-bold text-indigo-300 mb-4">
+                  <label className="block text-2xl md:text-3xl font-bold text-white  indigo-300 mb-4">
                     What's one small commitment you can make for the next seven
                     days? (Not a big change — just one small thing you'll try.)
                   </label>
@@ -1320,7 +1330,7 @@ export default function MindSyncModulePage() {
                     </button>
                   </div>
                   <textarea
-                    className="w-full bg-transparent border-b border-white/10 py-4 px-0 text-lg text-slate-200 placeholder:text-white/25 resize-none outline-none focus:border-emerald-400/60 transition-all h-24"
+                    className="w-full bg-transparent border-b border-white/10 py-4 px-0 text-lg text-slate-200 placeholder:text-white/25 resize-none outline-none focus:border-purple-400/40 transition-all h-24"
                     placeholder="Choose a simple, sustainable anchor..."
                   />
                 </div>
@@ -1342,6 +1352,54 @@ export default function MindSyncModulePage() {
               </div>
             </section>
           )}
+
+          <div className="pt-6 mt-2 border-t border-white/10">
+            <div className="flex items-center justify-between gap-4">
+              <button
+                type="button"
+                disabled={activeIndex === 0}
+                onClick={() => {
+                  const prev = TOC[Math.max(0, activeIndex - 1)]?.key;
+                  if (prev) setActive(prev);
+                }}
+                className={`flex items-center gap-2 px-5 py-3 rounded-full text-sm font-semibold border transition-colors ${
+                  activeIndex === 0
+                    ? 'bg-white/5 border-white/10 text-white/30 cursor-not-allowed'
+                    : 'bg-white/5 hover:bg-white/10 border-white/10 text-white/80'
+                }`}
+              >
+                <span className="material-symbols-outlined">arrow_back</span>
+                <span>Previous</span>
+              </button>
+
+              {activeIndex === TOC.length - 1 ? (
+                <button
+                  type="button"
+                  className="flex items-center gap-2 px-6 py-3 rounded-full text-sm font-semibold border border-transparent bg-gradient-to-r from-indigo-500 to-emerald-500 text-white hover:shadow-indigo-500/20 transition-colors"
+                >
+                  <span>Finish Module</span>
+                  <span className="material-symbols-outlined">
+                    arrow_forward
+                  </span>
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => {
+                    const next =
+                      TOC[Math.min(TOC.length - 1, activeIndex + 1)]?.key;
+                    if (next) setActive(next);
+                  }}
+                  className="flex items-center gap-2 px-6 py-3 rounded-full text-sm font-semibold border border-transparent bg-gradient-to-r from-indigo-500 to-emerald-500 text-white hover:shadow-indigo-500/20 transition-colors"
+                >
+                  <span>Next</span>
+                  <span className="material-symbols-outlined">
+                    arrow_forward
+                  </span>
+                </button>
+              )}
+            </div>
+          </div>
         </div>
 
         <aside className="w-1/4 border-l border-white/5 glass-panel flex flex-col shrink-0 sticky top-0 self-start">

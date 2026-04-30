@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
+import VideoLessonPlayer from '../components/VideoLessonPlayer';
 import {
   getProgramme,
   getInsightBySlug,
@@ -287,12 +288,6 @@ export default function InsightModuleView() {
   }>({
     0: 'questions',
   });
-  const [videoLoading, setVideoLoading] = useState<{ [key: number]: boolean }>(
-    () =>
-      Object.fromEntries(
-        Array.from({ length: insightCount }, (_, i) => [i, false])
-      )
-  );
 
   const allInsightsCompleted = completedInsights.every(Boolean);
 
@@ -333,32 +328,6 @@ export default function InsightModuleView() {
     }));
   };
 
-  const handleVideoComplete = (idx: number) => {
-    setSectionStates((prev) => ({
-      ...prev,
-      videos: prev.videos.map((completed, i) => (i === idx ? true : completed)),
-    }));
-    setVideoLoading((prev) => ({
-      ...prev,
-      [idx]: false,
-    }));
-  };
-
-  const startVideoLoading = (idx: number) => {
-    setVideoLoading((prev) => ({
-      ...prev,
-      [idx]: true,
-    }));
-
-    // Auto-hide loader after 5 seconds as fallback
-    setTimeout(() => {
-      setVideoLoading((prev) => ({
-        ...prev,
-        [idx]: false,
-      }));
-    }, 5000);
-  };
-
   // Scroll to top only when navigating to this page from external sources (dashboard main is the scroll container)
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -384,35 +353,6 @@ export default function InsightModuleView() {
       [activeInsightIndex]: newTab,
     }));
   };
-
-  // Start video loading when switching insights or when videos are available
-  useEffect(() => {
-    const moduleVideos: { [key: string]: string[] } = {
-      'thinking-differently-at-work': [
-        'https://drive.google.com/file/d/1VnNxw9NXGcDp9RkXCfuZAhQN6kamxNNA/view?usp=drive_link',
-        'https://drive.google.com/file/d/1fZvwZJNZBSy_FJjZgplXaBgpcuoVDyMW/view?usp=drive_link',
-        'https://drive.google.com/file/d/1FkVrCoOKloLhF30SNHTNCMIEN3ROXE9d/view?usp=drive_link',
-      ],
-      'attention-focus-mental-energy': [
-        'https://drive.google.com/file/d/1nM33RGIgQqPVSQFbydCaAYiYNlZc2Gff/view?usp=drive_link',
-        'https://drive.google.com/file/d/1AeH8w5MrKi6A0phhtPZc0-exP437BBn9/view?usp=drive_link',
-        'https://drive.google.com/file/d/106DcHCXiHIt9JePL68pMU791oLMpMqyp/view?usp=drive_link',
-      ],
-      // Alias: Future Sync syllabus slug
-      'attention-focus-and-mental-energy': [
-        'https://drive.google.com/file/d/1nM33RGIgQqPVSQFbydCaAYiYNlZc2Gff/view?usp=drive_link',
-        'https://drive.google.com/file/d/1AeH8w5MrKi6A0phhtPZc0-exP437BBn9/view?usp=drive_link',
-        'https://drive.google.com/file/d/106DcHCXiHIt9JePL68pMU791oLMpMqyp/view?usp=drive_link',
-      ],
-    };
-
-    const currentModuleVideos = moduleVideos[insight?.slug || ''] || [];
-    const hasVideo = Boolean(currentModuleVideos[activeInsightIndex]);
-
-    if (hasVideo && !sectionStates.videos[activeInsightIndex]) {
-      startVideoLoading(activeInsightIndex);
-    }
-  }, [activeInsightIndex, insight?.slug]);
 
   // Note: Removed scroll-to-top for sidebar navigation to maintain user's scroll position
 
@@ -536,92 +476,13 @@ export default function InsightModuleView() {
 
                   const currentModuleVideos = moduleVideos[insight.slug] || [];
                   const videoUrl = currentModuleVideos[idx];
-                  const hasVideo = Boolean(videoUrl);
-
-                  // Convert Google Drive share URL to embeddable format
-                  const getEmbedUrl = (shareUrl: string) => {
-                    const fileId = shareUrl.match(/\/d\/([a-zA-Z0-9-_]+)/)?.[1];
-                    return fileId
-                      ? `https://drive.google.com/file/d/${fileId}/preview`
-                      : shareUrl;
-                  };
 
                   return (
-                    <div className="relative aspect-video w-full rounded-2xl overflow-hidden glass-panel border border-white/10 shadow-2xl mb-6">
-                      {hasVideo ? (
-                        <>
-                          <iframe
-                            src={getEmbedUrl(videoUrl)}
-                            className="w-full h-full rounded-2xl"
-                            allow="autoplay; encrypted-media"
-                            allowFullScreen
-                            title={`${section.title} - Video ${idx + 1}`}
-                            onLoad={() => handleVideoComplete(idx)}
-                          />
-                          {videoLoading[idx] && (
-                            <div className="absolute inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-10">
-                              <div className="text-center">
-                                <div className="relative mb-4">
-                                  {/* Circular ring */}
-                                  <div className="w-16 h-16 rounded-full border-2 border-white/20 border-t-blue-400 animate-spin mx-auto"></div>
-
-                                  {/* Animated dots */}
-                                  <div className="flex items-center justify-center gap-1 mt-4">
-                                    <div
-                                      className="w-2 h-2 bg-blue-400 rounded-full animate-bounce"
-                                      style={{ animationDelay: '0ms' }}
-                                    ></div>
-                                    <div
-                                      className="w-2 h-2 bg-blue-400 rounded-full animate-bounce"
-                                      style={{ animationDelay: '150ms' }}
-                                    ></div>
-                                    <div
-                                      className="w-2 h-2 bg-blue-400 rounded-full animate-bounce"
-                                      style={{ animationDelay: '300ms' }}
-                                    ></div>
-                                  </div>
-                                </div>
-
-                                <p className="text-white font-medium text-sm">
-                                  Loading video
-                                </p>
-                              </div>
-                            </div>
-                          )}
-                        </>
-                      ) : (
-                        // Placeholder for videos not yet available
-                        <div className="w-full h-full bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center">
-                          <div className="text-center">
-                            <div className="w-20 h-20 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center mb-4 mx-auto">
-                              <span className="material-symbols-outlined text-white text-2xl">
-                                play_circle
-                              </span>
-                            </div>
-                            <h3 className="text-lg font-bold text-white mb-2">
-                              {section.title}
-                            </h3>
-                            <p className="text-slate-400 text-sm">
-                              Video coming soon
-                            </p>
-                          </div>
-                        </div>
-                      )}
-                      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4 rounded-b-2xl">
-                        <div className="flex items-center justify-between text-white">
-                          <span className="text-xs text-white/90 font-medium">
-                            Video {idx + 1}: {section.title}
-                          </span>
-                          <span className="text-xs text-emerald-400 font-medium">
-                            {videoLoading[idx]
-                              ? 'Loading...'
-                              : hasVideo
-                                ? 'Watch & Learn'
-                                : 'Coming Soon'}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
+                    <VideoLessonPlayer
+                      title={`Video ${idx + 1}: ${section.title}`}
+                      videoUrl={videoUrl}
+                      className="mb-6"
+                    />
                   );
                 })()}
 
