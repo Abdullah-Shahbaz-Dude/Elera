@@ -473,7 +473,7 @@ export default function MindSyncModulePage() {
 
                 <VideoLessonPlayer
                   title={`Video: ${MIND_SYNC_MODULE_01.title}`}
-                  videoUrl={null}
+                  videoUrl="https://drive.google.com/file/d/1IxkgTtoru399RxckLlkXpB7vg1dUMDkD/view?usp=drive_link"
                 />
 
                 <section className="glass-panel rounded-2xl overflow-hidden border border-white/10">
