@@ -3,11 +3,14 @@ import { Link } from 'react-router-dom';
 import { MIND_SYNC_MODULE_01 } from '../data/mindSyncSyllabus';
 import VideoLessonPlayer from '../components/VideoLessonPlayer';
 import image from '../../assets/images/mindsync/2.jpg';
-import aboutImage from '../../assets/images/mindsync/mindsync-2.jpg';
-import structureWatchImage from '../../assets/images/mindsync/1.jpg';
-import structureLearnImage from '../../assets/images/mindsync/3.jpg';
-import structurePracticeImage from '../../assets/images/mindsync/4.jpg';
-import structureTakeawayImage from '../../assets/images/mindsync/5.jpg';
+import aboutimage1 from '../../assets/images/mindsync/4.jpg';
+import aboutImage from '../../assets/images/mindsync/3.jpg';
+
+// import aboutImage from '../../assets/images/mindsync/3.jpg';
+import structureWatchImage from '../../assets/images/mindsync/5.jpg';
+import structureLearnImage from '../../assets/images/mindsync/6.jpg';
+import structurePracticeImage from '../../assets/images/mindsync/Untitled design.jpg';
+import structureTakeawayImage from '../../assets/images/mindsync/7.jpg';
 
 type TabKey =
   | 'introduction'
@@ -268,6 +271,11 @@ export default function MindSyncModulePage() {
   const [isScriptOpen, setIsScriptOpen] = useState(false);
   const [isAboutOpen, setIsAboutOpen] = useState(false);
   const [isOutcomesOpen, setIsOutcomesOpen] = useState(false);
+  const [isLearnHighlightOpen, setIsLearnHighlightOpen] = useState(false);
+  const [isTechniqueIntroOpen, setIsTechniqueIntroOpen] = useState(false);
+  const [isCoRegIntroOpen, setIsCoRegIntroOpen] = useState(false);
+  const [isPracticeIntroOpen, setIsPracticeIntroOpen] = useState(false);
+  const [isSituationOpen, setIsSituationOpen] = useState(false);
   const [practiceIndex, setPracticeIndex] = useState(0);
   const [selectedPracticeOption, setSelectedPracticeOption] =
     useState<PracticeOptionKey | null>(null);
@@ -284,9 +292,39 @@ export default function MindSyncModulePage() {
     );
   }, [active]);
 
+  const heroCopy = useMemo(() => {
+    const map: Record<
+      Exclude<TabKey, 'introduction'>,
+      { title: string; body: string }
+    > = {
+      video: {
+        title: 'Video',
+        body: 'Watch the video Dad and Son to set the scene for the module learning. There are many different scenarios where this type of clash may happen in the household',
+      },
+      learn: {
+        title: 'Learn',
+        body: 'Now that you have watched the video, this section gives you more understanding of what can happen when ADHD meets ADHD in interactions ',
+      },
+      practice: {
+        title: 'Practice',
+        body: "Below are four interactive scenarios. Each one drops you into a moment that ADHD parents face regularly. Read the situation, choose what you'd do next, and compare your answer to the feedback. ",
+      },
+      takeaway: {
+        title: 'Take away',
+        body: "Below is a one-page summary of everything in this module. It's designed to be saved as a screenshot on your phone and referred to in the moments when you need it most. ",
+      },
+      reflection: {
+        title: 'Optional Reflection',
+        body: 'These questions are entirely optional. Some parents find it useful to write things down at the end of a module others would rather just absorb the content. ',
+      },
+    };
+
+    return active === 'introduction' ? null : map[active];
+  }, [active]);
+
   return (
     <div className="flex flex-col min-h-full bg-[#020617] text-white">
-      <header className="relative shrink-0 min-h-[260px] flex flex-col justify-end p-24 overflow-hidden">
+      <header className="relative shrink-0 min-h-[400px] flex flex-col justify-end p-24 overflow-hidden">
         <div className="absolute inset-0 z-0">
           <img
             src={image}
@@ -321,15 +359,30 @@ export default function MindSyncModulePage() {
         </div>
 
         <div className="relative z-10 max-w-4xl mt-10">
-          <h1 className="text-4xl font-black text-white mb-2 leading-tight tracking-tight">
-            Module 1
-          </h1>
-          <h2 className="text-lg text-white/90 font-semibold mb-4">
-            Managing your own ADHD, whilst parenting a child with ADHD
-          </h2>
-          <p className="text-lg text-white/80 max-w-2xl font-light leading-relaxed whitespace-pre-line">
-            {MIND_SYNC_MODULE_01.summary}
-          </p>
+          {active === 'introduction' ? (
+            <>
+              <h1 className="text-4xl font-black text-white mb-2 leading-tight tracking-tight">
+                Module 1
+              </h1>
+              <h2 className="text-lg text-white/90 font-semibold mb-4">
+                Managing your own ADHD, whilst parenting a child with ADHD
+              </h2>
+              <p className="text-lg text-white/80 max-w-2xl font-light leading-relaxed whitespace-pre-line">
+                {MIND_SYNC_MODULE_01.summary}
+              </p>
+            </>
+          ) : (
+            heroCopy && (
+              <>
+                {/* <h1 className="text-4xl font-black text-white mb-2 leading-tight tracking-tight">
+                  {heroCopy.title}
+                </h1> */}
+                <p className="text-lg text-white/80 max-w-3xl font-normal leading-relaxed whitespace-pre-line">
+                  {heroCopy.body}
+                </p>
+              </>
+            )
+          )}
         </div>
         <div className="absolute right-0 bottom-0 w-1/3 h-full overflow-hidden pointer-events-none opacity-40">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[480px] h-[480px] bg-white/10 rounded-full blur-[120px]" />
@@ -381,7 +434,7 @@ export default function MindSyncModulePage() {
                         <div className="w-full h-52 rounded-2xl bg-cover overflow-hidden shadow-2xl relative">
                           <img
                             alt="Mind Sync"
-                            src={image}
+                            src={aboutimage1}
                             className="w-full h-full object-cover opacity-100"
                           />
                           <div className="absolute inset-0 bg-gradient-to-tr from-black/40 via-transparent to-black/10" />
@@ -505,12 +558,6 @@ export default function MindSyncModulePage() {
           {active === 'video' && (
             <section className="space-y-8">
               <div className="space-y-6">
-                <p className="text-slate-300 leading-relaxed">
-                  Watch the video Dad and Son to set the scene for the module
-                  learning. There are many different scenarios where this type
-                  of clash may happen in the household
-                </p>
-
                 <VideoLessonPlayer
                   title={`Video: ${MIND_SYNC_MODULE_01.title}`}
                   videoUrl="https://drive.google.com/file/d/1IxkgTtoru399RxckLlkXpB7vg1dUMDkD/view?usp=drive_link"
@@ -565,88 +612,91 @@ export default function MindSyncModulePage() {
 
           {active === 'learn' && (
             <section className="space-y-8">
-              <div className="relative overflow-hidden rounded-3xl border border-white/10 glass-panel">
-                <div className="absolute inset-0 bg-gradient-to-b from-white/[0.06] via-transparent to-transparent" />
-                <div className="relative px-6 md:px-12 py-14 md:py-20 text-center">
-                  <p className="mt-6 text-base md:text-lg text-white/60 max-w-3xl mx-auto leading-relaxed">
-                    Now that you've watched the video, let's go a little deeper.
-                    This part of the module gives you the underlying technique
-                    you'll be practising in the scenarios that follow.
-                  </p>
-                </div>
-              </div>
-
               <section className="space-y-6">
-                <div className="space-y-4">
-                  <h2 className="text-3xl md:text-4xl font-semibold tracking-tight text-white">
-                    Why two ADHD brains may clash
-                  </h2>
-                  <div className="text-slate-300 leading-relaxed max-w-6xl space-y-4">
-                    <p>
-                      In a typical parent-child conflict, there's usually a
-                      small emotional gap between what the child does and how
-                      the parent responds. The parent has a moment to think,
-                      choose, and reply. In ADHD-on-ADHD situations it is even
-                      harder to imagine
-                    </p>
+                <div
+                  className="glass-panel rounded-2xl border border-white/10 p-8 md:p-10 transition-all hover:bg-white/[0.04] hover:border-white/20 hover:ring-1 hover:ring-white/10 hover:shadow-[0_12px_40px_rgba(0,0,0,0.35)] cursor-pointer"
+                  onClick={() => setIsLearnHighlightOpen((v) => !v)}
+                >
+                  <div className="group">
+                    <button
+                      type="button"
+                      className="w-full text-left flex items-center justify-between gap-4 select-none rounded-xl -mx-2 px-2 py-2 transition-colors focus:outline-none focus-visible:outline-none"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setIsLearnHighlightOpen((v) => !v);
+                      }}
+                    >
+                      <h2 className="text-3xl md:text-4xl font-semibold tracking-tight text-white">
+                        Why two ADHD brains may clash
+                      </h2>
+                      <span
+                        className={`material-symbols-outlined transition-all ${
+                          isLearnHighlightOpen
+                            ? 'text-primary rotate-180'
+                            : 'text-white/70 group-hover:text-white'
+                        }`}
+                      >
+                        expand_more
+                      </span>
+                    </button>
+
+                    {isLearnHighlightOpen && (
+                      <div className="pt-4 space-y-4">
+                        <p className="text-slate-300 leading-relaxed">
+                          In a typical parent-child conflict, there's usually a
+                          small emotional gap between what the child does and
+                          how the parent responds. The parent has a moment to
+                          think, choose, and reply. In ADHD-on-ADHD situations
+                          it is even harder to imagine ADHD brains process
+                          emotional cues tone of voice, body language, facial
+                          expressions, much faster than they process the words
+                          people say. When your child speaks to you in way you
+                          feel is disrespectful or rude, your nervous system can
+                          react before the words have fully landed. You're not
+                          choosing to react. You're already reacting. This is
+                          the part most parenting advice misses. "Stay calm"
+                          isn't a useful instruction when your nervous system is
+                          already three steps ahead of your thinking brain.
+                        </p>
+                      </div>
+                    )}
                   </div>
                 </div>
 
-                <div className="glass-panel rounded-3xl p-8 md:p-12 border border-white/10 overflow-hidden">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
-                    <div className="space-y-6">
-                      <h3 className="text-xl font-semibold ">
-                        ADHD brains process emotional cues tone of voice, body
-                        language, facial expressions, much faster than they
-                        process the words people say. When your child speaks to
-                        you in way you feel is disrespectful or rude, your
-                        nervous system can react before the words have fully
-                        landed. You're not choosing to react. You're already
-                        reacting.
-                      </h3>
+                <div className="space-y-10">
+                  <div className="relative w-full h-[400px] rounded-2xl h-6xxl bg-neutral-900/50 border border-white/5 p-8 flex items-center justify-center overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-tr from-primary/5 to-emerald-400/5 pointer-events-none" />
 
-                      <p className="text-slate-300 leading-relaxed">
-                        This is the part most parenting advice misses. "Stay
-                        calm" isn't a useful instruction when your nervous
-                        system is already three steps ahead of your thinking
-                        brain.
-                      </p>
-                    </div>
-
-                    <div className="relative w-full aspect-square rounded-2xl bg-neutral-900/50 border border-white/5 p-8 flex items-center justify-center overflow-hidden">
-                      <div className="absolute inset-0 bg-gradient-to-tr from-primary/5 to-emerald-400/5 pointer-events-none" />
-
-                      <div className="flex items-center justify-around w-full">
-                        <div className="flex flex-col items-center gap-2">
-                          <div className="w-20 h-20 rounded-full border-2 border-dashed border-primary/40 flex items-center justify-center">
-                            <span className="material-symbols-outlined text-primary">
-                              neurology
-                            </span>
-                          </div>
-                          <span className="text-xs text-neutral-500">
-                            Brain A
+                    <div className="w-full flex items-center justify-between gap-6">
+                      <div className="flex flex-col items-center gap-2 shrink-0">
+                        <div className="w-16 h-16 md:w-20 md:h-20 rounded-full border-2 border-dashed border-primary/40 flex items-center justify-center">
+                          <span className="material-symbols-outlined text-primary">
+                            neurology
                           </span>
                         </div>
+                        <span className="text-xs text-neutral-500">
+                          Brain A
+                        </span>
+                      </div>
 
-                        <div className="flex-grow h-px bg-gradient-to-r from-primary via-red-400/80 to-emerald-300 relative mx-4">
-                          <div className="absolute -top-10 left-1/2 -translate-x-1/2 text-center">
-                            <span className="text-red-300 italic text-sm">
-                              Escalation Zone
-                            </span>
-                          </div>
-                          <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-red-400 rounded-full animate-pulse shadow-[0_0_15px_rgba(248,113,113,0.6)]" />
-                        </div>
-
-                        <div className="flex flex-col items-center gap-2">
-                          <div className="w-20 h-20 rounded-full border-2 border-dashed border-emerald-300/40 flex items-center justify-center">
-                            <span className="material-symbols-outlined text-emerald-300">
-                              neurology
-                            </span>
-                          </div>
-                          <span className="text-xs text-neutral-500">
-                            Brain B
+                      <div className="flex-grow h-px bg-gradient-to-r from-primary via-red-400/80 to-emerald-300 relative">
+                        <div className="absolute -top-8 left-1/2 -translate-x-1/2 text-center">
+                          <span className="text-red-300 italic text-sm">
+                            Escalation Zone
                           </span>
                         </div>
+                        <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-red-400 rounded-full animate-pulse shadow-[0_0_15px_rgba(248,113,113,0.6)]" />
+                      </div>
+
+                      <div className="flex flex-col items-center gap-2 shrink-0">
+                        <div className="w-16 h-16 md:w-20 md:h-20 rounded-full border-2 border-dashed border-emerald-300/40 flex items-center justify-center">
+                          <span className="material-symbols-outlined text-emerald-300">
+                            neurology
+                          </span>
+                        </div>
+                        <span className="text-xs text-neutral-500">
+                          Brain B
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -655,17 +705,48 @@ export default function MindSyncModulePage() {
 
               <div>
                 <div className="mb-12">
-                  <h2 className="text-3xl md:text-4xl font-semibold tracking-tight text-white mb-2">
-                    The technique: Catch the Rise
-                  </h2>
-                  <p className="text-slate-300 leading-relaxed max-w-3xl">
-                    This module's core skill is called Catch the Rise. It's not
-                    about reacting. It's about noticing your reaction earlier
-                    than you used to. Just three seconds earlier is usually
-                    enough to change the entire outcome.
-                    <br />
-                    It works in three short steps.
-                  </p>
+                  <div
+                    className="glass-panel rounded-2xl border border-white/10 p-8 md:p-10 transition-all hover:bg-white/[0.04] hover:border-white/20 hover:ring-1 hover:ring-white/10 hover:shadow-[0_12px_40px_rgba(0,0,0,0.35)] cursor-pointer max-w-6xl"
+                    onClick={() => setIsTechniqueIntroOpen((v) => !v)}
+                  >
+                    <div className="group">
+                      <button
+                        type="button"
+                        className="w-full text-left flex items-center justify-between gap-4 select-none rounded-xl -mx-2 px-2 py-2 transition-colors focus:outline-none focus-visible:outline-none"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setIsTechniqueIntroOpen((v) => !v);
+                        }}
+                      >
+                        <h2 className="text-3xl md:text-4xl font-semibold tracking-tight text-white">
+                          Catch the Rise Technique
+                        </h2>
+                        <span
+                          className={`material-symbols-outlined transition-all ${
+                            isTechniqueIntroOpen
+                              ? 'text-primary rotate-180'
+                              : 'text-white/70 group-hover:text-white'
+                          }`}
+                        >
+                          expand_more
+                        </span>
+                      </button>
+
+                      {isTechniqueIntroOpen && (
+                        <div className="pt-4">
+                          <p className="text-slate-300 leading-relaxed max-w-3xl">
+                            This module's core skill is called Catch the Rise.
+                            It's not about reacting. It's about noticing your
+                            reaction earlier than you used to. Just three
+                            seconds earlier is usually enough to change the
+                            entire outcome.
+                            <br />
+                            It works in three short steps.
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 </div>
 
                 <section className="grid grid-cols-1 gap-16 md:gap-24">
@@ -761,16 +842,49 @@ export default function MindSyncModulePage() {
 
               <div>
                 <div className="text-center  space-y-4 mb-10">
-                  <h3 className="text-3xl md:text-4xl font-bold text-white">
-                    {MIND_SYNC_MODULE_01.learn.coRegulationScript.heading}
-                  </h3>
-                  <p className="text-slate-300 leading-relaxed max-w-6xl mx-auto">
-                    Sometimes, even after catching the rise, you'll need to say
-                    something out loud to your child or to yourself. The script
-                    below has been tested in real ADHD households. It's not
-                    magic words; it's a structure. The structure works because
-                    each part does a specific thing in your child's brain.
-                  </p>
+                  <div className="max-w-6xl mx-auto">
+                    <div
+                      className="glass-panel rounded-2xl border border-white/10 p-6 md:p-8 transition-all hover:bg-white/[0.04] hover:border-white/20 hover:ring-1 hover:ring-white/10 hover:shadow-[0_12px_40px_rgba(0,0,0,0.35)] cursor-pointer text-left"
+                      onClick={() => setIsCoRegIntroOpen((v) => !v)}
+                    >
+                      <div className="group">
+                        <button
+                          type="button"
+                          className="w-full text-left flex items-center justify-between gap-4 select-none rounded-xl -mx-2 px-2 py-2 transition-colors focus:outline-none focus-visible:outline-none"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setIsCoRegIntroOpen((v) => !v);
+                          }}
+                        >
+                          <span className="text-2xl font-bold text-white">
+                            The co-regulation script
+                          </span>
+                          <span
+                            className={`material-symbols-outlined transition-all ${
+                              isCoRegIntroOpen
+                                ? 'text-primary rotate-180'
+                                : 'text-white/70 group-hover:text-white'
+                            }`}
+                          >
+                            expand_more
+                          </span>
+                        </button>
+
+                        {isCoRegIntroOpen && (
+                          <div className="pt-4">
+                            <p className="text-slate-300 leading-relaxed">
+                              Sometimes, even after catching the rise, you'll
+                              need to say something out loud to your child or to
+                              yourself. The script below has been tested in real
+                              ADHD households. It's not magic words; it's a
+                              structure. The structure works because each part
+                              does a specific thing in your child's brain.
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
                 <div className="relative py-10">
@@ -886,26 +1000,53 @@ export default function MindSyncModulePage() {
 
           {active === 'practice' && (
             <section className="space-y-10">
-              <div className="space-y-4">
-                <h3 className="text-3xl md:text-4xl font-bold text-white">
-                  Part 3 – Interactive Practice Scenarios
-                </h3>
-                <div className="text-slate-300 leading-relaxed whitespace-pre-line space-y-4 max-w-4xl">
-                  <p>
-                    Below are four interactive scenarios. Each one drops you
-                    into a moment that ADHD parents face regularly. Read the
-                    situation, choose what you'd do next, and compare your
-                    answer to the feedback. There are no "trick" questions here.
-                    Some of the answers feel reasonable but quietly make things
-                    worse; others feel uncomfortable but actually help. The
-                    feedback explains exactly why.
-                  </p>
-                  <p>
-                    These scenarios are best done after the video and the Learn
-                    section. Take them slowly. The goal isn't to score highly
-                    it's to notice what your instinct is, and where it might
-                    benefit from a small shift.
-                  </p>
+              <div className="max-w-6xl">
+                <div
+                  className="glass-panel rounded-2xl border border-white/10 p-8 md:p-10 transition-all hover:bg-white/[0.04] hover:border-white/20 hover:ring-1 hover:ring-white/10 hover:shadow-[0_12px_40px_rgba(0,0,0,0.35)] cursor-pointer"
+                  onClick={() => setIsPracticeIntroOpen((v) => !v)}
+                >
+                  <div className="group">
+                    <button
+                      type="button"
+                      className="w-full text-left flex items-center justify-between gap-4 select-none rounded-xl -mx-2 px-2 py-2 transition-colors focus:outline-none focus-visible:outline-none"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setIsPracticeIntroOpen((v) => !v);
+                      }}
+                    >
+                      <span className="text-3xl md:text-4xl font-bold text-white">
+                        Interactive Practice Scenarios
+                      </span>
+                      <span
+                        className={`material-symbols-outlined transition-all ${
+                          isPracticeIntroOpen
+                            ? 'text-primary rotate-180'
+                            : 'text-white/70 group-hover:text-white'
+                        }`}
+                      >
+                        expand_more
+                      </span>
+                    </button>
+
+                    {isPracticeIntroOpen && (
+                      <div className="pt-4">
+                        <p className="text-slate-300 leading-relaxed whitespace-pre-line max-w-4xl">
+                          Below are four interactive scenarios. Each one drops
+                          you into a moment that ADHD parents face regularly.
+                          Read the situation, choose what you'd do next, and
+                          compare your answer to the feedback. There are no
+                          "trick" questions here. Some of the answers feel
+                          reasonable but quietly make things worse; others feel
+                          uncomfortable but actually help. The feedback explains
+                          exactly why. \n These scenarios are best done after
+                          the video and the Learn section. Take them slowly. The
+                          goal isn't to score highly it's to notice what your
+                          instinct is, and where it might benefit from a small
+                          shift.
+                        </p>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
 
@@ -920,6 +1061,7 @@ export default function MindSyncModulePage() {
                         setPracticeIndex(idx);
                         setSelectedPracticeOption(null);
                         setPracticeSubmitted(false);
+                        setIsSituationOpen(false);
                       }}
                       className={`px-4 py-2 rounded-full text-xs uppercase tracking-widest border transition-colors ${
                         isActive
@@ -959,21 +1101,41 @@ export default function MindSyncModulePage() {
                               <img
                                 src={aboutImage}
                                 alt="Scenario visual"
-                                className="w-full h-full object-cover grayscale opacity-80 hover:grayscale-0 hover:opacity-100 transition-all duration-700"
+                                className="w-full h-full object-cover  opacity-80  transition-all duration-700"
                               />
                             </div>
                             <div className="flex-1">
                               <div className="text-[11px] uppercase tracking-[0.2em] text-white/50 font-semibold mb-3">
                                 The situation
                               </div>
-                              <p className="text-lg text-slate-300 mb-8 leading-relaxed whitespace-pre-line">
-                                {scenario.situation}
-                              </p>
-                              <div className="flex items-center gap-3 p-4 rounded-lg bg-white/5 border border-white/10">
-                                <span className="material-symbols-outlined text-amber-300">
-                                  lightbulb
+                              <button
+                                type="button"
+                                className="w-full flex items-center justify-between gap-4 p-4 rounded-lg bg-white/5 border border-white/10"
+                                onClick={() => setIsSituationOpen((v) => !v)}
+                              >
+                                <span className="text-sm text-amber-200/90 italic">
+                                  {isSituationOpen
+                                    ? 'Hide the situation'
+                                    : 'Click to view the full situation'}
                                 </span>
-                                <p className="text-sm text-amber-200/90 italic">
+                                <span
+                                  className={`material-symbols-outlined transition-transform text-white/60 ${
+                                    isSituationOpen ? 'rotate-180' : ''
+                                  }`}
+                                >
+                                  expand_more
+                                </span>
+                              </button>
+                              {isSituationOpen && (
+                                <p className="text-lg text-slate-300 mt-4 mb-8 leading-relaxed whitespace-pre-line">
+                                  {scenario.situation}
+                                </p>
+                              )}
+                              <div className="mt-6 pt-6 border-t border-white/10">
+                                <div className="text-[11px] uppercase tracking-[0.2em] text-white/50 font-semibold mb-3">
+                                  The question
+                                </div>
+                                <p className="text-white/85 text-base md:text-lg leading-relaxed">
                                   {scenario.question}
                                 </p>
                               </div>
@@ -1169,6 +1331,13 @@ export default function MindSyncModulePage() {
                         <button
                           type="button"
                           onClick={() => {
+                            const isLast =
+                              practiceIndex === PRACTICE_SCENARIOS.length - 1;
+                            if (isLast) {
+                              setActive('takeaway');
+                              return;
+                            }
+
                             const next = Math.min(
                               PRACTICE_SCENARIOS.length - 1,
                               practiceIndex + 1
@@ -1176,17 +1345,15 @@ export default function MindSyncModulePage() {
                             setPracticeIndex(next);
                             setSelectedPracticeOption(null);
                             setPracticeSubmitted(false);
+                            setIsSituationOpen(false);
                           }}
-                          disabled={
-                            practiceIndex === PRACTICE_SCENARIOS.length - 1
-                          }
-                          className={`flex items-center gap-2 text-sm transition-colors ${
-                            practiceIndex === PRACTICE_SCENARIOS.length - 1
-                              ? 'text-white/30 cursor-not-allowed'
-                              : 'text-white/60 hover:text-indigo-200'
-                          }`}
+                          className="px-6 py-3 rounded-xl bg-indigo-500/15 border border-indigo-400/30 text-indigo-100 hover:bg-indigo-500/20 hover:border-indigo-300/40 transition-all flex items-center gap-3 text-sm md:text-base"
                         >
-                          <span>Next</span>
+                          <span>
+                            {practiceIndex === PRACTICE_SCENARIOS.length - 1
+                              ? 'Finish Module'
+                              : `Click here for Scenario ${practiceIndex + 2}`}
+                          </span>
                           <span className="material-symbols-outlined">
                             arrow_forward
                           </span>
@@ -1205,12 +1372,6 @@ export default function MindSyncModulePage() {
                 <h3 className="text-3xl md:text-4xl font-bold text-white">
                   {MIND_SYNC_MODULE_01.takeaway.heading}
                 </h3>
-                <p className="text-slate-300 leading-relaxed max-w-3xl">
-                  Below is a one-page summary of everything in this module. It's
-                  designed to be saved as a screenshot on your phone and
-                  referred to in the moments when you need it most. Don't try to
-                  remember everything in the module. Just keep this card close.
-                </p>
               </header>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
@@ -1302,12 +1463,6 @@ export default function MindSyncModulePage() {
                 <h3 className="text-3xl md:text-5xl font-black text-white">
                   Optional Reflection
                 </h3>
-                <p className="text-slate-300 text-lg leading-relaxed max-w-4xl mx-auto">
-                  These questions are entirely optional. Some parents find it
-                  useful to write things down at the end of a module others
-                  would rather just absorb the content. Either is fine. If you'd
-                  like to reflect, here are a few questions to take with you.
-                </p>
               </div>
 
               <div className="space-y-8">
@@ -1412,7 +1567,7 @@ export default function MindSyncModulePage() {
                 <span>Previous</span>
               </button>
 
-              {activeIndex === TOC.length - 1 ? (
+              {active === 'takeaway' ? (
                 <button
                   type="button"
                   className="flex items-center gap-2 px-6 py-3 rounded-full text-sm font-semibold border border-transparent bg-gradient-to-r from-indigo-500 to-emerald-500 text-white hover:shadow-indigo-500/20 transition-colors"
@@ -1422,6 +1577,8 @@ export default function MindSyncModulePage() {
                     arrow_forward
                   </span>
                 </button>
+              ) : activeIndex === TOC.length - 1 ? (
+                <div />
               ) : (
                 <button
                   type="button"

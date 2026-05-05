@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MIND_SYNC_MODULE_01 } from '../data/mindSyncSyllabus';
-import image from '../../assets/images/futuresync/module-1/Parenting-a-Child-1.jpg';
+import image from '../../assets/images/mindsync/2.jpg';
 
 export default function MindSyncProgrammePage() {
   const navigate = useNavigate();

@@ -77,7 +77,7 @@ export const MIND_SYNC_MODULE_01: MindSyncModule = {
     "Part 1 - Watch A short video introducing the core idea, with a real family scenario you'll likely recognise.",
     'Part 2 - Learn The science and the technique, broken down clearly. No jargon. Real scripts you can use today.',
     "Part 3 - Practice Four interactive scenarios where you'll be tested on what you've learned. Each scenario gives feedback on every option you choose, so you understand why some responses work better than others.",
-    'Part 4 - Take away A one-page summary, plus optional reflection questions to deepen the learning.',
+    ' Take away A one-page summary, plus optional reflection questions to deepen the learning.',
   ],
   videoScriptScene: {
     bullets: [
@@ -155,7 +155,7 @@ export const MIND_SYNC_MODULE_01: MindSyncModule = {
   },
   practiceScenarios: [],
   takeaway: {
-    heading: 'Part 4 - Your Take-Away Card (Download PDF)',
+    heading: 'Your Take-Away Card (Download PDF)',
     body: 'CATCH THE RISE\nThe pocket version\n1. Notice your body before your mouth.\nJaw, shoulders, breath, hands. Any one is enough.\n2. Buy three seconds.\nOne slow breath. Place an object down. Step back half a pace.\n3. Speak from the calmer body.\nShorter. Lower. Slower. "I need a moment" is enough.\nIf words help:\n"I can see this is hard. I\'m a bit wound up too. I\'m going to step out for a minute. I\'ll come back when we\'ve both got our heads back."',
     optionalReflectionHeading: 'Optional reflection',
     optionalReflectionQuestions: [
