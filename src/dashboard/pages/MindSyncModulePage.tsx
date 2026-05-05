@@ -2,8 +2,12 @@ import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { MIND_SYNC_MODULE_01 } from '../data/mindSyncSyllabus';
 import VideoLessonPlayer from '../components/VideoLessonPlayer';
-import image from '../../assets/images/futuresync/module-1/Parenting-a-Child-1.jpg';
-import aboutImage from '../../assets/images/mindsync/module-1/image-2.jpg';
+import image from '../../assets/images/mindsync/2.jpg';
+import aboutImage from '../../assets/images/mindsync/mindsync-2.jpg';
+import structureWatchImage from '../../assets/images/mindsync/1.jpg';
+import structureLearnImage from '../../assets/images/mindsync/3.jpg';
+import structurePracticeImage from '../../assets/images/mindsync/4.jpg';
+import structureTakeawayImage from '../../assets/images/mindsync/5.jpg';
 
 type TabKey =
   | 'introduction'
@@ -262,6 +266,8 @@ const PRACTICE_SCENARIOS: PracticeScenario[] = [
 export default function MindSyncModulePage() {
   const [active, setActive] = useState<TabKey>('introduction');
   const [isScriptOpen, setIsScriptOpen] = useState(false);
+  const [isAboutOpen, setIsAboutOpen] = useState(false);
+  const [isOutcomesOpen, setIsOutcomesOpen] = useState(false);
   const [practiceIndex, setPracticeIndex] = useState(0);
   const [selectedPracticeOption, setSelectedPracticeOption] =
     useState<PracticeOptionKey | null>(null);
@@ -285,7 +291,7 @@ export default function MindSyncModulePage() {
           <img
             src={image}
             alt="Mind Sync"
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover object-top"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/60 to-transparent" />
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-black/10" />
@@ -316,10 +322,10 @@ export default function MindSyncModulePage() {
 
         <div className="relative z-10 max-w-4xl mt-10">
           <h1 className="text-4xl font-black text-white mb-2 leading-tight tracking-tight">
-            {MIND_SYNC_MODULE_01.title}
+            Module 1
           </h1>
           <h2 className="text-lg text-white/90 font-semibold mb-4">
-            {MIND_SYNC_MODULE_01.subtitle}
+            Managing your own ADHD, whilst parenting a child with ADHD
           </h2>
           <p className="text-lg text-white/80 max-w-2xl font-light leading-relaxed whitespace-pre-line">
             {MIND_SYNC_MODULE_01.summary}
@@ -334,65 +340,109 @@ export default function MindSyncModulePage() {
         <div className="w-3/4 flex flex-col p-8 space-y-10">
           {active === 'introduction' && (
             <section className="space-y-6">
-              <div className="glass-panel rounded-2xl border border-white/10 p-8 md:p-10">
-                <div className="flex flex-col md:flex-row gap-10 items-start">
-                  <div className="flex-1">
-                    <h3 className="text-2xl font-bold text-white mb-4">
+              <div
+                className="glass-panel rounded-2xl border border-white/10 p-8 md:p-10 transition-all hover:bg-white/[0.04] hover:border-white/20 hover:ring-1 hover:ring-white/10 hover:shadow-[0_12px_40px_rgba(0,0,0,0.35)] cursor-pointer"
+                onClick={() => {
+                  setIsAboutOpen((v) => !v);
+                }}
+              >
+                <div className="group">
+                  <button
+                    type="button"
+                    className="w-full text-left flex items-center justify-between gap-4 select-none rounded-xl -mx-2 px-2 py-2 transition-colors focus:outline-none focus-visible:outline-none"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setIsAboutOpen((v) => !v);
+                    }}
+                  >
+                    <h3 className="text-2xl font-bold text-white">
                       About this module
                     </h3>
-                    <div className="text-slate-300 leading-relaxed whitespace-pre-line space-y-4">
-                      {MIND_SYNC_MODULE_01.about.map((p) => (
-                        <p key={p}>{p}</p>
-                      ))}
-                    </div>
-                  </div>
+                    <span
+                      className={`material-symbols-outlined transition-all ${
+                        isAboutOpen
+                          ? 'text-primary rotate-180'
+                          : 'text-white/70 group-hover:text-white'
+                      }`}
+                    >
+                      expand_more
+                    </span>
+                  </button>
 
-                  <div className="w-full md:w-72 h-52 rounded-2xl bg-cover overflow-hidden shadow-2xl relative shrink-0">
-                    <img
-                      alt="Mind Sync"
-                      src={aboutImage}
-                      className="w-full h-full object-cover  opacity-100"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-tr from-black/40 via-transparent to-black/10" />
-                  </div>
+                  {isAboutOpen && (
+                    <div className="pt-4">
+                      <div className="text-slate-300 leading-relaxed whitespace-pre-line space-y-4">
+                        {MIND_SYNC_MODULE_01.about.map((p) => (
+                          <p key={p}>{p}</p>
+                        ))}
+                      </div>
+
+                      <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="w-full h-52 rounded-2xl bg-cover overflow-hidden shadow-2xl relative">
+                          <img
+                            alt="Mind Sync"
+                            src={image}
+                            className="w-full h-full object-cover opacity-100"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-tr from-black/40 via-transparent to-black/10" />
+                        </div>
+                        <div className="w-full h-52 rounded-2xl bg-cover overflow-hidden shadow-2xl relative">
+                          <img
+                            alt="Mind Sync"
+                            src={aboutImage}
+                            className="w-full h-full object-cover opacity-100"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-tr from-black/40 via-transparent to-black/10" />
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                <div className="lg:col-span-7 glass-panel rounded-2xl border border-white/10 p-8 md:p-10">
-                  <h3 className="text-2xl font-bold text-white mb-4">
-                    Learning Outcomes
-                  </h3>
-
-                  <ul className="space-y-3">
-                    {MIND_SYNC_MODULE_01.learningOutcomes.map((item, i) => (
-                      <li key={i} className="flex gap-3 text-slate-300">
-                        <span className="text-primary shrink-0 mt-1">•</span>
-                        <span>{item}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                <div className="lg:col-span-5 glass-panel rounded-2xl border border-white/10 p-8 md:p-10 flex flex-col items-center justify-center text-center relative overflow-hidden">
-                  <div className="absolute inset-0 opacity-10">
-                    <img
-                      alt=""
-                      className="w-full h-full object-cover"
-                      src={image}
-                    />
-                  </div>
-                  <div className="relative z-10 w-24 h-24 rounded-full bg-primary/10 border border-primary/30 flex items-center justify-center shadow-[0_0_50px_rgba(90,218,206,0.2)] mb-6">
-                    <span className="material-symbols-outlined text-primary text-4xl">
-                      laps
+              <div
+                className="glass-panel rounded-2xl border border-white/10 p-8 md:p-10 transition-all hover:bg-white/[0.04] hover:border-white/20 hover:ring-1 hover:ring-white/10 hover:shadow-[0_12px_40px_rgba(0,0,0,0.35)] cursor-pointer"
+                onClick={() => {
+                  setIsOutcomesOpen((v) => !v);
+                }}
+              >
+                <div className="group">
+                  <button
+                    type="button"
+                    className="w-full text-left flex items-center justify-between gap-4 select-none rounded-xl -mx-2 px-2 py-2 transition-colors focus:outline-none focus-visible:outline-none"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setIsOutcomesOpen((v) => !v);
+                    }}
+                  >
+                    <h3 className="text-2xl font-bold text-white">
+                      Learning Outcomes
+                    </h3>
+                    <span
+                      className={`material-symbols-outlined transition-all ${
+                        isOutcomesOpen
+                          ? 'text-primary rotate-180'
+                          : 'text-white/70 group-hover:text-white'
+                      }`}
+                    >
+                      expand_more
                     </span>
-                  </div>
-                  <h4 className="relative z-10 text-[12px] text-primary uppercase tracking-[0.2em] font-semibold">
-                    Mindful Sync
-                  </h4>
-                  <p className="relative z-10 text-slate-300 mt-3">
-                    Sync your breathing before we begin.
-                  </p>
+                  </button>
+
+                  {isOutcomesOpen && (
+                    <div className="pt-4">
+                      <ul className="space-y-3">
+                        {MIND_SYNC_MODULE_01.learningOutcomes.map((item, i) => (
+                          <li key={i} className="flex gap-3 text-slate-300">
+                            <span className="text-primary shrink-0 mt-1">
+                              •
+                            </span>
+                            <span>{item}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -407,59 +457,47 @@ export default function MindSyncModulePage() {
                       part: 'Part 01',
                       title: 'Watch',
                       desc: "A short video introducing the core idea, with a real family scenario you'll likely recognise.",
-                      icon: 'play_circle',
+                      bg: structureWatchImage,
                     },
                     {
                       part: 'Part 02',
                       title: 'Learn',
                       desc: 'The science and the technique, broken down clearly. No jargon. Real scripts you can use today.',
-                      icon: 'menu_book',
+                      bg: structureLearnImage,
                     },
                     {
                       part: 'Part 03',
                       title: 'Practice',
                       desc: "Four interactive scenarios where you'll be tested on what you've learned. Each scenario gives feedback on every option you choose, so you understand why some responses work better than others.",
-                      icon: 'psychology',
+                      bg: structurePracticeImage,
                     },
                     {
                       part: 'Part 04',
                       title: 'Take away',
-                      desc: ' A one-page summary, plus optional reflection questions to deepen the learning.',
-                      icon: 'assignment_turned_in',
+                      desc: 'A one-page summary, plus optional reflection questions to deepen the learning.',
+                      bg: structureTakeawayImage,
                     },
                   ].map((s) => (
                     <div
                       key={s.part}
-                      className="glass-panel rounded-2xl border border-white/10 p-6 text-center group hover:border-indigo-400/30 transition-all"
+                      className="glass-panel rounded-2xl border border-white/10 p-6 relative overflow-hidden  "
                     >
-                      <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center mx-auto mb-6 group-hover:bg-indigo-500/20 transition-colors">
-                        <span className="material-symbols-outlined text-neutral-400 group-hover:text-indigo-300">
-                          {s.icon}
-                        </span>
+                      <div className="absolute inset-0 opacity-[0.24]">
+                        <img
+                          alt=""
+                          src={s.bg}
+                          className="w-full h-full object-cover blur-[0.5px] brightness-[1.05] contrast-[1.05] saturate-[1.05]"
+                        />
                       </div>
-                      <div className="text-[12px] text-white/40 mb-2 uppercase tracking-widest">
+                      <div className="absolute inset-0 " />
+                      <div className="text-[12px] text-white mb-2 uppercase tracking-widest">
                         {s.part}
                       </div>
                       <div className="text-white font-semibold">{s.title}</div>
-                      <div className="text-xs text-slate-300/70 mt-2">
-                        {s.desc}
-                      </div>
+                      <div className="text-xs text-white mt-2">{s.desc}</div>
                     </div>
                   ))}
                 </div>
-              </div>
-
-              <div className="pt-10 mt-4 border-t border-white/5 flex flex-col items-center">
-                <p className="text-sm text-neutral-500 mb-6 text-center">
-                  Ready to begin your transition to calm parenting?
-                </p>
-                <button
-                  type="button"
-                  onClick={() => setActive('video')}
-                  className="px-10 py-4 bg-primary/10 border border-primary/30 text-primary rounded-2xl hover:bg-primary/20 active:scale-95 transition-all duration-300 text-[12px] uppercase tracking-[0.2em] font-semibold"
-                >
-                  Launch Introduction
-                </button>
               </div>
             </section>
           )}
@@ -467,9 +505,11 @@ export default function MindSyncModulePage() {
           {active === 'video' && (
             <section className="space-y-8">
               <div className="space-y-6">
-                <h3 className="text-2xl font-bold text-white">
-                  VIDEO SCRIPT & SCENE
-                </h3>
+                <p className="text-slate-300 leading-relaxed">
+                  Watch the video Dad and Son to set the scene for the module
+                  learning. There are many different scenarios where this type
+                  of clash may happen in the household
+                </p>
 
                 <VideoLessonPlayer
                   title={`Video: ${MIND_SYNC_MODULE_01.title}`}
@@ -483,7 +523,7 @@ export default function MindSyncModulePage() {
                         description
                       </span>
                       <h4 className="text-lg font-bold text-white">
-                        Live Script
+                        Video Script
                       </h4>
                     </div>
                     <div className="flex items-center gap-3">
@@ -1305,7 +1345,7 @@ export default function MindSyncModulePage() {
                 </div>
 
                 <div className="glass-panel p-6 rounded-2xl border border-white/10 card-glow transition-all">
-                  <label className="block text-2xl md:text-3xl font-bold text-white  indigo-300 mb-4">
+                  <label className="block text-2xl md:text-3xl font-bold text-whiteg  indigo-300 mb-4">
                     What's one small commitment you can make for the next seven
                     days? (Not a big change — just one small thing you'll try.)
                   </label>

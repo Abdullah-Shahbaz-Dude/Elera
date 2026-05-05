@@ -58,7 +58,7 @@ export interface MindSyncModule {
 
 export const MIND_SYNC_MODULE_01: MindSyncModule = {
   id: '1',
-  title: 'Parenting a Child with ADHD',
+  title: 'Managing your own ADHD, whilst parenting a child with ADHD',
   subtitle: 'When You Have ADHD Yourself',
   summary:
     'Spotting your own reactions, and staying calm when both ADHD brains can clash',
