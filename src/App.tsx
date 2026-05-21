@@ -38,6 +38,8 @@ import MindSyncIdea from './pages/our-ideas/MindSync';
 import DigitalBiasImpactAssessment from './pages/our-ideas/DigitalBiasImpactAssessment';
 import Login from './components/Login';
 import Signup from './components/Signup';
+import Home2 from './pages/Home2';
+import ComingSoon from './pages/ComingSoon';
 import { VideoProvider } from './contexts/VideoContext';
 
 function AppContent() {
@@ -53,6 +55,7 @@ function AppContent() {
       {!isDashboard && <Navbar />}
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/home-2" element={<Home2 />} />
         <Route path="/why-elerea-exist" element={<WhyElereaExist />} />
         <Route path="/our-services" element={<OurServices />} />
         <Route
@@ -126,6 +129,51 @@ function AppContent() {
         <Route
           path="/survey/mind-sync/module/:moduleNumber"
           element={<MindSyncModuleResults />}
+        />
+
+        <Route
+          path="/future-sync"
+          element={<ComingSoon title="Future Sync" />}
+        />
+        <Route
+          path="/mind-sync-schools"
+          element={<ComingSoon title="Mind Sync for Schools" />}
+        />
+        <Route
+          path="/mind-sync-parents"
+          element={<ComingSoon title="Mind Sync for Parents" />}
+        />
+        <Route
+          path="/mind-sync-school-discovery-call"
+          element={<ComingSoon title="Mind Sync School Discovery Call" />}
+        />
+        <Route
+          path="/sample-school-report"
+          element={<ComingSoon title="Sample School Report" />}
+        />
+        <Route
+          path="/future-sync-discovery-call"
+          element={<ComingSoon title="Future Sync Discovery Call" />}
+        />
+        <Route
+          path="/future-sync-sample-report"
+          element={<ComingSoon title="Future Sync Sample Report" />}
+        />
+        <Route
+          path="/faq"
+          element={<ComingSoon title="Frequently Asked Questions" />}
+        />
+        <Route
+          path="/who-we-are-coming-soon"
+          element={<ComingSoon title="Who We Are" />}
+        />
+        <Route
+          path="/who-we-work-with-coming-soon"
+          element={<ComingSoon title="Who We Work With" />}
+        />
+        <Route
+          path="/request-a-demo"
+          element={<ComingSoon title="Request A Demo" />}
         />
       </Routes>
     </div>
