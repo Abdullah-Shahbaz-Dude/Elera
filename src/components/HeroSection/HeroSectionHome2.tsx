@@ -30,18 +30,11 @@ const HeroSectionHome2: React.FC = () => {
         <div className="w-full px-6 sm:px-8 md:pl-[120px] md:pr-10">
           <div className="max-w-4xl">
             <h1 className="text-4xl sm:text-5xl md:text-6xl 2xl:text-7xl font-bold leading-[1.08] tracking-tight text-white drop-shadow-lg">
-              <span
-                className="bg-clip-text text-transparent"
-                style={{
-                  backgroundImage: 'linear-gradient(135deg, #ffffff, #60A5FA)',
-                }}
-              >
-                Psychology Based Tools
-              </span>
+              <span>Psychology Based Assessments</span>
               <br />
-              That Help You <span className="text-[#2B6EF0]">See Things</span>
+              That Help You <span>See Things</span>
               <br />
-              <span className="text-[#2B6EF0]">Differently</span>
+              <span>Differently</span>
             </h1>
 
             <p className="mt-6 text-white/80 text-base sm:text-lg md:text-xl leading-relaxed max-w-xl">

@@ -256,11 +256,7 @@ const Home2 = () => {
         <div className="relative container mx-auto px-4 md:px-6 z-10">
           <div className="mx-auto max-w-[1960px]">
             <Reveal className="mx-auto max-w-4xl">
-              <SectionTitle
-                title="Our Goals & Values"
-                subtitle="ELARA was founded by neurodiverse individuals to help society better understand neurodiversity and prepare for a digital future that depends on different thinking, adaptability and valuing different minds."
-                center
-              />
+              <SectionTitle title="Our Goals " center />
             </Reveal>
 
             <div className="grid gap-6 md:gap-8 md:grid-cols-2 mb-12 md:mb-14">
@@ -439,11 +435,7 @@ const Home2 = () => {
               </Reveal>
 
               <Reveal className="mt-20 md:mt-32 lg:mt-36">
-                <SectionTitle
-                  title="Our Values"
-                  subtitle="Built on psychology, insight, and a deeper understanding of human thinking."
-                  center
-                />
+                <SectionTitle title="Our Values" center />
                 <div className="grid gap-4">
                   {values.map((v, idx) => (
                     <Reveal key={v.title} delay={idx * 90} className="w-full">
@@ -536,9 +528,6 @@ const Home2 = () => {
                     <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent" />
 
                     <div className="absolute bottom-0 left-0 p-8 md:p-12 space-y-5 md:space-y-6">
-                      <div className="text-xs md:text-sm font-semibold tracking-wider text-white/80">
-                        ASSESSMENT & LEARNING
-                      </div>
                       <h3 className="text-4xl md:text-5xl font-bold leading-tight">
                         <span
                           className="bg-clip-text text-transparent"
@@ -551,8 +540,7 @@ const Home2 = () => {
                         </span>
                       </h3>
                       <p className="text-sm md:text-base text-white/80 max-w-md leading-relaxed">
-                        Helping society understand neurodiversity. Clinical
-                        tools and empathetic education frameworks.
+                        Helping society understand neurodiversity.
                       </p>
                       <button
                         type="button"
@@ -611,9 +599,6 @@ const Home2 = () => {
                     <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent" />
 
                     <div className="absolute bottom-0 left-0 p-8 md:p-12 space-y-5 md:space-y-6">
-                      <div className="text-xs md:text-sm font-semibold tracking-wider text-white/80">
-                        FUTURE-PROOF & STRATEGIC
-                      </div>
                       <h3 className="text-4xl md:text-5xl font-bold leading-tight">
                         <span
                           className="bg-clip-text text-transparent"
@@ -627,7 +612,7 @@ const Home2 = () => {
                       </h3>
                       <p className="text-sm md:text-base text-white/80 max-w-md leading-relaxed">
                         Helping organisations and their people get ready for the
-                        future of work by unlocking cognitive diversity.
+                        future of work.
                       </p>
                       <button
                         type="button"
