@@ -450,7 +450,7 @@ const Home2 = () => {
                       <button
                         type="button"
                         onClick={() => setOpenValue(v)}
-                        className="group w-full text-left rounded-2xl border border-white/15 bg-[#0B1020]/60 backdrop-blur-md p-6 md:p-7 shadow-[0_18px_55px_rgba(0,0,0,0.55)] hover:border-white/25 hover:bg-[#0B1020]/70 hover:shadow-[0_22px_70px_rgba(0,0,0,0.65)] hover:-translate-y-[1px] transition-all duration-200"
+                        className="group w-full text-left rounded-2xl border border-white/15 bg-[#0B1020]/100 backdrop-blur-md p-6 md:p-7 shadow-[0_18px_55px_rgba(0,0,0,0.55)] hover:border-white/25 hover:bg-[#0B1020]/70 hover:shadow-[0_22px_70px_rgba(0,0,0,0.65)] hover:-translate-y-[1px] transition-all duration-200"
                       >
                         <div className="flex items-start justify-between gap-6">
                           <div className="text-white font-semibold text-base md:text-lg">
