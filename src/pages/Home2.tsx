@@ -107,91 +107,6 @@ function SectionTitle({
   );
 }
 
-function Modal({
-  open,
-  onClose,
-  title,
-  children,
-}: {
-  open: boolean;
-  onClose: () => void;
-  title: string;
-  children: ReactNode;
-}) {
-  if (!open) return null;
-  return (
-    <div className="fixed inset-0 z-[200]">
-      <div
-        className="absolute inset-0 bg-black/75"
-        onClick={onClose}
-        aria-hidden
-      />
-      <div className="absolute inset-0 flex items-center justify-center p-4">
-        <div
-          className="w-full max-w-3xl rounded-3xl p-[2px]"
-          style={{
-            background:
-              'linear-gradient(135deg, rgba(96,165,250,0.78), rgba(147,51,234,0.78))',
-          }}
-        >
-          <div
-            className="rounded-3xl bg-[#0B1020]/80 backdrop-blur-xl overflow-hidden"
-            style={{
-              boxShadow: '0 30px 120px rgba(0,0,0,0.65)',
-              animation: 'home2ModalIn 180ms ease-out forwards',
-              willChange: 'transform, opacity',
-            }}
-            role="dialog"
-            aria-modal="true"
-            aria-label={title}
-          >
-            <style>
-              {
-                '@keyframes home2ModalIn { from { opacity: 0; transform: translateY(8px) scale(0.99); } to { opacity: 1; transform: translateY(0) scale(1); } }'
-              }
-            </style>
-            <div className="px-6 md:px-8 py-6 border-b border-white/10 flex items-start justify-between gap-6">
-              <div>
-                <div className="text-white font-bold text-xl md:text-2xl">
-                  {title}
-                </div>
-                <div className="text-white/60 text-sm mt-1">
-                  Press ESC or click outside to close
-                </div>
-              </div>
-              <button
-                type="button"
-                onClick={onClose}
-                className="h-10 w-10 rounded-xl flex items-center justify-center border border-white/10 bg-white/5 hover:bg-white/10 transition"
-                aria-label="Close"
-              >
-                <svg
-                  className="w-5 h-5 text-white"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={2.5}
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              </button>
-            </div>
-            <div className="px-6 md:px-8 py-6">
-              <div className="text-white/85 leading-relaxed text-base md:text-lg">
-                {children}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 const Home2 = () => {
   const navigate = useNavigate();
 
@@ -243,7 +158,19 @@ const Home2 = () => {
     []
   );
 
-  const [openValue, setOpenValue] = useState<ValueItem | null>(null);
+  const valueIcons = useMemo<string[]>(
+    () => [
+      'psychology',
+      'science',
+      'bolt',
+      'visibility',
+      'groups',
+      'manage_search',
+    ],
+    []
+  );
+
+  const [openValueIndex, setOpenValueIndex] = useState<number | null>(null);
 
   return (
     <main className="pt-0 bg-black">
@@ -262,67 +189,25 @@ const Home2 = () => {
             <div className="grid gap-6 md:gap-8 md:grid-cols-2 mb-12 md:mb-14">
               <Reveal delay={0} className="h-full">
                 <div
-                  className="relative rounded-2xl p-[2px]"
+                  className="relative h-full rounded-2xl p-[2px]"
                   style={{
                     background:
                       'linear-gradient(135deg, rgba(96,165,250,0.78), rgba(147,51,234,0.78))',
                   }}
                 >
                   <div
-                    className="relative rounded-2xl border border-white/10 bg-[#0B1020]/70 backdrop-blur-md p-7 md:p-8"
+                    className="group relative h-full min-h-[132px] md:min-h-[152px] rounded-2xl border border-white/10 bg-[#0B1020]/90 backdrop-blur-md p-8 md:p-10 flex flex-col items-center justify-center text-center transition-all duration-300 hover:border-white/20 hover:bg-[#0B1020]/90"
                     style={{ boxShadow: '0 18px 55px rgba(0,0,0,0.45)' }}
                   >
-                    <div
-                      className="h-11 w-11 rounded-xl flex items-center justify-center"
-                      style={{
-                        background:
-                          'linear-gradient(135deg, rgba(96,165,250,0.22), rgba(147,51,234,0.22))',
-                        border: '1px solid rgba(96,165,250,0.25)',
-                      }}
+                    <span
+                      className="material-symbols-outlined"
+                      style={{ color: '#60A5FA', fontSize: '44px' }}
+                      aria-hidden
                     >
-                      <svg
-                        width="22"
-                        height="22"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          d="M16 11c1.657 0 3-1.343 3-3S17.657 5 16 5s-3 1.343-3 3 1.343 3 3 3Z"
-                          stroke="#60A5FA"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                        <path
-                          d="M8 11c1.657 0 3-1.343 3-3S9.657 5 8 5 5 6.343 5 8s1.343 3 3 3Z"
-                          stroke="#A78BFA"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                        <path
-                          d="M21 19a4 4 0 0 0-4-4h-2"
-                          stroke="#60A5FA"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                        <path
-                          d="M11 15H7a4 4 0 0 0-4 4"
-                          stroke="#A78BFA"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </svg>
-                    </div>
-                    <h3 className="mt-5 text-white font-bold text-lg md:text-xl">
-                      To Help society understand neurodiversity.
-                    </h3>
-                    <p className="mt-3 text-base md:text-lg leading-relaxed text-white">
-                      Creating awareness, reducing stigma, and building
-                      inclusive environments in education and everyday life.
+                      diversity_3
+                    </span>
+                    <p className="mt-5 text-white font-semibold text-xl md:text-2xl leading-snug max-w-[34rem]">
+                      To help society understand neurodiversity
                     </p>
                   </div>
                 </div>
@@ -330,46 +215,25 @@ const Home2 = () => {
 
               <Reveal delay={110} className="h-full">
                 <div
-                  className="relative rounded-2xl p-[2px]"
+                  className="relative h-full rounded-2xl p-[2px]"
                   style={{
                     background:
                       'linear-gradient(135deg, rgba(96,165,250,0.78), rgba(147,51,234,0.78))',
                   }}
                 >
                   <div
-                    className="relative rounded-2xl border border-white/10 bg-[#0B1020]/70 backdrop-blur-md p-7 md:p-8"
+                    className="group relative h-full min-h-[132px] md:min-h-[152px] rounded-2xl border border-white/10 bg-[#0B1020]/90 backdrop-blur-md p-8 md:p-10 flex flex-col items-center justify-center text-center transition-all duration-300 hover:border-white/20 hover:bg-[#0B1020]/90"
                     style={{ boxShadow: '0 18px 55px rgba(0,0,0,0.45)' }}
                   >
-                    <div
-                      className="h-11 w-11 rounded-xl flex items-center justify-center"
-                      style={{
-                        background:
-                          'linear-gradient(135deg, rgba(96,165,250,0.22), rgba(147,51,234,0.22))',
-                        border: '1px solid rgba(96,165,250,0.25)',
-                      }}
+                    <span
+                      className="material-symbols-outlined"
+                      style={{ color: '#60A5FA', fontSize: '44px' }}
+                      aria-hidden
                     >
-                      <svg
-                        width="22"
-                        height="22"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          d="M12 2l3 7 7 3-7 3-3 7-3-7-7-3 7-3 3-7Z"
-                          stroke="#60A5FA"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </svg>
-                    </div>
-                    <h3 className="mt-5 text-white font-bold text-lg md:text-xl">
-                      Help organisations prepare for the future of work.
-                    </h3>
-                    <p className="mt-3 text-base md:text-lg leading-relaxed text-white">
-                      Future-proof teams with AI-readiness, neuro-strategic
-                      advantage and inclusive leadership.
+                      work_history
+                    </span>
+                    <p className="mt-5 text-white font-semibold text-xl md:text-2xl leading-snug max-w-[34rem]">
+                      Help organisations to prepare for the future of work
                     </p>
                   </div>
                 </div>
@@ -436,54 +300,73 @@ const Home2 = () => {
 
               <Reveal className="mt-20 md:mt-32 lg:mt-36">
                 <SectionTitle title="Our Values" center />
-                <div className="grid gap-4">
-                  {values.map((v, idx) => (
-                    <Reveal key={v.title} delay={idx * 90} className="w-full">
-                      <button
-                        type="button"
-                        onClick={() => setOpenValue(v)}
-                        className="group w-full text-left rounded-2xl border border-white/15 bg-[#0B1020]/100 backdrop-blur-md p-6 md:p-7 shadow-[0_18px_55px_rgba(0,0,0,0.55)] hover:border-white/25 hover:bg-[#0B1020]/70 hover:shadow-[0_22px_70px_rgba(0,0,0,0.65)] hover:-translate-y-[1px] transition-all duration-200"
-                      >
-                        <div className="flex items-start justify-between gap-6">
-                          <div className="text-white font-semibold text-base md:text-lg">
-                            {v.title}
-                          </div>
-                          <div
-                            className="h-10 w-10 rounded-xl flex items-center justify-center border border-white/10 bg-white/7 group-hover:bg-white/10 transition"
-                            aria-hidden
+                <div className="w-full">
+                  {values.map((v, idx) => {
+                    const isOpen = openValueIndex === idx;
+                    const iconName = valueIcons[idx] ?? 'psychology';
+                    return (
+                      <Reveal key={v.title} delay={idx * 90} className="w-full">
+                        <div className="border-b border-white/10 overflow-hidden">
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setOpenValueIndex((cur) =>
+                                cur === idx ? null : idx
+                              )
+                            }
+                            className="group w-full flex items-center justify-between gap-6 py-8 md:py-10 text-left focus:outline-none"
+                            aria-expanded={isOpen}
                           >
-                            <svg
-                              className="w-5 h-5 text-white/80"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              stroke="currentColor"
-                              strokeWidth={2.5}
+                            <div className="flex items-center gap-4">
+                              <span
+                                className="material-symbols-outlined"
+                                style={{ color: '#60A5FA', fontSize: '36px' }}
+                                aria-hidden
+                              >
+                                {iconName}
+                              </span>
+                              <h3 className="text-white font-semibold text-xl md:text-2xl">
+                                {v.title}
+                              </h3>
+                            </div>
+
+                            <span
+                              className={`material-symbols-outlined transition-transform duration-300 text-white/70 group-hover:text-white ${
+                                isOpen ? 'rotate-180' : ''
+                              }`}
+                              style={{ fontSize: '34px' }}
+                              aria-hidden
                             >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="M9 5l7 7-7 7"
-                              />
-                            </svg>
+                              expand_more
+                            </span>
+                          </button>
+
+                          <div
+                            className={`grid transition-[grid-template-rows] duration-150 ease-in-out will-change-[grid-template-rows] ${
+                              isOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'
+                            }`}
+                          >
+                            <div className="overflow-hidden">
+                              <div className="pb-8 md:pb-10 pl-12 md:pl-16">
+                                <p
+                                  className={`text-white/70 leading-relaxed text-lg md:text-xl max-w-5xl transition-all duration-150 ease-in-out will-change-[transform,opacity] ${
+                                    isOpen
+                                      ? 'opacity-100 translate-y-0'
+                                      : 'opacity-0 -translate-y-1'
+                                  }`}
+                                >
+                                  {v.body}
+                                </p>
+                              </div>
+                            </div>
                           </div>
                         </div>
-                        <div className="mt-2 text-white/60 text-sm">
-                          Click to open
-                        </div>
-                      </button>
-                    </Reveal>
-                  ))}
+                      </Reveal>
+                    );
+                  })}
                 </div>
               </Reveal>
             </div>
-
-            <Modal
-              open={openValue !== null}
-              onClose={() => setOpenValue(null)}
-              title={openValue?.title ?? ''}
-            >
-              {openValue?.body}
-            </Modal>
           </div>
         </div>
       </section>
