@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { Suspense, lazy, useMemo, useState } from 'react';
+import { Suspense, lazy, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import HeroSectionHome2 from '@/components/HeroSection/HeroSectionHome2';
 import {
@@ -14,6 +14,57 @@ const SectionLoader = () => (
     <div className="animate-pulse text-white/50">Loading...</div>
   </div>
 );
+
+function useRevealOnScroll<T extends HTMLElement>() {
+  const ref = useRef<T | null>(null);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry?.isIntersecting) {
+          setVisible(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.12, rootMargin: '0px 0px -10% 0px' }
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  return { ref, visible };
+}
+
+function Reveal({
+  children,
+  className,
+  delay = 0,
+}: {
+  children: ReactNode;
+  className?: string;
+  delay?: number;
+}) {
+  const { ref, visible } = useRevealOnScroll<HTMLDivElement>();
+
+  return (
+    <div
+      ref={ref}
+      className={`${
+        className ?? ''
+      } transition-all duration-700 ease-out will-change-[transform,opacity] ${
+        visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+      }`}
+      style={{ transitionDelay: `${delay}ms` }}
+    >
+      {children}
+    </div>
+  );
+}
 
 type Principle = {
   title: string;
@@ -204,129 +255,133 @@ const Home2 = () => {
 
         <div className="relative container mx-auto px-4 md:px-6 z-10">
           <div className="mx-auto max-w-[1960px]">
-            <div className="mx-auto max-w-4xl">
+            <Reveal className="mx-auto max-w-4xl">
               <SectionTitle
                 title="Our Goals & Values"
                 subtitle="ELARA was founded by neurodiverse individuals to help society better understand neurodiversity and prepare for a digital future that depends on different thinking, adaptability and valuing different minds."
                 center
               />
-            </div>
+            </Reveal>
 
             <div className="grid gap-6 md:gap-8 md:grid-cols-2 mb-12 md:mb-14">
-              <div
-                className="relative rounded-2xl p-[2px]"
-                style={{
-                  background:
-                    'linear-gradient(135deg, rgba(96,165,250,0.78), rgba(147,51,234,0.78))',
-                }}
-              >
+              <Reveal delay={0} className="h-full">
                 <div
-                  className="relative rounded-2xl border border-white/10 bg-[#0B1020]/70 backdrop-blur-md p-7 md:p-8"
-                  style={{ boxShadow: '0 18px 55px rgba(0,0,0,0.45)' }}
+                  className="relative rounded-2xl p-[2px]"
+                  style={{
+                    background:
+                      'linear-gradient(135deg, rgba(96,165,250,0.78), rgba(147,51,234,0.78))',
+                  }}
                 >
                   <div
-                    className="h-11 w-11 rounded-xl flex items-center justify-center"
-                    style={{
-                      background:
-                        'linear-gradient(135deg, rgba(96,165,250,0.22), rgba(147,51,234,0.22))',
-                      border: '1px solid rgba(96,165,250,0.25)',
-                    }}
+                    className="relative rounded-2xl border border-white/10 bg-[#0B1020]/70 backdrop-blur-md p-7 md:p-8"
+                    style={{ boxShadow: '0 18px 55px rgba(0,0,0,0.45)' }}
                   >
-                    <svg
-                      width="22"
-                      height="22"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
+                    <div
+                      className="h-11 w-11 rounded-xl flex items-center justify-center"
+                      style={{
+                        background:
+                          'linear-gradient(135deg, rgba(96,165,250,0.22), rgba(147,51,234,0.22))',
+                        border: '1px solid rgba(96,165,250,0.25)',
+                      }}
                     >
-                      <path
-                        d="M16 11c1.657 0 3-1.343 3-3S17.657 5 16 5s-3 1.343-3 3 1.343 3 3 3Z"
-                        stroke="#60A5FA"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                      <path
-                        d="M8 11c1.657 0 3-1.343 3-3S9.657 5 8 5 5 6.343 5 8s1.343 3 3 3Z"
-                        stroke="#A78BFA"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                      <path
-                        d="M21 19a4 4 0 0 0-4-4h-2"
-                        stroke="#60A5FA"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                      <path
-                        d="M11 15H7a4 4 0 0 0-4 4"
-                        stroke="#A78BFA"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
+                      <svg
+                        width="22"
+                        height="22"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M16 11c1.657 0 3-1.343 3-3S17.657 5 16 5s-3 1.343-3 3 1.343 3 3 3Z"
+                          stroke="#60A5FA"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                        <path
+                          d="M8 11c1.657 0 3-1.343 3-3S9.657 5 8 5 5 6.343 5 8s1.343 3 3 3Z"
+                          stroke="#A78BFA"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                        <path
+                          d="M21 19a4 4 0 0 0-4-4h-2"
+                          stroke="#60A5FA"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                        <path
+                          d="M11 15H7a4 4 0 0 0-4 4"
+                          stroke="#A78BFA"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                    </div>
+                    <h3 className="mt-5 text-white font-bold text-lg md:text-xl">
+                      To Help society understand neurodiversity.
+                    </h3>
+                    <p className="mt-3 text-base md:text-lg leading-relaxed text-white">
+                      Creating awareness, reducing stigma, and building
+                      inclusive environments in education and everyday life.
+                    </p>
                   </div>
-                  <h3 className="mt-5 text-white font-bold text-lg md:text-xl">
-                    To Help society understand neurodiversity.
-                  </h3>
-                  <p className="mt-3 text-base md:text-lg leading-relaxed text-white">
-                    Creating awareness, reducing stigma, and building inclusive
-                    environments in education and everyday life.
-                  </p>
                 </div>
-              </div>
+              </Reveal>
 
-              <div
-                className="relative rounded-2xl p-[2px]"
-                style={{
-                  background:
-                    'linear-gradient(135deg, rgba(96,165,250,0.78), rgba(147,51,234,0.78))',
-                }}
-              >
+              <Reveal delay={110} className="h-full">
                 <div
-                  className="relative rounded-2xl border border-white/10 bg-[#0B1020]/70 backdrop-blur-md p-7 md:p-8"
-                  style={{ boxShadow: '0 18px 55px rgba(0,0,0,0.45)' }}
+                  className="relative rounded-2xl p-[2px]"
+                  style={{
+                    background:
+                      'linear-gradient(135deg, rgba(96,165,250,0.78), rgba(147,51,234,0.78))',
+                  }}
                 >
                   <div
-                    className="h-11 w-11 rounded-xl flex items-center justify-center"
-                    style={{
-                      background:
-                        'linear-gradient(135deg, rgba(96,165,250,0.22), rgba(147,51,234,0.22))',
-                      border: '1px solid rgba(96,165,250,0.25)',
-                    }}
+                    className="relative rounded-2xl border border-white/10 bg-[#0B1020]/70 backdrop-blur-md p-7 md:p-8"
+                    style={{ boxShadow: '0 18px 55px rgba(0,0,0,0.45)' }}
                   >
-                    <svg
-                      width="22"
-                      height="22"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
+                    <div
+                      className="h-11 w-11 rounded-xl flex items-center justify-center"
+                      style={{
+                        background:
+                          'linear-gradient(135deg, rgba(96,165,250,0.22), rgba(147,51,234,0.22))',
+                        border: '1px solid rgba(96,165,250,0.25)',
+                      }}
                     >
-                      <path
-                        d="M12 2l3 7 7 3-7 3-3 7-3-7-7-3 7-3 3-7Z"
-                        stroke="#60A5FA"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
+                      <svg
+                        width="22"
+                        height="22"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M12 2l3 7 7 3-7 3-3 7-3-7-7-3 7-3 3-7Z"
+                          stroke="#60A5FA"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                    </div>
+                    <h3 className="mt-5 text-white font-bold text-lg md:text-xl">
+                      Help organisations prepare for the future of work.
+                    </h3>
+                    <p className="mt-3 text-base md:text-lg leading-relaxed text-white">
+                      Future-proof teams with AI-readiness, neuro-strategic
+                      advantage and inclusive leadership.
+                    </p>
                   </div>
-                  <h3 className="mt-5 text-white font-bold text-lg md:text-xl">
-                    Help organisations prepare for the future of work.
-                  </h3>
-                  <p className="mt-3 text-base md:text-lg leading-relaxed text-white">
-                    Future-proof teams with AI-readiness, neuro-strategic
-                    advantage and inclusive leadership.
-                  </p>
                 </div>
-              </div>
+              </Reveal>
             </div>
 
             <div>
-              <div className="mt-20 md:mt-32 lg:mt-36">
+              <Reveal className="mt-20 md:mt-32 lg:mt-36">
                 <SectionTitle title="Our Core Principles" center />
 
                 <div className="grid grid-cols-1 md:grid-cols-[minmax(0,1fr)_minmax(56px,1fr)_minmax(0,1fr)_minmax(56px,1fr)_minmax(0,1fr)] items-start gap-10 md:gap-0">
@@ -381,32 +436,53 @@ const Home2 = () => {
                     );
                   })}
                 </div>
-              </div>
+              </Reveal>
 
-              <div className="mt-20 md:mt-32 lg:mt-36">
+              <Reveal className="mt-20 md:mt-32 lg:mt-36">
                 <SectionTitle
                   title="Our Values"
                   subtitle="Built on psychology, insight, and a deeper understanding of human thinking."
                   center
                 />
                 <div className="grid gap-4">
-                  {values.map((v) => (
-                    <button
-                      key={v.title}
-                      type="button"
-                      onClick={() => setOpenValue(v)}
-                      className="text-left rounded-2xl border border-white/10 bg-white/5 p-5 md:p-6 hover:bg-white/10"
-                    >
-                      <div className="text-white font-semibold text-base md:text-lg">
-                        {v.title}
-                      </div>
-                      <div className="mt-2 text-white/65 text-sm">
-                        Click to open
-                      </div>
-                    </button>
+                  {values.map((v, idx) => (
+                    <Reveal key={v.title} delay={idx * 90} className="w-full">
+                      <button
+                        type="button"
+                        onClick={() => setOpenValue(v)}
+                        className="group w-full text-left rounded-2xl border border-white/15 bg-[#0B1020]/60 backdrop-blur-md p-6 md:p-7 shadow-[0_18px_55px_rgba(0,0,0,0.55)] hover:border-white/25 hover:bg-[#0B1020]/70 hover:shadow-[0_22px_70px_rgba(0,0,0,0.65)] hover:-translate-y-[1px] transition-all duration-200"
+                      >
+                        <div className="flex items-start justify-between gap-6">
+                          <div className="text-white font-semibold text-base md:text-lg">
+                            {v.title}
+                          </div>
+                          <div
+                            className="h-10 w-10 rounded-xl flex items-center justify-center border border-white/10 bg-white/7 group-hover:bg-white/10 transition"
+                            aria-hidden
+                          >
+                            <svg
+                              className="w-5 h-5 text-white/80"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                              strokeWidth={2.5}
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M9 5l7 7-7 7"
+                              />
+                            </svg>
+                          </div>
+                        </div>
+                        <div className="mt-2 text-white/60 text-sm">
+                          Click to open
+                        </div>
+                      </button>
+                    </Reveal>
                   ))}
                 </div>
-              </div>
+              </Reveal>
             </div>
 
             <Modal
@@ -421,117 +497,163 @@ const Home2 = () => {
       </section>
 
       {/* Our Offer */}
-      <section className="relative w-full overflow-hidden bg-black py-12 md:py-24 lg:py-28">
+      <section className="relative w-full overflow-hidden bg-black py-12 md:py-24 lg:py-28 -mt-20">
         <div className="relative container mx-auto px-4 md:px-6 z-10">
           <div className="mx-auto max-w-[1960px]">
-            <SectionTitle title="Our Offer" center />
+            <Reveal>
+              <SectionTitle title="Our Offer" center />
+            </Reveal>
 
-            <div className="grid gap-6 md:gap-2 lg:grid-cols-2">
-              <div className="group relative w-full">
+            <div className="grid gap-6 md:gap-10 lg:grid-cols-2">
+              <Reveal delay={0} className="group relative w-full">
                 <div
-                  className="relative w-full rounded-[20px] overflow-hidden transition-all duration-300 hover:scale-[1.02] flex flex-col"
+                  className="rounded-[2.5rem] p-[2px]"
                   style={{
-                    background: 'rgba(45, 45, 51, 1)',
-                    border: '1px solid rgba(63, 63, 71, 1)',
+                    background:
+                      'linear-gradient(135deg, rgba(96,165,250,0.60), rgba(147,51,234,0.60))',
                   }}
                 >
-                  <div className="px-[28px] pt-[28px]">
-                    <div
-                      className="relative w-full rounded-[16px] overflow-hidden bg-gray-800"
-                      style={{ height: '310px' }}
-                    >
-                      <img
-                        src={shutterstock1717584028}
-                        alt="Mind Sync"
-                        loading="lazy"
-                        decoding="async"
-                        className="w-full h-full object-cover"
-                        style={{ height: '310px' }}
-                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 668px"
-                      />
-                    </div>
-                  </div>
-
                   <div
-                    className="px-[28px] pb-[28px] flex flex-col"
-                    style={{ gap: '32px', marginTop: '27px' }}
+                    role="button"
+                    tabIndex={0}
+                    onClick={() => navigate('/our-services/mind-sync')}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        navigate('/our-services/mind-sync');
+                      }
+                    }}
+                    className="relative overflow-hidden rounded-[2.5rem] h-[520px] md:h-[600px] cursor-pointer bg-[#0B1020]/80 backdrop-blur-md transition-transform duration-300 hover:scale-[1.02]"
                   >
-                    <div>
-                      <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white leading-tight">
-                        Mind Sync
-                      </h3>
-                      <p className="mt-3 text-base md:text-lg leading-relaxed text-white">
-                        Helping society understand neurodiversity.
-                      </p>
-                    </div>
+                    <img
+                      src={shutterstock1717584028}
+                      alt="Mind Sync collaborative learning"
+                      loading="lazy"
+                      decoding="async"
+                      className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110 opacity-60"
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 668px"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent" />
 
-                    <button
-                      type="button"
-                      className="w-fit mt-auto rounded-xl px-6 md:px-10 py-3 md:py-4 text-sm md:text-base font-semibold text-white transition-all hover:scale-105 active:scale-95 cursor-pointer"
-                      style={{
-                        background: 'linear-gradient(135deg, #60A5FA, #9333EA)',
-                        boxShadow: '0 8px 32px rgba(96, 165, 250, 0.4)',
-                      }}
-                    >
-                      Explore Mind Sync
-                    </button>
+                    <div className="absolute bottom-0 left-0 p-8 md:p-12 space-y-5 md:space-y-6">
+                      <div className="text-xs md:text-sm font-semibold tracking-wider text-white/80">
+                        ASSESSMENT & LEARNING
+                      </div>
+                      <h3 className="text-4xl md:text-5xl font-bold leading-tight">
+                        <span
+                          className="bg-clip-text text-transparent"
+                          style={{
+                            backgroundImage:
+                              'linear-gradient(135deg, #60A5FA, #9333EA)',
+                          }}
+                        >
+                          Mind Sync
+                        </span>
+                      </h3>
+                      <p className="text-sm md:text-base text-white/80 max-w-md leading-relaxed">
+                        Helping society understand neurodiversity. Clinical
+                        tools and empathetic education frameworks.
+                      </p>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate('/our-services/mind-sync');
+                        }}
+                        className="inline-flex items-center gap-3 rounded-full px-6 md:px-8 py-3.5 md:py-4 text-sm md:text-base font-semibold text-white transition-all hover:gap-4"
+                        style={{
+                          background:
+                            'linear-gradient(135deg, #60A5FA, #9333EA)',
+                          boxShadow: '0 10px 30px rgba(96, 165, 250, 0.35)',
+                        }}
+                      >
+                        Explore Mind Sync
+                        <span
+                          className="material-symbols-outlined"
+                          style={{ fontSize: '20px' }}
+                        >
+                          arrow_forward
+                        </span>
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
+              </Reveal>
 
-              <div className="group relative w-full">
+              <Reveal delay={120} className="group relative w-full">
                 <div
-                  className="relative w-full rounded-[20px] overflow-hidden transition-all duration-300 hover:scale-[1.02] flex flex-col"
+                  className="rounded-[2.5rem] p-[2px]"
                   style={{
-                    background: 'rgba(45, 45, 51, 1)',
-                    border: '1px solid rgba(63, 63, 71, 1)',
+                    background:
+                      'linear-gradient(135deg, rgba(96,165,250,0.60), rgba(147,51,234,0.60))',
                   }}
                 >
-                  <div className="px-[28px] pt-[28px]">
-                    <div
-                      className="relative w-full rounded-[16px] overflow-hidden bg-gray-800"
-                      style={{ height: '310px' }}
-                    >
-                      <img
-                        src={shutterstock2291389905}
-                        alt="Future Sync"
-                        loading="lazy"
-                        decoding="async"
-                        className="w-full h-full object-cover"
-                        style={{ height: '310px' }}
-                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 668px"
-                      />
-                    </div>
-                  </div>
-
                   <div
-                    className="px-[28px] pb-[28px] flex flex-col"
-                    style={{ gap: '32px', marginTop: '27px' }}
+                    role="button"
+                    tabIndex={0}
+                    onClick={() => navigate('/future-sync')}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        navigate('/future-sync');
+                      }
+                    }}
+                    className="relative overflow-hidden rounded-[2.5rem] h-[520px] md:h-[600px] cursor-pointer bg-[#0B1020]/80 backdrop-blur-md transition-transform duration-300 hover:scale-[1.02]"
                   >
-                    <div>
-                      <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white leading-tight">
-                        Future Sync
+                    <img
+                      src={shutterstock2291389905}
+                      alt="Future Sync digital transformation"
+                      loading="lazy"
+                      decoding="async"
+                      className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110 opacity-60"
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 668px"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent" />
+
+                    <div className="absolute bottom-0 left-0 p-8 md:p-12 space-y-5 md:space-y-6">
+                      <div className="text-xs md:text-sm font-semibold tracking-wider text-white/80">
+                        FUTURE-PROOF & STRATEGIC
+                      </div>
+                      <h3 className="text-4xl md:text-5xl font-bold leading-tight">
+                        <span
+                          className="bg-clip-text text-transparent"
+                          style={{
+                            backgroundImage:
+                              'linear-gradient(135deg, #60A5FA, #9333EA)',
+                          }}
+                        >
+                          Future Sync
+                        </span>
                       </h3>
-                      <p className="mt-3 text-base md:text-lg leading-relaxed text-white">
+                      <p className="text-sm md:text-base text-white/80 max-w-md leading-relaxed">
                         Helping organisations and their people get ready for the
-                        future of work.
+                        future of work by unlocking cognitive diversity.
                       </p>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate('/future-sync');
+                        }}
+                        className="inline-flex items-center gap-3 rounded-full px-6 md:px-8 py-3.5 md:py-4 text-sm md:text-base font-semibold text-white transition-all hover:gap-4"
+                        style={{
+                          background:
+                            'linear-gradient(135deg, #60A5FA, #9333EA)',
+                          boxShadow: '0 10px 30px rgba(96, 165, 250, 0.25)',
+                        }}
+                      >
+                        Explore Future Sync
+                        <span
+                          className="material-symbols-outlined"
+                          style={{ fontSize: '20px' }}
+                        >
+                          arrow_forward
+                        </span>
+                      </button>
                     </div>
-
-                    <button
-                      type="button"
-                      onClick={() => navigate('/future-sync')}
-                      className="w-fit mt-auto rounded-xl px-6 md:px-10 py-3 md:py-4 text-sm md:text-base font-semibold text-white transition-all hover:scale-105 active:scale-95 cursor-pointer"
-                      style={{
-                        background: 'linear-gradient(135deg, #60A5FA, #9333EA)',
-                        boxShadow: '0 8px 32px rgba(96, 165, 250, 0.4)',
-                      }}
-                    >
-                      Explore Future Sync
-                    </button>
                   </div>
                 </div>
-              </div>
+              </Reveal>
             </div>
           </div>
         </div>

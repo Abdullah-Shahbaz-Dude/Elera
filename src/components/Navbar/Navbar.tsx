@@ -11,7 +11,9 @@ const Navbar: React.FC = () => {
 
   // Check if we're on the home page (hero section)
   useEffect(() => {
-    setIsHeroSection(location.pathname === '/');
+    setIsHeroSection(
+      location.pathname === '/' || location.pathname === '/home-2'
+    );
   }, [location.pathname]);
 
   // Detect scroll position for transparent navbar in hero section
@@ -102,8 +104,8 @@ const Navbar: React.FC = () => {
                           ? 'text-black'
                           : 'text-white'
                         : isSecondVideo
-                        ? 'text-black/80 hover:text-black'
-                        : 'text-white/80 hover:text-white'
+                          ? 'text-black/80 hover:text-black'
+                          : 'text-white/80 hover:text-white'
                     }`}
                   >
                     <span className="relative z-10">{link.label}</span>
@@ -131,8 +133,8 @@ const Navbar: React.FC = () => {
                         ? 'bg-gradient-blue text-white shadow-lg shadow-primary-blue-end/50'
                         : 'bg-gradient-blue text-white shadow-lg shadow-primary-blue-accent/50'
                       : isSecondVideo
-                      ? 'border-2 border-primary-blue-end bg-transparent text-primary-blue-end hover:border-primary-blue-accent hover:bg-gradient-blue hover:text-white hover:shadow-lg hover:shadow-primary-blue-end/50'
-                      : 'border-2 border-primary-blue-accent bg-transparent text-primary-blue-accent hover:bg-gradient-blue hover:text-white hover:shadow-lg hover:shadow-primary-blue-accent/50'
+                        ? 'border-2 border-primary-blue-end bg-transparent text-primary-blue-end hover:border-primary-blue-accent hover:bg-gradient-blue hover:text-white hover:shadow-lg hover:shadow-primary-blue-end/50'
+                        : 'border-2 border-primary-blue-accent bg-transparent text-primary-blue-accent hover:bg-gradient-blue hover:text-white hover:shadow-lg hover:shadow-primary-blue-accent/50'
                   }`}
                 >
                   <span className="relative z-10">Contact Us</span>
@@ -147,8 +149,8 @@ const Navbar: React.FC = () => {
                         ? 'bg-gradient-blue text-white shadow-lg shadow-primary-blue-end/50'
                         : 'bg-gradient-blue text-white shadow-lg shadow-primary-blue-accent/50'
                       : isSecondVideo
-                      ? 'border-2 border-primary-blue-end bg-transparent text-primary-blue-end hover:border-primary-blue-accent hover:bg-gradient-blue hover:text-white hover:shadow-lg hover:shadow-primary-blue-end/50'
-                      : 'border-2 border-primary-blue-accent bg-transparent text-primary-blue-accent hover:bg-gradient-blue hover:text-white hover:shadow-lg hover:shadow-primary-blue-accent/50'
+                        ? 'border-2 border-primary-blue-end bg-transparent text-primary-blue-end hover:border-primary-blue-accent hover:bg-gradient-blue hover:text-white hover:shadow-lg hover:shadow-primary-blue-end/50'
+                        : 'border-2 border-primary-blue-accent bg-transparent text-primary-blue-accent hover:bg-gradient-blue hover:text-white hover:shadow-lg hover:shadow-primary-blue-accent/50'
                   }`}
                 >
                   <span className="relative z-10">Login</span>
@@ -200,8 +202,8 @@ const Navbar: React.FC = () => {
                           ? 'text-black bg-gradient-to-r from-primary-blue-start/20 to-primary-blue-end/20'
                           : 'text-white bg-gradient-to-r from-primary-blue-start/20 to-primary-blue-end/20'
                         : isSecondVideo
-                        ? 'text-black/80 hover:text-black hover:bg-gradient-to-r hover:from-primary-blue-start/10 hover:to-primary-blue-end/10'
-                        : 'text-white/80 hover:text-white hover:bg-gradient-to-r hover:from-primary-blue-start/10 hover:to-primary-blue-end/10'
+                          ? 'text-black/80 hover:text-black hover:bg-gradient-to-r hover:from-primary-blue-start/10 hover:to-primary-blue-end/10'
+                          : 'text-white/80 hover:text-white hover:bg-gradient-to-r hover:from-primary-blue-start/10 hover:to-primary-blue-end/10'
                     }`}
                   >
                     <span className="relative z-10">{link.label}</span>
@@ -219,8 +221,8 @@ const Navbar: React.FC = () => {
                         ? 'text-black bg-gradient-to-r from-primary-blue-start/20 to-primary-blue-end/20'
                         : 'text-white bg-gradient-to-r from-primary-blue-start/20 to-primary-blue-end/20'
                       : isSecondVideo
-                      ? 'text-black/80 hover:text-black hover:bg-gradient-to-r hover:from-primary-blue-start/10 hover:to-primary-blue-end/10'
-                      : 'text-white/80 hover:text-white hover:bg-gradient-to-r hover:from-primary-blue-start/10 hover:to-primary-blue-end/10'
+                        ? 'text-black/80 hover:text-black hover:bg-gradient-to-r hover:from-primary-blue-start/10 hover:to-primary-blue-end/10'
+                        : 'text-white/80 hover:text-white hover:bg-gradient-to-r hover:from-primary-blue-start/10 hover:to-primary-blue-end/10'
                   }`}
                 >
                   <span className="relative z-10">Login</span>
