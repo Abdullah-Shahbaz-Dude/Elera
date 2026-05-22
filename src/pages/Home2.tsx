@@ -187,7 +187,7 @@ const Home2 = () => {
   );
 
   const [openValueIndex, setOpenValueIndex] = useState<number | null>(null);
-  const [openGoalId, setOpenGoalId] = useState<string>('goal-0');
+  const [openGoalId, setOpenGoalId] = useState<string | undefined>('goal-0');
 
   return (
     <main className="pt-0 bg-black">
@@ -207,7 +207,7 @@ const Home2 = () => {
               type="single"
               collapsible
               value={openGoalId}
-              onValueChange={(v) => setOpenGoalId(v || '')}
+              onValueChange={(v: string) => setOpenGoalId(v || undefined)}
               className="grid gap-6 md:gap-8 md:grid-cols-2 mb-12 md:mb-14 items-stretch"
               style={{ overflowAnchor: 'none' }}
             >
