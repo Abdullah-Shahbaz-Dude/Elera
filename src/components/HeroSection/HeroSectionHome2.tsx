@@ -37,10 +37,10 @@ const HeroSectionHome2: React.FC = () => {
               <span>Differently</span>
             </h1>
 
-            <p className="mt-6 text-white/80 text-base sm:text-lg md:text-xl leading-relaxed max-w-xl">
+            {/* <p className="mt-6 text-white/80 text-base sm:text-lg md:text-xl leading-relaxed max-w-xl">
               Empower schools, families, and organisations with neurodiversity
               insights, future-proof strategies, and science-led understanding.
-            </p>
+            </p> */}
 
             <div className="mt-8 flex flex-wrap gap-4">
               <button
