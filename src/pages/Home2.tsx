@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import { Suspense, lazy, useEffect, useMemo, useRef, useState } from 'react';
+import * as Accordion from '@radix-ui/react-accordion';
 import { useNavigate } from 'react-router-dom';
 import HeroSectionHome2 from '@/components/HeroSection/HeroSectionHome2';
 import {
@@ -139,7 +140,7 @@ const Home2 = () => {
         body: 'Everything we do is grounded in psychology, behavioural science and real world evidence.',
       },
       {
-        title: 'Insight should lead to action',
+        title: 'Insight should lead to change',
         body: 'Understanding problems is important, but practical change matters more. We focus on what people and organisations can do next.',
       },
       {
@@ -170,7 +171,23 @@ const Home2 = () => {
     []
   );
 
+  const goals = useMemo<ValueItem[]>(
+    () => [
+      {
+        title:
+          'Help Schools and Parents Create Better Understanding Around Neurodiversity',
+        body: 'Helping schools and families create environments where neurodivergent children feel understood and supported.',
+      },
+      {
+        title: 'Help Organisations Understand and Use Different Thinking',
+        body: 'Supporting organisations to adapt to digital change, AI, innovation, and the future of work through better understanding of people, thinking styles, and hidden strengths.',
+      },
+    ],
+    []
+  );
+
   const [openValueIndex, setOpenValueIndex] = useState<number | null>(null);
+  const [openGoalId, setOpenGoalId] = useState<string>('goal-0');
 
   return (
     <main className="pt-0 bg-black">
@@ -186,59 +203,78 @@ const Home2 = () => {
               <SectionTitle title="Our Goals " center />
             </Reveal>
 
-            <div className="grid gap-6 md:gap-8 md:grid-cols-2 mb-12 md:mb-14">
-              <Reveal delay={0} className="h-full">
-                <div
-                  className="relative h-full rounded-2xl p-[2px]"
-                  style={{
-                    background:
-                      'linear-gradient(135deg, rgba(96,165,250,0.78), rgba(147,51,234,0.78))',
-                  }}
-                >
-                  <div
-                    className="group relative h-full min-h-[132px] md:min-h-[152px] rounded-2xl border border-white/10 bg-[#0B1020]/90 backdrop-blur-md p-8 md:p-10 flex flex-col items-center justify-center text-center transition-all duration-300 hover:border-white/20 hover:bg-[#0B1020]/90"
-                    style={{ boxShadow: '0 18px 55px rgba(0,0,0,0.45)' }}
-                  >
-                    <span
-                      className="material-symbols-outlined"
-                      style={{ color: '#60A5FA', fontSize: '44px' }}
-                      aria-hidden
-                    >
-                      diversity_3
-                    </span>
-                    <p className="mt-5 text-white font-semibold text-xl md:text-2xl leading-snug max-w-[34rem]">
-                      To help society understand neurodiversity
-                    </p>
-                  </div>
-                </div>
-              </Reveal>
+            <Accordion.Root
+              type="single"
+              collapsible
+              value={openGoalId}
+              onValueChange={(v) => setOpenGoalId(v || '')}
+              className="grid gap-6 md:gap-8 md:grid-cols-2 mb-12 md:mb-14 items-stretch"
+              style={{ overflowAnchor: 'none' }}
+            >
+              {goals.map((g, idx) => {
+                const iconName = idx === 0 ? 'diversity_3' : 'work_history';
+                const itemValue = `goal-${idx}`;
+                return (
+                  <Reveal key={g.title} delay={idx * 90} className="h-full">
+                    <Accordion.Item value={itemValue} className="h-full">
+                      <div
+                        className="relative h-full rounded-2xl p-[2px]"
+                        style={{
+                          background:
+                            'linear-gradient(135deg, rgba(96,165,250,0.78), rgba(147,51,234,0.78))',
+                        }}
+                      >
+                        <div
+                          className="group relative h-full rounded-2xl border border-white/10 bg-[#0B1020]/90 backdrop-blur-md p-8 md:p-10 transition-all duration-300 hover:border-white/20 hover:bg-[#0B1020]/90"
+                          style={{ boxShadow: '0 18px 55px rgba(0,0,0,0.45)' }}
+                        >
+                          <Accordion.Header>
+                            <Accordion.Trigger className="group w-full text-left focus:outline-none">
+                              <div className="flex items-start justify-between gap-6">
+                                <div className="flex-1">
+                                  <div className="flex items-center">
+                                    <span
+                                      className="material-symbols-outlined"
+                                      style={{
+                                        color: '#60A5FA',
+                                        fontSize: '44px',
+                                      }}
+                                      aria-hidden
+                                    >
+                                      {iconName}
+                                    </span>
+                                  </div>
 
-              <Reveal delay={110} className="h-full">
-                <div
-                  className="relative h-full rounded-2xl p-[2px]"
-                  style={{
-                    background:
-                      'linear-gradient(135deg, rgba(96,165,250,0.78), rgba(147,51,234,0.78))',
-                  }}
-                >
-                  <div
-                    className="group relative h-full min-h-[132px] md:min-h-[152px] rounded-2xl border border-white/10 bg-[#0B1020]/90 backdrop-blur-md p-8 md:p-10 flex flex-col items-center justify-center text-center transition-all duration-300 hover:border-white/20 hover:bg-[#0B1020]/90"
-                    style={{ boxShadow: '0 18px 55px rgba(0,0,0,0.45)' }}
-                  >
-                    <span
-                      className="material-symbols-outlined"
-                      style={{ color: '#60A5FA', fontSize: '44px' }}
-                      aria-hidden
-                    >
-                      work_history
-                    </span>
-                    <p className="mt-5 text-white font-semibold text-xl md:text-2xl leading-snug max-w-[34rem]">
-                      Help organisations to prepare for the future of work
-                    </p>
-                  </div>
-                </div>
-              </Reveal>
-            </div>
+                                  <div className="mt-5 text-left text-white font-semibold text-xl md:text-2xl leading-snug">
+                                    {g.title}
+                                  </div>
+                                </div>
+
+                                <span
+                                  className="material-symbols-outlined mt-1 transition-transform duration-150 ease-in-out text-white/70 group-hover:text-white group-data-[state=open]:rotate-180"
+                                  style={{ fontSize: '34px' }}
+                                  aria-hidden
+                                >
+                                  expand_more
+                                </span>
+                              </div>
+                            </Accordion.Trigger>
+                          </Accordion.Header>
+
+                          <Accordion.Content className="overflow-hidden will-change-[height] data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down">
+                            <div className="pt-6">
+                              <p className="text-white/70 leading-relaxed text-base md:text-lg text-left max-w-[34rem]">
+                                {g.body}
+                              </p>
+                            </div>
+                          </Accordion.Content>
+                        </div>
+                      </div>
+                    </Accordion.Item>
+                  </Reveal>
+                );
+              })}
+            </Accordion.Root>
 
             <div>
               <Reveal className="mt-20 md:mt-32 lg:mt-36">
@@ -391,11 +427,11 @@ const Home2 = () => {
                   <div
                     role="button"
                     tabIndex={0}
-                    onClick={() => navigate('/our-services/mind-sync')}
+                    // onClick={() => navigate('/our-services/mind-sync')}
                     onKeyDown={(e) => {
                       if (e.key === 'Enter' || e.key === ' ') {
                         e.preventDefault();
-                        navigate('/our-services/mind-sync');
+                        // navigate('/our-services/mind-sync');
                       }
                     }}
                     className="relative overflow-hidden rounded-[2.5rem] h-[520px] md:h-[600px] cursor-pointer bg-[#0B1020]/80 backdrop-blur-md transition-transform duration-300 hover:scale-[1.02]"
@@ -422,6 +458,9 @@ const Home2 = () => {
                           Mind Sync
                         </span>
                       </h3>
+                      <div className="-mt-2 text-base md:text-lg font-semibold text-white/85">
+                        For School Staff and Parents
+                      </div>
                       <p className="text-sm md:text-base text-white/80 max-w-md leading-relaxed">
                         Helping society understand neurodiversity.
                       </p>
@@ -429,7 +468,7 @@ const Home2 = () => {
                         type="button"
                         onClick={(e) => {
                           e.stopPropagation();
-                          navigate('/our-services/mind-sync');
+                          // navigate('/our-services/mind-sync');
                         }}
                         className="inline-flex items-center gap-3 rounded-full px-6 md:px-8 py-3.5 md:py-4 text-sm md:text-base font-semibold text-white transition-all hover:gap-4"
                         style={{
@@ -438,7 +477,8 @@ const Home2 = () => {
                           boxShadow: '0 10px 30px rgba(96, 165, 250, 0.35)',
                         }}
                       >
-                        Explore Mind Sync
+                        {/* Explore Mind Sync */}
+                        Explore More
                         <span
                           className="material-symbols-outlined"
                           style={{ fontSize: '20px' }}
@@ -493,6 +533,9 @@ const Home2 = () => {
                           Future Sync
                         </span>
                       </h3>
+                      <div className="-mt-2 text-base md:text-lg font-semibold text-white/85">
+                        For Organisations
+                      </div>
                       <p className="text-sm md:text-base text-white/80 max-w-md leading-relaxed">
                         Helping organisations and their people get ready for the
                         future of work.
@@ -510,7 +553,8 @@ const Home2 = () => {
                           boxShadow: '0 10px 30px rgba(96, 165, 250, 0.25)',
                         }}
                       >
-                        Explore Future Sync
+                        {/* Explore Future Sync */}
+                        Explore More
                         <span
                           className="material-symbols-outlined"
                           style={{ fontSize: '20px' }}
