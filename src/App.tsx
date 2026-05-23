@@ -36,6 +36,7 @@ import MindSyncModuleResults from './pages/MindSyncModuleResults';
 import RevealHiddenBrilliance from './pages/our-ideas/RevealHiddenBrilliance';
 import MindSyncIdea from './pages/our-ideas/MindSync';
 import DigitalBiasImpactAssessment from './pages/our-ideas/DigitalBiasImpactAssessment';
+import OurOfferMindSync from './pages/OurOfferMindSync';
 import Login from './components/Login';
 import Signup from './components/Signup';
 import Home2 from './pages/Home2';
@@ -162,6 +163,16 @@ function AppContent() {
         <Route
           path="/faq"
           element={<ComingSoon title="Frequently Asked Questions" />}
+        />
+        <Route
+          path="/our-goals-values"
+          element={<ComingSoon title="Our Goals & Values" />}
+        />
+        <Route path="/our-offer" element={<ComingSoon title="Our Offer" />} />
+        <Route path="/our-offer/mind-sync" element={<OurOfferMindSync />} />
+        <Route
+          path="/who-we-work-with"
+          element={<ComingSoon title="Who We Work With" />}
         />
         <Route
           path="/who-we-are-coming-soon"

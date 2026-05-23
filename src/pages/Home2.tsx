@@ -427,11 +427,11 @@ const Home2 = () => {
                   <div
                     role="button"
                     tabIndex={0}
-                    // onClick={() => navigate('/our-services/mind-sync')}
+                    onClick={() => navigate('/our-offer/mind-sync')}
                     onKeyDown={(e) => {
                       if (e.key === 'Enter' || e.key === ' ') {
                         e.preventDefault();
-                        // navigate('/our-services/mind-sync');
+                        navigate('/our-offer/mind-sync');
                       }
                     }}
                     className="relative overflow-hidden rounded-[2.5rem] h-[520px] md:h-[600px] cursor-pointer bg-[#0B1020]/80 backdrop-blur-md transition-transform duration-300 hover:scale-[1.02]"
@@ -468,7 +468,7 @@ const Home2 = () => {
                         type="button"
                         onClick={(e) => {
                           e.stopPropagation();
-                          // navigate('/our-services/mind-sync');
+                          navigate('/our-offer/mind-sync');
                         }}
                         className="inline-flex items-center gap-3 rounded-full px-6 md:px-8 py-3.5 md:py-4 text-sm md:text-base font-semibold text-white transition-all hover:gap-4"
                         style={{

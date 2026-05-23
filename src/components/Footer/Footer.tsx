@@ -72,11 +72,8 @@ const Footer: React.FC = () => {
                 Contact Us
               </h4>
               <ul className="space-y-2 md:space-y-3">
-                <li className="text-sm md:text-base text-white">
-                  +44 55 66 77 88
-                </li>
                 <li className="text-sm md:text-base text-white break-words">
-                  elayara@gmail.com
+                  Hello@elera.com
                 </li>
               </ul>
             </div>
