@@ -252,7 +252,7 @@ const OurOfferMindSync = () => {
 
       <section className="relative py-20 md:py-24">
         <div className="container mx-auto px-4 md:px-6">
-          <div className="text-center mb-12 md:mb-16">
+          {/* <div className="text-center mb-12 md:mb-16">
             <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-white">
               Tailored Guidance
             </h2>
@@ -266,7 +266,7 @@ const OurOfferMindSync = () => {
               Choose the pathway that aligns with your role in the neurodiverse
               ecosystem.
             </p>
-          </div>
+          </div> */}
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
             <div className="group relative overflow-hidden rounded-3xl h-[520px] flex flex-col justify-end p-8 md:p-10">
