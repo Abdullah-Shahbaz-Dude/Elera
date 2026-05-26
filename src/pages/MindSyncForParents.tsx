@@ -1,7 +1,12 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import * as Accordion from '@radix-ui/react-accordion';
 import Footer from '@/components/Footer/Footer';
+import {
+  Accordion as SmoothAccordion,
+  AccordionHeader,
+  AccordionItem,
+  AccordionPanel,
+} from '@/components/ui/accordion';
 import {
   shutterstock1330833800,
   shutterstock1717584028,
@@ -19,7 +24,7 @@ const MindSyncForParents = () => {
           'A short online assessment covering behaviour, routines, school experience, and family dynamics.',
         bgImage: shutterstock2213352423,
         icon: 'assignment',
-        modalTitle: 'Step 1 - Assessment (Pop Up Bar)',
+        modalTitle: 'Assessment',
         modalIntro: 'Parents complete a short online assessment covering:',
         modalBullets: [
           'Their child’s behaviour, emotions, routines, and school experiences',
@@ -34,7 +39,7 @@ const MindSyncForParents = () => {
           'A personalised report explaining patterns, how neurodiversity may be influencing behaviour, and practical responses.',
         bgImage: shutterstock1330833800,
         icon: 'insights',
-        modalTitle: 'Step 2 - Personalised Insight (Pop Up Bar)',
+        modalTitle: 'Personalised Insight ',
         modalIntro: 'Parents receive a personalised report explaining:',
         modalBullets: [
           'The patterns currently happening within the family',
@@ -54,7 +59,7 @@ const MindSyncForParents = () => {
           'Short training modules, downloadable guides, and step-by-step strategies for everyday family life.',
         bgImage: shutterstock2513386035,
         icon: 'school',
-        modalTitle: 'Step 3 - Training & Practical Support (Pop Up Bar)',
+        modalTitle: 'Training & Practical Support  ',
         modalIntro: 'Parents receive access to:',
         modalBullets: [
           'Short training modules designed to be watched in around 10 minutes and applied immediately',
@@ -153,60 +158,31 @@ const MindSyncForParents = () => {
         </div>
       </section>
 
-      <section className="relative isolate py-20 md:py-28 lg:py-32 bg-[#050815] border-y border-white/5 shadow-[inset_0_1px_0_rgba(96,165,250,0.14),inset_0_-1px_0_rgba(167,139,250,0.12)]">
+      <section className="relative isolate py-20 md:py-28 lg:py-32 bg-[#050815]">
         <div className="absolute inset-0 pointer-events-none">
-          <div
-            className="absolute inset-0 opacity-30"
-            style={{
-              backgroundImage:
-                'radial-gradient(circle at 1px 1px, rgba(96,165,250,0.34) 1px, transparent 0)',
-              backgroundSize: '38px 38px',
-            }}
-          />
-          <div className="absolute -left-40 -top-40 h-[560px] w-[560px] rounded-full bg-[#60A5FA]/16 blur-[110px]" />
-          <div className="absolute -right-40 -bottom-40 h-[600px] w-[600px] rounded-full bg-[#A78BFA]/16 blur-[120px]" />
-          <div className="absolute left-1/2 top-1/3 -translate-x-1/2 h-[560px] w-[560px] rounded-full bg-[#9333EA]/14 blur-[135px]" />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#0B1020] via-[#050815] to-black" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#60A5FA]/28 via-transparent to-[#9333EA]/28" />
+          <div className="absolute -left-28 -top-28 h-[520px] w-[520px] rounded-full bg-[#60A5FA]/28 blur-[120px]" />
+          <div className="absolute -right-28 -bottom-28 h-[560px] w-[560px] rounded-full bg-[#9333EA]/28 blur-[130px]" />
+          <div className="absolute left-1/2 top-1/3 -translate-x-1/2 h-[520px] w-[520px] rounded-full bg-[#A78BFA]/18 blur-[150px]" />
+          <div className="absolute inset-0 shadow-[inset_0_1px_0_rgba(255,255,255,0.05),inset_0_-1px_0_rgba(255,255,255,0.05)]" />
         </div>
 
         <div className="relative container mx-auto px-4 md:px-6">
           <div className="mx-auto max-w-5xl">
-            <header className="mb-10 md:mb-12 text-center">
-              <p className="text-xs font-semibold tracking-[0.22em] uppercase text-white/60">
-                For families
-              </p>
-              <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-white">
-                When Behaviour Is Misunderstood, Managing behaviour can become
-                harder
-              </h2>
-              <div
-                className="mt-5 h-1 w-24 md:w-32 rounded-full mx-auto"
-                style={{
-                  background: 'linear-gradient(to right, #60A5FA, #9333EA)',
-                }}
-              />
-            </header>
-
-            <Accordion.Root type="single" collapsible className="space-y-4">
-              <Accordion.Item
+            <SmoothAccordion defaultValue="behaviour-drop" multiple={false}>
+              <AccordionItem
                 value="behaviour-drop"
                 className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-sm"
               >
-                <Accordion.Header>
-                  <Accordion.Trigger className="group flex w-full items-center justify-between gap-6 px-5 py-5 md:px-6 md:py-6 text-left">
-                    <span className="text-base md:text-lg font-semibold text-white">
-                      When Behaviour Is Misunderstood, Managing behaviour can
-                      become harder (Drop Down)
-                    </span>
-                    <span
-                      className="material-symbols-outlined text-white/70 transition-transform duration-300 group-data-[state=open]:rotate-180"
-                      style={{ fontSize: '28px' }}
-                      aria-hidden
-                    >
-                      expand_more
-                    </span>
-                  </Accordion.Trigger>
-                </Accordion.Header>
-                <Accordion.Content className="overflow-hidden data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down">
+                <AccordionHeader className="group flex w-full items-center justify-between gap-6 px-5 py-5 md:px-6 md:py-6 text-left">
+                  <span className="text-base md:text-lg font-semibold text-white">
+                    When Behaviour Is Misunderstood, Managing behaviour can
+                    become harder
+                  </span>
+                </AccordionHeader>
+
+                <AccordionPanel className="overflow-hidden transition-[max-height] duration-300 ease-out">
                   <div className="px-5 pb-6 md:px-6">
                     <ul className="space-y-3 pl-6 list-disc marker:text-[#60A5FA] marker:font-semibold marker:text-lg">
                       <li className="text-sm md:text-base text-white/75 leading-7">
@@ -241,19 +217,16 @@ const MindSyncForParents = () => {
                       </li>
                     </ul>
                   </div>
-                </Accordion.Content>
-              </Accordion.Item>
-            </Accordion.Root>
+                </AccordionPanel>
+              </AccordionItem>
+            </SmoothAccordion>
           </div>
         </div>
       </section>
-      <section className="relative py-16 md:py-20">
+      <section className="relative py-16 md:py-20 -mt-20">
         <div className="relative container mx-auto px-4 md:px-6">
           <div className="mx-auto max-w-6xl">
             <header className="mb-10 md:mb-12 text-center">
-              <p className="text-xs font-semibold tracking-[0.22em] uppercase text-white/60">
-                Implementation
-              </p>
               <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-white">
                 How Mind Sync For Parents Works
               </h2>
@@ -272,7 +245,7 @@ const MindSyncForParents = () => {
                     key={s.step}
                     type="button"
                     onClick={() => setOpenStep(s.step)}
-                    className="group relative overflow-hidden text-left rounded-2xl border border-white/10 bg-gradient-to-b from-white/[0.06] to-white/[0.02] backdrop-blur-sm p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-white/20 hover:shadow-[0_28px_80px_rgba(96,165,250,0.14)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#60A5FA]/50"
+                    className="group relative overflow-hidden text-left rounded-2xl border border-white/10 bg-gradient-to-b from-white/[0.06] to-white/[0.02] backdrop-blur-sm p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-white/20 hover:shadow-[0_28px_80px_rgba(96,165,250,0.14)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#60A5FA]/50 min-h-[190px] flex flex-col justify-between"
                   >
                     <img
                       src={s.bgImage}
@@ -298,13 +271,12 @@ const MindSyncForParents = () => {
                     >
                       {s.step}
                     </div>
-                    <h3 className="relative text-lg font-semibold text-white">
-                      {s.title}
-                    </h3>
-                    <p className="relative mt-2 text-sm text-white/75 leading-relaxed">
-                      {s.preview}
-                    </p>
-                    <span className="relative mt-4 inline-flex items-center gap-2 text-sm font-semibold text-white/80 transition-colors group-hover:text-white">
+                    <div className="relative">
+                      <h3 className="text-lg font-semibold text-white">
+                        {s.title}
+                      </h3>
+                    </div>
+                    <span className="relative mt-6 inline-flex items-center gap-2 text-sm font-semibold text-white/80 transition-colors group-hover:text-white">
                       Click to explore
                       <span
                         className="material-symbols-outlined"
@@ -414,7 +386,19 @@ const MindSyncForParents = () => {
         <div className="absolute inset-0 bg-gradient-to-b from-[#0B1020]/40 to-black pointer-events-none" />
 
         <div className="relative container mx-auto px-4 md:px-6">
-          <div className="mx-auto max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-12 items-center">
+          <header className="mb-10 md:mb-12 text-center">
+            <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-white">
+              Anticipated Outcomes
+            </h2>
+            <div
+              className="mt-5 h-1 w-24 md:w-32 rounded-full mx-auto"
+              style={{
+                background: 'linear-gradient(to right, #60A5FA, #9333EA)',
+              }}
+            />
+          </header>
+
+          <div className="mx-auto max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-12 items-start">
             <div className="order-2 lg:order-1">
               <div className="overflow-hidden rounded-3xl border border-white/10 shadow-[0_22px_70px_rgba(0,0,0,0.45)]">
                 <img
@@ -428,28 +412,7 @@ const MindSyncForParents = () => {
             </div>
 
             <div className="order-1 lg:order-2">
-              <p className="text-xs font-semibold tracking-[0.22em] uppercase text-white/60">
-                Results
-              </p>
-              <h2 className="mt-2 text-3xl md:text-5xl font-bold tracking-tight text-white">
-                <span
-                  className="bg-clip-text text-transparent"
-                  style={{
-                    backgroundImage:
-                      'linear-gradient(135deg, #60A5FA, #9333EA)',
-                  }}
-                >
-                  Anticipated Outcomes
-                </span>
-              </h2>
-              <div
-                className="mt-5 h-1 w-24 md:w-32 rounded-full"
-                style={{
-                  background: 'linear-gradient(to right, #60A5FA, #9333EA)',
-                }}
-              />
-
-              <div className="mt-8 space-y-5">
+              <div className="space-y-5">
                 {[
                   {
                     title: 'Reduced conflict',

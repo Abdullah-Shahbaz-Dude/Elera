@@ -1,12 +1,17 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import * as Accordion from '@radix-ui/react-accordion';
 import Footer from '@/components/Footer/Footer';
 import hero from '@/assets/images/shutterstock_726121441.webp';
 import image2 from '@/assets/images/shutterstock_1330833800.webp';
 import image3 from '@/assets/images/shutterstock_2513386035.webp';
 import image4 from '@/assets/images/shutterstock_2213352423.webp';
 import { image1 } from '@/assets/images';
+import {
+  Accordion as SmoothAccordion,
+  AccordionHeader,
+  AccordionItem,
+  AccordionPanel,
+} from '@/components/ui/accordion';
 
 const MindSyncForSchools = () => {
   const roadmapSteps = useMemo(
@@ -14,50 +19,63 @@ const MindSyncForSchools = () => {
       {
         step: 1,
         number: '01',
-        title: 'Discovery',
+        title: 'Assessment',
         preview:
-          'Initial audit of school culture, resources, and current neurodiversity support strategies.',
+          'Every staff member completes a short online assessment in around 15 minutes.',
         bgImage: image4,
-        modalTitle: 'Discovery & Audit',
-        modalContent:
-          'We begin with a comprehensive 360° audit of your current school ecosystem. This includes interviewing staff across all levels to identify stress points, reviewing existing neurodiversity policies, and assessing resource allocation for 2026 readiness.',
-        icon: 'search',
+        modalTitle: 'Assessment ',
+        modalIntro:
+          'Every staff member completes a short online assessment in around 15 minutes.',
+        icon: 'assignment_turned_in',
       },
       {
         step: 2,
         number: '02',
-        title: 'Training',
-        preview:
-          'Neuro-affirming training modules for teachers and support staff.',
+        title: 'Personal Insight Report',
+        preview: 'Each staff member receives a personalised insight report.',
         bgImage: image2,
-        modalTitle: 'Evidence-Based Training',
-        modalContent:
-          "Our training isn't just theory. We provide practical, neuro-affirming workshops that equip teachers with specific language and environmental adjustment tools. Training is delivered in bite-sized modules to accommodate busy school schedules.",
-        icon: 'school',
+        modalTitle: 'Personal Insight Report ',
+        modalIntro: 'Each staff member receives a personalised report showing:',
+        modalBullets: [
+          'How they currently respond to neurodiversity in the classroom',
+        ],
+        icon: 'description',
       },
       {
         step: 3,
         number: '03',
-        title: 'Integration',
+        title: 'Training & Support',
         preview:
-          'Embedding Mind Sync digital tools into existing classroom workflows.',
+          'Staff receive access to training resources, video modules, and classroom guides.',
         bgImage: image1,
-        modalTitle: 'Digital Integration',
-        modalContent:
-          "Mind Sync's suite of digital tools is integrated directly into your existing processes. This allows for consistent tracking of interventions and timely support alerts for front-line staff.",
-        icon: 'integration_instructions',
+        modalTitle: 'Training & Support ',
+        modalIntro: 'Staff receive access to:',
+        modalBullets: [
+          'The Mind Sync training library',
+          'Short practical video modules',
+          'Downloadable classroom guides and resources tailored to common challenges',
+        ],
+        modalNote:
+          'Topics include ADHD, autism, dyslexia, sensory needs, masking, emotional regulation, behaviour, and classroom engagement.',
+        icon: 'school',
       },
       {
         step: 4,
         number: '04',
-        title: 'Sustain',
+        title: 'Whole School Insight & Action Plan',
         preview:
-          'Ongoing coaching and data-led refinement for long-term resilience.',
+          'Leadership receives a whole-school report, a 12-month action plan, and evidence to support inclusive practice.',
         bgImage: image3,
-        modalTitle: 'Sustained Resilience',
-        modalContent:
-          "Change only sticks when it's supported long-term. We provide follow-up coaching for leadership and structured support for staff. Clear progress signals help you refine your approach based on real-world outcomes.",
-        icon: 'cycle',
+        modalTitle: 'Whole School Insight & Action Plan ',
+        modalIntro: 'School leadership receives:',
+        modalBullets: [
+          'A whole-school insight report showing patterns, strengths, gaps, and priority areas across staff',
+          'A practical 12-month action plan with recommended next steps, CPD focus areas, and ways to measure impact',
+          'Evidence and insight that can support schools in demonstrating inclusive practice aligned to the evolving Ofsted Inclusion Framework',
+        ],
+        modalNote:
+          'A follow-up reassessment tracks progress in staff confidence, classroom experiences, inclusion practices, and pupil outcomes over time.',
+        icon: 'insights',
       },
     ],
     []
@@ -97,9 +115,6 @@ const MindSyncForSchools = () => {
 
         <div className="relative container mx-auto px-4 md:px-6 z-10 py-16 md:py-20">
           <div className="max-w-4xl">
-            <p className="inline-flex items-center rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-xs font-semibold tracking-[0.22em] uppercase text-white/85">
-              Institutional
-            </p>
             <h1 className="mt-5 text-4xl md:text-6xl font-bold tracking-tight leading-tight">
               <span
                 className="bg-clip-text text-transparent"
@@ -111,31 +126,26 @@ const MindSyncForSchools = () => {
               </span>
             </h1>
             <p className="mt-5 text-base md:text-xl text-white/80 leading-relaxed max-w-3xl">
-              Supporting school staff manage and respond to neurodiversity
+              Supporting school staff manage and respond to Neurodiversity
               differently.
             </p>
           </div>
         </div>
       </section>
 
-      <section className="relative isolate py-20 md:py-28 lg:py-32 bg-[#050815] border-y border-white/5 shadow-[inset_0_1px_0_rgba(96,165,250,0.14),inset_0_-1px_0_rgba(167,139,250,0.12)]">
+      <section className="relative isolate py-20 md:py-28 lg:py-32 bg-[#01115762]">
         <div className="absolute inset-0 pointer-events-none">
-          <div
-            className="absolute inset-0 opacity-30"
-            style={{
-              backgroundImage:
-                'radial-gradient(circle at 1px 1px, rgba(96,165,250,0.34) 1px, transparent 0)',
-              backgroundSize: '38px 38px',
-            }}
-          />
-          <div className="absolute -left-40 -top-40 h-[560px] w-[560px] rounded-full bg-[#60A5FA]/16 blur-[110px]" />
-          <div className="absolute -right-40 -bottom-40 h-[600px] w-[600px] rounded-full bg-[#A78BFA]/16 blur-[120px]" />
-          <div className="absolute left-1/2 top-1/3 -translate-x-1/2 h-[560px] w-[560px] rounded-full bg-[#9333EA]/14 blur-[135px]" />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#0B1020] via-[#050815] to-black" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#60A5FA]/28 via-transparent to-[#9333EA]/28" />
+          <div className="absolute -left-28 -top-28 h-[520px] w-[520px] rounded-full bg-[#60A5FA]/28 blur-[120px]" />
+          <div className="absolute -right-28 -bottom-28 h-[560px] w-[560px] rounded-full bg-[#9333EA]/28 blur-[130px]" />
+          <div className="absolute left-1/2 top-1/3 -translate-x-1/2 h-[520px] w-[520px] rounded-full bg-[#A78BFA]/18 blur-[150px]" />
+          <div className="absolute inset-0 shadow-[inset_0_1px_0_rgba(255,255,255,0.05),inset_0_-1px_0_rgba(255,255,255,0.05)]" />
         </div>
 
         <div className="relative container mx-auto px-4 md:px-6">
           <div className="mx-auto max-w-5xl">
-            <header className="mb-10 md:mb-12 text-center">
+            {/* <header className="mb-10 md:mb-12 text-center">
               <p className="text-xs font-semibold tracking-[0.22em] uppercase text-white/60">
                 For leadership
               </p>
@@ -148,28 +158,19 @@ const MindSyncForSchools = () => {
                   background: 'linear-gradient(to right, #60A5FA, #9333EA)',
                 }}
               />
-            </header>
+            </header> */}
 
-            <Accordion.Root type="multiple" className="space-y-4">
-              <Accordion.Item
+            <SmoothAccordion multiple className="space-y-4">
+              <AccordionItem
                 value="schools-more"
                 className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-sm"
               >
-                <Accordion.Header>
-                  <Accordion.Trigger className="group flex w-full items-center justify-between gap-6 px-5 py-5 md:px-6 md:py-6 text-left">
-                    <span className="text-base md:text-lg font-semibold text-white">
-                      Schools are being asked to do more, with less, faster.
-                    </span>
-                    <span
-                      className="material-symbols-outlined text-white/70 transition-transform duration-300 group-data-[state=open]:rotate-180"
-                      style={{ fontSize: '28px' }}
-                      aria-hidden
-                    >
-                      expand_more
-                    </span>
-                  </Accordion.Trigger>
-                </Accordion.Header>
-                <Accordion.Content className="overflow-hidden data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down">
+                <AccordionHeader className="group flex w-full items-center justify-between gap-6 px-5 py-5 md:px-6 md:py-6 text-left">
+                  <span className="text-base md:text-lg font-semibold text-white">
+                    Schools are being asked to do more, with less, faster.
+                  </span>
+                </AccordionHeader>
+                <AccordionPanel className="overflow-hidden transition-[max-height] duration-300 ease-out">
                   <div className="px-5 pb-6 md:px-6">
                     <ul className="space-y-3 pl-6">
                       <li className="text-sm md:text-base text-white/75 leading-relaxed list-disc">
@@ -202,29 +203,20 @@ const MindSyncForSchools = () => {
                       </li>
                     </ul>
                   </div>
-                </Accordion.Content>
-              </Accordion.Item>
+                </AccordionPanel>
+              </AccordionItem>
 
-              <Accordion.Item
+              <AccordionItem
                 value="reforms"
                 className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-sm"
               >
-                <Accordion.Header>
-                  <Accordion.Trigger className="group flex w-full items-center justify-between gap-6 px-5 py-5 md:px-6 md:py-6 text-left">
-                    <span className="text-base md:text-lg font-semibold text-white">
-                      What the 2026 Special Educational Need (SEND) reforms mean
-                      for schools.
-                    </span>
-                    <span
-                      className="material-symbols-outlined text-white/70 transition-transform duration-300 group-data-[state=open]:rotate-180"
-                      style={{ fontSize: '28px' }}
-                      aria-hidden
-                    >
-                      expand_more
-                    </span>
-                  </Accordion.Trigger>
-                </Accordion.Header>
-                <Accordion.Content className="overflow-hidden data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down">
+                <AccordionHeader className="group flex w-full items-center justify-between gap-6 px-5 py-5 md:px-6 md:py-6 text-left">
+                  <span className="text-base md:text-lg font-semibold text-white">
+                    What the 2026 Special Educational Need (SEND) reforms mean
+                    for schools.
+                  </span>
+                </AccordionHeader>
+                <AccordionPanel className="overflow-hidden transition-[max-height] duration-300 ease-out">
                   <div className="px-5 pb-6 md:px-6">
                     <ul className="space-y-3 pl-6">
                       <li className="text-sm md:text-base text-white/75 leading-relaxed list-disc">
@@ -258,20 +250,17 @@ const MindSyncForSchools = () => {
                       </li>
                     </ul>
                   </div>
-                </Accordion.Content>
-              </Accordion.Item>
-            </Accordion.Root>
+                </AccordionPanel>
+              </AccordionItem>
+            </SmoothAccordion>
           </div>
         </div>
       </section>
 
-      <section className="relative py-16 md:py-20">
+      <section className="relative py-16 md:py-20 -mt-10">
         <div className="relative container mx-auto px-4 md:px-6">
           <div className="mx-auto max-w-7xl">
             <header className="mb-10 md:mb-12 text-center">
-              <p className="text-xs font-semibold tracking-[0.22em] uppercase text-white/60">
-                Implementation
-              </p>
               <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-white">
                 How Mind Sync For Schools Works
               </h2>
@@ -281,10 +270,6 @@ const MindSyncForSchools = () => {
                   background: 'linear-gradient(to right, #60A5FA, #9333EA)',
                 }}
               />
-              <p className="mt-6 text-base md:text-lg text-white/70 leading-7 md:leading-relaxed max-w-3xl mx-auto">
-                A structured 4-step implementation process designed for school
-                leadership.
-              </p>
             </header>
 
             <div className="relative">
@@ -295,7 +280,7 @@ const MindSyncForSchools = () => {
                     key={s.step}
                     type="button"
                     onClick={() => setOpenStep(s.step)}
-                    className="group relative overflow-hidden text-left rounded-2xl border border-white/10 bg-gradient-to-b from-white/[0.06] to-white/[0.02] backdrop-blur-sm p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-white/20 hover:shadow-[0_28px_80px_rgba(96,165,250,0.14)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#60A5FA]/50"
+                    className="group relative overflow-hidden text-left rounded-2xl border border-white/10 bg-gradient-to-b from-white/[0.06] to-white/[0.02] backdrop-blur-sm p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-white/20 hover:shadow-[0_28px_80px_rgba(96,165,250,0.14)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#60A5FA]/50 min-h-[190px] flex flex-col justify-between"
                   >
                     <img
                       src={s.bgImage}
@@ -321,13 +306,12 @@ const MindSyncForSchools = () => {
                     >
                       {s.step}
                     </div>
-                    <h3 className="relative text-lg font-semibold text-white">
-                      {s.title}
-                    </h3>
-                    <p className="relative mt-2 text-sm text-white/75 leading-relaxed">
-                      {s.preview}
-                    </p>
-                    <span className="relative mt-4 inline-flex items-center gap-2 text-sm font-semibold text-white/80 transition-colors group-hover:text-white">
+                    <div className="relative">
+                      <h3 className="text-lg font-semibold text-white">
+                        {s.title}
+                      </h3>
+                    </div>
+                    <span className="relative mt-6 inline-flex items-center gap-2 text-sm font-semibold text-white/80 transition-colors group-hover:text-white">
                       Click to explore
                       <span
                         className="material-symbols-outlined"
@@ -383,9 +367,30 @@ const MindSyncForSchools = () => {
                     Step {activeRoadmapStep.step}:{' '}
                     {activeRoadmapStep.modalTitle}
                   </h3>
-                  <p className="mt-4 text-base md:text-lg text-white/75 leading-relaxed">
-                    {activeRoadmapStep.modalContent}
-                  </p>
+                  {activeRoadmapStep.modalIntro && (
+                    <p className="mt-4 text-base md:text-lg text-white/75 leading-relaxed">
+                      {activeRoadmapStep.modalIntro}
+                    </p>
+                  )}
+
+                  {activeRoadmapStep.modalBullets?.length ? (
+                    <ul className="mt-4 space-y-3 pl-6 list-disc marker:text-[#60A5FA] marker:font-semibold marker:text-lg">
+                      {activeRoadmapStep.modalBullets.map((bullet) => (
+                        <li
+                          key={bullet}
+                          className="text-sm md:text-base text-white/75 leading-7"
+                        >
+                          {bullet}
+                        </li>
+                      ))}
+                    </ul>
+                  ) : null}
+
+                  {activeRoadmapStep.modalNote && (
+                    <p className="mt-5 text-sm md:text-base text-white/70 leading-relaxed">
+                      {activeRoadmapStep.modalNote}
+                    </p>
+                  )}
 
                   <button
                     type="button"
@@ -408,9 +413,6 @@ const MindSyncForSchools = () => {
         <div className="relative container mx-auto px-4 md:px-6">
           <div className="mx-auto ">
             <header className="mb-10 md:mb-12 text-center">
-              <p className="text-xs font-semibold tracking-[0.22em] uppercase text-white/60">
-                Outcomes
-              </p>
               <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-white">
                 Anticipated outcomes after 6 to 12 months
               </h2>
@@ -436,10 +438,55 @@ const MindSyncForSchools = () => {
                   <div className="w-full md:w-5/12 md:pr-10 md:text-right flex md:justify-end">
                     <div className="w-full max-w-xl rounded-2xl border border-white/10 bg-gradient-to-b from-white/[0.06] to-white/[0.02] backdrop-blur-xl p-7 md:p-8 shadow-[0_18px_60px_rgba(0,0,0,0.45)]">
                       <h3 className="mt-2 text-xl md:text-2xl font-bold tracking-tight text-white">
+                        For Ofsted and governors.
+                      </h3>
+                      <ul className="mt-6 space-y-3 pl-6 md:text-left list-disc marker:text-[#A78BFA] marker:font-semibold marker:text-lg">
+                        <li className="text-sm md:text-base text-white/80 leading-relaxed">
+                          Documented evidence of a structured, whole school
+                          approach to inclusion.
+                        </li>
+                        <li className="text-sm md:text-base text-white/80 leading-relaxed">
+                          Measurable changes in staff understanding of
+                          neurodiversity.
+                        </li>
+                        <li className="text-sm md:text-base text-white/80 leading-relaxed">
+                          A unified approach to Neurodiversity that staff,
+                          pupils and parents can describe.
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+
+                  <div className="z-20 hidden md:flex h-12 w-12 items-center justify-center rounded-full border border-white/10 bg-[#0B1020] shadow-[0_0_0_10px_rgba(0,0,0,0.35)]">
+                    <span
+                      className="material-symbols-outlined"
+                      style={{ color: '#A78BFA' }}
+                      aria-hidden
+                    >
+                      verified
+                    </span>
+                  </div>
+
+                  <div className="w-full md:w-5/12 md:pl-10">
+                    <div className="overflow-hidden rounded-2xl border border-white/10 shadow-[0_18px_60px_rgba(0,0,0,0.35)]">
+                      <img
+                        src={image2}
+                        alt=""
+                        className="h-52 w-full object-cover md:h-56"
+                        loading="lazy"
+                        decoding="async"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="relative flex flex-col md:flex-row-reverse items-center justify-center gap-7 md:gap-0">
+                  <div className="w-full md:w-5/12 md:pl-10 md:text-left flex md:justify-start">
+                    <div className="w-full max-w-xl rounded-2xl border border-white/10 bg-gradient-to-b from-white/[0.06] to-white/[0.02] backdrop-blur-xl p-7 md:p-8 shadow-[0_18px_60px_rgba(0,0,0,0.45)]">
+                      <h3 className="mt-2 text-xl md:text-2xl font-bold tracking-tight text-white">
                         For teachers and staff.
                       </h3>
-                      <ul className="mt-6 space-y-3 pl-6 md:text-left list-disc marker:text-[#60A5FA] marker:font-semibold marker:text-lg">
-                        Back to Mind Sync Offer
+                      <ul className="mt-6 space-y-3 pl-6 list-disc marker:text-[#60A5FA] marker:font-semibold marker:text-lg">
                         {[
                           'Reduction in conflict in the classroom, with knock on effects for staff retention and wellbeing.',
                           'Greater confidence responding to neurodivergent pupils.',
@@ -467,56 +514,10 @@ const MindSyncForSchools = () => {
                     </span>
                   </div>
 
-                  <div className="w-full md:w-5/12 md:pl-10">
-                    <div className="overflow-hidden rounded-2xl border border-white/10 shadow-[0_18px_60px_rgba(0,0,0,0.35)]">
-                      <img
-                        src={image4}
-                        alt=""
-                        className="h-52 w-full object-cover md:h-56"
-                        loading="lazy"
-                        decoding="async"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="relative flex flex-col md:flex-row-reverse items-center justify-center gap-7 md:gap-0">
-                  <div className="w-full md:w-5/12 md:pl-10 md:text-left flex md:justify-start">
-                    <div className="w-full max-w-xl rounded-2xl border border-white/10 bg-gradient-to-b from-white/[0.06] to-white/[0.02] backdrop-blur-xl p-7 md:p-8 shadow-[0_18px_60px_rgba(0,0,0,0.45)]">
-                      <h3 className="mt-2 text-xl md:text-2xl font-bold tracking-tight text-white">
-                        For Ofsted and governors.
-                      </h3>
-                      <ul className="mt-6 space-y-3 pl-6 list-disc marker:text-[#A78BFA] marker:font-semibold marker:text-lg">
-                        <li className="text-sm md:text-base text-white/80 leading-relaxed">
-                          Documented evidence of a structured, whole school
-                          approach to inclusion.
-                        </li>
-                        <li className="text-sm md:text-base text-white/80 leading-relaxed">
-                          Measurable changes in staff understanding of
-                          neurodiversity.
-                        </li>
-                        <li className="text-sm md:text-base text-white/80 leading-relaxed">
-                          A unified approach to Neurodiversity that staff,
-                          pupils and parents can describe.
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-
-                  <div className="z-20 hidden md:flex h-12 w-12 items-center justify-center rounded-full border border-white/10 bg-[#0B1020] shadow-[0_0_0_10px_rgba(0,0,0,0.35)]">
-                    <span
-                      className="material-symbols-outlined"
-                      style={{ color: '#A78BFA' }}
-                      aria-hidden
-                    >
-                      verified
-                    </span>
-                  </div>
-
                   <div className="w-full md:w-5/12 md:pr-10">
                     <div className="overflow-hidden rounded-2xl border border-white/10 shadow-[0_18px_60px_rgba(0,0,0,0.35)]">
                       <img
-                        src={image2}
+                        src={image4}
                         alt=""
                         className="h-52 w-full object-cover md:h-56"
                         loading="lazy"
