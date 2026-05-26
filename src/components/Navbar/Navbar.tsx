@@ -155,7 +155,11 @@ const Navbar: React.FC = () => {
                           <span className="absolute inset-0 rounded-lg bg-gradient-to-r from-primary-blue-start/10 to-primary-blue-end/10 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
                         </Link>
 
-                        <div className="pointer-events-none absolute left-1/2 top-full z-30 mt-3 w-64 -translate-x-1/2 opacity-0 translate-y-1 scale-[0.98] transition-all duration-200 group-hover:pointer-events-auto group-hover:opacity-100 group-hover:translate-y-0 group-hover:scale-100">
+                        <div className="pointer-events-none absolute left-1/2 top-full z-30 mt-3 w-64 -translate-x-1/2 opacity-0 translate-y-1 scale-[0.98] transition-all duration-200 group-hover:pointer-events-auto group-hover:opacity-100 group-hover:translate-y-0 group-hover:scale-100 relative">
+                          <div
+                            className="absolute -top-3 left-0 right-0 h-3"
+                            aria-hidden
+                          />
                           <div
                             className="rounded-2xl p-[1px]"
                             style={{
