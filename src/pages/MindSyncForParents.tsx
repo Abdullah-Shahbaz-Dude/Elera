@@ -378,58 +378,104 @@ const MindSyncForParents = () => {
                 </div>
               </div>
             )}
+          </div>
+        </div>
+      </section>
 
-            <div className="mt-10">
-              <Accordion.Root type="single" collapsible className="space-y-4">
-                <Accordion.Item
-                  value="parents-outcomes"
-                  className="overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-b from-white/[0.06] to-white/[0.02] backdrop-blur-sm"
+      <section className="relative py-16 md:py-20">
+        <div className="absolute inset-0 bg-gradient-to-b from-[#0B1020]/40 to-black pointer-events-none" />
+
+        <div className="relative container mx-auto px-4 md:px-6">
+          <div className="mx-auto max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-12 items-center">
+            <div className="order-2 lg:order-1">
+              <div className="overflow-hidden rounded-3xl border border-white/10 shadow-[0_22px_70px_rgba(0,0,0,0.45)]">
+                <img
+                  src={shutterstock1717584028}
+                  alt=""
+                  className="h-[420px] w-full object-cover"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </div>
+            </div>
+
+            <div className="order-1 lg:order-2">
+              <p className="text-xs font-semibold tracking-[0.22em] uppercase text-white/60">
+                Results
+              </p>
+              <h2 className="mt-2 text-3xl md:text-5xl font-bold tracking-tight text-white">
+                <span
+                  className="bg-clip-text text-transparent"
+                  style={{
+                    backgroundImage:
+                      'linear-gradient(135deg, #60A5FA, #9333EA)',
+                  }}
                 >
-                  <Accordion.Header>
-                    <Accordion.Trigger className="group flex w-full items-center justify-between gap-6 px-5 py-5 md:px-6 md:py-6 text-left">
-                      <div>
-                        <p className="text-xs font-semibold tracking-[0.22em] uppercase text-white/60">
-                          Results
-                        </p>
-                        <h3 className="mt-1 text-lg md:text-xl font-semibold text-white">
-                          Anticipated Outcomes (Pop Up Bar)
-                        </h3>
-                      </div>
+                  Anticipated Outcomes
+                </span>
+              </h2>
+              <div
+                className="mt-5 h-1 w-24 md:w-32 rounded-full"
+                style={{
+                  background: 'linear-gradient(to right, #60A5FA, #9333EA)',
+                }}
+              />
+
+              <div className="mt-8 space-y-5">
+                {[
+                  {
+                    title: 'Reduced conflict',
+                    body: 'Reduced conflict and emotional escalation at home',
+                  },
+                  {
+                    title: 'Greater consistency',
+                    body: 'Greater consistency between parents and caregivers',
+                  },
+                  {
+                    title: 'Better understanding',
+                    body: 'Better understanding of the child’s needs and behaviour',
+                  },
+                  {
+                    title: 'Increased confidence',
+                    body: 'Increased confidence in handling challenging situations',
+                  },
+                  {
+                    title: 'Stronger relationships',
+                    body: 'Stronger communication and relationships within the family',
+                  },
+                ].map((item) => (
+                  <div key={item.title} className="flex gap-4 items-start">
+                    <div
+                      className="mt-1 flex h-8 w-8 items-center justify-center rounded-full border border-white/10"
+                      style={{
+                        background:
+                          'linear-gradient(135deg, rgba(96,165,250,0.22), rgba(147,51,234,0.16))',
+                      }}
+                      aria-hidden
+                    >
                       <span
-                        className="material-symbols-outlined text-white/70 transition-transform duration-300 group-data-[state=open]:rotate-180"
-                        style={{ fontSize: '28px' }}
+                        className="material-symbols-outlined"
+                        style={{
+                          fontSize: '18px',
+                          color: '#E9D5FF',
+                          fontVariationSettings: "'FILL' 1",
+                        }}
                         aria-hidden
                       >
-                        expand_more
+                        check
                       </span>
-                    </Accordion.Trigger>
-                  </Accordion.Header>
-                  <Accordion.Content className="overflow-hidden data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down">
-                    <div className="px-5 pb-6 md:px-6">
-                      <ul className="space-y-3 pl-6 list-disc marker:text-[#60A5FA] marker:font-semibold marker:text-lg">
-                        <li className="text-sm md:text-base text-white/75 leading-7">
-                          Reduced conflict and emotional escalation at home
-                        </li>
-                        <li className="text-sm md:text-base text-white/75 leading-7">
-                          Greater consistency between parents and caregivers
-                        </li>
-                        <li className="text-sm md:text-base text-white/75 leading-7">
-                          Better understanding of the child’s needs and
-                          behaviour
-                        </li>
-                        <li className="text-sm md:text-base text-white/75 leading-7">
-                          Increased confidence in handling challenging
-                          situations
-                        </li>
-                        <li className="text-sm md:text-base text-white/75 leading-7">
-                          Stronger communication and relationships within the
-                          family
-                        </li>
-                      </ul>
                     </div>
-                  </Accordion.Content>
-                </Accordion.Item>
-              </Accordion.Root>
+                    <div>
+                      <div className="text-sm md:text-base font-semibold text-white">
+                        {item.title}
+                      </div>
+                      <div className="mt-1 text-sm md:text-base text-white/75 leading-7">
+                        {item.body}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
