@@ -153,8 +153,20 @@ const MindSyncForParents = () => {
         </div>
       </section>
 
-      <section className="relative py-16 md:py-20">
-        <div className="absolute inset-0 bg-gradient-to-b from-[#0B1020]/40 to-black pointer-events-none" />
+      <section className="relative isolate py-20 md:py-28 lg:py-32 bg-[#050815] border-y border-white/5 shadow-[inset_0_1px_0_rgba(96,165,250,0.14),inset_0_-1px_0_rgba(167,139,250,0.12)]">
+        <div className="absolute inset-0 pointer-events-none">
+          <div
+            className="absolute inset-0 opacity-30"
+            style={{
+              backgroundImage:
+                'radial-gradient(circle at 1px 1px, rgba(96,165,250,0.34) 1px, transparent 0)',
+              backgroundSize: '38px 38px',
+            }}
+          />
+          <div className="absolute -left-40 -top-40 h-[560px] w-[560px] rounded-full bg-[#60A5FA]/16 blur-[110px]" />
+          <div className="absolute -right-40 -bottom-40 h-[600px] w-[600px] rounded-full bg-[#A78BFA]/16 blur-[120px]" />
+          <div className="absolute left-1/2 top-1/3 -translate-x-1/2 h-[560px] w-[560px] rounded-full bg-[#9333EA]/14 blur-[135px]" />
+        </div>
 
         <div className="relative container mx-auto px-4 md:px-6">
           <div className="mx-auto max-w-5xl">
