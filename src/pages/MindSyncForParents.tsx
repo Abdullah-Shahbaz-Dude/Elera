@@ -2,7 +2,12 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import * as Accordion from '@radix-ui/react-accordion';
 import Footer from '@/components/Footer/Footer';
-import { shutterstock1717584028 } from '@/assets/images';
+import {
+  shutterstock1330833800,
+  shutterstock1717584028,
+  shutterstock2213352423,
+  shutterstock2513386035,
+} from '@/assets/images';
 
 const MindSyncForParents = () => {
   const steps = useMemo(
@@ -12,6 +17,7 @@ const MindSyncForParents = () => {
         title: 'Assessment',
         preview:
           'A short online assessment covering behaviour, routines, school experience, and family dynamics.',
+        bgImage: shutterstock2213352423,
         icon: 'assignment',
         modalTitle: 'Step 1 - Assessment (Pop Up Bar)',
         modalIntro: 'Parents complete a short online assessment covering:',
@@ -26,6 +32,7 @@ const MindSyncForParents = () => {
         title: 'Personalised Insight',
         preview:
           'A personalised report explaining patterns, how neurodiversity may be influencing behaviour, and practical responses.',
+        bgImage: shutterstock1330833800,
         icon: 'insights',
         modalTitle: 'Step 2 - Personalised Insight (Pop Up Bar)',
         modalIntro: 'Parents receive a personalised report explaining:',
@@ -45,6 +52,7 @@ const MindSyncForParents = () => {
         title: 'Training & Practical Support',
         preview:
           'Short training modules, downloadable guides, and step-by-step strategies for everyday family life.',
+        bgImage: shutterstock2513386035,
         icon: 'school',
         modalTitle: 'Step 3 - Training & Practical Support (Pop Up Bar)',
         modalIntro: 'Parents receive access to:',
@@ -252,8 +260,16 @@ const MindSyncForParents = () => {
                     key={s.step}
                     type="button"
                     onClick={() => setOpenStep(s.step)}
-                    className="group relative text-left rounded-2xl border border-white/10 bg-gradient-to-b from-white/[0.06] to-white/[0.02] backdrop-blur-sm p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-white/20 hover:shadow-[0_28px_80px_rgba(96,165,250,0.14)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#60A5FA]/50"
+                    className="group relative overflow-hidden text-left rounded-2xl border border-white/10 bg-gradient-to-b from-white/[0.06] to-white/[0.02] backdrop-blur-sm p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-white/20 hover:shadow-[0_28px_80px_rgba(96,165,250,0.14)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#60A5FA]/50"
                   >
+                    <img
+                      src={s.bgImage}
+                      alt=""
+                      className="absolute inset-0 h-full w-full object-cover opacity-[0.14] transition-transform duration-700 group-hover:scale-105"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                    <span className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/25 via-black/55 to-black/85" />
                     <span
                       className="pointer-events-none absolute inset-0 rounded-2xl opacity-0 transition-opacity duration-300 group-hover:opacity-100"
                       style={{
@@ -481,58 +497,58 @@ const MindSyncForParents = () => {
         </div>
       </section>
 
-      <section
-        className="relative py-12 md:py-14"
-        style={{
-          background:
-            'linear-gradient(135deg, rgba(14, 88, 110, 0.92), rgba(7, 32, 55, 0.92))',
-        }}
-      >
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute -left-24 -top-24 h-[360px] w-[360px] rounded-full bg-[#60A5FA]/20 blur-[90px]" />
-          <div className="absolute -right-24 -bottom-24 h-[360px] w-[360px] rounded-full bg-[#9333EA]/20 blur-[90px]" />
-        </div>
-
+      <section className="relative py-16 md:py-20">
         <div className="relative container mx-auto px-4 md:px-6">
-          <div className="mx-auto max-w-5xl text-center">
-            <h3 className="text-2xl md:text-3xl font-bold tracking-tight text-white">
-              Ready to explore Mind Sync for your family?
-            </h3>
-            <p className="mt-3 text-sm md:text-base text-white/80 leading-relaxed max-w-3xl mx-auto">
-              Request more information or book a call to understand how Mind
-              Sync supports families.
-            </p>
+          <div className="mx-auto max-w-6xl">
+            <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-[#0B1020]/60 backdrop-blur-xl px-6 py-12 md:px-12 md:py-14 text-center shadow-[0_30px_90px_rgba(0,0,0,0.55)]">
+              <div className="absolute inset-0 opacity-60" aria-hidden>
+                <div className="absolute inset-0 bg-gradient-to-br from-[#60A5FA]/25 via-[#0B1020]/60 to-[#9333EA]/25" />
+                <div className="absolute -left-24 -top-24 h-[360px] w-[360px] rounded-full bg-[#60A5FA]/20 blur-[90px]" />
+                <div className="absolute -right-24 -bottom-24 h-[360px] w-[360px] rounded-full bg-[#9333EA]/20 blur-[90px]" />
+              </div>
 
-            <div className="mt-7 flex flex-col sm:flex-row gap-3 justify-center">
-              <Link
-                to="/contact-us"
-                className="group inline-flex items-center justify-center gap-2 rounded-full px-7 py-3 text-sm md:text-base font-semibold text-black transition-all duration-300 hover:opacity-95"
-                style={{
-                  background: 'linear-gradient(135deg, #60A5FA, #A78BFA)',
-                }}
-              >
-                Enquire Now
-                <span
-                  className="material-symbols-outlined"
-                  style={{ fontSize: '20px' }}
-                  aria-hidden
-                >
-                  arrow_forward
-                </span>
-              </Link>
-              <Link
-                to="/our-offer/mind-sync"
-                className="group inline-flex items-center justify-center gap-2 rounded-full border border-white/70 bg-white/0 px-7 py-3 text-sm md:text-base font-semibold text-white transition-all duration-300 hover:bg-white/10"
-              >
-                Back to Mind Sync Offer
-                <span
-                  className="material-symbols-outlined"
-                  style={{ fontSize: '20px' }}
-                  aria-hidden
-                >
-                  arrow_forward
-                </span>
-              </Link>
+              <div className="relative">
+                <h3 className="text-2xl md:text-4xl font-bold tracking-tight text-white">
+                  Ready to start your journey?
+                </h3>
+                <p className="mt-4 text-sm md:text-lg text-white/80 leading-relaxed max-w-3xl mx-auto">
+                  Book a discovery call or request more information to see how
+                  Mind Sync supports families.
+                </p>
+
+                <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
+                  <Link
+                    to="/contact-us"
+                    className="group inline-flex items-center justify-center gap-2 rounded-full px-8 py-3.5 text-sm md:text-base font-semibold text-black transition-all duration-300 hover:opacity-95"
+                    style={{
+                      background: 'linear-gradient(135deg, #60A5FA, #A78BFA)',
+                    }}
+                  >
+                    Enquire Now
+                    <span
+                      className="material-symbols-outlined"
+                      style={{ fontSize: '20px' }}
+                      aria-hidden
+                    >
+                      arrow_forward
+                    </span>
+                  </Link>
+
+                  <Link
+                    to="/our-offer/mind-sync"
+                    className="group inline-flex items-center justify-center gap-2 rounded-full border border-white/40 bg-white/0 px-8 py-3.5 text-sm md:text-base font-semibold text-white transition-all duration-300 hover:bg-white/10"
+                  >
+                    Back to Mind Sync Offer
+                    <span
+                      className="material-symbols-outlined"
+                      style={{ fontSize: '20px' }}
+                      aria-hidden
+                    >
+                      arrow_forward
+                    </span>
+                  </Link>
+                </div>
+              </div>
             </div>
           </div>
         </div>

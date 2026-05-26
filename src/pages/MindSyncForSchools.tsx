@@ -17,6 +17,7 @@ const MindSyncForSchools = () => {
         title: 'Discovery',
         preview:
           'Initial audit of school culture, resources, and current neurodiversity support strategies.',
+        bgImage: image4,
         modalTitle: 'Discovery & Audit',
         modalContent:
           'We begin with a comprehensive 360° audit of your current school ecosystem. This includes interviewing staff across all levels to identify stress points, reviewing existing neurodiversity policies, and assessing resource allocation for 2026 readiness.',
@@ -28,6 +29,7 @@ const MindSyncForSchools = () => {
         title: 'Training',
         preview:
           'Neuro-affirming training modules for teachers and support staff.',
+        bgImage: image2,
         modalTitle: 'Evidence-Based Training',
         modalContent:
           "Our training isn't just theory. We provide practical, neuro-affirming workshops that equip teachers with specific language and environmental adjustment tools. Training is delivered in bite-sized modules to accommodate busy school schedules.",
@@ -39,6 +41,7 @@ const MindSyncForSchools = () => {
         title: 'Integration',
         preview:
           'Embedding Mind Sync digital tools into existing classroom workflows.',
+        bgImage: image1,
         modalTitle: 'Digital Integration',
         modalContent:
           "Mind Sync's suite of digital tools is integrated directly into your existing processes. This allows for consistent tracking of interventions and timely support alerts for front-line staff.",
@@ -50,6 +53,7 @@ const MindSyncForSchools = () => {
         title: 'Sustain',
         preview:
           'Ongoing coaching and data-led refinement for long-term resilience.',
+        bgImage: image3,
         modalTitle: 'Sustained Resilience',
         modalContent:
           "Change only sticks when it's supported long-term. We provide follow-up coaching for leadership and structured support for staff. Clear progress signals help you refine your approach based on real-world outcomes.",
@@ -279,8 +283,16 @@ const MindSyncForSchools = () => {
                     key={s.step}
                     type="button"
                     onClick={() => setOpenStep(s.step)}
-                    className="group relative text-left rounded-2xl border border-white/10 bg-gradient-to-b from-white/[0.06] to-white/[0.02] backdrop-blur-sm p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-white/20 hover:shadow-[0_28px_80px_rgba(96,165,250,0.14)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#60A5FA]/50"
+                    className="group relative overflow-hidden text-left rounded-2xl border border-white/10 bg-gradient-to-b from-white/[0.06] to-white/[0.02] backdrop-blur-sm p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-white/20 hover:shadow-[0_28px_80px_rgba(96,165,250,0.14)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#60A5FA]/50"
                   >
+                    <img
+                      src={s.bgImage}
+                      alt=""
+                      className="absolute inset-0 h-full w-full object-cover opacity-[0.14] transition-transform duration-700 group-hover:scale-105"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                    <span className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/25 via-black/55 to-black/85" />
                     <span
                       className="pointer-events-none absolute inset-0 rounded-2xl opacity-0 transition-opacity duration-300 group-hover:opacity-100"
                       style={{
@@ -555,59 +567,58 @@ const MindSyncForSchools = () => {
         </div>
       </section>
 
-      <section
-        className="relative py-12 md:py-14"
-        style={{
-          background:
-            'linear-gradient(135deg, rgba(14, 88, 110, 0.92), rgba(7, 32, 55, 0.92))',
-        }}
-      >
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute -left-24 -top-24 h-[360px] w-[360px] rounded-full bg-[#60A5FA]/20 blur-[90px]" />
-          <div className="absolute -right-24 -bottom-24 h-[360px] w-[360px] rounded-full bg-[#9333EA]/20 blur-[90px]" />
-        </div>
-
+      <section className="relative py-16 md:py-20">
         <div className="relative container mx-auto px-4 md:px-6">
-          <div className="mx-auto max-w-5xl text-center">
-            <h3 className="text-2xl md:text-3xl font-bold tracking-tight text-white">
-              Ready to explore Mind Sync for your school?
-            </h3>
-            <p className="mt-3 text-sm md:text-base text-white/80 leading-relaxed max-w-3xl mx-auto">
-              Book a discovery call or request a sample report to see how Mind
-              Sync supports staff confidence and inclusive practice.
-            </p>
+          <div className="mx-auto max-w-6xl">
+            <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-[#0B1020]/60 backdrop-blur-xl px-6 py-12 md:px-12 md:py-14 text-center shadow-[0_30px_90px_rgba(0,0,0,0.55)]">
+              <div className="absolute inset-0 opacity-60" aria-hidden>
+                <div className="absolute inset-0 bg-gradient-to-br from-[#60A5FA]/25 via-[#0B1020]/60 to-[#9333EA]/25" />
+                <div className="absolute -left-24 -top-24 h-[360px] w-[360px] rounded-full bg-[#60A5FA]/20 blur-[90px]" />
+                <div className="absolute -right-24 -bottom-24 h-[360px] w-[360px] rounded-full bg-[#9333EA]/20 blur-[90px]" />
+              </div>
 
-            <div className="mt-7 flex flex-col sm:flex-row gap-3 justify-center">
-              <Link
-                to="/mind-sync-school-discovery-call"
-                className="group inline-flex items-center justify-center gap-2 rounded-full px-7 py-3 text-sm md:text-base font-semibold text-black transition-all duration-300 hover:opacity-95"
-                style={{
-                  background: 'linear-gradient(135deg, #60A5FA, #A78BFA)',
-                }}
-              >
-                Book a Mind Sync School Discovery Call
-                <span
-                  className="material-symbols-outlined"
-                  style={{ fontSize: '20px' }}
-                  aria-hidden
-                >
-                  arrow_forward
-                </span>
-              </Link>
+              <div className="relative">
+                <h3 className="text-2xl md:text-4xl font-bold tracking-tight text-white">
+                  Ready to start your journey?
+                </h3>
+                <p className="mt-4 text-sm md:text-lg text-white/80 leading-relaxed max-w-3xl mx-auto">
+                  Book a discovery call or request a sample report to see how
+                  Mind Sync supports staff confidence and inclusive practice.
+                </p>
 
-              <Link
-                to="/sample-school-report"
-                className="group inline-flex items-center justify-center gap-2 rounded-full border border-white/70 bg-white/0 px-7 py-3 text-sm md:text-base font-semibold text-white transition-all duration-300 hover:bg-white/10"
-              >
-                Request a Sample School Report
-                <span
-                  className="material-symbols-outlined"
-                  style={{ fontSize: '20px' }}
-                  aria-hidden
-                >
-                  arrow_forward
-                </span>
-              </Link>
+                <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
+                  <Link
+                    to="/mind-sync-school-discovery-call"
+                    className="group inline-flex items-center justify-center gap-2 rounded-full px-8 py-3.5 text-sm md:text-base font-semibold text-black transition-all duration-300 hover:opacity-95"
+                    style={{
+                      background: 'linear-gradient(135deg, #60A5FA, #A78BFA)',
+                    }}
+                  >
+                    Book a Mind Sync School Discovery Call
+                    <span
+                      className="material-symbols-outlined"
+                      style={{ fontSize: '20px' }}
+                      aria-hidden
+                    >
+                      arrow_forward
+                    </span>
+                  </Link>
+
+                  <Link
+                    to="/sample-school-report"
+                    className="group inline-flex items-center justify-center gap-2 rounded-full border border-white/40 bg-white/0 px-8 py-3.5 text-sm md:text-base font-semibold text-white transition-all duration-300 hover:bg-white/10"
+                  >
+                    Request a Sample School Report
+                    <span
+                      className="material-symbols-outlined"
+                      style={{ fontSize: '20px' }}
+                      aria-hidden
+                    >
+                      arrow_forward
+                    </span>
+                  </Link>
+                </div>
+              </div>
             </div>
           </div>
         </div>
