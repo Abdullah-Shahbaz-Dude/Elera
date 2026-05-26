@@ -1,8 +1,13 @@
 import type { ReactNode } from 'react';
 import { Suspense, lazy, useEffect, useMemo, useRef, useState } from 'react';
-import * as Accordion from '@radix-ui/react-accordion';
 import { useNavigate } from 'react-router-dom';
 import HeroSectionHome2 from '@/components/HeroSection/HeroSectionHome2';
+import {
+  Accordion as SmoothAccordion,
+  AccordionHeader,
+  AccordionItem,
+  AccordionPanel,
+} from '@/components/ui/accordion';
 import {
   shutterstock1717584028,
   shutterstock2291389905,
@@ -186,9 +191,6 @@ const Home2 = () => {
     []
   );
 
-  const [openValueIndex, setOpenValueIndex] = useState<number | null>(null);
-  const [openGoalId, setOpenGoalId] = useState<string | undefined>('goal-0');
-
   return (
     <main className="pt-0 bg-black">
       <HeroSectionHome2 />
@@ -203,20 +205,17 @@ const Home2 = () => {
               <SectionTitle title="Our Goals " center />
             </Reveal>
 
-            <Accordion.Root
-              type="single"
-              collapsible
-              value={openGoalId}
-              onValueChange={(v: string) => setOpenGoalId(v || undefined)}
+            <SmoothAccordion
+              defaultValue="goal-0"
+              multiple={false}
               className="grid gap-6 md:gap-8 md:grid-cols-2 mb-12 md:mb-14 items-stretch"
-              style={{ overflowAnchor: 'none' }}
             >
               {goals.map((g, idx) => {
                 const iconName = idx === 0 ? 'diversity_3' : 'work_history';
                 const itemValue = `goal-${idx}`;
                 return (
                   <Reveal key={g.title} delay={idx * 90} className="h-full">
-                    <Accordion.Item value={itemValue} className="h-full">
+                    <AccordionItem value={itemValue} className="h-full">
                       <div
                         className="relative h-full rounded-2xl p-[2px]"
                         style={{
@@ -228,53 +227,43 @@ const Home2 = () => {
                           className="group relative h-full rounded-2xl border border-white/10 bg-[#0B1020]/90 backdrop-blur-md p-8 md:p-10 transition-all duration-300 hover:border-white/20 hover:bg-[#0B1020]/90"
                           style={{ boxShadow: '0 18px 55px rgba(0,0,0,0.45)' }}
                         >
-                          <Accordion.Header>
-                            <Accordion.Trigger className="group w-full text-left focus:outline-none">
-                              <div className="flex items-start justify-between gap-6">
-                                <div className="flex-1">
-                                  <div className="flex items-center">
-                                    <span
-                                      className="material-symbols-outlined"
-                                      style={{
-                                        color: '#60A5FA',
-                                        fontSize: '44px',
-                                      }}
-                                      aria-hidden
-                                    >
-                                      {iconName}
-                                    </span>
-                                  </div>
-
-                                  <div className="mt-5 text-left text-white font-semibold text-xl md:text-2xl leading-snug">
-                                    {g.title}
-                                  </div>
+                          <AccordionHeader className="group w-full text-left focus:outline-none">
+                            <div className="flex items-start justify-between gap-6">
+                              <div className="flex-1">
+                                <div className="flex items-center">
+                                  <span
+                                    className="material-symbols-outlined"
+                                    style={{
+                                      color: '#60A5FA',
+                                      fontSize: '44px',
+                                    }}
+                                    aria-hidden
+                                  >
+                                    {iconName}
+                                  </span>
                                 </div>
 
-                                <span
-                                  className="material-symbols-outlined mt-1 transition-transform duration-150 ease-in-out text-white/70 group-hover:text-white group-data-[state=open]:rotate-180"
-                                  style={{ fontSize: '34px' }}
-                                  aria-hidden
-                                >
-                                  expand_more
-                                </span>
+                                <div className="mt-5 text-left text-white font-semibold text-xl md:text-2xl leading-snug">
+                                  {g.title}
+                                </div>
                               </div>
-                            </Accordion.Trigger>
-                          </Accordion.Header>
+                            </div>
+                          </AccordionHeader>
 
-                          <Accordion.Content className="overflow-hidden will-change-[height] data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down">
+                          <AccordionPanel className="overflow-hidden transition-[max-height] duration-300 ease-out">
                             <div className="pt-6">
                               <p className="text-white/70 leading-relaxed text-base md:text-lg text-left max-w-[34rem]">
                                 {g.body}
                               </p>
                             </div>
-                          </Accordion.Content>
+                          </AccordionPanel>
                         </div>
                       </div>
-                    </Accordion.Item>
+                    </AccordionItem>
                   </Reveal>
                 );
               })}
-            </Accordion.Root>
+            </SmoothAccordion>
 
             <div>
               <Reveal className="mt-20 md:mt-32 lg:mt-36">
@@ -336,24 +325,17 @@ const Home2 = () => {
 
               <Reveal className="mt-20 md:mt-32 lg:mt-36">
                 <SectionTitle title="Our Values" center />
-                <div className="w-full">
+                <SmoothAccordion defaultValue="value-0" multiple={false}>
                   {values.map((v, idx) => {
-                    const isOpen = openValueIndex === idx;
                     const iconName = valueIcons[idx] ?? 'psychology';
                     return (
                       <Reveal key={v.title} delay={idx * 90} className="w-full">
-                        <div className="border-b border-white/10 overflow-hidden">
-                          <button
-                            type="button"
-                            onClick={() =>
-                              setOpenValueIndex((cur) =>
-                                cur === idx ? null : idx
-                              )
-                            }
-                            className="group w-full flex items-center justify-between gap-6 py-8 md:py-10 text-left focus:outline-none"
-                            aria-expanded={isOpen}
-                          >
-                            <div className="flex items-center gap-4">
+                        <AccordionItem
+                          value={`value-${idx}`}
+                          className="border-b border-white/10 overflow-hidden"
+                        >
+                          <AccordionHeader className="group w-full flex items-center justify-between gap-6 py-8 md:py-10 text-left focus:outline-none">
+                            <span className="flex items-center gap-4">
                               <span
                                 className="material-symbols-outlined"
                                 style={{ color: '#60A5FA', fontSize: '36px' }}
@@ -364,43 +346,21 @@ const Home2 = () => {
                               <h3 className="text-white font-semibold text-xl md:text-2xl">
                                 {v.title}
                               </h3>
-                            </div>
-
-                            <span
-                              className={`material-symbols-outlined transition-transform duration-300 text-white/70 group-hover:text-white ${
-                                isOpen ? 'rotate-180' : ''
-                              }`}
-                              style={{ fontSize: '34px' }}
-                              aria-hidden
-                            >
-                              expand_more
                             </span>
-                          </button>
+                          </AccordionHeader>
 
-                          <div
-                            className={`grid transition-[grid-template-rows] duration-150 ease-in-out will-change-[grid-template-rows] ${
-                              isOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'
-                            }`}
-                          >
-                            <div className="overflow-hidden">
-                              <div className="pb-8 md:pb-10 pl-12 md:pl-16">
-                                <p
-                                  className={`text-white/70 leading-relaxed text-lg md:text-xl max-w-5xl transition-all duration-150 ease-in-out will-change-[transform,opacity] ${
-                                    isOpen
-                                      ? 'opacity-100 translate-y-0'
-                                      : 'opacity-0 -translate-y-1'
-                                  }`}
-                                >
-                                  {v.body}
-                                </p>
-                              </div>
+                          <AccordionPanel className="overflow-hidden transition-[max-height] duration-300 ease-out">
+                            <div className="pb-8 md:pb-10 pl-12 md:pl-16">
+                              <p className="text-white/70 leading-relaxed text-lg md:text-xl max-w-5xl">
+                                {v.body}
+                              </p>
                             </div>
-                          </div>
-                        </div>
+                          </AccordionPanel>
+                        </AccordionItem>
                       </Reveal>
                     );
                   })}
-                </div>
+                </SmoothAccordion>
               </Reveal>
             </div>
           </div>

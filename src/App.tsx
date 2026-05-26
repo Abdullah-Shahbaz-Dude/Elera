@@ -38,6 +38,7 @@ import MindSyncIdea from './pages/our-ideas/MindSync';
 import DigitalBiasImpactAssessment from './pages/our-ideas/DigitalBiasImpactAssessment';
 import OurOfferMindSync from './pages/OurOfferMindSync';
 import MindSyncForSchools from './pages/MindSyncForSchools';
+import MindSyncForParents from './pages/MindSyncForParents';
 import Login from './components/Login';
 import Signup from './components/Signup';
 import Home2 from './pages/Home2';
@@ -138,10 +139,7 @@ function AppContent() {
           element={<ComingSoon title="Future Sync" />}
         />
         <Route path="/mind-sync-schools" element={<MindSyncForSchools />} />
-        <Route
-          path="/mind-sync-parents"
-          element={<ComingSoon title="Mind Sync for Parents" />}
-        />
+        <Route path="/mind-sync-parents" element={<MindSyncForParents />} />
         <Route
           path="/mind-sync-school-discovery-call"
           element={<ComingSoon title="Mind Sync School Discovery Call" />}

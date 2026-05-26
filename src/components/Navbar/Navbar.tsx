@@ -133,7 +133,15 @@ const Navbar: React.FC = () => {
                                 : 'text-white/80 hover:text-white'
                           }`}
                         >
-                          <span className="relative z-10">{link.label}</span>
+                          <span className="relative z-10 inline-flex items-center gap-1">
+                            {link.label}
+                            <span
+                              className="material-symbols-outlined text-[18px] leading-none text-current/80 transition-transform duration-200 group-hover:rotate-180"
+                              aria-hidden
+                            >
+                              expand_more
+                            </span>
+                          </span>
                           <span
                             className={`absolute bottom-0 left-0 h-0.5 w-full origin-left scale-x-0 rounded-full transition-transform duration-300 ease-out ${
                               isActive(link.path)
@@ -283,7 +291,15 @@ const Navbar: React.FC = () => {
                                 : 'text-white/80 hover:text-white hover:bg-gradient-to-r hover:from-primary-blue-start/10 hover:to-primary-blue-end/10'
                           }`}
                         >
-                          <span className="relative z-10">{link.label}</span>
+                          <span className="relative z-10 inline-flex items-center gap-1">
+                            {link.label}
+                            <span
+                              className="material-symbols-outlined text-[20px] leading-none text-current/80"
+                              aria-hidden
+                            >
+                              expand_more
+                            </span>
+                          </span>
                           {isActive(link.path) && (
                             <span className="absolute left-0 top-0 h-full w-1 rounded-r-full bg-gradient-blue" />
                           )}
