@@ -163,15 +163,24 @@ const MindSyncForSchools = () => {
             <SmoothAccordion multiple className="space-y-4">
               <AccordionItem
                 value="schools-more"
-                className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-sm"
+                className="border-b border-white/10"
               >
-                <AccordionHeader className="group flex w-full items-center justify-between gap-6 px-5 py-5 md:px-6 md:py-6 text-left">
-                  <span className="text-base md:text-lg font-semibold text-white">
-                    Schools are being asked to do more, with less, faster.
+                <AccordionHeader className="group flex w-full items-center justify-between gap-4 py-6 text-left">
+                  <span className="flex min-w-0 items-center gap-4">
+                    <span
+                      className="material-symbols-outlined text-[#60A5FA]"
+                      aria-hidden
+                      style={{ fontSize: '22px' }}
+                    >
+                      psychology
+                    </span>
+                    <span className="min-w-0 text-base md:text-lg font-semibold text-white">
+                      Schools are being asked to do more, with less, faster.
+                    </span>
                   </span>
                 </AccordionHeader>
                 <AccordionPanel className="overflow-hidden transition-[max-height] duration-300 ease-out">
-                  <div className="px-5 pb-6 md:px-6">
+                  <div className="pb-6 pl-10 md:pl-11">
                     <ul className="space-y-3 pl-6">
                       <li className="text-sm md:text-base text-white/75 leading-relaxed list-disc">
                         68% of primary teachers and 61% of secondary teachers
@@ -208,16 +217,25 @@ const MindSyncForSchools = () => {
 
               <AccordionItem
                 value="reforms"
-                className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-sm"
+                className="border-b border-white/10"
               >
-                <AccordionHeader className="group flex w-full items-center justify-between gap-6 px-5 py-5 md:px-6 md:py-6 text-left">
-                  <span className="text-base md:text-lg font-semibold text-white">
-                    What the 2026 Special Educational Need (SEND) reforms mean
-                    for schools.
+                <AccordionHeader className="group flex w-full items-center justify-between gap-4 py-6 text-left">
+                  <span className="flex min-w-0 items-center gap-4">
+                    <span
+                      className="material-symbols-outlined text-[#60A5FA]"
+                      aria-hidden
+                      style={{ fontSize: '22px' }}
+                    >
+                      bolt
+                    </span>
+                    <span className="min-w-0 text-base md:text-lg font-semibold text-white">
+                      What the 2026 Special Educational Need (SEND) reforms mean
+                      for schools.
+                    </span>
                   </span>
                 </AccordionHeader>
                 <AccordionPanel className="overflow-hidden transition-[max-height] duration-300 ease-out">
-                  <div className="px-5 pb-6 md:px-6">
+                  <div className="pb-6 pl-10 md:pl-11">
                     <ul className="space-y-3 pl-6">
                       <li className="text-sm md:text-base text-white/75 leading-relaxed list-disc">
                         The white paper proposes shifting the emphasis of SEND

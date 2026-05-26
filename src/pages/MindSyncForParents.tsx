@@ -104,9 +104,6 @@ const MindSyncForParents = () => {
 
         <div className="relative container mx-auto px-4 md:px-6 z-10 py-16 md:py-20">
           <div className="max-w-4xl">
-            <p className="inline-flex items-center rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-xs font-semibold tracking-[0.22em] uppercase text-white/85">
-              Personal
-            </p>
             <h1 className="mt-5 text-4xl md:text-6xl font-bold tracking-tight leading-tight">
               <span
                 className="bg-clip-text text-transparent"
@@ -173,17 +170,26 @@ const MindSyncForParents = () => {
             <SmoothAccordion defaultValue="behaviour-drop" multiple={false}>
               <AccordionItem
                 value="behaviour-drop"
-                className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-sm"
+                className="border-b border-white/10"
               >
-                <AccordionHeader className="group flex w-full items-center justify-between gap-6 px-5 py-5 md:px-6 md:py-6 text-left">
-                  <span className="text-base md:text-lg font-semibold text-white">
-                    When Behaviour Is Misunderstood, Managing behaviour can
-                    become harder
+                <AccordionHeader className="group flex w-full items-center justify-between gap-4 py-6 text-left">
+                  <span className="flex min-w-0 items-center gap-4">
+                    <span
+                      className="material-symbols-outlined text-[#60A5FA]"
+                      aria-hidden
+                      style={{ fontSize: '22px' }}
+                    >
+                      visibility
+                    </span>
+                    <span className="min-w-0 text-base md:text-lg font-semibold text-white">
+                      When Behaviour Is Misunderstood, Managing behaviour can
+                      become harder
+                    </span>
                   </span>
                 </AccordionHeader>
 
                 <AccordionPanel className="overflow-hidden transition-[max-height] duration-300 ease-out">
-                  <div className="px-5 pb-6 md:px-6">
+                  <div className="pb-6 pl-10 md:pl-11">
                     <ul className="space-y-3 pl-6 list-disc marker:text-[#60A5FA] marker:font-semibold marker:text-lg">
                       <li className="text-sm md:text-base text-white/75 leading-7">
                         Up to 70% of parents report regular conflict at home
