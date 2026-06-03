@@ -6,9 +6,10 @@
   body {
     background-color: #121419;
     @apply text-white;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto',
-      'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans',
-      'Helvetica Neue', sans-serif;
+    font-family:
+      -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+      'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+      sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
@@ -26,6 +27,27 @@
   }
   100% {
     transform: translateX(100%);
+  }
+}
+
+@keyframes step-enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.step-transition {
+  animation: step-enter 220ms ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .step-transition {
+    animation: none;
   }
 }
 
@@ -50,7 +72,7 @@
   content: '';
   position: absolute;
   inset: -1px;
-  background: linear-gradient(to right, #7C3AED, #3B82F6);
+  background: linear-gradient(to right, #7c3aed, #3b82f6);
   z-index: -1;
   border-radius: inherit;
   opacity: 0.5;
@@ -65,9 +87,18 @@
   box-shadow: 0 10px 25px -5px rgba(124, 58, 237, 0.2);
 }
 .gradient-bg {
-  background-color: #0B0B13;
-  background-image: radial-gradient(circle at top right, rgba(124, 58, 237, 0.06), transparent 50%),
-    radial-gradient(circle at bottom left, rgba(59, 130, 246, 0.05), transparent 50%);
+  background-color: #0b0b13;
+  background-image:
+    radial-gradient(
+      circle at top right,
+      rgba(124, 58, 237, 0.06),
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at bottom left,
+      rgba(59, 130, 246, 0.05),
+      transparent 50%
+    );
 }
 .dashboard-card {
   border-color: rgba(255, 255, 255, 0.08);
@@ -86,7 +117,9 @@
   border-radius: 17px;
   padding: 1px;
   background: linear-gradient(45deg, #8b5cf6, #3b82f6);
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
   pointer-events: none;
@@ -98,12 +131,21 @@
   border-color: rgba(255, 255, 255, 0.12);
 }
 .material-symbols-outlined {
-  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  font-variation-settings:
+    'FILL' 0,
+    'wght' 400,
+    'GRAD' 0,
+    'opsz' 24;
 }
 
 /* Module catalog */
 .module-card-overlay {
-  background: linear-gradient(to top, rgba(15, 23, 42, 0.9) 0%, rgba(15, 23, 42, 0.4) 50%, transparent 100%);
+  background: linear-gradient(
+    to top,
+    rgba(15, 23, 42, 0.9) 0%,
+    rgba(15, 23, 42, 0.4) 50%,
+    transparent 100%
+  );
   backdrop-filter: blur(4px);
 }
 .progress-glow {
@@ -127,7 +169,11 @@
 
 /* Lesson view – active lesson in syllabus nav */
 .lesson-active {
-  background: linear-gradient(90deg, rgba(99, 102, 241, 0.15) 0%, transparent 100%);
+  background: linear-gradient(
+    90deg,
+    rgba(99, 102, 241, 0.15) 0%,
+    transparent 100%
+  );
   border-left: 3px solid #6366f1;
 }
 
@@ -141,7 +187,7 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: url("https://www.transparenttextures.com/patterns/carbon-fibre.png");
+  background: url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
   opacity: 0.1;
   pointer-events: none;
 }
