@@ -58,26 +58,23 @@ export interface MindSyncModule {
 
 export const MIND_SYNC_MODULE_01: MindSyncModule = {
   id: '1',
-  title: 'Managing your own ADHD, whilst parenting a child with ADHD',
-  subtitle: 'When You Have ADHD Yourself',
-  summary:
-    'Spotting your own reactions, and staying calm when both ADHD brains can clash',
+  title: 'MODULE 1 – CATCH THE RISE',
+  subtitle: 'Parenting with ADHD when your child has ADHD too',
+  summary: '',
   about: [
-    "If you have ADHD and you're raising a child with ADHD, this module is for you. It's about a very specific dynamic that can often get overlooked.",
-    "This isn't a module about controlling your child's behaviour. It's about recognising your own ADHD response as it rises, before situations can escalate.",
+    "If you have ADHD and you're raising a child with ADHD, this module is for you. It's about the three seconds before you respond. Same child, same behaviour, different read, completely different outcome. When two ADHD nervous systems are in the same room, the cycle can escalate faster than either of you can choose.",
   ],
   learningOutcomes: [
-    'Recognise the early signs that your own ADHD nervous system is starting to become triggered.',
-    'Understand why two ADHD brains can escalate so quickly when one is already overloaded.',
-    'Use a simple script that can calm the situation for you and your child',
-    'Know exactly what to do (and what to avoid) in a moments where conflict may occur',
-    'Repair after the moments that go wrong, without damaging your authority or the relationship.',
+    'Recognise the early signs that your own ADHD nervous system is starting to fire.',
+    'Understand why two ADHD brains escalate so quickly under pressure.',
+    'Use a simple three-step technique in real time.',
+    'Repair after the moments that go wrong, without damaging the relationship.',
   ],
   structure: [
-    "Part 1 - Watch A short video introducing the core idea, with a real family scenario you'll likely recognise.",
-    'Part 2 - Learn The science and the technique, broken down clearly. No jargon. Real scripts you can use today.',
-    "Part 3 - Practice Four interactive scenarios where you'll be tested on what you've learned. Each scenario gives feedback on every option you choose, so you understand why some responses work better than others.",
-    ' Take away A one-page summary, plus optional reflection questions to deepen the learning.',
+    'Part 1, Watch. A two-minute video set in a real family scene.',
+    'Part 2, Learn. The brain science and the technique.',
+    'Part 3, Practise. Four scenarios with feedback.',
+    'Part 4, Take-away. A one-page card for your phone.',
   ],
   videoScriptScene: {
     bullets: [

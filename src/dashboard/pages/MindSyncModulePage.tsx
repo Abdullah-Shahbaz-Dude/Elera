@@ -324,18 +324,18 @@ export default function MindSyncModulePage() {
 
   return (
     <div className="flex flex-col min-h-full bg-[#020617] text-white">
-      <header className="relative shrink-0 min-h-[400px] flex flex-col justify-end p-24 overflow-hidden">
+      <header className="relative shrink-0 min-h-[200px] md:min-h-[240px] flex flex-col justify-end p-6 md:p-8 overflow-hidden">
         <div className="absolute inset-0 z-0">
           <img
             src={image}
             alt="Mind Sync"
-            className="w-full h-full object-cover object-top"
+            className="w-full h-full object-cover object-[center_7%]"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/60 to-transparent" />
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-black/10" />
           <div className="absolute inset-0 hero-gradient opacity-50" />
         </div>
-        <div className="absolute top-6 left-10 flex flex-col gap-2">
+        <div className="absolute top-3 left-4 md:left-6 flex flex-col gap-2">
           <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/70">
             Mind Sync - Training Module 01
           </span>
@@ -352,37 +352,32 @@ export default function MindSyncModulePage() {
           </Link>
         </div>
 
-        <div className="absolute top-6 right-10 text-right">
+        <div className="absolute top-3 right-4 md:right-6 text-right">
           <span className="text-xs text-white/70 font-medium">
             {activeItem.label}
           </span>
         </div>
 
-        <div className="relative z-10 max-w-4xl mt-10">
-          {active === 'introduction' ? (
-            <>
-              <h1 className="text-4xl font-black text-white mb-2 leading-tight tracking-tight">
-                Module 1
-              </h1>
-              <h2 className="text-lg text-white/90 font-semibold mb-4">
-                Managing your own ADHD, whilst parenting a child with ADHD
-              </h2>
-              <p className="text-lg text-white/80 max-w-2xl font-light leading-relaxed whitespace-pre-line">
+        <div className="relative z-10 max-w-4xl mt-6">
+          <>
+            <h1 className="text-2xl md:text-3xl font-black text-white mb-1 leading-tight tracking-tight">
+              {MIND_SYNC_MODULE_01.title}
+            </h1>
+            <h2 className="text-sm md:text-base text-white/90 font-semibold mb-2">
+              {MIND_SYNC_MODULE_01.subtitle}
+            </h2>
+            {active === 'introduction' ? (
+              <p className="text-sm md:text-base text-white/80 max-w-2xl font-light leading-relaxed whitespace-pre-line">
                 {MIND_SYNC_MODULE_01.summary}
               </p>
-            </>
-          ) : (
-            heroCopy && (
-              <>
-                {/* <h1 className="text-4xl font-black text-white mb-2 leading-tight tracking-tight">
-                  {heroCopy.title}
-                </h1> */}
-                <p className="text-lg text-white/80 max-w-3xl font-normal leading-relaxed whitespace-pre-line">
+            ) : (
+              heroCopy && (
+                <p className="text-sm md:text-base text-white/80 max-w-3xl font-normal leading-relaxed whitespace-pre-line">
                   {heroCopy.body}
                 </p>
-              </>
-            )
-          )}
+              )
+            )}
+          </>
         </div>
         <div className="absolute right-0 bottom-0 w-1/3 h-full overflow-hidden pointer-events-none opacity-40">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[480px] h-[480px] bg-white/10 rounded-full blur-[120px]" />
@@ -390,11 +385,11 @@ export default function MindSyncModulePage() {
       </header>
 
       <main className="flex w-full">
-        <div className="w-3/4 flex flex-col p-8 space-y-10">
+        <div className="w-3/4 flex flex-col p-6 space-y-7">
           {active === 'introduction' && (
             <section className="space-y-6">
               <div
-                className="glass-panel rounded-2xl border border-white/10 p-8 md:p-10 transition-all hover:bg-white/[0.04] hover:border-white/20 hover:ring-1 hover:ring-white/10 hover:shadow-[0_12px_40px_rgba(0,0,0,0.35)] cursor-pointer"
+                className="glass-panel rounded-2xl border border-white/10 p-5 md:p-6 transition-all hover:bg-white/[0.04] hover:border-white/20 hover:ring-1 hover:ring-white/10 hover:shadow-[0_12px_40px_rgba(0,0,0,0.35)] cursor-pointer"
                 onClick={() => {
                   setIsAboutOpen((v) => !v);
                 }}
@@ -408,7 +403,7 @@ export default function MindSyncModulePage() {
                       setIsAboutOpen((v) => !v);
                     }}
                   >
-                    <h3 className="text-2xl font-bold text-white">
+                    <h3 className="text-lg md:text-xl font-bold text-white">
                       About this module
                     </h3>
                     <span
@@ -423,15 +418,15 @@ export default function MindSyncModulePage() {
                   </button>
 
                   {isAboutOpen && (
-                    <div className="pt-4">
+                    <div className="pt-3">
                       <div className="text-slate-300 leading-relaxed whitespace-pre-line space-y-4">
                         {MIND_SYNC_MODULE_01.about.map((p) => (
                           <p key={p}>{p}</p>
                         ))}
                       </div>
 
-                      <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div className="w-full h-52 rounded-2xl bg-cover overflow-hidden shadow-2xl relative">
+                      <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="w-full h-44 rounded-2xl bg-cover overflow-hidden shadow-2xl relative">
                           <img
                             alt="Mind Sync"
                             src={aboutimage1}
@@ -439,7 +434,7 @@ export default function MindSyncModulePage() {
                           />
                           <div className="absolute inset-0 bg-gradient-to-tr from-black/40 via-transparent to-black/10" />
                         </div>
-                        <div className="w-full h-52 rounded-2xl bg-cover overflow-hidden shadow-2xl relative">
+                        <div className="w-full h-44 rounded-2xl bg-cover overflow-hidden shadow-2xl relative">
                           <img
                             alt="Mind Sync"
                             src={aboutImage}
@@ -454,7 +449,7 @@ export default function MindSyncModulePage() {
               </div>
 
               <div
-                className="glass-panel rounded-2xl border border-white/10 p-8 md:p-10 transition-all hover:bg-white/[0.04] hover:border-white/20 hover:ring-1 hover:ring-white/10 hover:shadow-[0_12px_40px_rgba(0,0,0,0.35)] cursor-pointer"
+                className="glass-panel rounded-2xl border border-white/10 p-5 md:p-6 transition-all hover:bg-white/[0.04] hover:border-white/20 hover:ring-1 hover:ring-white/10 hover:shadow-[0_12px_40px_rgba(0,0,0,0.35)] cursor-pointer"
                 onClick={() => {
                   setIsOutcomesOpen((v) => !v);
                 }}
@@ -468,7 +463,7 @@ export default function MindSyncModulePage() {
                       setIsOutcomesOpen((v) => !v);
                     }}
                   >
-                    <h3 className="text-2xl font-bold text-white">
+                    <h3 className="text-lg md:text-xl font-bold text-white">
                       Learning Outcomes
                     </h3>
                     <span
@@ -483,7 +478,7 @@ export default function MindSyncModulePage() {
                   </button>
 
                   {isOutcomesOpen && (
-                    <div className="pt-4">
+                    <div className="pt-3">
                       <ul className="space-y-3">
                         {MIND_SYNC_MODULE_01.learningOutcomes.map((item, i) => (
                           <li key={i} className="flex gap-3 text-slate-300">
@@ -504,36 +499,36 @@ export default function MindSyncModulePage() {
                   How this module is structured
                 </h3>
 
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                   {[
                     {
                       part: 'Part 01',
                       title: 'Watch',
-                      desc: "A short video introducing the core idea, with a real family scenario you'll likely recognise.",
+                      desc: 'A two-minute video set in a real family scene.',
                       bg: structureWatchImage,
                     },
                     {
                       part: 'Part 02',
                       title: 'Learn',
-                      desc: 'The science and the technique, broken down clearly. No jargon. Real scripts you can use today.',
+                      desc: 'The brain science and the technique.',
                       bg: structureLearnImage,
                     },
                     {
                       part: 'Part 03',
                       title: 'Practice',
-                      desc: "Four interactive scenarios where you'll be tested on what you've learned. Each scenario gives feedback on every option you choose, so you understand why some responses work better than others.",
+                      desc: 'Four scenarios with feedback.',
                       bg: structurePracticeImage,
                     },
                     {
                       part: 'Part 04',
                       title: 'Take away',
-                      desc: 'A one-page summary, plus optional reflection questions to deepen the learning.',
+                      desc: 'A one-page card for your phone.',
                       bg: structureTakeawayImage,
                     },
                   ].map((s) => (
                     <div
                       key={s.part}
-                      className="glass-panel rounded-2xl border border-white/10 p-6 relative overflow-hidden  "
+                      className="glass-panel rounded-2xl border border-white/10 p-4 min-h-[132px] md:min-h-[230px] flex flex-col relative overflow-hidden"
                     >
                       <div className="absolute inset-0 opacity-[0.24]">
                         <img
@@ -543,11 +538,13 @@ export default function MindSyncModulePage() {
                         />
                       </div>
                       <div className="absolute inset-0 " />
-                      <div className="text-[12px] text-white mb-2 uppercase tracking-widest">
+                      <div className="text-[11px] text-white mb-1 uppercase tracking-widest">
                         {s.part}
                       </div>
                       <div className="text-white font-semibold">{s.title}</div>
-                      <div className="text-xs text-white mt-2">{s.desc}</div>
+                      <div className="text-[11px] text-white mt-1 leading-5">
+                        {s.desc}
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -556,56 +553,52 @@ export default function MindSyncModulePage() {
           )}
 
           {active === 'video' && (
-            <section className="space-y-8">
-              <div className="space-y-6">
+            <section className="space-y-5">
+              <div className="space-y-4">
                 <VideoLessonPlayer
                   title={`Video: ${MIND_SYNC_MODULE_01.title}`}
                   videoUrl="https://drive.google.com/file/d/1IxkgTtoru399RxckLlkXpB7vg1dUMDkD/view?usp=drive_link"
+                  className="aspect-auto h-[64vh] md:h-[68vh]"
                 />
 
-                <section className="glass-panel rounded-2xl overflow-hidden border border-white/10">
-                  <div className="px-6 py-5 border-b border-white/5 flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <span className="material-symbols-outlined text-primary">
-                        description
-                      </span>
-                      <h4 className="text-lg font-bold text-white">
-                        Video Script
-                      </h4>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <div className="text-[10px] uppercase tracking-[0.2em] text-white/50">
-                        Full video script
+                {isScriptOpen && (
+                  <div className="fixed inset-0 z-[80]">
+                    <button
+                      type="button"
+                      className="absolute inset-0 bg-black/50"
+                      aria-label="Close transcript"
+                      onClick={() => setIsScriptOpen(false)}
+                    />
+                    <aside className="absolute right-0 top-0 h-full w-full max-w-[520px] bg-[#020617]/95 backdrop-blur-xl border-l border-white/10 shadow-[0_30px_120px_rgba(0,0,0,0.7)]">
+                      <div className="flex items-center justify-between px-5 py-4 border-b border-white/10">
+                        <div className="flex items-center gap-3">
+                          <span className="material-symbols-outlined text-primary">
+                            description
+                          </span>
+                          <div className="text-sm font-bold text-white">
+                            Video transcript
+                          </div>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setIsScriptOpen(false)}
+                          className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-white/5 transition-colors text-white/70 hover:text-white"
+                          aria-label="Close transcript"
+                        >
+                          <span className="material-symbols-outlined">
+                            close
+                          </span>
+                        </button>
                       </div>
-                      <button
-                        type="button"
-                        onClick={() => setIsScriptOpen((o) => !o)}
-                        className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-white/5 transition-colors text-white/60 hover:text-white"
-                        aria-label={
-                          isScriptOpen ? 'Collapse script' : 'Expand script'
-                        }
-                      >
-                        <span className="material-symbols-outlined">
-                          {isScriptOpen ? 'expand_less' : 'expand_more'}
-                        </span>
-                      </button>
-                    </div>
-                  </div>
 
-                  <div
-                    className={`transition-[max-height,opacity] duration-300 ease-out ${
-                      isScriptOpen
-                        ? 'max-h-[520px] opacity-100'
-                        : 'max-h-0 opacity-0'
-                    } overflow-hidden`}
-                  >
-                    <div className="max-h-[520px] overflow-y-auto px-6 md:px-10 py-8 space-y-6 custom-scrollbar">
-                      <div className="text-sm text-slate-300 leading-relaxed whitespace-pre-line">
-                        {MIND_SYNC_MODULE_01.videoScriptScene.fullScript}
+                      <div className="h-[calc(100vh-65px)] overflow-y-auto px-5 md:px-8 py-5 custom-scrollbar">
+                        <div className="text-sm text-slate-300 leading-relaxed whitespace-pre-line">
+                          {MIND_SYNC_MODULE_01.videoScriptScene.fullScript}
+                        </div>
                       </div>
-                    </div>
+                    </aside>
                   </div>
-                </section>
+                )}
               </div>
             </section>
           )}
@@ -1606,6 +1599,20 @@ export default function MindSyncModulePage() {
             </h2>
             <p className="text-xs text-slate-400">{TOC.length} sections</p>
           </div>
+          {active === 'video' && (
+            <div className="px-6 py-4 border-b border-white/5">
+              <button
+                type="button"
+                onClick={() => setIsScriptOpen(true)}
+                className="w-full inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/[0.03] px-4 py-2 text-sm font-semibold text-white hover:bg-white/[0.06] hover:border-white/20 transition-colors"
+              >
+                <span className="material-symbols-outlined text-primary text-[18px]">
+                  description
+                </span>
+                Video transcript
+              </button>
+            </div>
+          )}
           <div className="flex-1 custom-scrollbar">
             {TOC.map((item) => {
               const isCurrent = active === item.key;
