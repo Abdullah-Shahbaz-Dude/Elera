@@ -113,7 +113,7 @@ export const MIND_SYNC_MODULE_01: MindSyncModule = {
       },
     ],
     honestPart:
-      "You won't catch the rise every time. Nobody does. The aim isn't 100%. It's increasing the percentage of times you catch it from where it is now. If you catch it once a day in the first week, that's progress. If you catch it three times a day by the end of the month, you're well on your way.",
+      "You will not catch the rise every time. The aim isn't 100%. If you catch it once a day in the first week, that's progress. Three times a day by the end of the month, you're well on your way.",
     coRegulationScript: {
       heading: 'The co-regulation script',
       rows: [

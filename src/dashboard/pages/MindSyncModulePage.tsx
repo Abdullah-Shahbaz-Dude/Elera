@@ -45,24 +45,23 @@ interface PracticeScenario {
 
 const TOC: TocItem[] = [
   { key: 'introduction', label: 'Introduction' },
-  { key: 'video', label: 'Part 1, Watch' },
+  { key: 'video', label: 'Watch' },
   { key: 'learn', label: 'Learn' },
   { key: 'practice', label: 'Practice' },
   { key: 'takeaway', label: 'Take away' },
-  { key: 'reflection', label: 'Optional reflection' },
 ];
 
 const PRACTICE_SCENARIOS: PracticeScenario[] = [
   {
-    title: 'Scenario 1 - The Breakfast Storm',
+    title: 'Scenario 1, The Breakfast Storm',
     situation:
-      "It's 7:48 on a school morning. Your son needs to leave at 8:00. He's still in his pyjamas. You've reminded him three times. The fourth time, you say it slightly louder. He snaps back: \"I HEARD YOU, GOD!\" and slams his cereal bowl down hard enough that milk splashes onto the table.\nYou feel the heat rise immediately. You have about three seconds before whatever happens next, happens.",
+      "It's 7:48 on a school morning. Your son needs to leave at 8:00. He's still in his pyjamas. You've reminded him three times. The fourth time, your voice is slightly louder. He snaps: \"I HEARD YOU, GOD!\" and slams his cereal bowl down hard enough that milk splashes on the table. You feel the heat rise immediately. You have about three seconds.",
     question: 'What would you do?',
     options: [
       {
         key: 'A',
         title:
-          "Tell him firmly that's not how we speak to each other in this house, and add a consequence maybe no phone tonight.",
+          "Tell him firmly that's not how we speak in this house, and add a consequence, maybe no phone tonight.",
         body: '',
       },
       {
@@ -85,30 +84,30 @@ const PRACTICE_SCENARIOS: PracticeScenario[] = [
     ],
     feedback: {
       A: {
-        title: 'Option A - Looks reasonable, but quietly backfires',
-        body: "This response is firm and consistent both good things in principle. But two things are working against it. First, you're delivering a consequence while your own nervous system is firing, which usually carries more frustration than you intend. Second, the lesson he'll absorb in this state is the emotion, not the rule. He'll remember you were angry, not why. And in the heat of a school morning, you'll often end up not following through on the phone consequence anyway, which quietly teaches him the rule was negotiable.",
+        title: 'Option A, Looks reasonable, almost always backfires',
+        body: "Firm and consistent, both good things in principle. But you're delivering a consequence while your own nervous system is firing, which usually carries more frustration than you intend. The lesson he'll absorb is the emotion, not the rule. He'll remember you were angry, not why. And in the heat of a school morning, you'll often not follow through on the phone consequence, which quietly teaches him the rule was negotiable.",
       },
       B: {
         title: 'Option B - Almost guaranteed to escalate',
-        body: "This is the most natural ADHD-on-ADHD response. His tone fired your nervous system, and yours fires back at the same volume. He doesn't have the brain space right now to receive the message; he only has space to react to your tone. Within 30 seconds, you're both shouting, and the morning is gone. This isn't a bad parenting choice it's just the cycle the module is teaching you to interrupt.",
+        body: "The most natural ADHD-on-ADHD response. His tone fired your nervous system, and yours fires back at the same volume. He doesn't have the brain space right now to receive the message; he only has space to react to your tone. Within 30 seconds you're both shouting and the morning is gone. This isn't bad parenting, it's just the cycle the module is teaching you to interrupt.",
       },
       C: {
         title: 'Option C - This is the technique in action',
-        body: 'You caught the rise (the breath, the deliberate placing of an object). You acknowledged him without rewarding the tone ("I get it"). You set a clear next step that doesn\'t require him to apologise on the spot ("we\'ll talk in the car"). And you removed yourself from the heat without disappearing. Most importantly: you didn\'t try to address the rudeness in the moment  you left that for the car, when both nervous systems will have dropped. This is exactly what Catch the Rise looks like under pressure.',
+        body: 'You caught the rise. You acknowledged him without rewarding the tone ("I get it"). You set a clear next step that doesn\'t require him to apologise on the spot ("we\'ll talk in the car"). And you removed yourself from the heat without disappearing. Most importantly, you didn\'t try to address the rudeness in the moment, you left that for the car, when both nervous systems will have dropped.',
       },
       D: {
         title: 'Option D - Better than B, but missing something',
-        body: 'Walking out is better than escalating, and shows you have some awareness of needing to step away. But silence without acknowledgement can land as withdrawal of love, especially for an ADHD teen. He\'s already in a flood state, and your silent exit can leave him feeling abandoned, which often causes the meltdown to grow rather than fade. The small phrase before leaving ("I get it. I\'ll meet you in the car") makes the difference between a useful pause and a cold shutdown.',
+        body: 'Walking out is better than escalating. But silence without acknowledgement can land as withdrawal of love, especially for an ADHD teen. He\'s already in a flood state, and a silent exit can leave him feeling abandoned, which often grows the meltdown rather than fades it. The small phrase before leaving ("I get it. I\'ll meet you in the car") is the difference between a useful pause and a cold shutdown.',
       },
     },
     point:
-      "Notice how the difference between the worst and best options isn't whether you're firm or lenient. It's whether you spoke from a regulated state or a flooded one. Same words, said from a different nervous system, land completely differently to him.",
+      "The difference between the worst and best options isn't whether you're firm or lenient. It's whether you spoke from a regulated state or a flooded one. Same words, different nervous system, completely different landing.",
     bestOption: 'C',
   },
   {
-    title: 'Scenario 2 — The Saturday Build-Up',
+    title: 'Scenario 2, The Saturday Build-Up',
     situation:
-      "It's a slow Saturday. Your son has been gaming for about two hours. You've been doing housework. He's asked you the same question three times in 20 minutes: \"Can my friend come over?\" Each time you've said \"maybe later, I need to think.\" The third time, your voice has a slight edge to it.\nYou haven't snapped yet, but you can feel something building. Your shoulders are up. Your jaw is tight. You're aware you're getting close to your limit.",
+      'Slow Saturday. Your son has been gaming for about two hours. You\'ve been doing housework. He\'s asked you the same question three times in 20 minutes: "Can my friend come over?" Each time you\'ve said "maybe later, I need to think." The third time, your voice has a slight edge. You can feel something building. Shoulders up. Jaw tight. Close to your limit.',
     question: "What's the most useful thing to do right now?",
     options: [
       {
@@ -120,54 +119,54 @@ const PRACTICE_SCENARIOS: PracticeScenario[] = [
       {
         key: 'B',
         title:
-          'Snap at him: "I said LATER, can you stop asking?"  at least it\'ll get him to stop.',
+          'Snap at him: "I said LATER, can you stop asking?" At least it\'ll get him to stop.',
         body: '',
       },
       {
         key: 'C',
         title:
-          "Pause what you're doing, find him, and say: \"I noticed I'm getting a bit short. Let's both have a 20-minute break I need to reset. Then I'll give you a real answer.\"",
+          "Pause, find him, and say: \"I noticed I'm getting a bit short. Let's both have a 20-minute break, I need to reset. Then I'll give you a real answer.\"",
         body: '',
       },
       {
         key: 'D',
         title:
-          'Avoid him for a while  go into a different part of the house and hope the urge passes.',
+          'Avoid him for a while, go into a different part of the house and hope the urge passes.',
         body: '',
       },
     ],
     feedback: {
       A: {
-        title: 'Option A — The most common mistake',
-        body: "Pushing through is what most parents do, and it's how the snap eventually happens. Your nervous system has been signalling for the last 20 minutes that it needs a reset, but you've been ignoring those signals because the requests felt small. ADHD nervous systems don't need a big trigger to flood they need a long enough build-up. This option doesn't cause a meltdown right now, but it makes one much more likely in the next hour.",
+        title: 'Option A, The most common mistake',
+        body: "Pushing through is what most parents do, and it's how the snap eventually happens. Your nervous system has been signalling for 20 minutes that it needs a reset, but you've been ignoring it because the requests felt small. ADHD nervous systems don't need a big trigger, they need a long enough build-up. This doesn't cause a meltdown now, but it makes one much more likely in the next hour.",
       },
       B: {
-        title: 'Option B — Predictable but costly',
-        body: "Yes, it'll get him to stop asking. It'll also damage trust in a way that takes days to repair. He didn't do anything wrong here  he asked a reasonable question three times because his ADHD brain forgets the answer when it's not given clearly. Snapping in this moment teaches him that asking you things is risky, which makes him less likely to bring real concerns to you later. The short-term win costs you the longer-term relationship.",
+        title: 'Option B, Predictable but costly',
+        body: "Yes, it'll get him to stop asking. It'll also damage trust in a way that takes days to repair. He didn't do anything wrong, he asked a reasonable question three times because his ADHD brain forgets the answer when it isn't given clearly. Snapping teaches him that asking you things is risky, which makes him less likely to bring real concerns to you later.",
       },
       C: {
-        title: 'Option C — Catching the rise before it crests',
-        body: "This is the highest-skill version of the technique. You've noticed your own state before it tipped over. You've named it without making it his fault (\"I noticed I'm getting a bit short\"). You've taken a clear, defined break with a return time. And crucially you've signalled that you're going to give him a real answer, so the question doesn't keep coming back. This kind of pre-emptive reset prevents 80% of the snaps that would otherwise happen later in the day.",
+        title: 'Option C, Catching the rise before it crests',
+        body: "The highest-skill version of the technique. You've noticed your own state before it tipped. You've named it without making it his fault. You've taken a clear, defined break with a return time. Crucially, you've signalled a real answer is coming, so the question doesn't keep coming back. This kind of pre-emptive reset prevents most of the snaps that would otherwise happen later in the day.",
       },
       D: {
-        title: 'Option D — Half right, half a missed opportunity',
-        body: 'Stepping away from a building wave is genuinely useful. But disappearing without naming it leaves him confused  and his ADHD brain will likely interpret it as something he did wrong, which can quietly increase his anxiety. The fix is small: just one sentence before you step away. "I\'m going to take a quick reset, back in 20 minutes." That sentence transforms avoidance into intentional self-care, and teaches him that adults take breaks too.',
+        title: 'Option D, Half right, half a missed opportunity',
+        body: 'Stepping away from a building wave is genuinely useful. But disappearing without naming it leaves him confused, and his ADHD brain will likely interpret it as something he did wrong. The fix is small: one sentence before you step away. "I\'m going to take a quick reset, back in 20 minutes." That sentence transforms avoidance into intentional self-care.',
       },
     },
     point:
-      "Catching the rise isn't only about big moments. The hardest version is catching it during a slow, low-grade build-up because the body's signals are quieter and easier to ignore. Most snap moments aren't sudden. They're 20 minutes in the making.",
+      "Catching the rise isn't only about big moments. The hardest version is catching it during a slow build-up, because the body's signals are quieter and easier to ignore. Most snaps aren't sudden. They're twenty minutes in the making.",
     bestOption: 'C',
   },
   {
-    title: 'Scenario 3 — The After-the-Fact Apology',
+    title: 'Scenario 3, The After-the-Fact Apology',
     situation:
-      "You shouted at him 20 minutes ago over something minor  he forgot to feed the dog. You both know your reaction was bigger than the moment deserved. He's now in his room, headphones on, ignoring you. Your nervous system has settled. You feel guilty.",
+      "You shouted at him 20 minutes ago over something minor, he forgot to feed the dog. You both know your reaction was bigger than the moment deserved. He's now in his room, headphones on, ignoring you. Your nervous system has settled. You feel guilty.",
     question: "What's the best thing to do now?",
     options: [
       {
         key: 'A',
         title:
-          'Knock on his door, sit down, and apologise plainly: "I overreacted. The dog mattered, but not that much. I\'m sorry."',
+          'Knock, sit down, and apologise plainly: "I overreacted. The dog mattered, but not that much. I\'m sorry."',
         body: '',
       },
       {
@@ -178,8 +177,7 @@ const PRACTICE_SCENARIOS: PracticeScenario[] = [
       },
       {
         key: 'C',
-        title:
-          "Pretend it didn't happen. By tomorrow he'll have forgotten, and bringing it up will just remind him.",
+        title: "Pretend it didn't happen. By tomorrow he'll have forgotten.",
         body: '',
       },
       {
@@ -191,30 +189,30 @@ const PRACTICE_SCENARIOS: PracticeScenario[] = [
     ],
     feedback: {
       A: {
-        title: 'Option A - Repair done well',
-        body: "This is exactly what repair looks like. You're naming what happened, taking ownership without excuses, and not asking him to make you feel better about it. ADHD teens are often surprisingly forgiving when an adult repairs cleanly  because so few adults in their lives ever do. What he learns from this is that adults make mistakes, that mistakes can be acknowledged, and that the relationship survives them. That's one of the most important lessons you can model.",
+        title: 'Option A, Repair done well',
+        body: "This is exactly what repair looks like. You're naming what happened, taking ownership without excuses, and not asking him to make you feel better about it. ADHD teens are often surprisingly forgiving when an adult repairs cleanly, because so few adults in their lives ever do. What he learns is that adults make mistakes, that mistakes can be acknowledged, and that the relationship survives them.",
       },
       B: {
-        title: 'Option B - Kind, but incomplete',
+        title: 'Option B, Kind, but incomplete',
         body: "The gesture is lovely. ADHD brains often respond well to small acts of care after conflict, and a snack outside the door is a quiet way of saying \"we're okay.\" But without any words, he has to guess what the gesture means. Was it a peace offering? An apology? Just dinner? In ADHD relationships, the words matter more than people realise — because his brain often won't supply the meaning if you don't. Use both: the snack and a sentence.",
       },
       C: {
-        title: 'Option C - The most damaging option here',
+        title: 'Option C, The most damaging option here',
         body: "Pretending it didn't happen is what many adults do, and it's the option that does the most long-term damage. Your son hasn't forgotten, and he won't. ADHD brains often replay difficult moments more, not less. Without repair, the moment becomes part of his quiet picture of you — that you can hurt him and not name it. Over time, this is what erodes trust. The mistake itself is far less damaging than the silence around it.",
       },
       D: {
-        title: 'Option D - An apology with a hidden cost',
-        body: 'This is the trap most parents fall into. The first sentence is genuine, but the "but" undoes the whole repair. By the time the second clause arrives, it sounds like the apology was a setup for the lecture. ADHD brains pick up that shift instantly. The clean apology has to stand alone. The conversation about feeding the dog can happen tomorrow, when it isn\'t sitting on top of repair.',
+        title: 'Option D, An apology with a hidden cost',
+        body: 'The trap most parents fall into. The first sentence is genuine, but the "but" undoes the whole repair. By the time the second clause arrives, it sounds like the apology was a setup for the lecture. ADHD brains pick up that shift instantly. The clean apology has to stand alone. The conversation about feeding the dog can happen tomorrow.',
       },
     },
     point:
-      "Catching the rise isn't a guarantee. You'll still have moments where you don't catch it. What matters almost as much as the technique is what you do afterwards. Clean repair, no 'but,' no excuses, no asking him to comfort you about it - that's what builds the kind of trust an ADHD teen needs.",
+      'You\'ll still have moments where you don\'t catch the rise. What matters almost as much as the technique is what you do afterwards. Clean repair, no "but", no asking him to comfort you about it.',
     bestOption: 'A',
   },
   {
-    title: 'Scenario 4 - The Public Moment',
+    title: 'Scenario 4, The Public Moment',
     situation:
-      "You're at a family event. A relative has just made a comment to your son about \"sitting still for once.\" He's already had a long day. You watch his face change eyes drop, shoulders tighten, jaw set. You can feel your own heat rising on his behalf. You're aware that other family members are nearby and watching.",
+      'You\'re at a family event. A relative has just made a comment to your son about "sitting still for once." He\'s already had a long day. His face changes, eyes drop, shoulders tighten, jaw set. You can feel your own heat rising on his behalf. Other family members are nearby and watching.',
     question: "What's the most useful thing to do?",
     options: [
       {
@@ -244,24 +242,24 @@ const PRACTICE_SCENARIOS: PracticeScenario[] = [
     ],
     feedback: {
       A: {
-        title: 'Option A - Right values, wrong moment',
-        body: "Your instinct to protect him is correct, and the relative's comment was unhelpful. But confronting them publicly almost always escalates the room and pulls your son into the centre of an adult conflict. He'll feel the awkwardness more than the protection. There's a place for that conversation, but it's later, in private, with the relative not at the table. In the moment, your son needs an exit, not an advocate.",
+        title: 'Option A, Right values, wrong moment',
+        body: "Your instinct to protect is correct, and the relative's comment was unhelpful. But confronting them publicly almost always escalates the room and pulls your son into the centre of an adult conflict. He'll feel the awkwardness more than the protection. There's a place for that conversation, later, in private. In the moment, your son needs an exit, not an advocate.",
       },
       B: {
-        title: 'Option B - Caring, but late',
-        body: 'Checking on him afterwards is good. But "in the moment" matters for ADHD teens. He\'s currently sitting in a public space with shame visibly rising. If you wait, he\'ll have spent another half-hour in that state, masking, holding it together. By the time you check in, he may already be too far gone to talk. The ideal version of this option is to do something small in the moment AND check in afterwards  not one or the other.',
+        title: 'Option B, Caring, but late',
+        body: 'Checking on him afterwards is good. But "in the moment" matters for ADHD teens. He\'s currently sitting in a public space with shame visibly rising. If you wait, he\'ll spend another half-hour in that state, masking, holding it together. The ideal version is to do something small in the moment AND check in afterwards.',
       },
       C: {
         title: 'Option C - Quietly excellent',
-        body: "This is the move skilled parents of ADHD teens learn over time. You've given him a low-key exit without making the moment about him. You haven't confronted the relative or made him the subject of a scene. You haven't left him sitting in shame. And you've created a private space where you can check in properly \"that comment was rubbish, are you okay?\" without any of the adults watching. He gets protection, dignity, and follow-up. That's the full package.",
+        body: "This is the move skilled parents of ADHD teens learn over time. You've given him a low-key exit without making the moment about him. You haven't confronted the relative or made him the subject of a scene. You haven't left him sitting in shame. And you've created a private space where you can check in properly. He gets protection, dignity, and follow-up.",
       },
       D: {
         title: 'Option D - Well-meaning, but exposing',
-        body: "Loud public defence is well-intentioned but often makes the moment worse for him. He didn't want a spotlight; he wanted the spotlight to go away. Defending him publicly  even warmly  keeps him in the centre of the room and turns the moment into a Big Thing rather than something he can quietly let slide. ADHD teens are often acutely aware of how much attention they're getting. Public reassurance, however well-meant, is rarely what they need.",
+        body: "Public defence is well-intentioned but often makes the moment worse for him. He didn't want a spotlight; he wanted the spotlight to go away. Defending him publicly, even warmly, keeps him in the centre of the room and turns the moment into a Big Thing rather than something he can quietly let slide.",
       },
     },
     point:
-      "Catching the rise isn't only about your own escalation. It's also about catching his early  and quietly intervening before he has to manage the situation alone. Being the parent who can lift a child out of a shameful moment without anyone else noticing is one of the most underrated skills in parenting an ADHD child.",
+      "Catching the rise isn't only about your own escalation. It's also about catching his early and quietly intervening before he has to manage the situation alone.",
     bestOption: 'C',
   },
 ];
@@ -274,7 +272,6 @@ export default function MindSyncModulePage() {
   const [isOutcomesOpen, setIsOutcomesOpen] = useState(false);
   const [isLearnHighlightOpen, setIsLearnHighlightOpen] = useState(false);
   const [isTechniqueIntroOpen, setIsTechniqueIntroOpen] = useState(false);
-  const [isCoRegIntroOpen, setIsCoRegIntroOpen] = useState(false);
   const [isPracticeIntroOpen, setIsPracticeIntroOpen] = useState(false);
   const [isSituationOpen, setIsSituationOpen] = useState(false);
   const [practiceIndex, setPracticeIndex] = useState(0);
@@ -288,14 +285,12 @@ export default function MindSyncModulePage() {
       setLearnSubPage(0);
       setIsLearnHighlightOpen(false);
       setIsTechniqueIntroOpen(false);
-      setIsCoRegIntroOpen(false);
       return;
     }
 
     setLearnSubPage(0);
     setIsLearnHighlightOpen(false);
     setIsTechniqueIntroOpen(false);
-    setIsCoRegIntroOpen(false);
   }, [active]);
 
   const activeItem = useMemo(() => {
@@ -315,7 +310,7 @@ export default function MindSyncModulePage() {
       { title: string; body: string }
     > = {
       video: {
-        title: 'Part 1, Watch',
+        title: ' Watch',
         body: '',
       },
       learn: {
@@ -340,7 +335,7 @@ export default function MindSyncModulePage() {
   }, [active]);
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#020617] text-white">
+    <div className="flex flex-col min-h-screen bg-black text-white">
       <header className="relative shrink-0 min-h-[200px] md:min-h-[240px] flex flex-col justify-end p-6 md:p-8 overflow-hidden">
         <div className="absolute inset-0 z-0">
           <img
@@ -444,7 +439,7 @@ export default function MindSyncModulePage() {
                         <span
                           className={`material-symbols-outlined transition-all ${
                             isAboutOpen
-                              ? 'text-primary rotate-180'
+                              ? 'text-[#60A5FA] rotate-180'
                               : 'text-white/70 group-hover:text-white'
                           }`}
                         >
@@ -513,7 +508,7 @@ export default function MindSyncModulePage() {
                         <span
                           className={`material-symbols-outlined transition-all ${
                             isOutcomesOpen
-                              ? 'text-primary rotate-180'
+                              ? 'text-[#60A5FA] rotate-180'
                               : 'text-white/70 group-hover:text-white'
                           }`}
                         >
@@ -544,9 +539,16 @@ export default function MindSyncModulePage() {
                   </div>
 
                   <div className="pt-2">
-                    <h3 className="text-xl font-semibold text-white mb-6 text-center">
+                    <h3 className="text-2xl font-bold text-white mb-3 text-center">
                       How this module is structured
                     </h3>
+                    <div
+                      className="h-1 w-24 md:w-32 rounded-full mx-auto mb-6"
+                      style={{
+                        background:
+                          'linear-gradient(to right, #60A5FA, #9333EA)',
+                      }}
+                    ></div>
 
                     <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                       {[
@@ -579,21 +581,21 @@ export default function MindSyncModulePage() {
                           key={s.part}
                           className="glass-panel rounded-2xl border border-white/10 p-4 min-h-[132px] md:min-h-[230px] flex flex-col relative overflow-hidden"
                         >
-                          <div className="absolute inset-0 opacity-[0.24]">
+                          <div className="absolute inset-0 opacity-[0.18]">
                             <img
                               alt=""
                               src={s.bg}
                               className="w-full h-full object-cover blur-[0.5px] brightness-[1.05] contrast-[1.05] saturate-[1.05]"
                             />
                           </div>
-                          <div className="absolute inset-0 " />
-                          <div className="text-[11px] text-white mb-1 uppercase tracking-widest">
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/35 to-black/10" />
+                          <div className="relative z-10 text-xs text-white/85 mb-1 uppercase tracking-widest">
                             {s.part}
                           </div>
-                          <div className="text-white font-semibold">
+                          <div className="relative z-10 text-white font-semibold text-base md:text-lg">
                             {s.title}
                           </div>
-                          <div className="text-[11px] text-white mt-1 leading-5">
+                          <div className="relative z-10 text-base text-white/80 mt-2 leading-6">
                             {s.desc}
                           </div>
                         </div>
@@ -606,6 +608,12 @@ export default function MindSyncModulePage() {
               {active === 'video' && (
                 <section className="space-y-5 text-lg">
                   <div className="space-y-4 px-auto px-10 pt-2 ">
+                    <p className="text-base text-white/80">
+                      A short video. You will recognise the moment. Look out for
+                      the second when the dad notices his own response rising,
+                      and chooses what to do with it.
+                    </p>
+
                     <div
                       className="border-b border-white/10 overflow-hidden cursor-pointer"
                       onClick={() => setIsVideoHelpOpen((v) => !v)}
@@ -634,7 +642,7 @@ export default function MindSyncModulePage() {
                           <span
                             className={`material-symbols-outlined transition-all ${
                               isVideoHelpOpen
-                                ? 'text-primary rotate-180'
+                                ? 'text-[#60A5FA] rotate-180'
                                 : 'text-white/70 group-hover:text-white'
                             }`}
                           >
@@ -759,7 +767,7 @@ export default function MindSyncModulePage() {
                               <span
                                 className={`material-symbols-outlined transition-all ${
                                   isLearnHighlightOpen
-                                    ? 'text-primary rotate-180'
+                                    ? 'text-[#60A5FA] rotate-180'
                                     : 'text-white/70 group-hover:text-white'
                                 }`}
                               >
@@ -848,7 +856,7 @@ export default function MindSyncModulePage() {
                                 <span
                                   className={`material-symbols-outlined transition-all ${
                                     isTechniqueIntroOpen
-                                      ? 'text-primary rotate-180'
+                                      ? 'text-[#60A5FA] rotate-180'
                                       : 'text-white/70 group-hover:text-white'
                                   }`}
                                 >
@@ -865,9 +873,10 @@ export default function MindSyncModulePage() {
                                     to. Just three seconds earlier is usually
                                     enough to change the entire outcome.
                                     <br />
-                                    It works in three short steps.
                                   </p>
-
+                                  <h1 className="text-white font-semibold text-xl md:text-2xl">
+                                    It works in three short steps.
+                                  </h1>
                                   <section className="grid grid-cols-1 gap-16 md:gap-24">
                                     {MIND_SYNC_MODULE_01.learn.steps.map(
                                       (step, idx) => {
@@ -944,10 +953,17 @@ export default function MindSyncModulePage() {
                       </div>
 
                       <div>
-                        <h3 className="text-xl font-bold text-white mb-3">
+                        <h3 className="text-2xl font-bold text-white mb-3">
                           The honest part
                         </h3>
-                        <div className="text-slate-300 leading-relaxed whitespace-pre-line">
+                        <div
+                          className="h-1 w-20 md:w-28 rounded-full mb-5"
+                          style={{
+                            background:
+                              'linear-gradient(to right, #60A5FA, #9333EA)',
+                          }}
+                        ></div>
+                        <div className="text-white/80 leading-relaxed whitespace-pre-line">
                           {MIND_SYNC_MODULE_01.learn.honestPart}
                         </div>
                       </div>
@@ -958,136 +974,117 @@ export default function MindSyncModulePage() {
                     <div>
                       <div className="text-center  space-y-4 mb-10">
                         <div className="max-w-6xl mx-auto">
-                          <div
-                            className="glass-panel rounded-2xl border border-white/10 p-6 md:p-8 transition-all hover:bg-white/[0.04] hover:border-white/20 hover:ring-1 hover:ring-white/10 hover:shadow-[0_12px_40px_rgba(0,0,0,0.35)] cursor-pointer text-left"
-                            onClick={() => setIsCoRegIntroOpen((v) => !v)}
-                          >
+                          <div className=" rounded-2xl  p-6 md:p-8 transition-all    text-left">
                             <div className="group">
-                              <button
-                                type="button"
-                                className="w-full text-left flex items-center justify-between gap-4 select-none rounded-xl -mx-2 px-2 py-2 transition-colors focus:outline-none focus-visible:outline-none"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  setIsCoRegIntroOpen((v) => !v);
+                              <div className="text-2xl font-bold text-white text-center">
+                                The co-regulation script
+                              </div>
+                              <div
+                                className="h-1 w-24 md:w-32 rounded-full mx-auto mt-3"
+                                style={{
+                                  background:
+                                    'linear-gradient(to right, #60A5FA, #9333EA)',
                                 }}
-                              >
-                                <span className="text-2xl font-bold text-white">
-                                  The co-regulation script
-                                </span>
-                                <span
-                                  className={`material-symbols-outlined transition-all ${
-                                    isCoRegIntroOpen
-                                      ? 'text-primary rotate-180'
-                                      : 'text-white/70 group-hover:text-white'
-                                  }`}
-                                >
-                                  expand_more
-                                </span>
-                              </button>
+                              ></div>
 
-                              {isCoRegIntroOpen && (
-                                <div className="pt-4">
-                                  <p className="text-slate-300 leading-relaxed">
-                                    Sometimes, even after catching the rise,
-                                    you'll need to say something out loud to
-                                    your child or to yourself. The script below
-                                    has been tested in real ADHD households.
-                                    It's not magic words; it's a structure. The
-                                    structure works because each part does a
-                                    specific thing in your child's brain.
-                                  </p>
+                              <div className="pt-4">
+                                <p className="text-slate-300 leading-relaxed">
+                                  Sometimes you'll need to say something out
+                                  loud. The script below has a structure, not
+                                  magic words. Each part does a specific thing
+                                  in your child's brain.
+                                </p>
 
-                                  <div className="relative py-10">
-                                    <div className="absolute left-1/2 -translate-x-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-indigo-500 to-emerald-400 shadow-[0_0_15px_rgba(94,114,228,0.3)]" />
+                                <div className="relative py-10">
+                                  <div className="absolute left-1/2 -translate-x-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-[#60A5FA] to-[#9333EA] shadow-[0_0_15px_rgba(96,165,250,0.22)]" />
 
-                                    <div className="space-y-10 relative z-10">
-                                      {MIND_SYNC_MODULE_01.learn.coRegulationScript.rows.map(
-                                        (row, idx) => {
-                                          const isLeft = idx % 2 === 0;
-                                          const stepImage =
-                                            idx % 2 === 0 ? aboutImage : image;
-                                          const stepNumber = String(
-                                            idx + 1
-                                          ).padStart(2, '0');
+                                  <div className="space-y-10 relative z-10">
+                                    {MIND_SYNC_MODULE_01.learn.coRegulationScript.rows.map(
+                                      (row, idx) => {
+                                        const isLeft = idx % 2 === 0;
+                                        const stepImage =
+                                          idx % 2 === 0 ? aboutImage : image;
+                                        const stepNumber = String(
+                                          idx + 1
+                                        ).padStart(2, '0');
 
-                                          return (
-                                            <div
-                                              key={row.step}
-                                              className="relative z-10 flex flex-col md:flex-row items-center justify-center"
-                                            >
-                                              <div className="md:w-1/2 md:pr-12 flex justify-end">
-                                                {isLeft ? (
-                                                  <div className="glass-panel p-6 rounded-2xl max-w-xl border border-white/10 hover:border-indigo-400/30 transition-colors">
-                                                    <span className="text-emerald-300 text-[11px] uppercase tracking-widest font-semibold mb-2 block">
-                                                      Step {stepNumber}
-                                                    </span>
-                                                    <h4 className="text-2xl font-bold text-white mb-4">
-                                                      {row.step}
-                                                    </h4>
-                                                    <div className="text-[11px] uppercase tracking-widest text-white/60 mb-2">
-                                                      What to say
-                                                    </div>
-                                                    <div className="text-slate-200 italic whitespace-pre-line mb-4">
-                                                      {row.whatToSay}
-                                                    </div>
-                                                    <div className="text-[11px] uppercase tracking-widest text-white/60 mb-2">
-                                                      Why this part matters
-                                                    </div>
-                                                    <div className="text-sm text-slate-300 leading-relaxed whitespace-pre-line">
-                                                      {row.whyItMatters}
-                                                    </div>
+                                        return (
+                                          <div
+                                            key={row.step}
+                                            className="relative z-10 flex flex-col md:flex-row items-center justify-center"
+                                          >
+                                            <div className="md:w-1/2 md:pr-12 flex justify-end">
+                                              {isLeft ? (
+                                                <div className="glass-panel p-6 rounded-2xl max-w-xl border border-white/10 hover:border-[#60A5FA]/30 transition-colors">
+                                                  <span className="text-[#60A5FA] text-[11px] uppercase tracking-widest font-semibold mb-2 block">
+                                                    Step {stepNumber}
+                                                  </span>
+                                                  <h4 className="text-2xl font-bold text-white mb-4">
+                                                    {row.step}
+                                                  </h4>
+                                                  <div className="text-[11px] uppercase tracking-widest text-white/60 mb-2">
+                                                    What to say
                                                   </div>
-                                                ) : (
-                                                  <img
-                                                    alt={row.step}
-                                                    src={stepImage}
-                                                    className="hidden md:block w-48 h-32 object-cover rounded-2xl opacity-60 grayscale hover:grayscale-0 transition-all duration-700 border border-white/10"
-                                                  />
-                                                )}
-                                              </div>
-
-                                              <div className="my-4 md:my-0 flex items-center justify-center">
-                                                <div className="w-4 h-4 rounded-full bg-emerald-400 shadow-[0_0_20px_rgba(45,212,191,0.5)] border-2 border-white/20" />
-                                              </div>
-
-                                              <div className="md:w-1/2 md:pl-12 flex justify-start">
-                                                {!isLeft ? (
-                                                  <div className="glass-panel p-6 rounded-2xl max-w-xl border border-white/10 hover:border-indigo-400/30 transition-colors">
-                                                    <span className="text-emerald-300 text-[11px] uppercase tracking-widest font-semibold mb-2 block">
-                                                      Step {stepNumber}
-                                                    </span>
-                                                    <h4 className="text-2xl font-bold text-white mb-4">
-                                                      {row.step}
-                                                    </h4>
-                                                    <div className="text-[11px] uppercase tracking-widest text-white/60 mb-2">
-                                                      What to say
-                                                    </div>
-                                                    <div className="text-slate-200 italic whitespace-pre-line mb-4">
-                                                      {row.whatToSay}
-                                                    </div>
-                                                    <div className="text-[11px] uppercase tracking-widest text-white/60 mb-2">
-                                                      Why this part matters
-                                                    </div>
-                                                    <div className="text-sm text-slate-300 leading-relaxed whitespace-pre-line">
-                                                      {row.whyItMatters}
-                                                    </div>
+                                                  <div className="text-slate-200 italic whitespace-pre-line mb-4">
+                                                    {row.whatToSay}
                                                   </div>
-                                                ) : (
-                                                  <img
-                                                    alt={row.step}
-                                                    src={stepImage}
-                                                    className="hidden md:block w-48 h-32 object-cover rounded-2xl opacity-60 grayscale hover:grayscale-0 transition-all duration-700 border border-white/10"
-                                                  />
-                                                )}
-                                              </div>
+                                                  <div className="text-[11px] uppercase tracking-widest text-white/60 mb-2">
+                                                    Why this part matters
+                                                  </div>
+                                                  <div className="text-sm text-slate-300 leading-relaxed whitespace-pre-line">
+                                                    {row.whyItMatters}
+                                                  </div>
+                                                </div>
+                                              ) : (
+                                                <img
+                                                  alt={row.step}
+                                                  src={stepImage}
+                                                  className="hidden md:block w-48 h-32 object-cover rounded-2xl border border-white/10"
+                                                />
+                                              )}
                                             </div>
-                                          );
-                                        }
-                                      )}
-                                    </div>
+
+                                            <div className="my-4 md:my-0 flex items-center justify-center">
+                                              <div className="w-4 h-4 rounded-full bg-[#60A5FA] shadow-[0_0_20px_rgba(96,165,250,0.35)] border-2 border-white/20" />
+                                            </div>
+
+                                            <div className="md:w-1/2 md:pl-12 flex justify-start">
+                                              {!isLeft ? (
+                                                <div className="glass-panel p-6 rounded-2xl max-w-xl border border-white/10 hover:border-[#60A5FA]/30 transition-colors">
+                                                  <span className="text-[#60A5FA] text-[11px] uppercase tracking-widest font-semibold mb-2 block">
+                                                    Step {stepNumber}
+                                                  </span>
+                                                  <h4 className="text-2xl font-bold text-white mb-4">
+                                                    {row.step}
+                                                  </h4>
+                                                  <div className="text-[11px] uppercase tracking-widest text-white/60 mb-2">
+                                                    What to say
+                                                  </div>
+                                                  <div className="text-slate-200 italic whitespace-pre-line mb-4">
+                                                    {row.whatToSay}
+                                                  </div>
+                                                  <div className="text-[11px] uppercase tracking-widest text-white/60 mb-2">
+                                                    Why this part matters
+                                                  </div>
+                                                  <div className="text-sm text-slate-300 leading-relaxed whitespace-pre-line">
+                                                    {row.whyItMatters}
+                                                  </div>
+                                                </div>
+                                              ) : (
+                                                <img
+                                                  alt={row.step}
+                                                  src={stepImage}
+                                                  className="hidden md:block w-48 h-32 object-cover rounded-2xl border border-white/10"
+                                                />
+                                              )}
+                                            </div>
+                                          </div>
+                                        );
+                                      }
+                                    )}
                                   </div>
                                 </div>
-                              )}
+                              </div>
                             </div>
                           </div>
                         </div>
@@ -1097,23 +1094,50 @@ export default function MindSyncModulePage() {
 
                   {learnSubPage === 2 && (
                     <div className="flex flex-col min-h-0 flex-1">
-                      <h3 className="text-xl font-bold text-white mb-3">
-                        What not to do
-                      </h3>
-                      <div className="grid grid-cols-1 md:grid-cols-2 md:grid-rows-2 md:auto-rows-fr gap-6 flex-1 min-h-0">
-                        {MIND_SYNC_MODULE_01.learn.whatNotToDo.map((item) => (
-                          <div
-                            key={item}
-                            className="flex items-start gap-4 p-6 rounded-2xl border border-red-500/20 bg-red-500/20 h-full"
-                          >
-                            <span className="material-symbols-outlined text-red-300 shrink-0">
-                              cancel
-                            </span>
-                            <p className="text-sm text-slate-300 leading-relaxed">
-                              {item}
-                            </p>
-                          </div>
-                        ))}
+                      <div className="text-center">
+                        <h3 className="text-2xl md:text-3xl font-bold text-white">
+                          What not to do
+                        </h3>
+                        <div
+                          className="h-1 w-24 md:w-32 rounded-full mx-auto mt-3"
+                          style={{
+                            background:
+                              'linear-gradient(to right, #60A5FA, #9333EA)',
+                          }}
+                        ></div>
+                        <p className="mt-4 text-sm md:text-base text-white/70">
+                          Four moves that look reasonable under pressure but
+                          tend to escalate.
+                        </p>
+                      </div>
+
+                      <div className="mt-8 grid grid-cols-1 md:grid-cols-2 md:grid-rows-2 md:auto-rows-fr gap-6 flex-1 min-h-0">
+                        {MIND_SYNC_MODULE_01.learn.whatNotToDo.map((item) => {
+                          const splitIndex = item.indexOf('.');
+                          const lead =
+                            splitIndex === -1
+                              ? item
+                              : item.slice(0, splitIndex + 1);
+                          const rest =
+                            splitIndex === -1 ? '' : item.slice(splitIndex + 1);
+
+                          return (
+                            <div
+                              key={item}
+                              className="h-full rounded-2xl border border-[#E79AAE]/25 bg-[#140B10] px-5 py-5 text-left"
+                            >
+                              <div className="flex gap-4">
+                                <div className="w-1.5 rounded-full bg-[#E79AAE] shrink-0" />
+                                <p className="text-sm md:text-base leading-relaxed text-white/80">
+                                  <span className="font-semibold text-[#E79AAE]">
+                                    {lead}{' '}
+                                  </span>
+                                  <span>{rest}</span>
+                                </p>
+                              </div>
+                            </div>
+                          );
+                        })}
                       </div>
                     </div>
                   )}
@@ -1151,7 +1175,7 @@ export default function MindSyncModulePage() {
                           <span
                             className={`material-symbols-outlined transition-all ${
                               isPracticeIntroOpen
-                                ? 'text-primary rotate-180'
+                                ? 'text-[#60A5FA] rotate-180'
                                 : 'text-white/70 group-hover:text-white'
                             }`}
                           >
@@ -1189,14 +1213,14 @@ export default function MindSyncModulePage() {
                       return (
                         <>
                           <div className="w-full mb-6 text-center">
-                            <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-emerald-300/80 block mb-3">
+                            <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#60A5FA]/90 block mb-3">
                               Scenario {practiceIndex + 1} of{' '}
                               {PRACTICE_SCENARIOS.length}
                             </span>
                             <h4 className="text-3xl md:text-4xl font-black text-white mb-3">
                               {scenario.title}
                             </h4>
-                            <div className="h-1 w-24 bg-gradient-to-r from-indigo-500 to-emerald-400 mx-auto rounded-full" />
+                            <div className="h-1 w-24 bg-gradient-to-r from-[#60A5FA] to-[#9333EA] mx-auto rounded-full" />
                           </div>
 
                           <section className="w-full">
@@ -1266,16 +1290,16 @@ export default function MindSyncModulePage() {
                                   }}
                                   className={`group relative glass-panel p-6 rounded-xl text-left border transition-all duration-300 ${
                                     isSelected
-                                      ? 'border-indigo-400/60 bg-indigo-500/10 shadow-[0_0_20px_rgba(94,114,228,0.15)]'
-                                      : 'border-white/10 hover:border-indigo-400/40 hover:bg-white/10 hover:-translate-y-1'
+                                      ? 'border-[#60A5FA]/60 bg-[#60A5FA]/10 shadow-[0_0_20px_rgba(96,165,250,0.18)]'
+                                      : 'border-white/10 hover:border-[#60A5FA]/40 hover:bg-white/10 hover:-translate-y-1'
                                   }`}
                                 >
                                   <div className="flex items-start gap-4">
                                     <div
                                       className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 font-bold border transition-colors ${
                                         isSelected
-                                          ? 'bg-indigo-400 text-neutral-950 border-indigo-300'
-                                          : 'bg-white/5 text-indigo-300 border-white/10 group-hover:bg-indigo-500/20'
+                                          ? 'bg-[#60A5FA] text-neutral-950 border-[#60A5FA]'
+                                          : 'bg-white/5 text-[#60A5FA] border-white/10 group-hover:bg-[#60A5FA]/20'
                                       }`}
                                     >
                                       {opt.key}
@@ -1284,7 +1308,7 @@ export default function MindSyncModulePage() {
                                       <h5
                                         className={`font-semibold mb-2 ${
                                           isSelected
-                                            ? 'text-indigo-200'
+                                            ? 'text-[#60A5FA]'
                                             : 'text-white'
                                         }`}
                                       >
@@ -1300,7 +1324,7 @@ export default function MindSyncModulePage() {
 
                                   {isSelected ? (
                                     <div className="absolute top-4 right-4">
-                                      <span className="material-symbols-outlined text-indigo-400">
+                                      <span className="material-symbols-outlined text-[#60A5FA]">
                                         check_circle
                                       </span>
                                     </div>
@@ -1317,7 +1341,7 @@ export default function MindSyncModulePage() {
                               onClick={() => setPracticeSubmitted(true)}
                               className={`px-10 py-4 rounded-full font-semibold shadow-2xl transition-all flex items-center gap-3 ${
                                 selectedPracticeOption
-                                  ? 'bg-gradient-to-r from-indigo-500 to-emerald-500 text-white hover:scale-105 active:scale-95'
+                                  ? 'bg-gradient-to-r from-[#60A5FA] to-[#9333EA] text-white hover:scale-105 active:scale-95'
                                   : 'bg-white/10 text-white/40 cursor-not-allowed'
                               }`}
                             >
@@ -1352,8 +1376,8 @@ export default function MindSyncModulePage() {
                                       <div
                                         className={`shrink-0 px-3 py-1 rounded-full text-[10px] uppercase tracking-widest border ${
                                           selected === scenario.bestOption
-                                            ? 'bg-emerald-500/10 border-emerald-400/30 text-emerald-200'
-                                            : 'bg-red-500/10 border-red-400/30 text-red-200'
+                                            ? 'bg-[#60A5FA]/10 border-[#60A5FA]/30 text-[#60A5FA]'
+                                            : 'bg-[#9333EA]/10 border-[#9333EA]/30 text-[#C4B5FD]'
                                         }`}
                                       >
                                         {selected === scenario.bestOption
@@ -1454,7 +1478,7 @@ export default function MindSyncModulePage() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
                     <div className="glass-panel p-6 rounded-2xl border border-white/10 card-glow">
                       <div className="text-left">
-                        <div className="text-[10px] text-emerald-300 px-2 py-1 bg-white/5 rounded-full inline-block mb-3 uppercase tracking-widest font-semibold">
+                        <div className="text-[10px] text-[#60A5FA] px-2 py-1 bg-white/5 rounded-full inline-block mb-3 uppercase tracking-widest font-semibold">
                           Mind Sync Pocket
                         </div>
                         <h4 className="text-2xl font-bold text-white">
@@ -1465,10 +1489,46 @@ export default function MindSyncModulePage() {
                         </div>
                       </div>
 
-                      <div className="mt-6 text-sm text-slate-200 leading-relaxed whitespace-pre-line">
-                        {
-                          '1. Notice your body before your mouth.\nJaw, shoulders, breath, hands. Any one is enough.\n\n2. Buy three seconds.\nOne slow breath. Place an object down. Step back half a pace.\n\n3. Speak from the calmer body.\nShorter. Lower. Slower. "I need a moment" is enough.\n\nIf words help:\n"I can see this is hard. I\'m a bit wound up too. I\'m going to step out for a minute. I\'ll come back when we\'ve both got our heads back."'
-                        }
+                      <div className="mt-6 text-sm text-slate-200 leading-relaxed">
+                        <ol className="space-y-5 list-none">
+                          <li>
+                            <div className="text-lg font-semibold text-white">
+                              1. Notice your body before your mouth.
+                            </div>
+                            <div className="mt-1 whitespace-pre-line">
+                              Jaw, shoulders, breath, hands. Any one is enough.
+                            </div>
+                          </li>
+                          <li>
+                            <div className="text-lg font-semibold text-white">
+                              2. Buy three seconds.
+                            </div>
+                            <div className="mt-1 whitespace-pre-line">
+                              One slow breath. Place an object down. Step back
+                              half a pace.
+                            </div>
+                          </li>
+                          <li>
+                            <div className="text-lg font-semibold text-white">
+                              3. Speak from the calmer body.
+                            </div>
+                            <div className="mt-1 whitespace-pre-line">
+                              Shorter. Lower. Slower. "I need a moment" is
+                              enough.
+                            </div>
+                          </li>
+                        </ol>
+
+                        <div className="mt-6">
+                          <div className="text-[#60A5FA] font-semibold">
+                            If words help:
+                          </div>
+                          <div className="mt-2 whitespace-pre-line">
+                            "I can see this is hard. I'm a bit wound up too. I'm
+                            going to step out for a minute. I'll come back when
+                            we've both got our heads back."
+                          </div>
+                        </div>
                       </div>
                     </div>
 
@@ -1483,8 +1543,8 @@ export default function MindSyncModulePage() {
                           </div>
                         </div>
 
-                        <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-500/15 to-emerald-400/10 border border-white/10 flex items-center justify-center">
-                          <span className="material-symbols-outlined text-indigo-200">
+                        <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#60A5FA]/20 to-[#9333EA]/20 border border-white/10 flex items-center justify-center">
+                          <span className="material-symbols-outlined text-[#60A5FA]">
                             picture_as_pdf
                           </span>
                         </div>
@@ -1492,7 +1552,7 @@ export default function MindSyncModulePage() {
 
                       <button
                         type="button"
-                        className="mt-6 flex items-center justify-center gap-2 w-full py-4 bg-gradient-to-r from-indigo-500 to-emerald-500 text-white rounded-xl font-semibold shadow-xl hover:shadow-indigo-500/20 transition-all"
+                        className="mt-6 flex items-center justify-center gap-2 w-full py-4 bg-gradient-to-r from-[#60A5FA] to-[#9333EA] text-white rounded-xl font-semibold shadow-xl hover:shadow-indigo-500/20 transition-all"
                       >
                         <span className="material-symbols-outlined">
                           download
@@ -1656,7 +1716,7 @@ export default function MindSyncModulePage() {
                 {active === 'takeaway' ? (
                   <button
                     type="button"
-                    className="flex items-center gap-2 px-6 py-3 rounded-full text-sm font-semibold border border-transparent bg-gradient-to-r from-indigo-500 to-emerald-500 text-white hover:shadow-indigo-500/20 transition-colors"
+                    className="flex items-center gap-2 px-6 py-3 rounded-full text-sm font-semibold border border-transparent bg-gradient-to-r from-[#60A5FA] to-[#9333EA] text-white hover:shadow-indigo-500/20 transition-colors"
                   >
                     <span>Finish Module</span>
                     <span className="material-symbols-outlined">
@@ -1680,7 +1740,7 @@ export default function MindSyncModulePage() {
                         TOC[Math.min(TOC.length - 1, activeIndex + 1)]?.key;
                       if (next) setActive(next);
                     }}
-                    className="flex items-center gap-2 px-6 py-3 rounded-full text-sm font-semibold border border-transparent bg-gradient-to-r from-indigo-500 to-emerald-500 text-white hover:shadow-indigo-500/20 transition-colors"
+                    className="flex items-center gap-2 px-6 py-3 rounded-full text-sm font-semibold border border-transparent bg-gradient-to-r from-[#60A5FA] to-[#9333EA] text-white hover:shadow-indigo-500/20 transition-colors"
                   >
                     <span>Next</span>
                     <span className="material-symbols-outlined">
@@ -1710,14 +1770,14 @@ export default function MindSyncModulePage() {
                   onClick={() => setActive(item.key)}
                   className={`w-full text-left p-4 border-b flex items-start gap-3 transition-colors cursor-pointer ${
                     isCurrent
-                      ? 'border-white/10 active-lesson-glow bg-indigo-500/10'
+                      ? 'border-white/10 active-lesson-glow bg-[#60A5FA]/10'
                       : 'border-white/5 hover:bg-white/5'
                   }`}
                 >
                   <div className="w-6 h-6 rounded-full flex items-center justify-center shrink-0 mt-0.5">
                     {isCurrent ? (
-                      <div className="w-6 h-6 rounded-full border border-indigo-400 flex items-center justify-center">
-                        <div className="w-2 h-2 bg-indigo-400 rounded-full animate-pulse" />
+                      <div className="w-6 h-6 rounded-full border border-[#60A5FA] flex items-center justify-center">
+                        <div className="w-2 h-2 bg-[#60A5FA] rounded-full animate-pulse" />
                       </div>
                     ) : (
                       <div className="w-6 h-6 rounded-full border border-white/20 flex items-center justify-center">
@@ -1734,7 +1794,7 @@ export default function MindSyncModulePage() {
                       {item.label}
                     </p>
                     <p
-                      className={`text-[10px] ${isCurrent ? 'text-indigo-400 font-semibold uppercase' : 'text-slate-500'}`}
+                      className={`text-[10px] ${isCurrent ? 'text-[#60A5FA] font-semibold uppercase' : 'text-slate-500'}`}
                     >
                       {isCurrent ? 'Active' : 'Click to view'}
                     </p>
