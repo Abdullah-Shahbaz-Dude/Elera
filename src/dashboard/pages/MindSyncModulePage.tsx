@@ -581,7 +581,7 @@ export default function MindSyncModulePage() {
                           key={s.part}
                           className="glass-panel rounded-2xl border border-white/10 p-4 min-h-[132px] md:min-h-[230px] flex flex-col relative overflow-hidden"
                         >
-                          <div className="absolute inset-0 opacity-[0.18]">
+                          <div className="absolute inset-0 opacity-[0.35]">
                             <img
                               alt=""
                               src={s.bg}
