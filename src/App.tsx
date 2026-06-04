@@ -57,7 +57,8 @@ function AppContent() {
     <div className="min-h-screen">
       {!isDashboard && <Navbar />}
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<Home2 />} />
+        <Route path="/home-1" element={<Home />} />
         <Route path="/home-2" element={<Home2 />} />
         <Route path="/why-elerea-exist" element={<WhyElereaExist />} />
         <Route path="/our-services" element={<OurServices />} />
