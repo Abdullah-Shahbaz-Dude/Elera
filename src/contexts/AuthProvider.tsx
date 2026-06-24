@@ -3,7 +3,9 @@ import axios from 'axios';
 import { AuthContext } from './AuthContext';
 
 const API_BASE =
-  import.meta.env.VITE_API_URL ?? 'https://web-production-d29fb.up.railway.app';
+  // import.meta.env.VITE_API_URL ?? 'https://web-production-d29fb.up.railway.app';
+  import.meta.env.VITE_API_URL ??
+  'https://elera-backend-production-aa3a.up.railway.app';
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<{
