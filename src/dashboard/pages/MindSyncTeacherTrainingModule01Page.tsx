@@ -167,54 +167,54 @@ function Tag({ children }: { children: string }) {
   );
 }
 
-function ScriptDropdown({
-  header,
-  body,
-  dropdownId,
-  onOpenChange,
-}: DropdownProps) {
-  const [open, setOpen] = useState(false);
-  return (
-    <div className="border border-white/10 rounded-xl overflow-hidden bg-white/[0.02]">
-      <button
-        type="button"
-        onClick={() => {
-          setOpen((v) => {
-            const next = !v;
-            onOpenChange?.(dropdownId, next);
-            return next;
-          });
-        }}
-        className="w-full h-[56px] flex items-center justify-between gap-4 px-4 bg-[#1A1A33]/60 hover:bg-[#1A1A33]/75 transition-colors text-left"
-      >
-        <div className="flex items-center gap-3 min-w-0">
-          <span className="material-symbols-outlined text-[#818CF8]">
-            menu_book
-          </span>
-          <div className="text-sm font-medium text-white/85 truncate">
-            {header}
-          </div>
-        </div>
-        <span
-          className={`material-symbols-outlined text-[#818CF8] transition-transform ${
-            open ? 'rotate-180' : ''
-          }`}
-        >
-          expand_more
-        </span>
-      </button>
-      <div
-        className={`overflow-hidden transition-all duration-300 ease-out ${
-          open ? 'max-h-[520px] opacity-100' : 'max-h-0 opacity-0'
-        }`}
-      >
-        <div className="px-4 py-4 text-sm text-slate-200 whitespace-pre-line">
-          {body}
-        </div>
-      </div>
-    </div>
-  );
-}
+// function ScriptDropdown({
+//   header,
+//   body,
+//   dropdownId,
+//   onOpenChange,
+// }: DropdownProps) {
+//   const [open, setOpen] = useState(false);
+//   return (
+//     <div className="border border-white/10 rounded-xl overflow-hidden bg-white/[0.02]">
+//       <button
+//         type="button"
+//         onClick={() => {
+//           setOpen((v) => {
+//             const next = !v;
+//             onOpenChange?.(dropdownId, next);
+//             return next;
+//           });
+//         }}
+//         className="w-full h-[56px] flex items-center justify-between gap-4 px-4 bg-[#1A1A33]/60 hover:bg-[#1A1A33]/75 transition-colors text-left"
+//       >
+//         <div className="flex items-center gap-3 min-w-0">
+//           <span className="material-symbols-outlined text-[#818CF8]">
+//             menu_book
+//           </span>
+//           <div className="text-sm font-medium text-white/85 truncate">
+//             {header}
+//           </div>
+//         </div>
+//         <span
+//           className={`material-symbols-outlined text-[#818CF8] transition-transform ${
+//             open ? 'rotate-180' : ''
+//           }`}
+//         >
+//           expand_more
+//         </span>
+//       </button>
+//       <div
+//         className={`overflow-hidden transition-all duration-300 ease-out ${
+//           open ? 'max-h-[520px] opacity-100' : 'max-h-0 opacity-0'
+//         }`}
+//       >
+//         <div className="px-4 py-4 text-sm text-slate-200 whitespace-pre-line">
+//           {body}
+//         </div>
+//       </div>
+//     </div>
+//   );
+// }
 
 function Dropdown({
   header,
