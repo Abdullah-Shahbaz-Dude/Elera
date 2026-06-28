@@ -7,6 +7,9 @@ import structureLearnImage from '../../assets/images/mindsync/6.jpg';
 import structurePracticeImage from '../../assets/images/mindsync/Untitled design.jpg';
 import structureTakeawayImage from '../../assets/images/mindsync/7.jpg';
 import learnHeroImage from '../../assets/images/mindsync/shutterstock_2757853493 (1).jpg';
+import scenario1Image from '../../assets/images/mindsync/3.jpg';
+import scenario2Image from '../../assets/images/mindsync/4.jpg';
+import scenario3Image from '../../assets/images/mindsync/1.jpg';
 
 type ScreenType =
   | 'cover'
@@ -25,6 +28,12 @@ type ScreenType =
 type DropdownItem = {
   header: string;
   body: string;
+};
+
+const SCENARIO_IMAGES: Record<1 | 2 | 3, string> = {
+  1: scenario1Image,
+  2: scenario2Image,
+  3: scenario3Image,
 };
 
 type DropdownProps = DropdownItem & {
@@ -581,6 +590,20 @@ export default function MindSyncTeacherTrainingModule01Page() {
   useEffect(() => {
     setOpenDropdownIds(new Set());
   }, [index]);
+
+  useEffect(() => {
+    if (screen.type !== 'scenario_choose') return;
+
+    const scenarioId = screen.scenarioId;
+    if (scenarioId !== 1 && scenarioId !== 2 && scenarioId !== 3) return;
+
+    setScenarioAnswers((prev) => {
+      if (!prev[scenarioId]) return prev;
+      const next = { ...prev };
+      delete next[scenarioId];
+      return next;
+    });
+  }, [index, screen.type, screen.scenarioId]);
 
   const handleDropdownOpenChange = (dropdownId: string, open: boolean) => {
     setOpenDropdownIds((prev) => {
@@ -1418,12 +1441,28 @@ export default function MindSyncTeacherTrainingModule01Page() {
 
                     {screen.type === 'scenario_situation' &&
                     screen.scenarioId ? (
-                      <div className="space-y-3">
-                        <h3 className="text-lg md:text-xl font-bold text-[#60A5FA]">
-                          {SCENARIOS[screen.scenarioId].title}
-                        </h3>
-                        <div className="text-sm md:text-base text-slate-200 whitespace-pre-line leading-relaxed">
-                          {SCENARIOS[screen.scenarioId].situation}
+                      <div className="space-y-6">
+                        <div className="text-center">
+                          <h2 className="text-2xl md:text-3xl font-black text-white">
+                            {SCENARIOS[screen.scenarioId].title}
+                          </h2>
+                          <div className="mt-3 h-1 w-24 mx-auto rounded-full bg-gradient-to-r from-[#60A5FA] to-[#9333EA]" />
+                        </div>
+
+                        <div className="flex justify-center">
+                          <div className="w-full max-w-[784px] rounded-2xl overflow-hidden border border-white/10 bg-white/[0.02]">
+                            <img
+                              src={SCENARIO_IMAGES[screen.scenarioId]}
+                              alt="Scenario"
+                              className="w-full h-[240px] md:h-[320px] object-cover"
+                            />
+                          </div>
+                        </div>
+
+                        <div className="w-full max-w-[784px] mx-auto">
+                          <div className="text-sm md:text-base text-slate-200 whitespace-pre-line leading-relaxed">
+                            {SCENARIOS[screen.scenarioId].situation}
+                          </div>
                         </div>
                       </div>
                     ) : null}
@@ -1433,12 +1472,14 @@ export default function MindSyncTeacherTrainingModule01Page() {
                           const scenarioId = screen.scenarioId;
                           const scenario = SCENARIOS[scenarioId];
                           return (
-                            <div className="space-y-5">
-                              <h3 className="text-lg md:text-xl font-bold text-[#60A5FA]">
-                                {scenario.question}
-                              </h3>
+                            <div className="space-y-6">
+                              <div className="w-full max-w-[784px] mb-20 ">
+                                <h3 className="text-2xl md:text-[62px] md:leading-[38.4px] font-bold text-[#DADFFB]">
+                                  {scenario.question}
+                                </h3>
+                              </div>
 
-                              <div className="grid grid-cols-1 gap-4">
+                              <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-6  w-full max-w-[986px] mx-auto">
                                 {(
                                   Object.keys(
                                     scenario.options
@@ -1456,17 +1497,17 @@ export default function MindSyncTeacherTrainingModule01Page() {
                                           [scenarioId]: k,
                                         }))
                                       }
-                                      className={`text-left rounded-2xl border px-5 py-4 transition-colors ${
+                                      className={`text-left rounded-lg border px-[25px] py-[25px] transition-colors ${
                                         selected
-                                          ? 'border-[#60A5FA]/60 bg-[#60A5FA]/10'
-                                          : 'border-white/10 bg-white/[0.02] hover:bg-white/[0.05]'
+                                          ? 'bg-[#1A1A33] border-[#4F46E5] shadow-[0_0_0_1px_rgba(79,70,229,0.45)]'
+                                          : 'bg-transparent border-white/10 hover:bg-white/[0.03]'
                                       }`}
                                     >
-                                      <div className="flex items-start gap-4">
-                                        <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-white/5 border border-white/10 text-[#60A5FA] font-bold">
+                                      <div className="flex items-start gap-5">
+                                        <div className="w-10 h-10 rounded-[12px] border-2 border-[#424754] flex items-center justify-center text-[#C2C6D6] font-bold shrink-0">
                                           {k}
                                         </div>
-                                        <div className="text-sm md:text-base text-slate-200 leading-relaxed">
+                                        <div className="text-sm md:text-base text-[#DAE2FD] leading-relaxed">
                                           {scenario.options[k]}
                                         </div>
                                       </div>
@@ -1484,12 +1525,14 @@ export default function MindSyncTeacherTrainingModule01Page() {
                           const scenarioId = screen.scenarioId;
                           const scenario = SCENARIOS[scenarioId];
                           return (
-                            <div className="space-y-4">
-                              <h2 className="text-xl md:text-2xl font-bold text-[#60A5FA]">
-                                Feedback
-                              </h2>
+                            <div className="space-y-6">
+                              <div className="w-full max-w-[920px] mx-auto">
+                                <h3 className="text-2xl md:text-[32px] md:leading-[38.4px] font-bold text-[#DADFFB]">
+                                  Feedback
+                                </h3>
+                              </div>
 
-                              <div className="space-y-3">
+                              <div className="space-y-3 w-full max-w-[920px] mx-auto">
                                 {(
                                   Object.keys(
                                     scenario.feedback
@@ -1521,25 +1564,34 @@ export default function MindSyncTeacherTrainingModule01Page() {
                       : null}
 
                     {screen.type === 'takeaway' ? (
-                      <div className="space-y-4">
-                        <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
-                          <div className="text-xs font-bold uppercase tracking-[0.2em] text-white/60">
-                            Take away card
+                      <div className="space-y-8">
+                        <div className="relative rounded-2xl overflow-hidden border border-white/10">
+                          <div className="absolute inset-0">
+                            <img
+                              src={structureTakeawayImage}
+                              alt=""
+                              className="w-full h-full object-cover"
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-r from-[#020617]/95 via-[#020617]/85 to-[#020617]/60" />
                           </div>
-                          <div className="mt-3 text-xl font-black text-white whitespace-pre-line">
-                            {screen.takeawayHeading}
-                          </div>
-                          <div className="mt-4 text-sm md:text-base text-slate-200 whitespace-pre-line leading-relaxed">
-                            {screen.takeawayBody}
+
+                          <div className="relative z-10 p-6 md:p-8">
+                            <div className="glass-panel p-6 rounded-2xl border border-white/10 card-glow max-w-[920px]">
+                              <div className="text-left">
+                                <div className="text-[10px] text-[#60A5FA] px-2 py-1 bg-white/5 rounded-full inline-block mb-3 uppercase tracking-widest font-semibold">
+                                  Mind Sync Pocket
+                                </div>
+                                <h4 className="text-2xl font-bold text-white whitespace-pre-line">
+                                  {screen.takeawayHeading}
+                                </h4>
+                              </div>
+
+                              <div className="mt-6 text-sm text-slate-200 leading-relaxed whitespace-pre-line">
+                                {screen.takeawayBody}
+                              </div>
+                            </div>
                           </div>
                         </div>
-
-                        <button
-                          type="button"
-                          className="w-full py-4 rounded-2xl bg-gradient-to-r from-[#60A5FA] to-[#9333EA] text-white font-semibold"
-                        >
-                          Save card
-                        </button>
                       </div>
                     ) : null}
 
