@@ -1,7 +1,12 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import VideoLessonPlayer from '../components/VideoLessonPlayer';
 import image from '../../assets/images/mindsync/2.jpg';
+import structureWatchImage from '../../assets/images/mindsync/5.jpg';
+import structureLearnImage from '../../assets/images/mindsync/6.jpg';
+import structurePracticeImage from '../../assets/images/mindsync/Untitled design.jpg';
+import structureTakeawayImage from '../../assets/images/mindsync/7.jpg';
+import learnHeroImage from '../../assets/images/mindsync/shutterstock_2757853493 (1).jpg';
 
 type ScreenType =
   | 'cover'
@@ -25,6 +30,9 @@ type DropdownItem = {
 type DropdownProps = DropdownItem & {
   dropdownId: string;
   onOpenChange?: (dropdownId: string, open: boolean) => void;
+  containerClassName?: string;
+  buttonClassName?: string;
+  bodyClassName?: string;
 };
 
 type ScenarioOptionKey = 'A' | 'B' | 'C' | 'D';
@@ -150,10 +158,15 @@ function Tag({ children }: { children: string }) {
   );
 }
 
-function Dropdown({ header, body, dropdownId, onOpenChange }: DropdownProps) {
+function ScriptDropdown({
+  header,
+  body,
+  dropdownId,
+  onOpenChange,
+}: DropdownProps) {
   const [open, setOpen] = useState(false);
   return (
-    <div className="border md:w-auto border-white/10 rounded-lg overflow-hidden">
+    <div className="border border-white/10 rounded-xl overflow-hidden bg-white/[0.02]">
       <button
         type="button"
         onClick={() => {
@@ -163,7 +176,65 @@ function Dropdown({ header, body, dropdownId, onOpenChange }: DropdownProps) {
             return next;
           });
         }}
-        className="w-full h-[70px] flex items-center justify-between gap-4 px-[25px] bg-[#1A1A33] hover:bg-[#1A1A33]/90 transition-colors text-left"
+        className="w-full h-[56px] flex items-center justify-between gap-4 px-4 bg-[#1A1A33]/60 hover:bg-[#1A1A33]/75 transition-colors text-left"
+      >
+        <div className="flex items-center gap-3 min-w-0">
+          <span className="material-symbols-outlined text-[#818CF8]">
+            menu_book
+          </span>
+          <div className="text-sm font-medium text-white/85 truncate">
+            {header}
+          </div>
+        </div>
+        <span
+          className={`material-symbols-outlined text-[#818CF8] transition-transform ${
+            open ? 'rotate-180' : ''
+          }`}
+        >
+          expand_more
+        </span>
+      </button>
+      <div
+        className={`overflow-hidden transition-all duration-300 ease-out ${
+          open ? 'max-h-[520px] opacity-100' : 'max-h-0 opacity-0'
+        }`}
+      >
+        <div className="px-4 py-4 text-sm text-slate-200 whitespace-pre-line">
+          {body}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function Dropdown({
+  header,
+  body,
+  dropdownId,
+  onOpenChange,
+  containerClassName,
+  buttonClassName,
+  bodyClassName,
+}: DropdownProps) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div
+      className={`border md:w-auto border-white/10 rounded-lg overflow-hidden ${
+        containerClassName ?? ''
+      }`}
+    >
+      <button
+        type="button"
+        onClick={() => {
+          setOpen((v) => {
+            const next = !v;
+            onOpenChange?.(dropdownId, next);
+            return next;
+          });
+        }}
+        className={`w-full h-[70px] flex items-center justify-between gap-4 px-[25px] bg-[#1A1A33] hover:bg-[#1A1A33]/90 transition-colors text-left ${
+          buttonClassName ?? ''
+        }`}
       >
         <div className="text-sm font-medium text-[#CBD5E1]">{header}</div>
         <span
@@ -174,11 +245,15 @@ function Dropdown({ header, body, dropdownId, onOpenChange }: DropdownProps) {
           expand_more
         </span>
       </button>
-      {open ? (
+      <div
+        className={`overflow-hidden transition-all duration-300 ease-out ${
+          open ? 'max-h-[520px] opacity-100' : 'max-h-0 opacity-0'
+        } ${bodyClassName ?? ''}`}
+      >
         <div className="px-[25px] py-4 text-sm text-slate-200 whitespace-pre-line">
           {body}
         </div>
-      ) : null}
+      </div>
     </div>
   );
 }
@@ -431,6 +506,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
   const [openDropdownIds, setOpenDropdownIds] = useState<Set<string>>(
     () => new Set()
   );
+  const scrollAreaRef = useRef<HTMLDivElement | null>(null);
   const [scenarioAnswers, setScenarioAnswers] = useState<
     Partial<Record<1 | 2 | 3, ScenarioOptionKey>>
   >({});
@@ -445,6 +521,8 @@ export default function MindSyncTeacherTrainingModule01Page() {
     takeaway: true,
     closing: true,
   });
+
+  const [isSidebarTranscriptOpen, setIsSidebarTranscriptOpen] = useState(false);
 
   const toc = useMemo(() => {
     return screens.map((s, i) => {
@@ -510,6 +588,17 @@ export default function MindSyncTeacherTrainingModule01Page() {
       if (open) next.add(dropdownId);
       else next.delete(dropdownId);
       return next;
+    });
+
+    if (screen.type === 'accordion') return;
+
+    const el = scrollAreaRef.current;
+    if (!el) return;
+
+    requestAnimationFrame(() => {
+      if (open) {
+        el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' });
+      }
     });
   };
 
@@ -584,42 +673,41 @@ export default function MindSyncTeacherTrainingModule01Page() {
 
       <main className="flex w-full h-[calc(100vh-238px)] overflow-hidden">
         <div className="w-3/4 flex flex-col min-h-0 overflow-hidden p-4">
-          <div className="step-transition flex flex-col flex-1 min-h-0 overflow-hidden">
+          <div
+            key={index}
+            className="step-transition flex flex-col flex-1 min-h-0 overflow-hidden"
+          >
             <div
-              className={`flex-1 min-h-0 custom-scrollbar pb-24 ${
-                isAnyDropdownOpen ? 'overflow-y-auto' : 'overflow-hidden'
-              }`}
+              ref={scrollAreaRef}
+              className={`flex-1 min-h-0 custom-scrollbar pb-24 ${'overflow-y-auto scroll-smooth'}`}
             >
               <section className="space-y-4">
                 {screen.type === 'cover' ? (
-                  <div className=" p-6 md:p-6 card-glow">
-                    <div className="mb-6 ">
+                  <div className="p-6 md:p-6 card-glow">
+                    <div className="mb-6">
                       <Tag> Introduction</Tag>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-                      <div className="space-y-4">
-                        <div className="w-full md:w-[460px] md:h-[365px]">
-                          <div className="text-[26px] leading-[43px] font-normal text-white/70 whitespace-pre-line">
-                            {screen.body}
-                          </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
+                      <div className="space-y-6">
+                        <div className="text-2xl md:text-3xl leading-snug font-medium text-white/70 whitespace-pre-line max-w-[560px]">
+                          {screen.body}
                         </div>
                       </div>
 
-                      <div className="relative flex justify-center">
-                        <div className="relative rounded-3xl overflow-hidden border border-white/10 bg-white/[0.02] w-full md:w-[336px] h-[260px] md:h-[375px]">
+                      <div className="flex justify-center md:justify-end">
+                        <div className="w-full max-w-[420px] md:w-[420px] rounded-3xl overflow-hidden border border-white/10 bg-white/[0.02]">
                           <img
                             src={image}
                             alt="Module visual"
-                            className="w-full h-full object-cover"
+                            className="w-full h-[280px] md:h-[320px] object-cover"
                           />
-                          <div className="absolute inset-0 bg-gradient-to-tr from-black/40 via-black/10 to-transparent" />
                         </div>
                       </div>
                     </div>
                   </div>
                 ) : (
-                  <div className="p-5 md:p-6 md:px-20 card-glow flex flex-col min-h-0">
+                  <div className="p-5 md:p-6 md:px-14 card-glow flex flex-col min-h-0 ">
                     {screen.id === 2 ? (
                       <div className="flex-1 flex flex-col gap-4 min-h-0">
                         <div className="flex items-center justify-between gap-3">
@@ -627,7 +715,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
                         </div>
 
                         <div className="text-center">
-                          <h2 className="text-xl md:text-2xl font-black -mt-12 text-white">
+                          <h2 className="text-xl md:text-2xl font-black text-white -mt-12 mb-2">
                             {screen.t2}
                           </h2>
                           <div className="mt-3 h-1 w-24 mx-auto rounded-full bg-gradient-to-r from-[#60A5FA] to-[#9333EA]" />
@@ -635,24 +723,24 @@ export default function MindSyncTeacherTrainingModule01Page() {
 
                         {screen.lead ? (
                           <div className="w-full md:w-auto">
-                            <div className="text-base md:text-2xl leading-relaxed font-medium text-white/80 whitespace-pre-line">
+                            <div className="text-base md:text-xl leading-relaxed font-medium text-white/80 whitespace-pre-line mb-6">
                               {screen.lead}
                             </div>
                           </div>
                         ) : null}
 
                         <div className="flex justify-center">
-                          <div className="w-full max-w-[461px] md:w-[461px] rounded-2xl overflow-hidden border border-white/10 bg-white/[0.02]">
+                          <div className="w-full max-w-[461px] md:w-[451px] rounded-2xl overflow-hidden border border-white/10 bg-white/[0.02]">
                             <img
                               src={image}
                               alt="About this module"
-                              className="w-full h-[200px] md:h-[250px] object-cover"
+                              className="w-full h-[200px] md:h-[260px] object-cover"
                             />
                           </div>
                         </div>
 
                         {screen.body ? (
-                          <div className="w-full md:w-auto">
+                          <div className="w-full md:w-[1000px] ">
                             <div className="text-sm md:text-lg text-slate-200 whitespace-pre-line leading-relaxed">
                               {screen.body}
                             </div>
@@ -660,24 +748,19 @@ export default function MindSyncTeacherTrainingModule01Page() {
                         ) : null}
 
                         {screen.dropdowns && screen.dropdowns.length ? (
-                          <div className="mt-auto">
-                            <div className="space-y-3">
-                              {screen.dropdowns.map((d) => (
-                                <div
-                                  key={d.header}
-                                  className="w-full md:w-auto"
-                                >
-                                  <div className="[&>div>button]:py-4 [&>div>button]:px-5">
-                                    <Dropdown
-                                      dropdownId={`${screen.id}:${d.header}`}
-                                      header={d.header}
-                                      body={d.body}
-                                      onOpenChange={handleDropdownOpenChange}
-                                    />
-                                  </div>
+                          <div className="space-y-3">
+                            {screen.dropdowns.map((d) => (
+                              <div key={d.header} className="w-full md:w-auto">
+                                <div className="[&>div>button]:py-4 [&>div>button]:px-5">
+                                  <Dropdown
+                                    dropdownId={`${screen.id}:${d.header}`}
+                                    header={d.header}
+                                    body={d.body}
+                                    onOpenChange={handleDropdownOpenChange}
+                                  />
                                 </div>
-                              ))}
-                            </div>
+                              </div>
+                            ))}
                           </div>
                         ) : null}
                       </div>
@@ -687,39 +770,320 @@ export default function MindSyncTeacherTrainingModule01Page() {
                           <div className="flex items-center gap-2 flex-wrap" />
                         </div>
 
-                        {screen.t1 ? (
+                        {screen.id === 8 ||
+                        screen.id === 9 ||
+                        screen.id === 10 ? (
+                          <div className="flex-1 flex flex-col gap-4 min-h-0">
+                            <div className="text-center">
+                              {screen.t3 ? (
+                                <h3 className="text-lg md:text-xl font-bold text-white">
+                                  {screen.t3}
+                                </h3>
+                              ) : null}
+                              <div className="mt-3 h-1 w-24 mx-auto rounded-full bg-gradient-to-r from-[#60A5FA] to-[#9333EA]" />
+                            </div>
+
+                            {screen.body ? (
+                              <div className="w-full md:w-[1000px]">
+                                <div className="text-sm md:text-lg text-slate-200 whitespace-pre-line leading-relaxed">
+                                  {screen.body}
+                                </div>
+                              </div>
+                            ) : null}
+
+                            {screen.id !== 10 ? (
+                              <div className="flex justify-center">
+                                <div className="w-full max-w-[461px] md:w-[451px] rounded-2xl overflow-hidden border border-white/10 bg-white/[0.02]">
+                                  <img
+                                    src={structureLearnImage}
+                                    alt="Learn"
+                                    className="w-full h-[200px] md:h-[260px] object-cover"
+                                  />
+                                </div>
+                              </div>
+                            ) : null}
+
+                            {screen.dropdowns && screen.dropdowns.length ? (
+                              <div className="space-y-3">
+                                {screen.dropdowns.map((d) => (
+                                  <div
+                                    key={d.header}
+                                    className="w-full md:w-auto"
+                                  >
+                                    <div className="[&>div>button]:py-4 [&>div>button]:px-5">
+                                      <Dropdown
+                                        dropdownId={`${screen.id}:${d.header}`}
+                                        header={d.header}
+                                        body={d.body}
+                                        onOpenChange={handleDropdownOpenChange}
+                                      />
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            ) : null}
+                          </div>
+                        ) : null}
+
+                        {screen.id === 3 ? (
+                          <div className="space-y-3">
+                            <Tag>Introduction</Tag>
+                            {screen.t2 ? (
+                              <h2 className="text-2xl md:text-[32px] md:leading-[38.4px] font-bold text-[#DADFFB]">
+                                {screen.t2}
+                              </h2>
+                            ) : null}
+                          </div>
+                        ) : null}
+
+                        {screen.id === 4 ? (
+                          <div className="w-full md:w-[784px] md:mx-auto space-y-8">
+                            <div className="text-center">
+                              {screen.t2 ? (
+                                <h2 className="text-2xl md:text-3xl font-black text-white">
+                                  {screen.t2}
+                                </h2>
+                              ) : null}
+                              <div className="mt-3 h-1 w-24 mx-auto rounded-full bg-gradient-to-r from-[#60A5FA] to-[#9333EA]" />
+                            </div>
+
+                            <div className="text-2xl font-semibold text-white">
+                              Four short parts:
+                            </div>
+
+                            <div className="flex flex-col md:flex-row gap-6 md:gap-[37px]">
+                              {[
+                                {
+                                  title: 'Watch',
+                                  subtitle: 'VIDEO INSIGHT',
+                                  icon: 'play_circle',
+                                  bg: structureWatchImage,
+                                },
+                                {
+                                  title: 'Learn',
+                                  subtitle: 'CORE THEORY',
+                                  icon: 'menu_book',
+                                  bg: structureLearnImage,
+                                },
+                                {
+                                  title: 'Practise',
+                                  subtitle: 'INTERACTIVE TASK',
+                                  icon: 'task_alt',
+                                  bg: structurePracticeImage,
+                                },
+                                {
+                                  title: 'Take away',
+                                  subtitle: 'PDF RESOURCES',
+                                  icon: 'description',
+                                  bg: structureTakeawayImage,
+                                },
+                              ].map((item) => (
+                                <div
+                                  key={item.title}
+                                  className="relative w-full md:w-[300px] h-[205px] rounded-lg border border-white/10 bg-white/[0.09] overflow-hidden flex flex-col items-center justify-center text-center"
+                                >
+                                  <div className="absolute inset-0 opacity-[0.35]">
+                                    <img
+                                      alt=""
+                                      src={item.bg}
+                                      className="w-full h-full object-cover"
+                                    />
+                                  </div>
+                                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/35 to-black/10" />
+
+                                  <span className="material-symbols-outlined text-[#ADC6FF] text-[28px]">
+                                    {item.icon}
+                                  </span>
+                                  <div className="mt-3 text-sm font-semibold text-white">
+                                    {item.title}
+                                  </div>
+                                  <div className="mt-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-white/70">
+                                    {item.subtitle}
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        ) : null}
+
+                        {screen.type === 'divider' && screen.t1 ? (
+                          screen.id === 5 ? (
+                            <div className="text-left">
+                              <h1 className="text-2xl md:text-4xl font-black text-white">
+                                {screen.t1}
+                              </h1>
+                              <div className="mt-3 h-1 w-24 rounded-full bg-gradient-to-r from-[#60A5FA] to-[#9333EA]" />
+                            </div>
+                          ) : screen.id === 7 ? (
+                            <div className="text-left">
+                              <h1 className="text-xl md:text-2xl font-black text-white">
+                                {screen.t1}
+                              </h1>
+                              <div className="mt-3 h-1 w-24 rounded-full bg-gradient-to-r from-[#60A5FA] to-[#9333EA]" />
+                            </div>
+                          ) : (
+                            <div className="text-center">
+                              <h1 className="text-2xl md:text-4xl font-black text-white">
+                                {screen.t1}
+                              </h1>
+                              <div className="mt-3 h-1 w-24 mx-auto rounded-full bg-gradient-to-r from-[#60A5FA] to-[#9333EA]" />
+                            </div>
+                          )
+                        ) : null}
+
+                        {screen.id === 5 ? (
+                          <div className="pt-6 space-y-6">
+                            {screen.body ? (
+                              <div className="w-full md:w-auto">
+                                <div className="text-base md:text-xl leading-relaxed font-medium text-white/80 whitespace-pre-line">
+                                  {screen.body}
+                                </div>
+                              </div>
+                            ) : null}
+
+                            <div className="flex justify-center">
+                              <div className="w-full max-w-[461px] md:w-[451px] rounded-2xl overflow-hidden border border-white/10 bg-white/[0.02]">
+                                <img
+                                  src={structureWatchImage}
+                                  alt="Watch"
+                                  className="w-full h-[200px] md:h-[260px] object-cover"
+                                />
+                              </div>
+                            </div>
+
+                            {screen.dropdowns && screen.dropdowns.length ? (
+                              <div className="space-y-3">
+                                {screen.dropdowns.map((d) => (
+                                  <div
+                                    key={d.header}
+                                    className="w-full md:w-auto"
+                                  >
+                                    <div className="[&>div>button]:py-4 [&>div>button]:px-5">
+                                      <Dropdown
+                                        dropdownId={`${screen.id}:${d.header}`}
+                                        header={d.header}
+                                        body={d.body}
+                                        onOpenChange={handleDropdownOpenChange}
+                                      />
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            ) : null}
+                          </div>
+                        ) : null}
+
+                        {screen.id === 7 ? (
+                          <div className="pt-6">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
+                              <div className="space-y-6">
+                                {screen.lead ? (
+                                  <h2 className="text-3xl md:text-4xl font-black text-white leading-tight">
+                                    {screen.lead}
+                                  </h2>
+                                ) : null}
+                                {screen.body ? (
+                                  <div className="text-lg md:text-xl text-white/70 whitespace-pre-line leading-relaxed">
+                                    {screen.body}
+                                  </div>
+                                ) : null}
+                              </div>
+
+                              <div className="flex justify-center md:justify-end">
+                                <div className="w-full max-w-[420px] md:w-[420px] rounded-3xl overflow-hidden border border-white/10 bg-white/[0.02]">
+                                  <img
+                                    src={learnHeroImage}
+                                    alt="Learn"
+                                    className="w-full h-[280px] md:h-[320px] object-cover"
+                                  />
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        ) : null}
+
+                        {screen.t1 && screen.type !== 'divider' ? (
                           <h1 className="text-2xl md:text-4xl font-black text-white">
                             {screen.t1}
                           </h1>
                         ) : null}
 
-                        {screen.t2 ? (
+                        {screen.id === 11 && screen.t2 ? (
+                          <div className="text-center">
+                            <h2 className="text-2xl md:text-3xl font-black text-white">
+                              {screen.t2}
+                            </h2>
+                            <div className="mt-3 h-1 w-24 mx-auto rounded-full bg-gradient-to-r from-[#60A5FA] to-[#9333EA]" />
+                          </div>
+                        ) : null}
+
+                        {screen.t2 &&
+                        screen.id !== 3 &&
+                        screen.id !== 4 &&
+                        screen.id !== 11 &&
+                        screen.type !== 'video' ? (
                           <h2 className="text-xl md:text-2xl font-bold text-[#60A5FA]">
                             {screen.t2}
                           </h2>
                         ) : null}
 
-                        {screen.t3 ? (
+                        {screen.t3 &&
+                        screen.id !== 8 &&
+                        screen.id !== 9 &&
+                        screen.id !== 10 ? (
                           <h3 className="text-lg md:text-xl font-bold text-[#60A5FA]">
                             {screen.t3}
                           </h3>
                         ) : null}
 
-                        {screen.lead ? (
+                        {screen.lead && screen.id !== 7 ? (
                           <div className="text-base md:text-lg font-semibold text-white whitespace-pre-line">
                             {screen.lead}
                           </div>
                         ) : null}
 
-                        {screen.body ? (
-                          <div className="text-sm md:text-base text-slate-200 whitespace-pre-line leading-relaxed">
+                        {screen.body &&
+                        screen.id !== 4 &&
+                        screen.id !== 7 &&
+                        screen.id !== 5 &&
+                        screen.id !== 8 &&
+                        screen.id !== 9 &&
+                        screen.id !== 10 &&
+                        screen.type !== 'accordion' ? (
+                          <div
+                            className={`text-sm md:text-base text-slate-200 whitespace-pre-line leading-relaxed ${
+                              screen.type === 'divider' ? 'mt-4' : ''
+                            }`}
+                          >
                             {screen.body}
                           </div>
                         ) : null}
                       </>
                     )}
 
-                    {screen.bullets ? (
+                    {screen.bullets && screen.id === 3 ? (
+                      <div className="rounded-lg border border-[#818CF8] bg-[#171F33]/70 backdrop-blur-[12px] p-6 md:p-8 md:w-[1103px] md:mt-10">
+                        <div className="space-y-4">
+                          <div className="space-y-6">
+                            {screen.bullets.map((b) => (
+                              <div
+                                key={b}
+                                className="flex items-start gap-6 rounded-md"
+                              >
+                                <div className="w-12 h-12 rounded-xl bg-[#4D8EFF]/20 border border-[#ADC6FF]/20 flex items-center justify-center shrink-0">
+                                  <span className="material-symbols-outlined text-[#ADC6FF]">
+                                    check
+                                  </span>
+                                </div>
+                                <div className="text-sm md:text-base text-[#DADFFB] leading-relaxed">
+                                  {b}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    ) : screen.bullets && screen.id !== 4 ? (
                       <ul className="list-disc pl-6 space-y-2 text-sm md:text-base text-slate-200">
                         {screen.bullets.map((b) => (
                           <li key={b} className="leading-relaxed">
@@ -730,32 +1094,55 @@ export default function MindSyncTeacherTrainingModule01Page() {
                     ) : null}
 
                     {screen.keyPoint ? (
-                      <KeyPoint>{screen.keyPoint}</KeyPoint>
+                      screen.id === 10 ? (
+                        <div className="mt-8 w-full max-w-[1100px] mx-auto rounded-3xl border border-rose-300/10 bg-gradient-to-br from-[#4A1A2A]/85 via-[#2A1020]/90 to-[#120612]/80 px-10 md:px-12 py-10 md:py-12 text-white/90 whitespace-pre-line pb-32">
+                          <div className="text-3xl md:text-4xl font-black text-white tracking-tight">
+                            The single most important point.
+                          </div>
+                          <div className="mt-5 text-base md:text-lg leading-relaxed text-white/80">
+                            {screen.keyPoint}
+                          </div>
+                        </div>
+                      ) : (
+                        <KeyPoint>{screen.keyPoint}</KeyPoint>
+                      )
                     ) : null}
 
                     {screen.type === 'video' ? (
-                      <div className="space-y-4">
-                        <VideoLessonPlayer
-                          title={screen.videoTitle ?? 'Video'}
-                          videoUrl={screen.videoUrl}
-                        />
-                        {screen.videoPrompt ? (
-                          <div className="text-sm text-slate-200">
-                            {screen.videoPrompt}
+                      <div className="space-y-3">
+                        {screen.t2 ? (
+                          <div className="text-center">
+                            <h2 className="text-xl  md:text-2xl font-black text-white">
+                              {screen.t2}
+                            </h2>
+                            <div className="mt-3 h-1 w-24 mx-auto rounded-full bg-gradient-to-r from-[#60A5FA] to-[#9333EA]" />
                           </div>
                         ) : null}
-                        {screen.transcriptDropdown ? (
-                          <Dropdown
-                            dropdownId={`${screen.id}:transcript`}
-                            header={screen.transcriptDropdown.header}
-                            body={screen.transcriptDropdown.body}
-                            onOpenChange={handleDropdownOpenChange}
-                          />
+
+                        <div className="flex justify-center">
+                          <div className="w-full max-w-[784px] space-y-3">
+                            <VideoLessonPlayer
+                              title={screen.videoTitle ?? 'Video'}
+                              videoUrl={screen.videoUrl}
+                              className="rounded-[18px]"
+                            />
+                          </div>
+                        </div>
+
+                        {screen.videoPrompt ? (
+                          <div className="text-sm text-slate-200 text-center">
+                            {screen.videoPrompt}
+                          </div>
                         ) : null}
                       </div>
                     ) : null}
 
-                    {screen.dropdowns && screen.id !== 2 ? (
+                    {screen.dropdowns &&
+                    screen.id !== 2 &&
+                    screen.id !== 5 &&
+                    screen.id !== 8 &&
+                    screen.id !== 9 &&
+                    screen.id !== 10 ? (
                       <div className="space-y-3">
                         {screen.dropdowns.map((d) => (
                           <div key={d.header} className="w-full md:w-[715px]">
@@ -773,16 +1160,27 @@ export default function MindSyncTeacherTrainingModule01Page() {
                     ) : null}
 
                     {screen.type === 'accordion' && screen.accordionItems ? (
-                      <div className="space-y-3">
-                        {screen.accordionItems.map((item) => (
-                          <Dropdown
-                            key={item.header}
-                            dropdownId={`${screen.id}:${item.header}`}
-                            header={item.header}
-                            body={item.body}
-                            onOpenChange={handleDropdownOpenChange}
-                          />
-                        ))}
+                      <div className="pt-2">
+                        {screen.body ? (
+                          <div className="text-sm md:text-base text-slate-200/90 text-center whitespace-pre-line leading-relaxed max-w-[720px] mx-auto">
+                            {screen.body}
+                          </div>
+                        ) : null}
+
+                        <div className="mt-8 space-y-4 max-w-[920px] mx-auto">
+                          {screen.accordionItems.map((item) => (
+                            <Dropdown
+                              key={item.header}
+                              dropdownId={`${screen.id}:${item.header}`}
+                              header={item.header}
+                              body={item.body}
+                              onOpenChange={handleDropdownOpenChange}
+                              containerClassName="rounded-xl bg-white/[0.03]"
+                              buttonClassName="h-[64px] bg-[#1A1A33]/60 hover:bg-[#1A1A33]/75"
+                              bodyClassName="bg-[#1A1A33]/35"
+                            />
+                          ))}
+                        </div>
                       </div>
                     ) : null}
 
@@ -970,14 +1368,14 @@ export default function MindSyncTeacherTrainingModule01Page() {
           </div>
         </div>
 
-        <aside className="w-1/4 border-l border-white/5 glass-panel flex flex-col shrink-0 sticky top-0 self-start">
+        <aside className="relative w-1/4 h-full border-l border-white/5 glass-panel flex flex-col shrink-0 overflow-hidden">
           <div className="p-6 border-b border-white/5">
             <h2 className="text-sm font-bold uppercase tracking-widest text-slate-500 mb-1">
               Module Contents
             </h2>
             <p className="text-xs text-slate-400">{toc.length} blocks</p>
           </div>
-          <div className="flex-1 custom-scrollbar">
+          <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar">
             {sidebarSections.map((section) => {
               const isOpen = openSections[section.key];
               const isActiveSection = section.key === activeSidebarSectionKey;
@@ -1074,12 +1472,69 @@ export default function MindSyncTeacherTrainingModule01Page() {
                           </button>
                         );
                       })}
+
+                      {section.key === 'watch' &&
+                      screen.type === 'video' &&
+                      screen.transcriptDropdown ? (
+                        <div className="p-4 border-t border-white/5">
+                          <button
+                            type="button"
+                            onClick={() => setIsSidebarTranscriptOpen(true)}
+                            className="w-full h-[56px] rounded-xl border border-white/10 bg-[#1A1A33]/60 hover:bg-[#1A1A33]/75 transition-colors flex items-center gap-3 px-4 text-left"
+                          >
+                            <span className="material-symbols-outlined text-[#818CF8]">
+                              menu_book
+                            </span>
+                            <span className="text-sm font-medium text-white/85 truncate">
+                              {screen.transcriptDropdown.header}
+                            </span>
+                          </button>
+                        </div>
+                      ) : null}
                     </div>
                   ) : null}
                 </div>
               );
             })}
           </div>
+
+          {isSidebarTranscriptOpen &&
+          screen.type === 'video' &&
+          screen.transcriptDropdown ? (
+            <div className="absolute inset-0 z-20">
+              <button
+                type="button"
+                aria-label="Close transcript"
+                onClick={() => setIsSidebarTranscriptOpen(false)}
+                className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+              />
+              <div className="absolute inset-3 glass-panel rounded-2xl border border-white/10 bg-[#020617]/90 backdrop-blur p-4 shadow-[0_30px_120px_rgba(0,0,0,0.7)] overflow-hidden flex flex-col">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <div className="text-xs font-bold uppercase tracking-[0.2em] text-white/60">
+                      Transcript
+                    </div>
+                    <div className="mt-1 text-sm font-semibold text-white truncate">
+                      {screen.transcriptDropdown.header}
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setIsSidebarTranscriptOpen(false)}
+                    className="w-9 h-9 rounded-xl border border-white/10 bg-white/[0.04] hover:bg-white/[0.08] transition-colors flex items-center justify-center shrink-0"
+                  >
+                    <span className="material-symbols-outlined text-white/80">
+                      close
+                    </span>
+                  </button>
+                </div>
+
+                <div className="mt-4 flex-1 min-h-0 overflow-y-auto custom-scrollbar text-sm text-slate-200 whitespace-pre-line leading-relaxed pr-1">
+                  {screen.transcriptDropdown.body}
+                </div>
+              </div>
+            </div>
+          ) : null}
         </aside>
       </main>
     </div>
