@@ -772,8 +772,9 @@ export default function MindSyncTeacherTrainingModule01Page() {
 
                         {screen.id === 8 ||
                         screen.id === 9 ||
-                        screen.id === 10 ? (
-                          <div className="flex-1 flex flex-col gap-4 min-h-0">
+                        screen.id === 10 ||
+                        screen.id === 13 ? (
+                          <div className="flex-1 flex flex-col gap-6 min-h-0">
                             <div className="text-center">
                               {screen.t3 ? (
                                 <h3 className="text-lg md:text-xl font-bold text-white">
@@ -784,8 +785,8 @@ export default function MindSyncTeacherTrainingModule01Page() {
                             </div>
 
                             {screen.body ? (
-                              <div className="w-full md:w-[1000px]">
-                                <div className="text-sm md:text-lg text-slate-200 whitespace-pre-line leading-relaxed">
+                              <div className="w-full max-w-[784px] mx-auto">
+                                <div className="text-sm md:text-base text-slate-200 whitespace-pre-line leading-relaxed text-center md:text-left">
                                   {screen.body}
                                 </div>
                               </div>
@@ -793,23 +794,24 @@ export default function MindSyncTeacherTrainingModule01Page() {
 
                             {screen.id !== 10 ? (
                               <div className="flex justify-center">
-                                <div className="w-full max-w-[461px] md:w-[451px] rounded-2xl overflow-hidden border border-white/10 bg-white/[0.02]">
+                                <div className="w-full max-w-[520px] md:w-[520px] rounded-2xl overflow-hidden border border-white/10 bg-white/[0.02]">
                                   <img
-                                    src={structureLearnImage}
-                                    alt="Learn"
-                                    className="w-full h-[200px] md:h-[260px] object-cover"
+                                    src={
+                                      screen.id === 13
+                                        ? learnHeroImage
+                                        : structureLearnImage
+                                    }
+                                    alt={screen.id === 13 ? 'Step 1' : 'Learn'}
+                                    className="w-full h-[220px] md:h-[280px] object-cover"
                                   />
                                 </div>
                               </div>
                             ) : null}
 
                             {screen.dropdowns && screen.dropdowns.length ? (
-                              <div className="space-y-3">
+                              <div className="space-y-3 w-full max-w-[920px] mx-auto">
                                 {screen.dropdowns.map((d) => (
-                                  <div
-                                    key={d.header}
-                                    className="w-full md:w-auto"
-                                  >
+                                  <div key={d.header} className="w-full">
                                     <div className="[&>div>button]:py-4 [&>div>button]:px-5">
                                       <Dropdown
                                         dropdownId={`${screen.id}:${d.header}`}
@@ -907,7 +909,53 @@ export default function MindSyncTeacherTrainingModule01Page() {
                         ) : null}
 
                         {screen.type === 'divider' && screen.t1 ? (
-                          screen.id === 5 ? (
+                          screen.id === 18 ? (
+                            <div className="flex flex-col gap-6">
+                              <div className="text-center">
+                                <h1 className="text-2xl md:text-4xl font-black text-white">
+                                  {screen.t1}
+                                </h1>
+                                <div className="mt-3 h-1 w-24 mx-auto rounded-full bg-gradient-to-r from-[#60A5FA] to-[#9333EA]" />
+                              </div>
+
+                              {screen.body ? (
+                                <div className="w-full max-w-[784px] mx-auto">
+                                  <div className="text-sm md:text-base text-slate-200 whitespace-pre-line leading-relaxed text-center md:text-left">
+                                    {screen.body}
+                                  </div>
+                                </div>
+                              ) : null}
+
+                              <div className="flex justify-center">
+                                <div className="w-full max-w-[520px] md:w-[520px] rounded-2xl overflow-hidden border border-white/10 bg-white/[0.02]">
+                                  <img
+                                    src={structurePracticeImage}
+                                    alt="Practise"
+                                    className="w-full h-[220px] md:h-[280px] object-cover"
+                                  />
+                                </div>
+                              </div>
+
+                              {screen.dropdowns && screen.dropdowns.length ? (
+                                <div className="space-y-3 w-full max-w-[920px] mx-auto">
+                                  {screen.dropdowns.map((d) => (
+                                    <div key={d.header} className="w-full">
+                                      <div className="[&>div>button]:py-4 [&>div>button]:px-5">
+                                        <Dropdown
+                                          dropdownId={`${screen.id}:${d.header}`}
+                                          header={d.header}
+                                          body={d.body}
+                                          onOpenChange={
+                                            handleDropdownOpenChange
+                                          }
+                                        />
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
+                              ) : null}
+                            </div>
+                          ) : screen.id === 5 ? (
                             <div className="text-left">
                               <h1 className="text-2xl md:text-4xl font-black text-white">
                                 {screen.t1}
@@ -1003,9 +1051,18 @@ export default function MindSyncTeacherTrainingModule01Page() {
                         ) : null}
 
                         {screen.t1 && screen.type !== 'divider' ? (
-                          <h1 className="text-2xl md:text-4xl font-black text-white">
-                            {screen.t1}
-                          </h1>
+                          screen.t2 ? (
+                            <div className="text-center">
+                              <h1 className="text-2xl md:text-4xl font-black text-white">
+                                {screen.t1}
+                              </h1>
+                              <div className="mt-3 h-1 w-24 mx-auto rounded-full bg-gradient-to-r from-[#60A5FA] to-[#9333EA]" />
+                            </div>
+                          ) : (
+                            <h1 className="text-2xl md:text-4xl font-black text-white">
+                              {screen.t1}
+                            </h1>
+                          )
                         ) : null}
 
                         {screen.id === 11 && screen.t2 ? (
@@ -1017,21 +1074,103 @@ export default function MindSyncTeacherTrainingModule01Page() {
                           </div>
                         ) : null}
 
+                        {screen.id === 12 ? (
+                          <div className="pt-2">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
+                              <div className="space-y-6">
+                                {screen.t2 ? (
+                                  <div>
+                                    <div className="text-left -mt-40">
+                                      <h1 className="text-xl md:text-2xl font-black text-white">
+                                        {screen.t2}
+                                      </h1>
+                                      <div className="mt-3 h-1 w-24 rounded-full bg-gradient-to-r from-[#60A5FA] to-[#9333EA]" />
+                                    </div>
+                                  </div>
+                                ) : null}
+                                {screen.body ? (
+                                  <div className="text-lg md:text-xl text-white/70 whitespace-pre-line leading-relaxed">
+                                    {screen.body}
+                                  </div>
+                                ) : null}
+                              </div>
+
+                              <div className="flex justify-center md:justify-end">
+                                <div className="w-full max-w-[420px] md:w-[420px] rounded-3xl overflow-hidden border border-white/10 bg-white/[0.02]">
+                                  <img
+                                    src={learnHeroImage}
+                                    alt="Learn"
+                                    className="w-full h-[280px] md:h-[320px] object-cover"
+                                  />
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        ) : null}
+
+                        {screen.id === 14 ? (
+                          <div className="pt-2">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
+                              <div className="space-y-6">
+                                <div className="text-left">
+                                  {screen.t3 ? (
+                                    <h1 className="text-xl md:text-2xl font-black text-white">
+                                      {screen.t3}
+                                    </h1>
+                                  ) : null}
+                                  <div className="mt-3 h-1 w-24 rounded-full bg-gradient-to-r from-[#60A5FA] to-[#9333EA]" />
+                                </div>
+
+                                {screen.body ? (
+                                  <div className="text-lg md:text-xl text-white/70 whitespace-pre-line leading-relaxed">
+                                    {screen.body}
+                                  </div>
+                                ) : null}
+                              </div>
+
+                              <div className="flex justify-center md:justify-end">
+                                <div className="w-full max-w-[420px] md:w-[420px] rounded-3xl overflow-hidden border border-white/10 bg-white/[0.02]">
+                                  <img
+                                    src={learnHeroImage}
+                                    alt="Learn"
+                                    className="w-full h-[280px] md:h-[320px] object-cover"
+                                  />
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        ) : null}
+
                         {screen.t2 &&
+                        !screen.t1 &&
                         screen.id !== 3 &&
                         screen.id !== 4 &&
                         screen.id !== 11 &&
+                        screen.id !== 12 &&
+                        screen.type !== 'accordion' &&
                         screen.type !== 'video' ? (
-                          <h2 className="text-xl md:text-2xl font-bold text-[#60A5FA]">
-                            {screen.t2}
-                          </h2>
+                          <div className="text-center">
+                            <h2 className="text-xl md:text-2xl font-black text-white">
+                              {screen.t2}
+                            </h2>
+                            <div className="mt-3 h-1 w-24 mx-auto rounded-full bg-gradient-to-r from-[#60A5FA] to-[#9333EA]" />
+                          </div>
                         ) : null}
 
                         {screen.t3 &&
+                        (typeof screen.t1 !== 'string' ||
+                          screen.t1.trim().toLowerCase() !==
+                            screen.t3.trim().toLowerCase()) &&
+                        (typeof screen.t2 !== 'string' ||
+                          screen.t2.trim().toLowerCase() !==
+                            screen.t3.trim().toLowerCase()) &&
                         screen.id !== 8 &&
                         screen.id !== 9 &&
-                        screen.id !== 10 ? (
-                          <h3 className="text-lg md:text-xl font-bold text-[#60A5FA]">
+                        screen.id !== 10 &&
+                        screen.id !== 13 &&
+                        screen.id !== 14 &&
+                        screen.id !== 15 ? (
+                          <h3 className="text-lg md:text-xl font-bold text-white/85">
                             {screen.t3}
                           </h3>
                         ) : null}
@@ -1042,6 +1181,18 @@ export default function MindSyncTeacherTrainingModule01Page() {
                           </div>
                         ) : null}
 
+                        {screen.id === 17 && screen.body ? (
+                          <div className="flex justify-center pt-2">
+                            <div className="w-full max-w-[781px] md:w-[781px] h-auto md:h-[315px] rounded-lg border border-white/10 bg-white/[0.12] backdrop-blur-[12px] overflow-hidden">
+                              <div className="px-9 pt-8 pb-8 md:px-9 md:pt-[33px] md:pb-8">
+                                <div className="text-sm md:text-base text-white whitespace-pre-line leading-relaxed">
+                                  {screen.body}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        ) : null}
+
                         {screen.body &&
                         screen.id !== 4 &&
                         screen.id !== 7 &&
@@ -1049,6 +1200,11 @@ export default function MindSyncTeacherTrainingModule01Page() {
                         screen.id !== 8 &&
                         screen.id !== 9 &&
                         screen.id !== 10 &&
+                        screen.id !== 13 &&
+                        screen.id !== 14 &&
+                        screen.id !== 12 &&
+                        screen.id !== 18 &&
+                        screen.id !== 17 &&
                         screen.type !== 'accordion' ? (
                           <div
                             className={`text-sm md:text-base text-slate-200 whitespace-pre-line leading-relaxed ${
@@ -1060,6 +1216,68 @@ export default function MindSyncTeacherTrainingModule01Page() {
                         ) : null}
                       </>
                     )}
+
+                    {screen.id === 15 ? (
+                      <div className="space-y-8">
+                        <div className="text-center">
+                          {screen.t3 ? (
+                            <h3 className="text-lg md:text-xl font-bold text-white">
+                              {screen.t3}
+                            </h3>
+                          ) : null}
+                          <div className="mt-3 h-1 w-24 mx-auto rounded-full bg-gradient-to-r from-[#60A5FA] to-[#9333EA]" />
+                        </div>
+
+                        {screen.bullets && screen.bullets.length ? (
+                          <div className="space-y-7">
+                            {screen.bullets.map((b, i) => {
+                              const isGreen = /^Green\b/i.test(b);
+                              const isAmber = /^Amber\b/i.test(b);
+                              const icon = isGreen
+                                ? 'insert_chart'
+                                : isAmber
+                                  ? 'chat'
+                                  : 'looks_3';
+                              return (
+                                <div
+                                  key={`${i}-${b}`}
+                                  className="flex items-start gap-6"
+                                >
+                                  <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center shrink-0">
+                                    {i === 2 && !isGreen && !isAmber ? (
+                                      <span className="text-[#A5B4FC] font-bold text-lg leading-none">
+                                        3
+                                      </span>
+                                    ) : (
+                                      <span className="material-symbols-outlined text-[#A5B4FC]">
+                                        {icon}
+                                      </span>
+                                    )}
+                                  </div>
+                                  <div className="text-sm md:text-base text-slate-200 leading-relaxed">
+                                    {b}
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        ) : null}
+
+                        {screen.keyPoint ? (
+                          <div className="mt-8 w-full max-w-[1100px] mx-auto rounded-3xl border border-rose-300/10 bg-gradient-to-br from-[#4A1A2A]/85 via-[#2A1020]/90 to-[#120612]/80 px-10 md:px-12 py-10 md:py-12 text-white/90 whitespace-pre-line">
+                            <div className="text-3xl md:text-4xl font-black text-white tracking-tight">
+                              The honest part.
+                            </div>
+                            <div className="mt-5 text-base md:text-lg leading-relaxed text-white/80">
+                              {screen.keyPoint.replace(
+                                /^The honest part\.?\s*/i,
+                                ''
+                              )}
+                            </div>
+                          </div>
+                        ) : null}
+                      </div>
+                    ) : null}
 
                     {screen.bullets && screen.id === 3 ? (
                       <div className="rounded-lg border border-[#818CF8] bg-[#171F33]/70 backdrop-blur-[12px] p-6 md:p-8 md:w-[1103px] md:mt-10">
@@ -1083,7 +1301,9 @@ export default function MindSyncTeacherTrainingModule01Page() {
                           </div>
                         </div>
                       </div>
-                    ) : screen.bullets && screen.id !== 4 ? (
+                    ) : screen.bullets &&
+                      screen.id !== 4 &&
+                      screen.id !== 15 ? (
                       <ul className="list-disc pl-6 space-y-2 text-sm md:text-base text-slate-200">
                         {screen.bullets.map((b) => (
                           <li key={b} className="leading-relaxed">
@@ -1103,7 +1323,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
                             {screen.keyPoint}
                           </div>
                         </div>
-                      ) : (
+                      ) : screen.id === 15 ? null : (
                         <KeyPoint>{screen.keyPoint}</KeyPoint>
                       )
                     ) : null}
@@ -1142,7 +1362,10 @@ export default function MindSyncTeacherTrainingModule01Page() {
                     screen.id !== 5 &&
                     screen.id !== 8 &&
                     screen.id !== 9 &&
-                    screen.id !== 10 ? (
+                    screen.id !== 10 &&
+                    screen.id !== 13 &&
+                    screen.id !== 14 &&
+                    screen.id !== 18 ? (
                       <div className="space-y-3">
                         {screen.dropdowns.map((d) => (
                           <div key={d.header} className="w-full md:w-[715px]">
@@ -1161,6 +1384,15 @@ export default function MindSyncTeacherTrainingModule01Page() {
 
                     {screen.type === 'accordion' && screen.accordionItems ? (
                       <div className="pt-2">
+                        {screen.t2 ? (
+                          <div className="text-center">
+                            <h2 className="text-2xl md:text-3xl font-black text-white">
+                              {screen.t2}
+                            </h2>
+                            <div className="mt-3 h-1 w-24 mx-auto rounded-full bg-gradient-to-r from-[#60A5FA] to-[#9333EA]" />
+                          </div>
+                        ) : null}
+
                         {screen.body ? (
                           <div className="text-sm md:text-base text-slate-200/90 text-center whitespace-pre-line leading-relaxed max-w-[720px] mx-auto">
                             {screen.body}
