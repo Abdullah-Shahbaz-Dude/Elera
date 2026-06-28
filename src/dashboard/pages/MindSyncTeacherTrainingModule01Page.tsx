@@ -516,6 +516,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
     () => new Set()
   );
   const scrollAreaRef = useRef<HTMLDivElement | null>(null);
+  const scrollRestoreTopRef = useRef<number | null>(null);
   const [scenarioAnswers, setScenarioAnswers] = useState<
     Partial<Record<1 | 2 | 3, ScenarioOptionKey>>
   >({});
@@ -606,22 +607,43 @@ export default function MindSyncTeacherTrainingModule01Page() {
   }, [index, screen.type, screen.scenarioId]);
 
   const handleDropdownOpenChange = (dropdownId: string, open: boolean) => {
+    const el = scrollAreaRef.current;
+
     setOpenDropdownIds((prev) => {
       const next = new Set(prev);
+      const wasAnyOpen = prev.size > 0;
+
       if (open) next.add(dropdownId);
       else next.delete(dropdownId);
-      return next;
-    });
 
-    if (screen.type === 'accordion') return;
+      const willAnyOpen = next.size > 0;
 
-    const el = scrollAreaRef.current;
-    if (!el) return;
+      if (el) {
+        if (open && !wasAnyOpen) {
+          scrollRestoreTopRef.current = el.scrollTop;
+        }
 
-    requestAnimationFrame(() => {
-      if (open) {
-        el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' });
+        requestAnimationFrame(() => {
+          if (!el) return;
+
+          if (open) {
+            if (screen.type !== 'accordion') {
+              el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' });
+            }
+            return;
+          }
+
+          if (!willAnyOpen && scrollRestoreTopRef.current !== null) {
+            el.scrollTo({
+              top: scrollRestoreTopRef.current,
+              behavior: 'smooth',
+            });
+            scrollRestoreTopRef.current = null;
+          }
+        });
       }
+
+      return next;
     });
   };
 
@@ -702,7 +724,9 @@ export default function MindSyncTeacherTrainingModule01Page() {
           >
             <div
               ref={scrollAreaRef}
-              className={`flex-1 min-h-0 custom-scrollbar pb-24 ${'overflow-y-auto scroll-smooth'}`}
+              className={`flex-1 min-h-0 custom-scrollbar pb-24 scroll-smooth ${
+                isAnyDropdownOpen ? 'overflow-y-auto' : 'overflow-hidden'
+              }`}
             >
               <section className="space-y-4">
                 {screen.type === 'cover' ? (
