@@ -101,7 +101,7 @@ function AppContent() {
             element={<MindSyncProgrammePage />}
           />
           <Route
-            path="my-learning/mind-sync/modules/1"
+            path="my-learning/mind-sync/modules/:moduleId"
             element={<MindSyncModulePage />}
           />
           <Route

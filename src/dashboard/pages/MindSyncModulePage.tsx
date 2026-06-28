@@ -6,6 +6,9 @@ import image from '../../assets/images/mindsync/2.jpg';
 import aboutimage1 from '../../assets/images/mindsync/4.jpg';
 import aboutImage from '../../assets/images/mindsync/3.jpg';
 
+import { useParams, Navigate } from 'react-router-dom';
+import MindSyncTeacherTrainingModule01Page from './MindSyncTeacherTrainingModule01Page';
+
 // import aboutImage from '../../assets/images/mindsync/3.jpg';
 import structureWatchImage from '../../assets/images/mindsync/5.jpg';
 import structureLearnImage from '../../assets/images/mindsync/6.jpg';
@@ -265,6 +268,16 @@ const PRACTICE_SCENARIOS: PracticeScenario[] = [
 ];
 
 export default function MindSyncModulePage() {
+  const { moduleId } = useParams();
+
+  if (moduleId === '2') {
+    return <MindSyncTeacherTrainingModule01Page />;
+  }
+
+  if (moduleId && moduleId !== '1') {
+    return <Navigate to="/dashboard/my-learning/mind-sync" replace />;
+  }
+
   const [active, setActive] = useState<TabKey>('introduction');
   const [isScriptOpen, setIsScriptOpen] = useState(false);
   const [isVideoHelpOpen, setIsVideoHelpOpen] = useState(false);

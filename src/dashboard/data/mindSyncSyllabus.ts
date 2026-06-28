@@ -170,3 +170,64 @@ export const MIND_SYNC_MODULE_01: MindSyncModule = {
     ],
   },
 };
+
+export const MIND_SYNC_TEACHER_TRAINING_MODULE_01: MindSyncModule = {
+  id: '2',
+  title: 'MODULE 1 – THE THREE SECOND PAUSE',
+  subtitle: 'Teacher Training',
+  summary:
+    'Reading behaviour in the moment. How to tell the difference between distress, defiance and overwhelm, and what to do in the three seconds before you respond.',
+  about: [
+    'Most teachers have read a pupil’s behaviour as defiance and only later realised it was distress.',
+    'This module is about the three seconds before you respond. Same pupil, same behaviour, a different read, a completely different outcome.',
+  ],
+  learningOutcomes: [
+    'Spot the three patterns staff most often misread: distress as defiance, overwhelm as rudeness, stimming as off task.',
+    'Understand what is happening inside a dysregulated pupil, and why pushing harder makes it worse.',
+    'Use the three second pause in real time.',
+    'Give consequences in a way that lands rather than escalates.',
+  ],
+  structure: [
+    'Part 1, Watch. A two minute video from a real classroom.',
+    'Part 2, Learn. The brain science and the technique.',
+    'Part 3, Practise. Three classroom scenarios with feedback.',
+    'Part 4, Take away. A one page card for your lanyard or noticeboard.',
+  ],
+  videoScriptScene: {
+    bullets: [
+      'Notice the moment where the teacher pauses before responding.',
+      'Compare what the teacher assumes with what is actually happening for the pupil.',
+      'See how the response changes when the state is read correctly.',
+    ],
+    productionApproach:
+      'A short narrative classroom sequence that shows the same moment from the classroom view and the pupil view, with the three second pause labelled on screen.',
+    suggestedStyle:
+      'Naturalistic classroom filming. No perfection. The teacher catches herself just in time.',
+    characters: [
+      'Ms Patel, teacher',
+      'Daniel, Year 9 pupil',
+      'Narrator (voice over)',
+    ],
+    fullScript: '',
+  },
+  learn: {
+    body: '',
+    techniqueHeading: 'The technique. The three second pause',
+    steps: [],
+    honestPart: '',
+    coRegulationScript: {
+      heading: '',
+      rows: [],
+    },
+    whatNotToDo: [],
+  },
+  practiceScenarios: [],
+  takeaway: {
+    heading: 'Part 4. Your take away card',
+    body: '',
+    optionalReflectionHeading: '',
+    optionalReflectionQuestions: [],
+    beforeYouCloseHeading: '',
+    beforeYouCloseBody: [],
+  },
+};
