@@ -93,6 +93,9 @@ type SidebarSection = {
   indices: number[];
 };
 
+const TAKEAWAY_HIGHLIGHT_TEXT =
+  '“Yesterday I misread what was going on for you. I should have checked in rather than snapped. I am sorry. You did not deserve that.” No “but.” No explanation. No asking them to apologise back. Then let them go.';
+
 const SCENARIOS: Record<1 | 2 | 3, Scenario> = {
   1: {
     id: 1,
@@ -484,13 +487,10 @@ export default function MindSyncTeacherTrainingModule01Page() {
       },
       { id: 19, type: 'scenario_situation', scenarioId: 1 },
       { id: 20, type: 'scenario_choose', scenarioId: 1 },
-      { id: 21, type: 'scenario_feedback', scenarioId: 1 },
       { id: 22, type: 'scenario_situation', scenarioId: 2 },
       { id: 23, type: 'scenario_choose', scenarioId: 2 },
-      { id: 24, type: 'scenario_feedback', scenarioId: 2 },
       { id: 25, type: 'scenario_situation', scenarioId: 3 },
       { id: 26, type: 'scenario_choose', scenarioId: 3 },
-      { id: 27, type: 'scenario_feedback', scenarioId: 3 },
       {
         id: 28,
         type: 'takeaway',
@@ -517,6 +517,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
   );
   const scrollAreaRef = useRef<HTMLDivElement | null>(null);
   const scrollRestoreTopRef = useRef<number | null>(null);
+  const [isScenarioFeedbackOpen, setIsScenarioFeedbackOpen] = useState(false);
   const [scenarioAnswers, setScenarioAnswers] = useState<
     Partial<Record<1 | 2 | 3, ScenarioOptionKey>>
   >({});
@@ -590,6 +591,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
 
   useEffect(() => {
     setOpenDropdownIds(new Set());
+    setIsScenarioFeedbackOpen(false);
   }, [index]);
 
   useEffect(() => {
@@ -834,8 +836,20 @@ export default function MindSyncTeacherTrainingModule01Page() {
                             </div>
 
                             {screen.body ? (
-                              <div className="w-full max-w-[784px] mx-auto">
-                                <div className="text-sm md:text-base text-slate-200 whitespace-pre-line leading-relaxed text-center md:text-left">
+                              <div
+                                className={`w-full mx-auto ${
+                                  screen.id === 10
+                                    ? 'max-w-[1100px]'
+                                    : 'max-w-[784px]'
+                                }`}
+                              >
+                                <div
+                                  className={`whitespace-pre-line text-center md:text-left ${
+                                    screen.id === 10
+                                      ? 'text-base md:text-lg leading-relaxed text-slate-100/90'
+                                      : 'text-sm md:text-base text-slate-200 leading-relaxed'
+                                  }`}
+                                >
                                   {screen.body}
                                 </div>
                               </div>
@@ -1114,15 +1128,6 @@ export default function MindSyncTeacherTrainingModule01Page() {
                           )
                         ) : null}
 
-                        {screen.id === 11 && screen.t2 ? (
-                          <div className="text-center">
-                            <h2 className="text-2xl md:text-3xl font-black text-white">
-                              {screen.t2}
-                            </h2>
-                            <div className="mt-3 h-1 w-24 mx-auto rounded-full bg-gradient-to-r from-[#60A5FA] to-[#9333EA]" />
-                          </div>
-                        ) : null}
-
                         {screen.id === 12 ? (
                           <div className="pt-2">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
@@ -1234,7 +1239,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
                           <div className="flex justify-center pt-2">
                             <div className="w-full max-w-[781px] md:w-[781px] h-auto md:h-[315px] rounded-lg border border-white/10 bg-white/[0.12] backdrop-blur-[12px] overflow-hidden">
                               <div className="px-9 pt-8 pb-8 md:px-9 md:pt-[33px] md:pb-8">
-                                <div className="text-sm md:text-base text-white whitespace-pre-line leading-relaxed">
+                                <div className="text-sm md:text-2xl text-white whitespace-pre-line leading-relaxed">
                                   {screen.body}
                                 </div>
                               </div>
@@ -1497,15 +1502,16 @@ export default function MindSyncTeacherTrainingModule01Page() {
                       ? (() => {
                           const scenarioId = screen.scenarioId;
                           const scenario = SCENARIOS[scenarioId];
+                          const selected = scenarioAnswers[scenarioId] ?? null;
                           return (
                             <div className="space-y-6">
-                              <div className="w-full max-w-[784px] mb-20 ">
-                                <h3 className="text-2xl md:text-[62px] md:leading-[38.4px] font-bold text-[#DADFFB]">
+                              <div className="w-full max-w-[784px] mb-6 md:mb-8">
+                                <h3 className="text-2xl md:text-[32px] md:leading-[38.4px] font-bold text-[#DADFFB]">
                                   {scenario.question}
                                 </h3>
                               </div>
 
-                              <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-6  w-full max-w-[986px] mx-auto">
+                              <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-[986px] mx-auto">
                                 {(
                                   Object.keys(
                                     scenario.options
@@ -1523,7 +1529,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
                                           [scenarioId]: k,
                                         }))
                                       }
-                                      className={`text-left rounded-lg border px-[25px] py-[25px] transition-colors ${
+                                      className={`text-left rounded-lg border px-[18px] py-[18px] md:px-[22px] md:py-[22px] transition-colors ${
                                         selected
                                           ? 'bg-[#1A1A33] border-[#4F46E5] shadow-[0_0_0_1px_rgba(79,70,229,0.45)]'
                                           : 'bg-transparent border-white/10 hover:bg-white/[0.03]'
@@ -1541,6 +1547,71 @@ export default function MindSyncTeacherTrainingModule01Page() {
                                   );
                                 })}
                               </div>
+
+                              <div className="flex flex-col items-center gap-4 pt-2">
+                                <button
+                                  type="button"
+                                  disabled={!selected}
+                                  onClick={() =>
+                                    setIsScenarioFeedbackOpen(true)
+                                  }
+                                  className={`px-10 py-4 rounded-full font-semibold shadow-2xl transition-all flex items-center gap-3 ${
+                                    selected
+                                      ? 'bg-gradient-to-r from-[#60A5FA] to-[#9333EA] text-white hover:scale-105 active:scale-95'
+                                      : 'bg-white/10 text-white/40 cursor-not-allowed'
+                                  }`}
+                                >
+                                  <span className="tracking-wider">
+                                    View feedback
+                                  </span>
+                                  <span className="material-symbols-outlined">
+                                    arrow_forward
+                                  </span>
+                                </button>
+                              </div>
+
+                              {isScenarioFeedbackOpen && selected ? (
+                                <div className="fixed inset-0 z-50 flex items-center justify-center p-6">
+                                  <button
+                                    type="button"
+                                    aria-label="Close feedback"
+                                    onClick={() =>
+                                      setIsScenarioFeedbackOpen(false)
+                                    }
+                                    className="absolute inset-0 bg-black/60"
+                                  />
+
+                                  <div className="relative w-full max-w-2xl glass-panel rounded-2xl border border-white/10 bg-[#020617]/90 backdrop-blur p-5 md:p-6 shadow-[0_30px_120px_rgba(0,0,0,0.7)] animate-in fade-in zoom-in-95 duration-200">
+                                    <div className="flex items-start justify-between gap-4">
+                                      <div className="min-w-0">
+                                        <div className="text-[11px] uppercase tracking-[0.2em] text-white/50 font-semibold mb-2">
+                                          Feedback
+                                        </div>
+                                        <div className="text-sm font-bold text-white">
+                                          Option {selected}
+                                        </div>
+                                      </div>
+
+                                      <button
+                                        type="button"
+                                        onClick={() =>
+                                          setIsScenarioFeedbackOpen(false)
+                                        }
+                                        className="p-2 rounded-full text-white/60 hover:text-white transition-colors"
+                                        aria-label="Close feedback"
+                                      >
+                                        <span className="material-symbols-outlined">
+                                          close
+                                        </span>
+                                      </button>
+                                    </div>
+
+                                    <div className="mt-4 max-h-[60vh] overflow-y-auto custom-scrollbar text-sm text-slate-300 leading-relaxed whitespace-pre-line">
+                                      {scenario.feedback[selected]}
+                                    </div>
+                                  </div>
+                                </div>
+                              ) : null}
                             </div>
                           );
                         })()
@@ -1590,8 +1661,8 @@ export default function MindSyncTeacherTrainingModule01Page() {
                       : null}
 
                     {screen.type === 'takeaway' ? (
-                      <div className="space-y-8">
-                        <div className="relative rounded-2xl overflow-hidden border border-white/10">
+                      <div className="space-y-4">
+                        <div className="relative rounded-2xl mt-8 overflow-hidden border border-white/10">
                           <div className="absolute inset-0">
                             <img
                               src={structureTakeawayImage}
@@ -1601,19 +1672,42 @@ export default function MindSyncTeacherTrainingModule01Page() {
                             <div className="absolute inset-0 bg-gradient-to-r from-[#020617]/95 via-[#020617]/85 to-[#020617]/60" />
                           </div>
 
-                          <div className="relative z-10 p-6 md:p-8">
-                            <div className="glass-panel p-6 rounded-2xl border border-white/10 card-glow max-w-[920px]">
+                          <div className="relative z-10 p-4 md:p-5">
+                            <div className="glass-panel p-5 rounded-2xl border border-white/10 card-glow max-w-[920px]">
                               <div className="text-left">
                                 <div className="text-[10px] text-[#60A5FA] px-2 py-1 bg-white/5 rounded-full inline-block mb-3 uppercase tracking-widest font-semibold">
                                   Mind Sync Pocket
                                 </div>
-                                <h4 className="text-2xl font-bold text-white whitespace-pre-line">
+                                <h4 className="text-xl md:text-2xl font-bold text-white whitespace-pre-line">
                                   {screen.takeawayHeading}
                                 </h4>
                               </div>
 
-                              <div className="mt-6 text-sm text-slate-200 leading-relaxed whitespace-pre-line">
-                                {screen.takeawayBody}
+                              <div className="mt-4 text-xs md:text-sm text-slate-200 leading-relaxed whitespace-pre-wrap md:columns-2 md:gap-8">
+                                {(() => {
+                                  if (!screen.takeawayBody) return null;
+                                  if (
+                                    !screen.takeawayBody.includes(
+                                      TAKEAWAY_HIGHLIGHT_TEXT
+                                    )
+                                  ) {
+                                    return screen.takeawayBody;
+                                  }
+
+                                  const parts = screen.takeawayBody.split(
+                                    TAKEAWAY_HIGHLIGHT_TEXT
+                                  );
+
+                                  return (
+                                    <>
+                                      {parts[0]}
+                                      <span className="inline-block bg-white/10 border border-white/10 rounded-xl px-3 py-2">
+                                        {TAKEAWAY_HIGHLIGHT_TEXT}
+                                      </span>
+                                      {parts[1] ?? null}
+                                    </>
+                                  );
+                                })()}
                               </div>
                             </div>
                           </div>
