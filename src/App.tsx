@@ -3,6 +3,7 @@ import {
   Routes,
   Route,
   useLocation,
+  Link,
 } from 'react-router-dom';
 import ProtectedRoute from './components/ProtectedRoute';
 import Navbar from './components/Navbar/Navbar';
@@ -44,6 +45,34 @@ import Signup from './components/Signup';
 import Home2 from './pages/Home2';
 import ComingSoon from './pages/ComingSoon';
 import { VideoProvider } from './contexts/VideoContext';
+
+function DashboardComingSoon({ title }: { title: string }) {
+  return (
+    <main className="min-h-screen bg-black text-white">
+      <div className="container mx-auto px-4 md:px-6 py-16">
+        <div className="mx-auto max-w-3xl">
+          <h1 className="text-4xl md:text-6xl font-bold mb-6">{title}</h1>
+          <p className="text-white/80 text-lg md:text-xl leading-relaxed">
+            Coming Soon
+          </p>
+
+          <div className="mt-10">
+            <Link
+              to="/dashboard/my-learning/mind-sync"
+              className="inline-flex items-center justify-center rounded-xl px-6 py-3 text-base font-semibold text-white shadow-xl transition-all hover:scale-[1.02] active:scale-[0.98]"
+              style={{
+                background: 'linear-gradient(135deg, #60A5FA, #9333EA)',
+                boxShadow: '0 8px 32px rgba(96, 165, 250, 0.35)',
+              }}
+            >
+              Back to Mind Sync
+            </Link>
+          </div>
+        </div>
+      </div>
+    </main>
+  );
+}
 
 function AppContent() {
   const location = useLocation();
@@ -103,6 +132,10 @@ function AppContent() {
           <Route
             path="my-learning/mind-sync/modules/:moduleId"
             element={<MindSyncModulePage />}
+          />
+          <Route
+            path="my-learning/mind-sync/module-2"
+            element={<DashboardComingSoon title="Mind Sync Module 2" />}
           />
           <Route
             path="my-learning/programme/:programmeId"

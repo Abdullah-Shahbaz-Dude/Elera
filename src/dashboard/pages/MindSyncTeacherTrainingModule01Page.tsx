@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import VideoLessonPlayer from '../components/VideoLessonPlayer';
 import image from '../../assets/images/mindsync/2.jpg';
 import structureWatchImage from '../../assets/images/mindsync/5.jpg';
@@ -279,6 +279,7 @@ function KeyPoint({ children }: { children: string }) {
 }
 
 export default function MindSyncTeacherTrainingModule01Page() {
+  const navigate = useNavigate();
   const screens: Screen[] = useMemo(
     () => [
       {
@@ -1716,9 +1717,34 @@ export default function MindSyncTeacherTrainingModule01Page() {
                     ) : null}
 
                     {screen.type === 'closing' ? (
-                      <div className="space-y-4">
-                        <div className="text-sm md:text-base text-slate-200 whitespace-pre-line leading-relaxed">
-                          {screen.closingBody}
+                      <div className="pt-4">
+                        <div className="w-full max-w-[1100px] mx-auto rounded-3xl border border-white/10 bg-gradient-to-br from-[#24104A]/85 via-[#140A2A]/90 to-[#05020D]/90 px-7 md:px-10 py-8 md:py-10 text-white/90 overflow-hidden relative">
+                          <div className="absolute -top-32 -left-32 w-[520px] h-[520px] bg-fuchsia-500/10 blur-[120px] rounded-full" />
+                          <div className="absolute -bottom-32 -right-32 w-[520px] h-[520px] bg-indigo-500/10 blur-[120px] rounded-full" />
+
+                          <div className="relative z-10">
+                            <h2 className="text-3xl md:text-5xl font-black text-white tracking-tight">
+                              Great job. You've finished
+                              <br />
+                              Module 1.
+                            </h2>
+
+                            <div className="mt-5 max-w-[820px] text-sm md:text-base text-white/70 leading-relaxed whitespace-pre-line">
+                              {screen.closingBody}
+                            </div>
+
+                            <div className="mt-8">
+                              <Link
+                                to="/dashboard/my-learning/mind-sync/module-2"
+                                className="inline-flex items-center justify-center gap-3 rounded-xl px-8 py-3.5 text-sm md:text-base font-semibold text-[#0B1020] bg-[#B9C7FF] hover:bg-[#C7D2FE] transition-colors"
+                              >
+                                <span>Start Module 2</span>
+                                <span className="material-symbols-outlined">
+                                  arrow_forward
+                                </span>
+                              </Link>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     ) : null}
@@ -1748,9 +1774,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
                   disabled={!canGoNext}
                   onClick={() => {
                     if (screen.id === 29) {
-                      window.location.assign(
-                        '/dashboard/my-learning/mind-sync'
-                      );
+                      navigate('/dashboard/my-learning/mind-sync');
                       return;
                     }
 
@@ -1783,11 +1807,19 @@ export default function MindSyncTeacherTrainingModule01Page() {
             {sidebarSections.map((section) => {
               const isOpen = openSections[section.key];
               const isActiveSection = section.key === activeSidebarSectionKey;
+              const isCollapsible = section.key !== 'closing';
               return (
                 <div key={section.key} className="border-b border-white/5">
                   <button
                     type="button"
                     onClick={() => {
+                      if (!isCollapsible) {
+                        const targetIndex = section.indices[0];
+                        if (typeof targetIndex === 'number')
+                          setIndex(targetIndex);
+                        return;
+                      }
+
                       if (isOpen) {
                         setOpenSections({
                           introduction: false,
@@ -1824,16 +1856,18 @@ export default function MindSyncTeacherTrainingModule01Page() {
                         {section.indices.length} blocks
                       </div>
                     </div>
-                    <span
-                      className={`material-symbols-outlined text-white/60 transition-transform ${
-                        isOpen ? 'rotate-180' : ''
-                      }`}
-                    >
-                      expand_more
-                    </span>
+                    {isCollapsible ? (
+                      <span
+                        className={`material-symbols-outlined text-white/60 transition-transform ${
+                          isOpen ? 'rotate-180' : ''
+                        }`}
+                      >
+                        expand_more
+                      </span>
+                    ) : null}
                   </button>
 
-                  {isOpen ? (
+                  {isCollapsible && isOpen ? (
                     <div>
                       {section.indices.map((i) => {
                         const item = toc[i];
