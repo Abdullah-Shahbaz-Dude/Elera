@@ -725,7 +725,9 @@ export default function MindSyncTeacherTrainingModule01Page() {
             <div
               ref={scrollAreaRef}
               className={`flex-1 min-h-0 custom-scrollbar pb-24 scroll-smooth ${
-                isAnyDropdownOpen ? 'overflow-y-auto' : 'overflow-hidden'
+                isAnyDropdownOpen || screen.type === 'scenario_feedback'
+                  ? 'overflow-y-auto'
+                  : 'overflow-hidden'
               }`}
             >
               <section className="space-y-4">
