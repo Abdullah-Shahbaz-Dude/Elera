@@ -17,10 +17,14 @@ export default function VideoLessonPlayer({
   const embedUrl = useMemo(() => {
     if (!videoUrl) return null;
     const fileId = videoUrl.match(/\/d\/([a-zA-Z0-9-_]+)/)?.[1];
-    return fileId ? `https://drive.google.com/file/d/${fileId}/preview` : videoUrl;
+    return fileId
+      ? `https://drive.google.com/file/d/${fileId}/preview`
+      : videoUrl;
   }, [videoUrl]);
 
-  const [status, setStatus] = useState<VideoStatus>(hasVideo ? 'loading' : 'coming_soon');
+  const [status, setStatus] = useState<VideoStatus>(
+    hasVideo ? 'loading' : 'coming_soon'
+  );
 
   useEffect(() => {
     if (!hasVideo) {
@@ -35,15 +39,17 @@ export default function VideoLessonPlayer({
 
   return (
     <div
-      className={`relative aspect-video w-full rounded-2xl overflow-hidden glass-panel border border-white/10 shadow-2xl ${
+      className={`relative aspect-video w-full overflow-hidden border shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)] ${
         className ?? ''
       }`}
+      style={{ background: '#2D3449', borderColor: '#424754', borderRadius: 8 }}
     >
+      <div className="absolute inset-0 pointer-events-none bg-gradient-to-br from-black/60 via-black/0 to-black/0" />
       {hasVideo && embedUrl ? (
         <>
           <iframe
             src={embedUrl}
-            className="w-full h-full rounded-2xl"
+            className="w-full h-full"
             allow="autoplay; encrypted-media"
             allowFullScreen
             title={title}
@@ -76,23 +82,27 @@ export default function VideoLessonPlayer({
           )}
         </>
       ) : (
-        <div className="w-full h-full bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center">
+        <div className="w-full h-full flex items-center justify-center">
           <div className="text-center">
-            <div className="w-20 h-20 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center mb-4 mx-auto">
-              <span className="material-symbols-outlined text-white text-2xl">
-                play_circle
+            <div className="w-20 h-20 rounded-[12px] bg-[#ADC6FF] flex items-center justify-center mx-auto shadow-[0_8px_10px_-6px_rgba(0,0,0,0.1),0_20px_25px_-5px_rgba(0,0,0,0.1)]">
+              <span className="material-symbols-outlined text-[#002E6A] text-[28px]">
+                play_arrow
               </span>
             </div>
-            <h3 className="text-lg font-bold text-white mb-2">{title}</h3>
-            <p className="text-slate-400 text-sm">Video coming soon</p>
+            <h3 className="mt-4 text-base md:text-lg font-semibold text-[#D9E2FD]">
+              {title}
+            </h3>
+            <p className="mt-1 text-xs md:text-sm text-[#D9E2FD]/70">
+              Video coming soon
+            </p>
           </div>
         </div>
       )}
 
-      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4 rounded-b-2xl">
-        <div className="flex items-center justify-between text-white">
-          <span className="text-xs text-white/90 font-medium">{title}</span>
-          <span className="text-xs text-emerald-400 font-medium">
+      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-3">
+        <div className="flex items-center justify-between">
+          <span className="text-xs font-medium text-[#D9E2FD]">{title}</span>
+          <span className="text-xs font-medium text-[#D9E2FD]/70">
             {status === 'loading'
               ? 'Loading...'
               : hasVideo
