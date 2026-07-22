@@ -32,19 +32,19 @@ export default function DashboardLayout() {
     } ${
       isActive
         ? 'bg-primary/10 text-primary font-medium border border-primary/20'
-        : 'hover:bg-white/5 text-slate-400 hover:text-white'
+        : 'hover:bg-slate-100 text-slate-600 hover:text-slate-900'
     }`;
 
   const linkClass = isLessonView
-    ? 'flex items-center justify-center px-3 py-3 rounded-xl hover:bg-white/5 text-slate-400 hover:text-white transition-all group'
-    : 'flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 text-slate-400 hover:text-white transition-all group';
+    ? 'flex items-center justify-center px-3 py-3 rounded-xl hover:bg-slate-100 text-slate-600 hover:text-slate-900 transition-all group'
+    : 'flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-slate-100 text-slate-600 hover:text-slate-900 transition-all group';
 
   return (
-    <div className="flex h-screen overflow-hidden font-display bg-background-dark text-white">
+    <div className="flex h-screen overflow-hidden font-display bg-white text-slate-900">
       <aside
         className={`${
           isLessonView ? 'w-20' : 'w-64'
-        } sidebar-glass flex flex-col h-full z-20 shrink-0 transition-[width] duration-200`}
+        } flex flex-col h-full z-20 shrink-0 transition-[width] duration-200 bg-white border-r border-slate-200`}
       >
         <div
           className={`flex items-center ${
@@ -64,9 +64,7 @@ export default function DashboardLayout() {
                 src={isLessonView ? logoFav : logoImage}
                 alt="Elara"
                 className={`object-contain ${
-                  isLessonView
-                    ? 'h-full w-full'
-                    : 'max-h-32 w-full brightness-0 invert'
+                  isLessonView ? 'h-full w-full' : 'max-h-32 w-full'
                 }`}
               />
             </Link>
@@ -136,10 +134,10 @@ export default function DashboardLayout() {
           </Link> */}
         </nav>
         <div
-          className={`border-t border-white/10 ${isLessonView ? 'p-2' : 'p-4'}`}
+          className={`border-t border-slate-200 ${isLessonView ? 'p-2' : 'p-4'}`}
         >
           <div
-            className={`rounded-xl bg-white/5 border border-white/5 flex items-center gap-3 ${
+            className={`rounded-xl bg-slate-50 border border-slate-200 flex items-center gap-3 ${
               isLessonView ? 'justify-center p-2' : 'p-4'
             }`}
           >
@@ -148,7 +146,7 @@ export default function DashboardLayout() {
             </div>
             {!isLessonView && (
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold truncate text-white">
+                <p className="text-sm font-semibold truncate text-slate-900">
                   {displayName}
                 </p>
                 <p className="text-xs text-slate-400 truncate">Member</p>
@@ -157,7 +155,7 @@ export default function DashboardLayout() {
             <button
               type="button"
               onClick={handleLogout}
-              className="text-slate-400 hover:text-white transition-colors p-1"
+              className="text-slate-500 hover:text-slate-900 transition-colors p-1"
               aria-label="Logout"
               title="Logout"
             >
@@ -166,7 +164,7 @@ export default function DashboardLayout() {
           </div>
         </div>
       </aside>
-      <main className="flex-1 overflow-y-auto relative">
+      <main className="flex-1 overflow-y-auto relative bg-white">
         <Outlet />
       </main>
     </div>

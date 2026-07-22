@@ -231,9 +231,10 @@ function Dropdown({
   const [open, setOpen] = useState(false);
   return (
     <div
-      className={`border md:w-auto border-white/10 rounded-lg overflow-hidden ${
+      className={`border md:w-auto rounded-lg overflow-hidden bg-white ${
         containerClassName ?? ''
       }`}
+      style={{ borderColor: '#E5E9F0' }}
     >
       <button
         type="button"
@@ -244,15 +245,16 @@ function Dropdown({
             return next;
           });
         }}
-        className={`w-full h-[70px] flex items-center justify-between gap-4 px-[25px] bg-[#1A1A33] hover:bg-[#1A1A33]/90 transition-colors text-left ${
+        className={`w-full h-[70px] flex items-center justify-between gap-4 px-[25px] bg-white hover:bg-slate-50 transition-colors text-left ${
           buttonClassName ?? ''
         }`}
       >
-        <div className="text-sm font-medium text-[#CBD5E1]">{header}</div>
+        <div className="text-sm font-arial text-slate-900">{header}</div>
         <span
-          className={`material-symbols-outlined text-[#818CF8] transition-transform ${
+          className={`material-symbols-outlined transition-transform ${
             open ? 'rotate-180' : ''
           }`}
+          style={{ color: '#1F7A7A' }}
         >
           expand_more
         </span>
@@ -262,7 +264,14 @@ function Dropdown({
           open ? 'max-h-[520px] opacity-100' : 'max-h-0 opacity-0'
         } ${bodyClassName ?? ''}`}
       >
-        <div className="px-[25px] py-4 text-sm text-slate-200 whitespace-pre-line">
+        <div
+          className="px-[25px] py-4 text-slate-700 whitespace-pre-line"
+          style={{
+            background: '#FFFFFF',
+            fontSize: '15px',
+            fontWeight: 400,
+          }}
+        >
           {body}
         </div>
       </div>
@@ -272,7 +281,7 @@ function Dropdown({
 
 function KeyPoint({ children }: { children: string }) {
   return (
-    <div className="rounded-2xl border border-amber-400/25 bg-amber-500/10 px-5 py-4 text-slate-100 whitespace-pre-line">
+    <div className="rounded-2xl border border-amber-300/60 bg-amber-50 px-5 py-4 text-slate-900 whitespace-pre-line">
       {children}
     </div>
   );
@@ -281,234 +290,230 @@ function KeyPoint({ children }: { children: string }) {
 export default function MindSyncTeacherTrainingModule01Page() {
   const navigate = useNavigate();
   const screens: Screen[] = useMemo(
-    () => [
-      {
-        id: 1,
-        type: 'cover',
-        t1: 'The Three Second Pause',
-        t2: 'Reading behaviour in the moment',
-        body: 'How to tell the difference between distress, defiance and overwhelm.\nAnd what to do in the three seconds before you respond.',
-      },
-      {
-        id: 2,
-        type: 'text',
-        t2: 'About this module',
-        lead: 'Most teachers have read a pupil’s behaviour as defiance and only later realised it was distress.',
-        body: 'This module is about the three seconds before you respond. Same pupil, same behaviour, a different read, a completely different outcome.',
-        dropdowns: [
+    () =>
+      (
+        [
           {
-            header: 'Does this only apply to pupils with a diagnosis?',
-            body: 'No. The brain patterns here show up across autism, ADHD, dyslexia and dyspraxia, in pupils with no diagnosis at all, and in any pupil on a bad day.',
-          },
-        ],
-      },
-      {
-        id: 3,
-        type: 'bullets',
-        t2: 'By the end of this module you will',
-        bullets: [
-          'Spot the three patterns staff most often misread: distress as defiance, overwhelm as rudeness, stimming as off task.',
-          'Understand what is happening inside a dysregulated pupil, and why pushing harder makes it worse.',
-          'Use the three second pause in real time.',
-          'Give consequences in a way that lands rather than escalates.',
-        ],
-      },
-      {
-        id: 4,
-        type: 'bullets',
-        t2: 'How this module works',
-        body: 'Four short parts:',
-        bullets: [
-          'Watch. A two minute video from a real classroom.',
-          'Learn. The brain science and the technique.',
-          'Practise. Three classroom scenarios with feedback.',
-          'Take away. A one page card for your lanyard or noticeboard.',
-        ],
-      },
-      {
-        id: 5,
-        type: 'divider',
-        t1: 'Part 1. Watch',
-        body: 'A short video. You will recognise the moment. Watch the difference between what the teacher sees and what is actually happening for the pupil.',
-        dropdowns: [
-          {
-            header: 'What to look for',
-            body: 'The same behaviour can come from very different brain states, and how to tell which is which.\n\nThe three second pause in action, in a real classroom, with a teacher who is not perfect but catches herself just in time.\n\nThe signs that you are about to respond to defiance that is really distress.',
-          },
-        ],
-      },
-      {
-        id: 6,
-        type: 'video',
-        t2: 'The three second pause, in a real classroom',
-        videoTitle: 'Module 1 film, around 2 minutes',
-        videoUrl: null,
-        videoPrompt:
-          'Watch Ms Patel and Daniel. Keep your eye on the second where she pauses.',
-        transcriptDropdown: {
-          header: 'Read the full script',
-          body: 'OPEN. Clean Elara logo on a plain background. Hold 2 to 3 seconds.\nSoft fade into the classroom.\n\nSCENE 1, the lesson and Daniel (0:00 to 0:30). Wide shot of a Year 9 English lesson already in full flow. The class is working, Ms Patel is teaching in her stride. We move to Daniel near the back: his book is not out, his desk is bare while the pupils beside him work, his pen is on the floor, and he is turned towards the window, not the board. Calm and still, not disturbing anyone.\n\nCaptions, one at a time: “Daniel, Year 9. He has ADHD.” “He is not disrupting anyone.” “His brain cannot hold focus right now.”\n\nMs Patel glances over, sees him, takes it in, and chooses to give him a minute.\n\nNarrator: This is an ordinary Year 9 English lesson, and it is going well. Now look at the back of the room. This is Daniel. He has ADHD. He is not messing about and he is not distracting anyone. His book is not even out, and his pen is on the floor. However hard he tries, his brain cannot hold on to the lesson right now. His teacher has noticed. She has not acted yet. That is the most important second in the lesson, and most observers would not even see it.\n\nSCENE 2, the first ask (0:30 to 1:00). Ms Patel comes alongside Daniel. Calm, low voice. “Daniel, book out please. We are on page forty two.”\n\nDaniel does not respond. He does not get his book out, does not turn to the page, does not look at her. A small mutter under his breath. Ms Patel’s face tightens for a second. Two pupils nearby are watching.\n\nCut to Daniel’s view for two seconds. The room feels louder. The light hums. A pencil tapping is too loud. His face is blank, his jaw tight. He heard the tone, not the words. The tone felt like pressure.\n\nNarrator: We have just seen two versions of the same moment. From the front of the class, it looks as if Daniel has refused a reasonable instruction. From inside Daniel’s head, he could not process it, and he is already starting to shut down. Same behaviour, completely different reality.\n\nSCENE 3, the pause (1:00 to 1:35). Ms Patel is about to repeat herself, more firmly. We see her start to react, then stop herself. She holds it. Three seconds. Caption, low on screen: “The three second pause.” She is choosing.\n\nShe crouches to Daniel’s eye level, side on, not face on. Lower, slower voice. “Daniel. Quick check in. Are you with me, or are you somewhere else right now?” After a few seconds, a tiny shake of the head. Almost nothing, but it is an answer. “OK. Take two minutes. Get a drink. Come back when you are ready. I will catch you up on the page.”\n\nDaniel gets up slowly and goes out. Ms Patel turns back to the class as if nothing unusual has happened.\n\nNarrator: That was the three second pause. It cost her about a minute of lesson time. Without it, this could have gone a very different way. It might have tipped into a behaviour incident, with Daniel walking out and the rest of the lesson lost. Because she paused, it did not have to. He took a short break, came back, and got on with his work.\n\nSCENE 4, the takeaway (1:35 to 2:05). End of lesson. The bell goes. Daniel hands his book to Ms Patel as he leaves. She glances at it. He has done the work. A small nod between them. Ms Patel sits, lets out a breath. Something nearly went wrong, and did not. Not because she was a better teacher than yesterday, but because she paused for three seconds.\n\nNarrator: The pause is not soft. It is not letting him off. It is the difference between responding to what is actually happening and responding to what you assumed was happening. In this module, we will show you exactly how to do it, and when it matters most.\n\nCLOSE. Fade to the clean Elara logo on a plain background. Hold about 3 seconds. Soft music resolves.',
-        },
-      },
-      {
-        id: 7,
-        type: 'divider',
-        t1: 'Part 2. Learn',
-        lead: 'What you just watched, in plain language.',
-        body: 'There are three states a pupil’s brain can be in during a lesson. They look different, they need different responses, and the costliest mistake is treating one as if it were another.',
-      },
-      {
-        id: 8,
-        type: 'text',
-        t3: 'State 1. Calmly engaged (green)',
-        body: 'The thinking brain is online. The pupil can follow instructions, manage impulses and learn. Most of your lesson assumes pupils are here. Most are, most of the time.',
-        dropdowns: [
-          {
-            header: 'A bit more on the brain',
-            body: 'The thinking brain is the prefrontal cortex, just behind the forehead. In green it is in charge, so the pupil has the capacity to learn, remember and make choices.',
-          },
-        ],
-      },
-      {
-        id: 9,
-        type: 'text',
-        t3: 'State 2. Dysregulated (amber)',
-        body: 'Something has knocked the pupil out of green: a loud room, a fall out at break, work that feels too hard, being tired or hungry. The thinking brain is only partly online and the alarm system has switched on. They look fidgety, restless, distracted. They did not choose this.',
-      },
-      {
-        id: 10,
-        type: 'key',
-        t3: 'State 3. Shut down (red)',
-        body: 'The alarm system is in charge and the thinking brain has gone offline. The pupil cannot process language the way you expect. They may freeze, refuse to move, go silent, or lash out. None of this is choice in the everyday sense. The brain has to come back down first.',
-        keyPoint:
-          'The single most important point. A pupil in amber or red cannot learn from a consequence in the moment. Their thinking brain is not online to take it in. Give the consequence later, when they are back in green. That is when it teaches.',
-      },
-      {
-        id: 11,
-        type: 'accordion',
-        t2: 'The three states, side by side',
-        body: 'A quick reference. Tap each state to see what you might see, what is happening underneath, and what helps in the moment.',
-        accordionTitle: 'The three states, side by side',
-        accordionItems: [
-          {
-            header: 'Green, calmly engaged',
-            body: 'What you see: on task, following instructions, productive movement, can wait for help.\n\nUnderneath: the thinking brain is in charge. Capacity to learn and choose.\n\nWhat helps: teach, stretch, push gently. High expectations land best here.',
+            id: 1,
+            type: 'cover',
+            t1: 'The Three Second Pause',
+            t2: 'Reading behaviour in the moment',
+            body: 'How to tell the difference between distress, defiance and overwhelm. And what to do in the three seconds before you respond.',
           },
           {
-            header: 'Amber, dysregulated',
-            body: 'What you see: fidgety, restless, off task, short or muttered replies, slower to follow. May look cheeky or low level disruptive.\n\nUnderneath: the thinking brain is partly offline, the alarm is firing low. Energy is going on staying in the room, less is left for learning.\n\nWhat helps: co regulate first. Lower your voice. Reduce demands briefly. Offer a choice. Buy ninety seconds. Most come back within two minutes if you do not push.',
+            id: 2,
+            type: 'text',
+            t2: 'About this module',
+            lead: 'Sometimes a pupil’s behaviour can look like defiance when what is really going on is distress.',
+            body: 'This module is about the three seconds before you respond. Same pupil, same behaviour, a different read, a completely different outcome.',
+            dropdowns: [
+              {
+                header: 'Does this only apply to pupils with a diagnosis?',
+                body: 'No. The brain patterns here show up across autism, ADHD, dyslexia and dyspraxia, in pupils with no diagnosis at all, and in any pupil on a bad day.',
+              },
+            ],
           },
           {
-            header: 'Red, shut down',
-            body: 'What you see: frozen, silent, head down. May refuse to move, may walk out, may lash out with words that are not their usual voice.\n\nUnderneath: the thinking brain is offline, the alarm is in charge. Words do not process as you expect.\n\nWhat helps: reduce demands to almost zero. Quiet voice. Side on, not face on. Offer space, not solutions. Do not negotiate. Give the brain time to come back online.',
-          },
-        ],
-      },
-      {
-        id: 12,
-        type: 'text',
-        t2: 'The technique. The three second pause',
-        body: 'It is not complicated. You make a small gap between the pupil’s behaviour and your response, and into that gap you fit one simple check. It works in three steps.',
-      },
-      {
-        id: 13,
-        type: 'text',
-        t3: 'Step 1. Notice the rise in yourself',
-        body: 'Your jaw tightens. Your chest feels hot. The feeling that you have been undermined, especially with others watching. That rise is information about you, not about the pupil. Notice it. Do not act on it yet.',
-        dropdowns: [
-          {
-            header: 'Why this is the hard step',
-            body: 'The rise feels like clarity. It is not. Catching it, and not acting on it, is the actual work of this technique.',
-          },
-        ],
-      },
-      {
-        id: 14,
-        type: 'text',
-        t3: 'Step 2. Ask one quiet question',
-        body: 'Inside your head: is this pupil in green, amber or red? Two seconds of looking usually tells you. Aloud if you need to: “Quick check in. Are you with me, or somewhere else right now?” It works because it does not accuse or demand. It opens a door.',
-      },
-      {
-        id: 15,
-        type: 'key',
-        t3: 'Step 3. Match your response to the state, not the behaviour',
-        bullets: [
-          'Green, and they chose not to comply: the calm, firm, named behaviour conversation.',
-          'Amber: lower the demand briefly, slow your voice, offer a small choice. Most return to green within two minutes.',
-          'Red: reduce demands to almost zero. Offer space, not solutions. The conversation comes later.',
-        ],
-        keyPoint:
-          'The honest part. You will not manage this every time. The goal is not perfection. It is catching the rise more often than you used to. Within a couple of months, the pupils who used to escalate start to settle.',
-      },
-      {
-        id: 16,
-        type: 'accordion',
-        t2: 'What not to do, in the moment',
-        body: 'Five moves that look reasonable under pressure but tend to escalate a dysregulated pupil. Tap each one.',
-        accordionTitle: 'What not to do, in the moment',
-        accordionItems: [
-          {
-            header: 'Do not raise your voice to match theirs',
-            body: 'The calmer you sound, the more likely they are to come down.',
+            id: 3,
+            type: 'bullets',
+            t2: 'By the end you will be able to',
+            bullets: [
+              'Spot the three patterns staff most often misread: distress as defiance, overwhelm as rudeness, stimming as off task.',
+              'Understand what is happening inside a dysregulated pupil, and why pushing harder makes it worse.',
+              'Use the three second pause in real time.',
+              'Give consequences in a way that lands rather than escalates.',
+            ],
           },
           {
-            header: 'Do not demand eye contact',
-            body: 'For many neurodivergent pupils it costs cognitive load they do not have. Eye contact is not the test of respect.',
+            id: 5,
+            type: 'divider',
+
+            body: 'The same moment, twice. In the first version the teacher responds in about a second, the way any of us might. In the second she waits three. Watch what changes.',
+            videoTitle: 'Module 1 film, around 2 minutes',
+            videoUrl: null,
+            videoPrompt:
+              'Watch Ms Patel and Daniel. Keep your eye on the second where she pauses.',
+            dropdowns: [
+              {
+                header: 'Read the full script ',
+                body: 'OPEN. Clean Elara logo, then a soft dissolve into the classroom.\n\nSCENE 1, a pupil who has checked out. A Year 9 English lesson in full flow. Daniel is near the back.\nHis book is closed and he is turning a pen over and over in his hands, bending it, clicking it, eyes\nsomewhere else. The pupils either side of him are writing.\n\nNarrator: Year 9 English, period four on a Wednesday. Watch the boy at the back. His book is shut,\nand he is turning a pen over and over in his hands. He is not being difficult and he is not being loud. He\nhas just stopped being able to join in.\n\nSCENE 2, the ask, and two realities. Ms Patel asks him calmly to get his book out. He does not open it.\nA small tense shake of the head, and a low mutter. From the front it looks like a knock back. Then a\nshort view from Daniel’s side: the room tilts, the light hums, a pencil tap is too loud.\n\nNarrator: A fair, ordinary instruction. From the front of the room, that looks like a refusal. But from\ninside his head, it is not refusal at all. He heard the tone, not the words. Same moment. Two\ncompletely different realities.\n\nSCENE 3, what often happens. She responds in about a second, on reflex. She asks again, harder,\nand names a consequence. It stops being about a book and starts being about winning.\n\nSCENE 4, what could happen instead. The same moment again. Narrator: In a classroom, most of us\nwait about one second before we respond. Researchers have actually measured it. And when a\nteacher holds that pause for just a few seconds longer, what happens next in the room can change\ncompletely. She feels herself about to react, and instead she waits. Three seconds. Then she comes\ndown to his level, off to the side, and asks one quiet question.\n\nSCENE 5, the outcome. He takes two minutes, comes back, and does the work. Narrator: Two\nversions of the same lesson, and the only real difference between them was about two seconds. Not a\nbetter teacher. Not a different pupil. Two seconds.\n\nCLOSE. Clean Elara logo.',
+              },
+            ],
           },
           {
-            header: 'Do not stack instructions on a dysregulated pupil',
-            body: 'Working memory is reduced. One instruction at a time, with a pause after each, lands.',
+            id: 6,
+            type: 'video',
+            t2: 'The three second pause, in a real classroom',
+            videoTitle: 'Module 1 film, around 2 minutes',
+            videoUrl: null,
+            videoPrompt:
+              'Watch Ms Patel and Daniel. Keep your eye on the second where she pauses.',
+            transcriptDropdown: {
+              header: 'Read the full script',
+              body: 'OPEN. Clean Elara logo on a plain background. Hold 2 to 3 seconds.\nSoft fade into the classroom.\n\nSCENE 1, the lesson and Daniel (0:00 to 0:30). Wide shot of a Year 9 English lesson already in full flow. The class is working, Ms Patel is teaching in her stride. We move to Daniel near the back: his book is not out, his desk is bare while the pupils beside him work, his pen is on the floor, and he is turned towards the window, not the board. Calm and still, not disturbing anyone.\n\nCaptions, one at a time: “Daniel, Year 9. He has ADHD.” “He is not disrupting anyone.” “His brain cannot hold focus right now.”\n\nMs Patel glances over, sees him, takes it in, and chooses to give him a minute.\n\nNarrator: This is an ordinary Year 9 English lesson, and it is going well. Now look at the back of the room. This is Daniel. He has ADHD. He is not messing about and he is not distracting anyone. His book is not even out, and his pen is on the floor. However hard he tries, his brain cannot hold on to the lesson right now. His teacher has noticed. She has not acted yet. That is the most important second in the lesson, and most observers would not even see it.\n\nSCENE 2, the first ask (0:30 to 1:00). Ms Patel comes alongside Daniel. Calm, low voice. “Daniel, book out please. We are on page forty two.”\n\nDaniel does not respond. He does not get his book out, does not turn to the page, does not look at her. A small mutter under his breath. Ms Patel’s face tightens for a second. Two pupils nearby are watching.\n\nCut to Daniel’s view for two seconds. The room feels louder. The light hums. A pencil tapping is too loud. His face is blank, his jaw tight. He heard the tone, not the words. The tone felt like pressure.\n\nNarrator: We have just seen two versions of the same moment. From the front of the class, it looks as if Daniel has refused a reasonable instruction. From inside Daniel’s head, he could not process it, and he is already starting to shut down. Same behaviour, completely different reality.\n\nSCENE 3, the pause (1:00 to 1:35). Ms Patel is about to repeat herself, more firmly. We see her start to react, then stop herself. She holds it. Three seconds. Caption, low on screen: “The three second pause.” She is choosing.\n\nShe crouches to Daniel’s eye level, side on, not face on. Lower, slower voice. “Daniel. Quick check in. Are you with me, or are you somewhere else right now?” After a few seconds, a tiny shake of the head. Almost nothing, but it is an answer. “OK. Take two minutes. Get a drink. Come back when you are ready. I will catch you up on the page.”\n\nDaniel gets up slowly and goes out. Ms Patel turns back to the class as if nothing unusual has happened.\n\nNarrator: That was the three second pause. It cost her about a minute of lesson time. Without it, this could have gone a very different way. It might have tipped into a behaviour incident, with Daniel walking out and the rest of the lesson lost. Because she paused, it did not have to. He took a short break, came back, and got on with his work.\n\nSCENE 4, the takeaway (1:35 to 2:05). End of lesson. The bell goes. Daniel hands his book to Ms Patel as he leaves. She glances at it. He has done the work. A small nod between them. Ms Patel sits, lets out a breath. Something nearly went wrong, and did not. Not because she was a better teacher than yesterday, but because she paused for three seconds.\n\nNarrator: The pause is not soft. It is not letting him off. It is the difference between responding to what is actually happening and responding to what you assumed was happening. In this module, we will show you exactly how to do it, and when it matters most.\n\nCLOSE. Fade to the clean Elara logo on a plain background. Hold about 3 seconds. Soft music resolves.',
+            },
           },
           {
-            header: 'Do not give a public consequence to a dysregulated pupil',
-            body: 'It almost always escalates. Deliver it quietly later, when the pupil is back in green. That is when it teaches.',
+            id: 7,
+            type: 'divider',
+            t1: 'Part 2. Learn',
+            lead: 'What you just watched, in plain language.',
+            body: 'There are three states a pupil’s brain can be in during a lesson. They look different, they need different responses, and the costliest mistake is treating one as if it were another.',
           },
           {
-            header: 'Do not read stimming as off task behaviour',
-            body: 'Tapping, rocking, fiddling are usually self regulation. Asking them to stop removes what is keeping them engaged.',
+            id: 8,
+            type: 'text',
+            t3: 'State 1. Calmly engaged (green)',
+            body: 'The thinking brain is online. The pupil can follow instructions, manage impulses and learn. Most of your lesson assumes pupils are here. Most are, most of the time.',
+            dropdowns: [
+              {
+                header: 'A bit more on the brain',
+                body: 'The thinking brain is the prefrontal cortex, just behind the forehead. In green it is in charge, so the pupil has the capacity to learn, remember and make choices.',
+              },
+            ],
           },
-        ],
-      },
-      {
-        id: 17,
-        type: 'text',
-        body: 'Evidence base. The three state model used here is consistent with research by Mullally and colleagues at Newcastle University on school distress, and with the Neurodivergence Task and Finish Group report, which finds that behaviour, including stimming, is too often read as defiance when it is in fact communication of overwhelm or distress.',
-      },
-      {
-        id: 18,
-        type: 'divider',
-        t1: 'Part 3. Practise',
-        body: 'Three scenarios you will recognise. Read the situation, choose what you would do, then compare with the feedback. No trick questions. Some answers feel reasonable but quietly make things worse.',
-        dropdowns: [
           {
-            header: 'How to get the most from this',
-            body: 'Take them slowly. The goal is not to score highly. It is to notice your own instinct, and where it might benefit from a small shift.',
+            id: 9,
+            type: 'text',
+            t3: 'State 2. Dysregulated (amber)',
+            body: 'Something has knocked the pupil out of green: a loud room, a fall out at break, work that feels too hard, being tired or hungry. The thinking brain is only partly online and the alarm system has switched on. They look fidgety, restless, distracted. They did not choose this.',
           },
-        ],
-      },
-      { id: 19, type: 'scenario_situation', scenarioId: 1 },
-      { id: 20, type: 'scenario_choose', scenarioId: 1 },
-      { id: 22, type: 'scenario_situation', scenarioId: 2 },
-      { id: 23, type: 'scenario_choose', scenarioId: 2 },
-      { id: 25, type: 'scenario_situation', scenarioId: 3 },
-      { id: 26, type: 'scenario_choose', scenarioId: 3 },
-      {
-        id: 28,
-        type: 'takeaway',
-        t1: 'Part 4. Your take away card',
-        body: 'A one page summary of the whole module, made to fit a phone screen, a lanyard insert, or a noticeboard. Do not try to remember the module. Just keep this card close.',
-        takeawayHeading: 'THE THREE SECOND PAUSE\nThe pocket version',
-        takeawayBody:
-          '1. Notice the rise in yourself. The tight chest, the urge to snap, the feeling of being undermined. Notice it. Do not reply yet.\n\n2. Ask one quiet question. Inside: is this pupil green, amber or red? If you need to, aloud: “Quick check in. Are you with me, or somewhere else?”\n\n3. Match your response to the state, not the behaviour. Green: teach. Amber: lower the demand, offer a choice, buy ninety seconds. Red: reduce demands to almost zero, offer space, save the conversation for later.\n\nAnd when you get it wrong:\n\n“Yesterday I misread what was going on for you. I should have checked in rather than snapped. I am sorry. You did not deserve that.” No “but.” No explanation. No asking them to apologise back. Then let them go.',
-      },
-      {
-        id: 29,
-        type: 'closing',
-        t2: 'That is Module 1',
-        closingBody:
-          'Next in the pathway: Module 2, Don’t Break What’s Working. How to tell when a quietly off task pupil is actually coping, and the cost of taking their coping away.\n\nMind Sync · Evidence based insight, in plain language. Designed by educational psychologists. Aligned to the Ofsted Education Inspection Framework, November 2025.',
-      },
-    ],
+          {
+            id: 10,
+            type: 'key',
+            t3: 'State 3. Shut down (red)',
+            body: 'The alarm system is in charge and the thinking brain has gone offline. The pupil cannot process language the way you expect. They may freeze, refuse to move, go silent, or lash out. None of this is choice in the everyday sense. The brain has to come back down first.',
+            keyPoint:
+              'The single most important point. A pupil in amber or red cannot learn from a consequence in the moment. Their thinking brain is not online to take it in. Give the consequence later, when they are back in green. That is when it teaches.',
+          },
+          {
+            id: 11,
+            type: 'accordion',
+            t2: 'The three states, side by side',
+            body: 'A quick reference. Tap each state to see what you might see, what is happening underneath, and what helps in the moment.',
+            accordionTitle: 'The three states, side by side',
+            accordionItems: [
+              {
+                header: 'Green, calmly engaged',
+                body: 'What you see: on task, following instructions, productive movement, can wait for help.\n\nUnderneath: the thinking brain is in charge. Capacity to learn and choose.\n\nWhat helps: teach, stretch, push gently. High expectations land best here.',
+              },
+              {
+                header: 'Amber, dysregulated',
+                body: 'What you see: fidgety, restless, off task, short or muttered replies, slower to follow. May look cheeky or low level disruptive.\n\nUnderneath: the thinking brain is partly offline, the alarm is firing low. Energy is going on staying in the room, less is left for learning.\n\nWhat helps: co regulate first. Lower your voice. Reduce demands briefly. Offer a choice. Buy ninety seconds. Most come back within two minutes if you do not push.',
+              },
+              {
+                header: 'Red, shut down',
+                body: 'What you see: frozen, silent, head down. May refuse to move, may walk out, may lash out with words that are not their usual voice.\n\nUnderneath: the thinking brain is offline, the alarm is in charge. Words do not process as you expect.\n\nWhat helps: reduce demands to almost zero. Quiet voice. Side on, not face on. Offer space, not solutions. Do not negotiate. Give the brain time to come back online.',
+              },
+            ],
+          },
+          {
+            id: 12,
+            type: 'text',
+            t2: 'Three states, and why the difference matters.',
+            body: 'During a lesson, a pupil’s brain can be in one of three states. From the front of the room they can look similar. They need very different things from you, and the costly mistake is treating one as if it were another. Tap each state.',
+          },
+          {
+            id: 13,
+            type: 'text',
+            t3: 'Step 1. Notice the rise in yourself',
+            body: 'Your jaw tightens. Your chest feels hot. The feeling that you have been undermined, especially with others watching. That rise is information about you, not about the pupil. Notice it. Do not act on it yet.',
+            dropdowns: [
+              {
+                header: 'Why this is the hard step',
+                body: 'The rise feels like clarity. It is not. Catching it, and not acting on it, is the actual work of this technique.',
+              },
+            ],
+          },
+          {
+            id: 14,
+            type: 'text',
+            t3: 'Step 2. Ask one quiet question',
+            body: 'Inside your head: is this pupil in green, amber or red? Two seconds of looking usually tells you. Aloud if you need to: “Quick check in. Are you with me, or somewhere else right now?” It works because it does not accuse or demand. It opens a door.',
+          },
+          {
+            id: 15,
+            type: 'key',
+            t3: 'Step 3. Match your response to the state, not the behaviour',
+            bullets: [
+              'Green, and they chose not to comply: the calm, firm, named behaviour conversation.',
+              'Amber: lower the demand briefly, slow your voice, offer a small choice. Most return to green within two minutes.',
+              'Red: reduce demands to almost zero. Offer space, not solutions. The conversation comes later.',
+            ],
+            keyPoint:
+              'The honest part. You will not manage this every time. The goal is not perfection. It is catching the rise more often than you used to. Within a couple of months, the pupils who used to escalate start to settle.',
+          },
+          {
+            id: 16,
+            type: 'accordion',
+            t2: 'What not to do, in the moment',
+            body: 'Five moves that look reasonable under pressure but tend to escalate a dysregulated pupil. Tap each one.',
+            accordionTitle: 'What not to do, in the moment',
+            accordionItems: [
+              {
+                header: 'Do not raise your voice to match theirs',
+                body: 'The calmer you sound, the more likely they are to come down.',
+              },
+              {
+                header: 'Do not demand eye contact',
+                body: 'For many neurodivergent pupils it costs cognitive load they do not have. Eye contact is not the test of respect.',
+              },
+              {
+                header: 'Do not stack instructions on a dysregulated pupil',
+                body: 'Working memory is reduced. One instruction at a time, with a pause after each, lands.',
+              },
+              {
+                header:
+                  'Do not give a public consequence to a dysregulated pupil',
+                body: 'It almost always escalates. Deliver it quietly later, when the pupil is back in green. That is when it teaches.',
+              },
+              {
+                header: 'Do not read stimming as off task behaviour',
+                body: 'Tapping, rocking, fiddling are usually self regulation. Asking them to stop removes what is keeping them engaged.',
+              },
+            ],
+          },
+          {
+            id: 17,
+            type: 'text',
+            body: 'Evidence base. The three state model used here is consistent with research by Mullally and colleagues at Newcastle University on school distress, and with the Neurodivergence Task and Finish Group report, which finds that behaviour, including stimming, is too often read as defiance when it is in fact communication of overwhelm or distress.',
+          },
+          {
+            id: 18,
+            type: 'divider',
+            t1: 'Part 3. Practise',
+            body: 'Three situations you will recognise. Read it, choose what you would do, then compare. There are no trick questions, and the aim is not to score well. It is to notice your own instinct, and where a small shift might help. Some options feel reasonable and quietly make things harder.',
+            // dropdowns: [
+            //   {
+            //     header: 'How to get the most from this',
+            //     body: 'Take them slowly. The goal is not to score highly. It is to notice your own instinct, and where it might benefit from a small shift.',
+            //   },
+            // ],
+          },
+          { id: 19, type: 'scenario_situation', scenarioId: 1 },
+          { id: 20, type: 'scenario_choose', scenarioId: 1 },
+          { id: 22, type: 'scenario_situation', scenarioId: 2 },
+          { id: 23, type: 'scenario_choose', scenarioId: 2 },
+          { id: 25, type: 'scenario_situation', scenarioId: 3 },
+          { id: 26, type: 'scenario_choose', scenarioId: 3 },
+          {
+            id: 28,
+            type: 'takeaway',
+            t1: 'Part 4. Your take away card',
+            body: 'A one page summary of the whole module, made to fit a phone screen, a lanyard insert, or a noticeboard. Do not try to remember the module. Just keep this card close.',
+            takeawayHeading: 'THE THREE SECOND PAUSE\nThe pocket version',
+            takeawayBody:
+              '1. Notice the rise in yourself. The tight chest, the urge to snap, the feeling of being undermined. Notice it. Do not reply yet.\n\n2. Ask one quiet question. Inside: is this pupil green, amber or red? If you need to, aloud: “Quick check in. Are you with me, or somewhere else?”\n\n3. Match your response to the state, not the behaviour. Green: teach. Amber: lower the demand, offer a choice, buy ninety seconds. Red: reduce demands to almost zero, offer space, save the conversation for later.\n\nAnd when you get it wrong:\n\n“Yesterday I misread what was going on for you. I should have checked in rather than snapped. I am sorry. You did not deserve that.” No “but.” No explanation. No asking them to apologise back. Then let them go.',
+          },
+          {
+            id: 29,
+            type: 'closing',
+            t2: 'That is Module 1',
+            closingBody:
+              'Next in the pathway: Module 2, Don’t Break What’s Working. How to tell when a quietly off task pupil is actually coping, and the cost of taking their coping away.\n\nMind Sync · Evidence based insight, in plain language. Designed by educational psychologists. Aligned to the Ofsted Education Inspection Framework, November 2025.',
+          },
+        ] as Screen[]
+      ).filter((s) => s.id !== 6),
     []
   );
 
@@ -518,6 +523,9 @@ export default function MindSyncTeacherTrainingModule01Page() {
   );
   const scrollAreaRef = useRef<HTMLDivElement | null>(null);
   const scrollRestoreTopRef = useRef<number | null>(null);
+  const sidebarScrollRef = useRef<HTMLDivElement | null>(null);
+  const suppressAutoOpenRef = useRef(false);
+  const lastAutoOpenIndexRef = useRef<number | null>(null);
   const [isScenarioFeedbackOpen, setIsScenarioFeedbackOpen] = useState(false);
   const [scenarioAnswers, setScenarioAnswers] = useState<
     Partial<Record<1 | 2 | 3, ScenarioOptionKey>>
@@ -526,12 +534,12 @@ export default function MindSyncTeacherTrainingModule01Page() {
   const [openSections, setOpenSections] = useState<
     Record<SidebarSectionKey, boolean>
   >({
-    introduction: true,
-    watch: true,
-    learn: true,
-    practise: true,
-    takeaway: true,
-    closing: true,
+    introduction: false,
+    watch: false,
+    learn: false,
+    practise: false,
+    takeaway: false,
+    closing: false,
   });
 
   const [isSidebarTranscriptOpen, setIsSidebarTranscriptOpen] = useState(false);
@@ -539,7 +547,11 @@ export default function MindSyncTeacherTrainingModule01Page() {
   const toc = useMemo(() => {
     return screens.map((s, i) => {
       const label =
-        s.type === 'cover' ? 'Cover' : s.t1 || s.t2 || s.t3 || `Block ${s.id}`;
+        s.type === 'cover'
+          ? 'Cover'
+          : s.type === 'scenario_situation' && s.scenarioId
+            ? SCENARIOS[s.scenarioId].title
+            : s.t1 || s.t2 || s.t3 || `Block ${s.id}`;
       return {
         index: i,
         label,
@@ -563,10 +575,10 @@ export default function MindSyncTeacherTrainingModule01Page() {
 
     return [
       { key: 'introduction', label: 'Introduction', indices: range(1, 4) },
-      { key: 'watch', label: 'Watch', indices: range(5, 6) },
-      { key: 'learn', label: 'Learn', indices: range(7, 17) },
-      { key: 'practise', label: 'Practise', indices: range(18, 27) },
-      { key: 'takeaway', label: 'Take away', indices: range(28, 28) },
+      { key: 'watch', label: 'Part 1. Watch', indices: range(5, 5) },
+      { key: 'learn', label: 'Part 2. Learn', indices: range(7, 17) },
+      { key: 'practise', label: 'Part 3. Practise', indices: range(18, 27) },
+      { key: 'takeaway', label: 'Part 4. Take away', indices: range(28, 28) },
       { key: 'closing', label: 'Closing', indices: range(29, 29) },
     ];
   }, [toc]);
@@ -578,15 +590,49 @@ export default function MindSyncTeacherTrainingModule01Page() {
 
   useEffect(() => {
     if (!activeSidebarSectionKey) return;
-    setOpenSections({
-      introduction: activeSidebarSectionKey === 'introduction',
-      watch: activeSidebarSectionKey === 'watch',
-      learn: activeSidebarSectionKey === 'learn',
-      practise: activeSidebarSectionKey === 'practise',
-      takeaway: activeSidebarSectionKey === 'takeaway',
-      closing: activeSidebarSectionKey === 'closing',
+    if (lastAutoOpenIndexRef.current === null) {
+      lastAutoOpenIndexRef.current = index;
+      return;
+    }
+    if (lastAutoOpenIndexRef.current === index) return;
+    lastAutoOpenIndexRef.current = index;
+    if (suppressAutoOpenRef.current) {
+      suppressAutoOpenRef.current = false;
+      return;
+    }
+    setOpenSections((prev) => {
+      if (prev[activeSidebarSectionKey]) return prev;
+      return {
+        ...prev,
+        [activeSidebarSectionKey]: true,
+      };
     });
-  }, [activeSidebarSectionKey]);
+  }, [activeSidebarSectionKey, index]);
+
+  useEffect(() => {
+    const container = sidebarScrollRef.current;
+    if (!container) return;
+
+    const raf = window.requestAnimationFrame(() => {
+      const activeEl = container.querySelector(
+        `[data-sidebar-item="true"][data-toc-index="${index}"]`
+      ) as HTMLElement | null;
+
+      if (activeEl) {
+        activeEl.scrollIntoView({ block: 'nearest' });
+        return;
+      }
+
+      if (!activeSidebarSectionKey) return;
+      const sectionEl = container.querySelector(
+        `[data-sidebar-section-header="true"][data-section-key="${activeSidebarSectionKey}"]`
+      ) as HTMLElement | null;
+      if (!sectionEl) return;
+      sectionEl.scrollIntoView({ block: 'nearest' });
+    });
+
+    return () => window.cancelAnimationFrame(raf);
+  }, [index, activeSidebarSectionKey, openSections]);
 
   const screen = screens[Math.min(screens.length - 1, Math.max(0, index))];
 
@@ -666,7 +712,10 @@ export default function MindSyncTeacherTrainingModule01Page() {
   }, [screen.id]);
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#030713] text-white">
+    <div
+      className="flex flex-col min-h-screen bg-[#F7F9FC] text-slate-900"
+      style={{ fontFamily: 'Montserrat, system-ui, sans-serif' }}
+    >
       <header className="relative shrink-0 h-[238px] flex flex-col justify-end px-8 pb-8 overflow-hidden">
         <div className="absolute inset-0 z-0">
           <img
@@ -674,18 +723,17 @@ export default function MindSyncTeacherTrainingModule01Page() {
             alt="Mind Sync"
             className="w-full h-full object-cover object-[center_7%]"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#060E20] via-[#060E20]/40 to-transparent" />
-          <div className="absolute inset-0 bg-black/20" />
-          <div className="absolute inset-0 hero-gradient opacity-50" />
+          <div className="absolute inset-0 bg-gradient-to-r from-white/80 via-white/55 to-transparent" />
+          <div className="absolute inset-0 bg-white/10" />
         </div>
 
         <div className="absolute top-4 left-8 flex flex-col gap-2">
-          <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/70">
+          <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-700">
             Mind Sync - Teacher Training
           </span>
           <Link
             to="/dashboard/my-learning/mind-sync"
-            className="flex items-center gap-2 text-white/80 hover:text-white transition-colors group"
+            className="flex items-center gap-2 text-slate-700 hover:text-slate-900 transition-colors group"
           >
             <span className="material-symbols-outlined text-lg group-hover:-translate-x-1 transition-transform">
               arrow_back
@@ -697,19 +745,32 @@ export default function MindSyncTeacherTrainingModule01Page() {
         </div>
 
         <div className="absolute top-4 right-8 text-right">
-          <span className="text-xs text-white/70 font-medium">
+          <span className="text-xs text-slate-700 font-medium">
             Block {screen.id}
           </span>
         </div>
 
         <div className="relative z-10 max-w-4xl mt-6">
-          <h1 className="text-2xl md:text-3xl font-black text-white mb-1 leading-tight tracking-tight">
-            MODULE 1 – THE THREE SECOND PAUSE
+          <h1
+            className="text-[32px] leading-tight font-bold mb-1 tracking-tight"
+            style={{ color: '#1F3864' }}
+          >
+            {screen.id === 5
+              ? (screen.t1 ?? 'Part 1. Watch')
+              : 'MODULE 1 – THE THREE SECOND PAUSE'}
           </h1>
-          <h2 className="text-sm md:text-base text-white/90 font-semibold mb-2">
-            Reading behaviour in the moment
+          <h2
+            className="text-[24px] leading-snug font-bold mb-2"
+            style={{ color: '#1F7A7A' }}
+          >
+            {screen.id === 5
+              ? (screen.t2 ?? 'The three second pause, in a real classroom')
+              : (screen.t2 ?? 'Reading behaviour in the moment')}
           </h2>
-          <p className="text-sm md:text-base text-white/80 max-w-2xl font-light leading-relaxed whitespace-pre-line">
+          <p
+            className="text-[15px] leading-relaxed max-w-2xl whitespace-pre-line"
+            style={{ color: '#6B6B6B' }}
+          >
             Screen {index + 1} of {screens.length}
           </p>
         </div>
@@ -736,19 +797,15 @@ export default function MindSyncTeacherTrainingModule01Page() {
               <section className="space-y-4">
                 {screen.type === 'cover' ? (
                   <div className="p-6 md:p-6 card-glow">
-                    <div className="mb-6">
-                      <Tag> Introduction</Tag>
-                    </div>
-
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
                       <div className="space-y-6">
-                        <div className="text-2xl md:text-3xl leading-snug font-medium text-white/70 whitespace-pre-line max-w-[560px]">
+                        <div className="text-2xl md:text-3xl leading-snug font-medium text-slate-700 whitespace-pre-line max-w-[560px]">
                           {screen.body}
                         </div>
                       </div>
 
                       <div className="flex justify-center md:justify-end">
-                        <div className="w-full max-w-[420px] md:w-[420px] rounded-3xl overflow-hidden border border-white/10 bg-white/[0.02]">
+                        <div className="w-full max-w-[420px] md:w-[420px] rounded-3xl overflow-hidden border border-slate-200 bg-white">
                           <img
                             src={image}
                             alt="Module visual"
@@ -762,27 +819,16 @@ export default function MindSyncTeacherTrainingModule01Page() {
                   <div className="p-5 md:p-6 md:px-14 card-glow flex flex-col min-h-0 ">
                     {screen.id === 2 ? (
                       <div className="flex-1 flex flex-col gap-4 min-h-0">
-                        <div className="flex items-center justify-between gap-3">
-                          <Tag>Introduction</Tag>
-                        </div>
-
-                        <div className="text-center">
-                          <h2 className="text-xl md:text-2xl font-black text-white -mt-12 mb-2">
-                            {screen.t2}
-                          </h2>
-                          <div className="mt-3 h-1 w-24 mx-auto rounded-full bg-gradient-to-r from-[#60A5FA] to-[#9333EA]" />
-                        </div>
-
                         {screen.lead ? (
                           <div className="w-full md:w-auto">
-                            <div className="text-base md:text-xl leading-relaxed font-medium text-white/80 whitespace-pre-line mb-6">
+                            <div className="text-[16px] leading-relaxed font-semibold text-slate-900 whitespace-pre-line mb-6">
                               {screen.lead}
                             </div>
                           </div>
                         ) : null}
 
                         <div className="flex justify-center">
-                          <div className="w-full max-w-[461px] md:w-[451px] rounded-2xl overflow-hidden border border-white/10 bg-white/[0.02]">
+                          <div className="w-full max-w-[461px] md:w-[451px] rounded-2xl overflow-hidden border border-slate-200 bg-white">
                             <img
                               src={image}
                               alt="About this module"
@@ -793,7 +839,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
 
                         {screen.body ? (
                           <div className="w-full md:w-[1000px] ">
-                            <div className="text-sm md:text-lg text-slate-200 whitespace-pre-line leading-relaxed">
+                            <div className="text-sm md:text-lg text-slate-700 whitespace-pre-line leading-relaxed">
                               {screen.body}
                             </div>
                           </div>
@@ -829,7 +875,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
                           <div className="flex-1 flex flex-col gap-6 min-h-0">
                             <div className="text-center">
                               {screen.t3 ? (
-                                <h3 className="text-lg md:text-xl font-bold text-white">
+                                <h3 className="text-lg md:text-xl font-bold text-slate-900">
                                   {screen.t3}
                                 </h3>
                               ) : null}
@@ -848,7 +894,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
                                   className={`whitespace-pre-line text-center md:text-left ${
                                     screen.id === 10
                                       ? 'text-base md:text-lg leading-relaxed text-slate-100/90'
-                                      : 'text-sm md:text-base text-slate-200 leading-relaxed'
+                                      : 'text-sm md:text-base text-slate-700 leading-relaxed'
                                   }`}
                                 >
                                   {screen.body}
@@ -858,7 +904,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
 
                             {screen.id !== 10 ? (
                               <div className="flex justify-center">
-                                <div className="w-full max-w-[520px] md:w-[520px] rounded-2xl overflow-hidden border border-white/10 bg-white/[0.02]">
+                                <div className="w-full max-w-[520px] md:w-[520px] rounded-2xl overflow-hidden border border-slate-200 bg-white">
                                   <img
                                     src={
                                       screen.id === 13
@@ -891,92 +937,11 @@ export default function MindSyncTeacherTrainingModule01Page() {
                           </div>
                         ) : null}
 
-                        {screen.id === 3 ? (
-                          <div className="space-y-3">
-                            <Tag>Introduction</Tag>
-                            {screen.t2 ? (
-                              <h2 className="text-2xl md:text-[32px] md:leading-[38.4px] font-bold text-[#DADFFB]">
-                                {screen.t2}
-                              </h2>
-                            ) : null}
-                          </div>
-                        ) : null}
-
-                        {screen.id === 4 ? (
-                          <div className="w-full md:w-[784px] md:mx-auto space-y-8">
-                            <div className="text-center">
-                              {screen.t2 ? (
-                                <h2 className="text-2xl md:text-3xl font-black text-white">
-                                  {screen.t2}
-                                </h2>
-                              ) : null}
-                              <div className="mt-3 h-1 w-24 mx-auto rounded-full bg-gradient-to-r from-[#60A5FA] to-[#9333EA]" />
-                            </div>
-
-                            <div className="text-2xl font-semibold text-white">
-                              Four short parts:
-                            </div>
-
-                            <div className="flex flex-col md:flex-row gap-6 md:gap-[37px]">
-                              {[
-                                {
-                                  title: 'Watch',
-                                  subtitle: 'VIDEO INSIGHT',
-                                  icon: 'play_circle',
-                                  bg: structureWatchImage,
-                                },
-                                {
-                                  title: 'Learn',
-                                  subtitle: 'CORE THEORY',
-                                  icon: 'menu_book',
-                                  bg: structureLearnImage,
-                                },
-                                {
-                                  title: 'Practise',
-                                  subtitle: 'INTERACTIVE TASK',
-                                  icon: 'task_alt',
-                                  bg: structurePracticeImage,
-                                },
-                                {
-                                  title: 'Take away',
-                                  subtitle: 'PDF RESOURCES',
-                                  icon: 'description',
-                                  bg: structureTakeawayImage,
-                                },
-                              ].map((item) => (
-                                <div
-                                  key={item.title}
-                                  className="relative w-full md:w-[300px] h-[205px] rounded-lg border border-white/10 bg-white/[0.09] overflow-hidden flex flex-col items-center justify-center text-center"
-                                >
-                                  <div className="absolute inset-0 opacity-[0.35]">
-                                    <img
-                                      alt=""
-                                      src={item.bg}
-                                      className="w-full h-full object-cover"
-                                    />
-                                  </div>
-                                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/35 to-black/10" />
-
-                                  <span className="material-symbols-outlined text-[#ADC6FF] text-[28px]">
-                                    {item.icon}
-                                  </span>
-                                  <div className="mt-3 text-sm font-semibold text-white">
-                                    {item.title}
-                                  </div>
-                                  <div className="mt-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-white/70">
-                                    {item.subtitle}
-                                  </div>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        ) : null}
-
                         {screen.type === 'divider' && screen.t1 ? (
                           screen.id === 18 ? (
                             <div className="flex flex-col gap-6">
                               <div className="text-center">
-                                <h1 className="text-2xl md:text-4xl font-black text-white">
+                                <h1 className="text-2xl md:text-4xl font-black text-slate-900">
                                   {screen.t1}
                                 </h1>
                                 <div className="mt-3 h-1 w-24 mx-auto rounded-full bg-gradient-to-r from-[#60A5FA] to-[#9333EA]" />
@@ -984,14 +949,14 @@ export default function MindSyncTeacherTrainingModule01Page() {
 
                               {screen.body ? (
                                 <div className="w-full max-w-[784px] mx-auto">
-                                  <div className="text-sm md:text-base text-slate-200 whitespace-pre-line leading-relaxed text-center md:text-left">
+                                  <div className="text-sm md:text-base text-slate-700 whitespace-pre-line leading-relaxed text-center md:text-left">
                                     {screen.body}
                                   </div>
                                 </div>
                               ) : null}
 
                               <div className="flex justify-center">
-                                <div className="w-full max-w-[520px] md:w-[520px] rounded-2xl overflow-hidden border border-white/10 bg-white/[0.02]">
+                                <div className="w-full max-w-[520px] md:w-[520px] rounded-2xl overflow-hidden border border-slate-200 bg-white">
                                   <img
                                     src={structurePracticeImage}
                                     alt="Practise"
@@ -1021,21 +986,21 @@ export default function MindSyncTeacherTrainingModule01Page() {
                             </div>
                           ) : screen.id === 5 ? (
                             <div className="text-left">
-                              <h1 className="text-2xl md:text-4xl font-black text-white">
+                              <h1 className="text-2xl md:text-4xl font-black text-slate-900">
                                 {screen.t1}
                               </h1>
                               <div className="mt-3 h-1 w-24 rounded-full bg-gradient-to-r from-[#60A5FA] to-[#9333EA]" />
                             </div>
                           ) : screen.id === 7 ? (
                             <div className="text-left">
-                              <h1 className="text-xl md:text-2xl font-black text-white">
+                              <h1 className="text-xl md:text-2xl font-black text-slate-900">
                                 {screen.t1}
                               </h1>
                               <div className="mt-3 h-1 w-24 rounded-full bg-gradient-to-r from-[#60A5FA] to-[#9333EA]" />
                             </div>
                           ) : (
                             <div className="text-center">
-                              <h1 className="text-2xl md:text-4xl font-black text-white">
+                              <h1 className="text-2xl md:text-4xl font-black text-slate-900">
                                 {screen.t1}
                               </h1>
                               <div className="mt-3 h-1 w-24 mx-auto rounded-full bg-gradient-to-r from-[#60A5FA] to-[#9333EA]" />
@@ -1047,21 +1012,30 @@ export default function MindSyncTeacherTrainingModule01Page() {
                           <div className="pt-6 space-y-6">
                             {screen.body ? (
                               <div className="w-full md:w-auto">
-                                <div className="text-base md:text-xl leading-relaxed font-medium text-white/80 whitespace-pre-line">
+                                <div className="text-base md:text-xl leading-relaxed font-medium text-slate-700 whitespace-pre-line">
                                   {screen.body}
                                 </div>
                               </div>
                             ) : null}
 
                             <div className="flex justify-center">
-                              <div className="w-full max-w-[461px] md:w-[451px] rounded-2xl overflow-hidden border border-white/10 bg-white/[0.02]">
-                                <img
-                                  src={structureWatchImage}
-                                  alt="Watch"
-                                  className="w-full h-[200px] md:h-[260px] object-cover"
+                              <div className="w-full max-w-[461px] md:w-[451px] space-y-3">
+                                <VideoLessonPlayer
+                                  title={
+                                    screen.videoTitle ??
+                                    'Module 1 film, around 2 minutes'
+                                  }
+                                  videoUrl={screen.videoUrl ?? null}
+                                  className="rounded-[18px]"
                                 />
                               </div>
                             </div>
+
+                            {screen.videoPrompt ? (
+                              <div className="text-sm text-slate-600 text-center">
+                                {screen.videoPrompt}
+                              </div>
+                            ) : null}
 
                             {screen.dropdowns && screen.dropdowns.length ? (
                               <div className="space-y-3">
@@ -1090,19 +1064,19 @@ export default function MindSyncTeacherTrainingModule01Page() {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
                               <div className="space-y-6">
                                 {screen.lead ? (
-                                  <h2 className="text-3xl md:text-4xl font-black text-white leading-tight">
+                                  <h2 className="text-3xl md:text-4xl font-black text-slate-900 leading-tight">
                                     {screen.lead}
                                   </h2>
                                 ) : null}
                                 {screen.body ? (
-                                  <div className="text-lg md:text-xl text-white/70 whitespace-pre-line leading-relaxed">
+                                  <div className="text-lg md:text-xl text-slate-700 whitespace-pre-line leading-relaxed">
                                     {screen.body}
                                   </div>
                                 ) : null}
                               </div>
 
                               <div className="flex justify-center md:justify-end">
-                                <div className="w-full max-w-[420px] md:w-[420px] rounded-3xl overflow-hidden border border-white/10 bg-white/[0.02]">
+                                <div className="w-full max-w-[420px] md:w-[420px] rounded-3xl overflow-hidden border border-slate-200 bg-white">
                                   <img
                                     src={learnHeroImage}
                                     alt="Learn"
@@ -1117,13 +1091,13 @@ export default function MindSyncTeacherTrainingModule01Page() {
                         {screen.t1 && screen.type !== 'divider' ? (
                           screen.t2 ? (
                             <div className="text-center">
-                              <h1 className="text-2xl md:text-4xl font-black text-white">
+                              <h1 className="text-2xl md:text-4xl font-black text-slate-900">
                                 {screen.t1}
                               </h1>
                               <div className="mt-3 h-1 w-24 mx-auto rounded-full bg-gradient-to-r from-[#60A5FA] to-[#9333EA]" />
                             </div>
                           ) : (
-                            <h1 className="text-2xl md:text-4xl font-black text-white">
+                            <h1 className="text-2xl md:text-4xl font-black text-slate-900">
                               {screen.t1}
                             </h1>
                           )
@@ -1136,7 +1110,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
                                 {screen.t2 ? (
                                   <div>
                                     <div className="text-left -mt-40">
-                                      <h1 className="text-xl md:text-2xl font-black text-white">
+                                      <h1 className="text-xl md:text-2xl font-black text-slate-900">
                                         {screen.t2}
                                       </h1>
                                       <div className="mt-3 h-1 w-24 rounded-full bg-gradient-to-r from-[#60A5FA] to-[#9333EA]" />
@@ -1144,14 +1118,14 @@ export default function MindSyncTeacherTrainingModule01Page() {
                                   </div>
                                 ) : null}
                                 {screen.body ? (
-                                  <div className="text-lg md:text-xl text-white/70 whitespace-pre-line leading-relaxed">
+                                  <div className="text-lg md:text-xl text-slate-700 whitespace-pre-line leading-relaxed">
                                     {screen.body}
                                   </div>
                                 ) : null}
                               </div>
 
                               <div className="flex justify-center md:justify-end">
-                                <div className="w-full max-w-[420px] md:w-[420px] rounded-3xl overflow-hidden border border-white/10 bg-white/[0.02]">
+                                <div className="w-full max-w-[420px] md:w-[420px] rounded-3xl overflow-hidden border border-slate-200 bg-white">
                                   <img
                                     src={learnHeroImage}
                                     alt="Learn"
@@ -1169,7 +1143,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
                               <div className="space-y-6">
                                 <div className="text-left">
                                   {screen.t3 ? (
-                                    <h1 className="text-xl md:text-2xl font-black text-white">
+                                    <h1 className="text-xl md:text-2xl font-black text-slate-900">
                                       {screen.t3}
                                     </h1>
                                   ) : null}
@@ -1177,14 +1151,14 @@ export default function MindSyncTeacherTrainingModule01Page() {
                                 </div>
 
                                 {screen.body ? (
-                                  <div className="text-lg md:text-xl text-white/70 whitespace-pre-line leading-relaxed">
+                                  <div className="text-lg md:text-xl text-slate-700 whitespace-pre-line leading-relaxed">
                                     {screen.body}
                                   </div>
                                 ) : null}
                               </div>
 
                               <div className="flex justify-center md:justify-end">
-                                <div className="w-full max-w-[420px] md:w-[420px] rounded-3xl overflow-hidden border border-white/10 bg-white/[0.02]">
+                                <div className="w-full max-w-[420px] md:w-[420px] rounded-3xl overflow-hidden border border-slate-200 bg-white">
                                   <img
                                     src={learnHeroImage}
                                     alt="Learn"
@@ -1205,7 +1179,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
                         screen.type !== 'accordion' &&
                         screen.type !== 'video' ? (
                           <div className="text-center">
-                            <h2 className="text-xl md:text-2xl font-black text-white">
+                            <h2 className="text-xl md:text-2xl font-black text-slate-900">
                               {screen.t2}
                             </h2>
                             <div className="mt-3 h-1 w-24 mx-auto rounded-full bg-gradient-to-r from-[#60A5FA] to-[#9333EA]" />
@@ -1225,22 +1199,22 @@ export default function MindSyncTeacherTrainingModule01Page() {
                         screen.id !== 13 &&
                         screen.id !== 14 &&
                         screen.id !== 15 ? (
-                          <h3 className="text-lg md:text-xl font-bold text-white/85">
+                          <h3 className="text-lg md:text-xl font-bold text-slate-900">
                             {screen.t3}
                           </h3>
                         ) : null}
 
                         {screen.lead && screen.id !== 7 ? (
-                          <div className="text-base md:text-lg font-semibold text-white whitespace-pre-line">
+                          <div className="text-base md:text-lg font-semibold text-slate-900 whitespace-pre-line">
                             {screen.lead}
                           </div>
                         ) : null}
 
                         {screen.id === 17 && screen.body ? (
                           <div className="flex justify-center pt-2">
-                            <div className="w-full max-w-[781px] md:w-[781px] h-auto md:h-[315px] rounded-lg border border-white/10 bg-white/[0.12] backdrop-blur-[12px] overflow-hidden">
+                            <div className="w-full max-w-[781px] md:w-[781px] h-auto md:h-[315px] rounded-lg border border-slate-200 bg-white overflow-hidden">
                               <div className="px-9 pt-8 pb-8 md:px-9 md:pt-[33px] md:pb-8">
-                                <div className="text-sm md:text-2xl text-white whitespace-pre-line leading-relaxed">
+                                <div className="text-sm md:text-2xl text-slate-900 whitespace-pre-line leading-relaxed">
                                   {screen.body}
                                 </div>
                               </div>
@@ -1249,7 +1223,6 @@ export default function MindSyncTeacherTrainingModule01Page() {
                         ) : null}
 
                         {screen.body &&
-                        screen.id !== 4 &&
                         screen.id !== 7 &&
                         screen.id !== 5 &&
                         screen.id !== 8 &&
@@ -1262,7 +1235,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
                         screen.id !== 17 &&
                         screen.type !== 'accordion' ? (
                           <div
-                            className={`text-sm md:text-base text-slate-200 whitespace-pre-line leading-relaxed ${
+                            className={`text-sm md:text-base text-slate-700 whitespace-pre-line leading-relaxed ${
                               screen.type === 'divider' ? 'mt-4' : ''
                             }`}
                           >
@@ -1276,7 +1249,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
                       <div className="space-y-8">
                         <div className="text-center">
                           {screen.t3 ? (
-                            <h3 className="text-lg md:text-xl font-bold text-white">
+                            <h3 className="text-lg md:text-xl font-bold text-slate-900">
                               {screen.t3}
                             </h3>
                           ) : null}
@@ -1298,7 +1271,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
                                   key={`${i}-${b}`}
                                   className="flex items-start gap-6"
                                 >
-                                  <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center shrink-0">
+                                  <div className="w-12 h-12 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-center shrink-0">
                                     {i === 2 && !isGreen && !isAmber ? (
                                       <span className="text-[#A5B4FC] font-bold text-lg leading-none">
                                         3
@@ -1309,7 +1282,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
                                       </span>
                                     )}
                                   </div>
-                                  <div className="text-sm md:text-base text-slate-200 leading-relaxed">
+                                  <div className="text-sm md:text-base text-slate-700 leading-relaxed">
                                     {b}
                                   </div>
                                 </div>
@@ -1335,30 +1308,85 @@ export default function MindSyncTeacherTrainingModule01Page() {
                     ) : null}
 
                     {screen.bullets && screen.id === 3 ? (
-                      <div className="rounded-lg border border-[#818CF8] bg-[#171F33]/70 backdrop-blur-[12px] p-6 md:p-8 md:w-[1103px] md:mt-10">
-                        <div className="space-y-4">
-                          <div className="space-y-6">
-                            {screen.bullets.map((b) => (
-                              <div
-                                key={b}
-                                className="flex items-start gap-6 rounded-md"
-                              >
-                                <div className="w-12 h-12 rounded-xl bg-[#4D8EFF]/20 border border-[#ADC6FF]/20 flex items-center justify-center shrink-0">
-                                  <span className="material-symbols-outlined text-[#ADC6FF]">
-                                    check
-                                  </span>
+                      <div className="space-y-8">
+                        <div className="rounded-lg border border-[#818CF8] bg-[#04216b]/100 backdrop-blur-[12px] p-6 md:p-8 md:w-[1103px] md:mt-8">
+                          <div className="space-y-4">
+                            <div className="space-y-6">
+                              {screen.bullets.map((b) => (
+                                <div
+                                  key={b}
+                                  className="flex items-start gap-6 rounded-md"
+                                >
+                                  <div className="w-10 h-10 rounded-xl bg-[#4D8EFF]/20 border border-[#ADC6FF]/20 flex items-center justify-center shrink-0">
+                                    <span className="material-symbols-outlined text-[#ADC6FF]">
+                                      check
+                                    </span>
+                                  </div>
+                                  <div className="text-sm md:text-base text-[#DADFFB] leading-relaxed">
+                                    {b}
+                                  </div>
                                 </div>
-                                <div className="text-sm md:text-base text-[#DADFFB] leading-relaxed">
-                                  {b}
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="w-full md:w-[1000px] mx-auto  ">
+                          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                            {[
+                              {
+                                title: 'Watch',
+                                subtitle: 'VIDEO INSIGHT',
+                                icon: 'play_circle',
+                                bg: structureWatchImage,
+                              },
+                              {
+                                title: 'Learn',
+                                subtitle: 'CORE THEORY',
+                                icon: 'menu_book',
+                                bg: structureLearnImage,
+                              },
+                              {
+                                title: 'Practise',
+                                subtitle: 'INTERACTIVE TASK',
+                                icon: 'task_alt',
+                                bg: structurePracticeImage,
+                              },
+                              {
+                                title: 'Take away',
+                                subtitle: 'PDF RESOURCES',
+                                icon: 'description',
+                                bg: structureTakeawayImage,
+                              },
+                            ].map((item) => (
+                              <div
+                                key={item.title}
+                                className="relative w-full h-[170px] rounded-lg border border-white/10 bg-white/[0.09] overflow-hidden flex flex-col items-center justify-center text-center"
+                              >
+                                <div className="absolute inset-0 opacity-[0.35]">
+                                  <img
+                                    alt=""
+                                    src={item.bg}
+                                    className="w-full h-full object-cover"
+                                  />
+                                </div>
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/35 to-black/10" />
+
+                                <span className="material-symbols-outlined text-[#ADC6FF] text-[28px]">
+                                  {item.icon}
+                                </span>
+                                <div className="mt-3 text-sm font-semibold text-white">
+                                  {item.title}
+                                </div>
+                                <div className="mt-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-white/70">
+                                  {item.subtitle}
                                 </div>
                               </div>
                             ))}
                           </div>
                         </div>
                       </div>
-                    ) : screen.bullets &&
-                      screen.id !== 4 &&
-                      screen.id !== 15 ? (
+                    ) : screen.bullets && screen.id !== 15 ? (
                       <ul className="list-disc pl-6 space-y-2 text-sm md:text-base text-slate-200">
                         {screen.bullets.map((b) => (
                           <li key={b} className="leading-relaxed">
@@ -1441,7 +1469,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
                       <div className="pt-2">
                         {screen.t2 ? (
                           <div className="text-center">
-                            <h2 className="text-2xl md:text-3xl font-black text-white">
+                            <h2 className="text-2xl md:text-3xl font-black text-slate-900">
                               {screen.t2}
                             </h2>
                             <div className="mt-3 h-1 w-24 mx-auto rounded-full bg-gradient-to-r from-[#60A5FA] to-[#9333EA]" />
@@ -1449,7 +1477,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
                         ) : null}
 
                         {screen.body ? (
-                          <div className="text-sm md:text-base text-slate-200/90 text-center whitespace-pre-line leading-relaxed max-w-[720px] mx-auto">
+                          <div className="text-sm md:text-base text-slate-600 text-center whitespace-pre-line leading-relaxed max-w-[720px] mx-auto">
                             {screen.body}
                           </div>
                         ) : null}
@@ -1462,9 +1490,8 @@ export default function MindSyncTeacherTrainingModule01Page() {
                               header={item.header}
                               body={item.body}
                               onOpenChange={handleDropdownOpenChange}
-                              containerClassName="rounded-xl bg-white/[0.03]"
-                              buttonClassName="h-[64px] bg-[#1A1A33]/60 hover:bg-[#1A1A33]/75"
-                              bodyClassName="bg-[#1A1A33]/35"
+                              containerClassName="rounded-xl"
+                              buttonClassName="h-[64px]"
                             />
                           ))}
                         </div>
@@ -1475,14 +1502,14 @@ export default function MindSyncTeacherTrainingModule01Page() {
                     screen.scenarioId ? (
                       <div className="space-y-6">
                         <div className="text-center">
-                          <h2 className="text-2xl md:text-3xl font-black text-white">
+                          <h2 className="text-2xl md:text-3xl font-black text-slate-900">
                             {SCENARIOS[screen.scenarioId].title}
                           </h2>
                           <div className="mt-3 h-1 w-24 mx-auto rounded-full bg-gradient-to-r from-[#60A5FA] to-[#9333EA]" />
                         </div>
 
                         <div className="flex justify-center">
-                          <div className="w-full max-w-[784px] rounded-2xl overflow-hidden border border-white/10 bg-white/[0.02]">
+                          <div className="w-full max-w-[784px] rounded-2xl overflow-hidden border border-slate-200 bg-white">
                             <img
                               src={SCENARIO_IMAGES[screen.scenarioId]}
                               alt="Scenario"
@@ -1492,7 +1519,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
                         </div>
 
                         <div className="w-full max-w-[784px] mx-auto">
-                          <div className="text-sm md:text-base text-slate-200 whitespace-pre-line leading-relaxed">
+                          <div className="text-sm md:text-base text-slate-700 whitespace-pre-line leading-relaxed">
                             {SCENARIOS[screen.scenarioId].situation}
                           </div>
                         </div>
@@ -1507,7 +1534,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
                           return (
                             <div className="space-y-6">
                               <div className="w-full max-w-[784px] mb-6 md:mb-8">
-                                <h3 className="text-2xl md:text-[32px] md:leading-[38.4px] font-bold text-[#DADFFB]">
+                                <h3 className="text-2xl md:text-[32px] md:leading-[38.4px] font-bold text-slate-900">
                                   {scenario.question}
                                 </h3>
                               </div>
@@ -1532,15 +1559,15 @@ export default function MindSyncTeacherTrainingModule01Page() {
                                       }
                                       className={`text-left rounded-lg border px-[18px] py-[18px] md:px-[22px] md:py-[22px] transition-colors ${
                                         selected
-                                          ? 'bg-[#1A1A33] border-[#4F46E5] shadow-[0_0_0_1px_rgba(79,70,229,0.45)]'
-                                          : 'bg-transparent border-white/10 hover:bg-white/[0.03]'
+                                          ? 'bg-slate-50 border-[#4F46E5] shadow-[0_0_0_1px_rgba(79,70,229,0.25)]'
+                                          : 'bg-white border-slate-200 hover:bg-slate-50'
                                       }`}
                                     >
                                       <div className="flex items-start gap-5">
-                                        <div className="w-10 h-10 rounded-[12px] border-2 border-[#424754] flex items-center justify-center text-[#C2C6D6] font-bold shrink-0">
+                                        <div className="w-10 h-10 rounded-[12px] border-2 border-slate-300 flex items-center justify-center text-slate-700 font-bold shrink-0 bg-white">
                                           {k}
                                         </div>
-                                        <div className="text-sm md:text-base text-[#DAE2FD] leading-relaxed">
+                                        <div className="text-sm md:text-base text-slate-700 leading-relaxed">
                                           {scenario.options[k]}
                                         </div>
                                       </div>
@@ -1559,7 +1586,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
                                   className={`px-10 py-4 rounded-full font-semibold shadow-2xl transition-all flex items-center gap-3 ${
                                     selected
                                       ? 'bg-gradient-to-r from-[#60A5FA] to-[#9333EA] text-white hover:scale-105 active:scale-95'
-                                      : 'bg-white/10 text-white/40 cursor-not-allowed'
+                                      : 'bg-slate-100 text-slate-400 cursor-not-allowed'
                                   }`}
                                 >
                                   <span className="tracking-wider">
@@ -1579,16 +1606,16 @@ export default function MindSyncTeacherTrainingModule01Page() {
                                     onClick={() =>
                                       setIsScenarioFeedbackOpen(false)
                                     }
-                                    className="absolute inset-0 bg-black/60"
+                                    className="absolute inset-0 bg-black/30"
                                   />
 
-                                  <div className="relative w-full max-w-2xl glass-panel rounded-2xl border border-white/10 bg-[#020617]/90 backdrop-blur p-5 md:p-6 shadow-[0_30px_120px_rgba(0,0,0,0.7)] animate-in fade-in zoom-in-95 duration-200">
+                                  <div className="relative w-full max-w-2xl rounded-2xl border border-slate-200 bg-white p-5 md:p-6 shadow-[0_30px_120px_rgba(15,23,42,0.18)] animate-in fade-in zoom-in-95 duration-200">
                                     <div className="flex items-start justify-between gap-4">
                                       <div className="min-w-0">
-                                        <div className="text-[11px] uppercase tracking-[0.2em] text-white/50 font-semibold mb-2">
+                                        <div className="text-[11px] uppercase tracking-[0.2em] text-slate-500 font-semibold mb-2">
                                           Feedback
                                         </div>
-                                        <div className="text-sm font-bold text-white">
+                                        <div className="text-sm font-bold text-slate-900">
                                           Option {selected}
                                         </div>
                                       </div>
@@ -1598,7 +1625,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
                                         onClick={() =>
                                           setIsScenarioFeedbackOpen(false)
                                         }
-                                        className="p-2 rounded-full text-white/60 hover:text-white transition-colors"
+                                        className="p-2 rounded-full text-slate-500 hover:text-slate-900 transition-colors"
                                         aria-label="Close feedback"
                                       >
                                         <span className="material-symbols-outlined">
@@ -1607,7 +1634,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
                                       </button>
                                     </div>
 
-                                    <div className="mt-4 max-h-[60vh] overflow-y-auto custom-scrollbar text-sm text-slate-300 leading-relaxed whitespace-pre-line">
+                                    <div className="mt-4 max-h-[60vh] overflow-y-auto custom-scrollbar text-sm text-slate-700 leading-relaxed whitespace-pre-line">
                                       {scenario.feedback[selected]}
                                     </div>
                                   </div>
@@ -1625,7 +1652,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
                           return (
                             <div className="space-y-6">
                               <div className="w-full max-w-[920px] mx-auto">
-                                <h3 className="text-2xl md:text-[32px] md:leading-[38.4px] font-bold text-[#DADFFB]">
+                                <h3 className="text-2xl md:text-[32px] md:leading-[38.4px] font-bold text-slate-900">
                                   Feedback
                                 </h3>
                               </div>
@@ -1644,10 +1671,10 @@ export default function MindSyncTeacherTrainingModule01Page() {
                                       className={`rounded-2xl border p-5 whitespace-pre-line ${
                                         selected
                                           ? 'border-emerald-400/30 bg-emerald-500/10'
-                                          : 'border-white/10 bg-white/[0.02]'
+                                          : 'border-slate-200 bg-white'
                                       }`}
                                     >
-                                      <div className="text-sm text-slate-200 leading-relaxed">
+                                      <div className="text-sm text-slate-700 leading-relaxed">
                                         {scenario.feedback[k]}
                                       </div>
                                     </div>
@@ -1753,7 +1780,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
               </section>
             </div>
 
-            <div className="sticky bottom-0 mt-auto pt-4 pb-2 border-t border-white/10 bg-[#020617]/85 backdrop-blur">
+            <div className="sticky bottom-0 mt-auto pt-4 pb-2 border-t border-slate-200 bg-white/90 backdrop-blur">
               <div className="flex items-center justify-between gap-2">
                 <button
                   type="button"
@@ -1761,8 +1788,8 @@ export default function MindSyncTeacherTrainingModule01Page() {
                   onClick={() => setIndex((v) => Math.max(0, v - 1))}
                   className={`flex items-center gap-2 h-12 px-5 rounded-full text-sm font-semibold border transition-colors ${
                     index === 0
-                      ? 'bg-white/5 border-white/10 text-white/30 cursor-not-allowed'
-                      : 'bg-white/5 hover:bg-white/10 border-white/10 text-white/80'
+                      ? 'bg-slate-50 border-slate-200 text-slate-400 cursor-not-allowed'
+                      : 'bg-slate-50 hover:bg-slate-100 border-slate-200 text-slate-700'
                   }`}
                 >
                   <span className="material-symbols-outlined">arrow_back</span>
@@ -1783,7 +1810,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
                   className={`flex items-center gap-2 h-12 px-6 rounded-full text-sm font-semibold border border-transparent transition-colors ${
                     canGoNext
                       ? 'bg-gradient-to-r from-[#60A5FA] to-[#9333EA] text-white hover:shadow-indigo-500/20'
-                      : 'bg-white/10 text-white/40 cursor-not-allowed'
+                      : 'bg-slate-100 text-slate-400 cursor-not-allowed'
                   }`}
                 >
                   <span>{nextLabel}</span>
@@ -1796,80 +1823,129 @@ export default function MindSyncTeacherTrainingModule01Page() {
           </div>
         </div>
 
-        <aside className="relative w-1/4 h-full border-l border-white/5 glass-panel flex flex-col shrink-0 overflow-hidden">
-          <div className="p-6 border-b border-white/5">
+        <aside className="relative w-1/4 h-full border-l border-slate-200 bg-white flex flex-col shrink-0 overflow-hidden">
+          <div className="p-6 border-b border-slate-200">
             <h2 className="text-sm font-bold uppercase tracking-widest text-slate-500 mb-1">
               Module Contents
             </h2>
             <p className="text-xs text-slate-400">{toc.length} blocks</p>
           </div>
-          <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar">
+          <div
+            ref={sidebarScrollRef}
+            className="flex-1 min-h-0 overflow-y-auto custom-scrollbar bg-white"
+          >
             {sidebarSections.map((section) => {
               const isOpen = openSections[section.key];
               const isActiveSection = section.key === activeSidebarSectionKey;
-              const isCollapsible = section.key !== 'closing';
+              const isCollapsible =
+                section.key !== 'closing' && section.key !== 'watch';
+              const visibleIndices = section.indices.filter((i) => {
+                const item = toc[i];
+                if (!item) return false;
+                if (section.key === 'introduction' && item.blockId === 1)
+                  return false;
+                if (section.key === 'learn' && item.blockId === 7) return false;
+                if (section.key === 'practise' && item.blockId === 18)
+                  return false;
+                if (
+                  item.blockId === 8 ||
+                  item.blockId === 9 ||
+                  item.blockId === 10 ||
+                  item.blockId === 20 ||
+                  item.blockId === 23 ||
+                  item.blockId === 26
+                )
+                  return false;
+                return true;
+              });
+
+              const canCollapse = isCollapsible && visibleIndices.length > 1;
+              const shouldShowItems = canCollapse && isOpen;
               return (
-                <div key={section.key} className="border-b border-white/5">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      if (!isCollapsible) {
-                        const targetIndex = section.indices[0];
-                        if (typeof targetIndex === 'number')
-                          setIndex(targetIndex);
-                        return;
-                      }
-
-                      if (isOpen) {
-                        setOpenSections({
-                          introduction: false,
-                          watch: false,
-                          learn: false,
-                          practise: false,
-                          takeaway: false,
-                          closing: false,
-                        });
-                        return;
-                      }
-
-                      setOpenSections({
-                        introduction: section.key === 'introduction',
-                        watch: section.key === 'watch',
-                        learn: section.key === 'learn',
-                        practise: section.key === 'practise',
-                        takeaway: section.key === 'takeaway',
-                        closing: section.key === 'closing',
-                      });
-                    }}
+                <div key={section.key} className="border-b border-slate-200">
+                  <div
                     className={`w-full text-left px-4 py-4 flex items-center justify-between gap-3 transition-colors relative ${
-                      isActiveSection ? 'bg-white/[0.04]' : 'hover:bg-white/5'
+                      isOpen || isActiveSection
+                        ? 'bg-[#bdd2f8]'
+                        : 'hover:bg-slate-50'
                     }`}
                   >
                     {isActiveSection ? (
-                      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-fuchsia-500/70 to-transparent" />
+                      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#2E7CF6]/60 to-transparent" />
                     ) : null}
-                    <div className="min-w-0">
-                      <div className="text-xs font-bold uppercase tracking-widest text-slate-300 truncate">
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const targetIndex = section.indices[0];
+                        if (typeof targetIndex !== 'number') return;
+                        if (targetIndex !== index)
+                          suppressAutoOpenRef.current = true;
+                        setIndex(targetIndex);
+                      }}
+                      data-sidebar-section-header="true"
+                      data-section-key={section.key}
+                      className="min-w-0 flex-1 text-left"
+                    >
+                      <div
+                        className={`text-xs font-bold uppercase tracking-widest truncate ${
+                          isOpen || isActiveSection
+                            ? 'text-[#1F3864]'
+                            : 'text-slate-700'
+                        }`}
+                      >
                         {section.label}
                       </div>
                       <div className="text-[10px] text-slate-500">
-                        {section.indices.length} blocks
+                        {visibleIndices.length} blocks
                       </div>
-                    </div>
-                    {isCollapsible ? (
-                      <span
-                        className={`material-symbols-outlined text-white/60 transition-transform ${
-                          isOpen ? 'rotate-180' : ''
-                        }`}
-                      >
-                        expand_more
-                      </span>
-                    ) : null}
-                  </button>
+                    </button>
 
-                  {isCollapsible && isOpen ? (
+                    {canCollapse ? (
+                      <button
+                        type="button"
+                        aria-label={
+                          isOpen ? 'Collapse section' : 'Expand section'
+                        }
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (isOpen) {
+                            setOpenSections({
+                              introduction: false,
+                              watch: false,
+                              learn: false,
+                              practise: false,
+                              takeaway: false,
+                              closing: false,
+                            });
+                            return;
+                          }
+
+                          setOpenSections({
+                            introduction: section.key === 'introduction',
+                            watch: section.key === 'watch',
+                            learn: section.key === 'learn',
+                            practise: section.key === 'practise',
+                            takeaway: section.key === 'takeaway',
+                            closing: section.key === 'closing',
+                          });
+                        }}
+                        className="-mr-1 p-1 rounded-md hover:bg-slate-100 transition-colors"
+                      >
+                        <span
+                          className={`material-symbols-outlined text-slate-500 transition-transform ${
+                            isOpen ? 'rotate-180' : ''
+                          }`}
+                        >
+                          expand_more
+                        </span>
+                      </button>
+                    ) : null}
+                  </div>
+
+                  {shouldShowItems ? (
                     <div>
-                      {section.indices.map((i) => {
+                      {visibleIndices.map((i) => {
                         const item = toc[i];
                         if (!item) return null;
                         const isCurrent = item.index === index;
@@ -1878,27 +1954,29 @@ export default function MindSyncTeacherTrainingModule01Page() {
                             key={`${item.blockId}-${item.index}`}
                             type="button"
                             onClick={() => setIndex(item.index)}
+                            data-sidebar-item="true"
+                            data-toc-index={item.index}
                             className={`w-full text-left px-4 py-3 border-t flex items-start gap-3 transition-colors cursor-pointer ${
                               isCurrent
-                                ? 'border-white/10'
-                                : 'border-white/5 hover:bg-white/5'
+                                ? 'border-slate-200 bg-slate-50'
+                                : 'border-slate-200 hover:bg-slate-50'
                             }`}
                           >
                             <div className="w-6 h-6 rounded-full flex items-center justify-center shrink-0 mt-0.5">
                               {isCurrent ? (
-                                <div className="w-6 h-6 rounded-full border border-[#60A5FA] flex items-center justify-center">
-                                  <div className="w-2 h-2 bg-[#60A5FA] rounded-full animate-pulse" />
+                                <div className="w-6 h-6 rounded-full border border-[#2E7CF6] flex items-center justify-center">
+                                  <div className="w-2 h-2 bg-[#2E7CF6] rounded-full animate-pulse" />
                                 </div>
                               ) : (
-                                <div className="w-6 h-6 rounded-full border border-white/20" />
+                                <div className="w-6 h-6 rounded-full border border-slate-300" />
                               )}
                             </div>
                             <div className="flex-1 min-w-0">
                               <p
                                 className={`text-xs truncate ${
                                   isCurrent
-                                    ? 'font-bold text-white'
-                                    : 'font-medium text-slate-300'
+                                    ? 'font-bold text-slate-900'
+                                    : 'font-medium text-slate-700'
                                 }`}
                               >
                                 {item.label}
