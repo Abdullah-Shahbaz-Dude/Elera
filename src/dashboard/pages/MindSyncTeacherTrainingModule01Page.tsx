@@ -96,6 +96,8 @@ type SidebarSection = {
 const TAKEAWAY_HIGHLIGHT_TEXT =
   '“Yesterday I misread what was going on for you. I should have checked in rather than snapped. I am sorry. You did not deserve that.” No “but.” No explanation. No asking them to apologise back. Then let them go.';
 
+const HIDDEN_NAV_BLOCK_IDS = new Set<number>([8, 9, 10, 20, 23, 26]);
+
 const SCENARIOS: Record<1 | 2 | 3, Scenario> = {
   1: {
     id: 1,
@@ -386,22 +388,28 @@ export default function MindSyncTeacherTrainingModule01Page() {
             id: 11,
             type: 'accordion',
             t2: 'The three states, side by side',
-            body: 'A quick reference. Tap each state to see what you might see, what is happening underneath, and what helps in the moment.',
+            // body: 'A quick reference. Tap each state to see what you might see, what is happening underneath, and what helps in the moment.',
             accordionTitle: 'The three states, side by side',
             accordionItems: [
               {
-                header: 'Green, calmly engaged',
-                body: 'What you see: on task, following instructions, productive movement, can wait for help.\n\nUnderneath: the thinking brain is in charge. Capacity to learn and choose.\n\nWhat helps: teach, stretch, push gently. High expectations land best here.',
+                header: 'Green. Calmly engaged',
+                body: 'What you see: on task, following instructions, productive movement, able to wait for help.\n\nUnderneath: the thinking brain is in charge. There is capacity to learn and to choose.\n\nWhat helps: teach, stretch, push gently. High expectations work best here.',
               },
               {
-                header: 'Amber, dysregulated',
-                body: 'What you see: fidgety, restless, off task, short or muttered replies, slower to follow. May look cheeky or low level disruptive.\n\nUnderneath: the thinking brain is partly offline, the alarm is firing low. Energy is going on staying in the room, less is left for learning.\n\nWhat helps: co regulate first. Lower your voice. Reduce demands briefly. Offer a choice. Buy ninety seconds. Most come back within two minutes if you do not push.',
+                header: 'Amber. Dysregulated',
+                body: 'What you see: fidgety, restless, off task, short or muttered replies, slower to follow. Can look cheeky or low level disruptive.\n\nUnderneath: something has knocked them out of green. A loud room, a fall out at break, work that feels too hard, being tired or hungry. The thinking brain is only partly online. Their energy is going on staying in the room, so less is left for learning. They did not choose this.\n\nWhat helps: co regulate first. Lower your voice. Reduce the demand briefly. Offer a small choice. Buy ninety seconds. Most pupils come back within two minutes if you do not push.',
               },
               {
-                header: 'Red, shut down',
-                body: 'What you see: frozen, silent, head down. May refuse to move, may walk out, may lash out with words that are not their usual voice.\n\nUnderneath: the thinking brain is offline, the alarm is in charge. Words do not process as you expect.\n\nWhat helps: reduce demands to almost zero. Quiet voice. Side on, not face on. Offer space, not solutions. Do not negotiate. Give the brain time to come back online.',
+                header: 'Red. Shut down',
+                body: 'What you see: frozen, silent, head down. May refuse to move, may walk out, may say something that is not their usual voice.\n\nUnderneath: the alarm system is in charge and the thinking brain has gone offline. Language does not process the way you expect. The brain has to come back down first.\n\nWhat helps: reduce demands to almost zero. Quiet voice. Side on, not face on. Offer space, not solutions. Do not negotiate. Give the brain time to come back.',
+              },
+              {
+                header: 'A bit more on the brain',
+                body: 'The thinking brain is the prefrontal cortex, just behind the forehead. In green it is in charge, so a pupil has the capacity to learn, remember and make choices. When the alarm system fires, that part goes quiet first.',
               },
             ],
+            keyPoint:
+              'A pupil in amber or red cannot take in a conversation about their behaviour while it is happening. The thinking brain is not online to process it. Have that conversation later, once they are back in green. That is when it teaches them something.',
           },
           {
             id: 12,
@@ -694,6 +702,23 @@ export default function MindSyncTeacherTrainingModule01Page() {
 
   const isAnyDropdownOpen = openDropdownIds.size > 0;
 
+  const getPrevVisibleIndex = (fromIndex: number) => {
+    for (let i = fromIndex - 1; i >= 0; i -= 1) {
+      if (!HIDDEN_NAV_BLOCK_IDS.has(screens[i].id)) return i;
+    }
+    return null;
+  };
+
+  const getNextVisibleIndex = (fromIndex: number) => {
+    for (let i = fromIndex + 1; i < screens.length; i += 1) {
+      if (!HIDDEN_NAV_BLOCK_IDS.has(screens[i].id)) return i;
+    }
+    return null;
+  };
+
+  const prevVisibleIndex = getPrevVisibleIndex(index);
+  const nextVisibleIndex = getNextVisibleIndex(index);
+
   const canGoNext = useMemo(() => {
     if (screen.type === 'scenario_choose' && screen.scenarioId) {
       return Boolean(scenarioAnswers[screen.scenarioId]);
@@ -871,14 +896,16 @@ export default function MindSyncTeacherTrainingModule01Page() {
                         screen.id === 10 ||
                         screen.id === 13 ? (
                           <div className="flex-1 flex flex-col gap-6 min-h-0">
-                            <div className="text-center">
-                              {screen.t3 ? (
-                                <h3 className="text-lg md:text-xl font-bold text-slate-900">
-                                  {screen.t3}
-                                </h3>
-                              ) : null}
-                              <div className="mt-3 h-1 w-24 mx-auto rounded-full bg-gradient-to-r from-[#60A5FA] to-[#9333EA]" />
-                            </div>
+                            {activeSidebarSectionKey !== 'learn' ? (
+                              <div className="text-center">
+                                {screen.t3 ? (
+                                  <h3 className="text-lg md:text-xl font-bold text-slate-900">
+                                    {screen.t3}
+                                  </h3>
+                                ) : null}
+                                <div className="mt-3 h-1 w-24 mx-auto rounded-full bg-gradient-to-r from-[#60A5FA] to-[#9333EA]" />
+                              </div>
+                            ) : null}
 
                             {screen.body ? (
                               <div
@@ -1074,7 +1101,9 @@ export default function MindSyncTeacherTrainingModule01Page() {
                           </div>
                         ) : null}
 
-                        {screen.t1 && screen.type !== 'divider' ? (
+                        {screen.t1 &&
+                        screen.type !== 'divider' &&
+                        activeSidebarSectionKey !== 'learn' ? (
                           screen.t2 ? (
                             <div className="text-center">
                               <h1 className="text-2xl md:text-4xl font-black text-slate-900">
@@ -1093,16 +1122,6 @@ export default function MindSyncTeacherTrainingModule01Page() {
                           <div className="pt-2">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
                               <div className="space-y-6">
-                                {screen.t2 ? (
-                                  <div>
-                                    <div className="text-left -mt-40">
-                                      <h1 className="text-xl md:text-2xl font-black text-slate-900">
-                                        {screen.t2}
-                                      </h1>
-                                      <div className="mt-3 h-1 w-24 rounded-full bg-gradient-to-r from-[#60A5FA] to-[#9333EA]" />
-                                    </div>
-                                  </div>
-                                ) : null}
                                 {screen.body ? (
                                   <div className="text-lg md:text-xl text-slate-700 whitespace-pre-line leading-relaxed">
                                     {screen.body}
@@ -1127,15 +1146,6 @@ export default function MindSyncTeacherTrainingModule01Page() {
                           <div className="pt-2">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
                               <div className="space-y-6">
-                                <div className="text-left">
-                                  {screen.t3 ? (
-                                    <h1 className="text-xl md:text-2xl font-black text-slate-900">
-                                      {screen.t3}
-                                    </h1>
-                                  ) : null}
-                                  <div className="mt-3 h-1 w-24 rounded-full bg-gradient-to-r from-[#60A5FA] to-[#9333EA]" />
-                                </div>
-
                                 {screen.body ? (
                                   <div className="text-lg md:text-xl text-slate-700 whitespace-pre-line leading-relaxed">
                                     {screen.body}
@@ -1164,12 +1174,14 @@ export default function MindSyncTeacherTrainingModule01Page() {
                         screen.id !== 12 &&
                         screen.type !== 'accordion' &&
                         screen.type !== 'video' ? (
-                          <div className="text-center">
-                            <h2 className="text-xl md:text-2xl font-black text-slate-900">
-                              {screen.t2}
-                            </h2>
-                            <div className="mt-3 h-1 w-24 mx-auto rounded-full bg-gradient-to-r from-[#60A5FA] to-[#9333EA]" />
-                          </div>
+                          activeSidebarSectionKey !== 'learn' ? (
+                            <div className="text-center">
+                              <h2 className="text-xl md:text-2xl font-black text-slate-900">
+                                {screen.t2}
+                              </h2>
+                              <div className="mt-3 h-1 w-24 mx-auto rounded-full bg-gradient-to-r from-[#60A5FA] to-[#9333EA]" />
+                            </div>
+                          ) : null
                         ) : null}
 
                         {screen.t3 &&
@@ -1184,7 +1196,8 @@ export default function MindSyncTeacherTrainingModule01Page() {
                         screen.id !== 10 &&
                         screen.id !== 13 &&
                         screen.id !== 14 &&
-                        screen.id !== 15 ? (
+                        screen.id !== 15 &&
+                        activeSidebarSectionKey !== 'learn' ? (
                           <h3 className="text-lg md:text-xl font-bold text-slate-900">
                             {screen.t3}
                           </h3>
@@ -1233,14 +1246,16 @@ export default function MindSyncTeacherTrainingModule01Page() {
 
                     {screen.id === 15 ? (
                       <div className="space-y-8">
-                        <div className="text-center">
-                          {screen.t3 ? (
-                            <h3 className="text-lg md:text-xl font-bold text-slate-900">
-                              {screen.t3}
-                            </h3>
-                          ) : null}
-                          <div className="mt-3 h-1 w-24 mx-auto rounded-full bg-gradient-to-r from-[#60A5FA] to-[#9333EA]" />
-                        </div>
+                        {activeSidebarSectionKey !== 'learn' ? (
+                          <div className="text-center">
+                            {screen.t3 ? (
+                              <h3 className="text-lg md:text-xl font-bold text-slate-900">
+                                {screen.t3}
+                              </h3>
+                            ) : null}
+                            <div className="mt-3 h-1 w-24 mx-auto rounded-full bg-gradient-to-r from-[#60A5FA] to-[#9333EA]" />
+                          </div>
+                        ) : null}
 
                         {screen.bullets && screen.bullets.length ? (
                           <div className="space-y-7">
@@ -1388,13 +1403,15 @@ export default function MindSyncTeacherTrainingModule01Page() {
 
                     {screen.keyPoint ? (
                       screen.id === 10 ? (
-                        <div className="mt-8 w-full max-w-[1100px] mx-auto rounded-3xl border border-rose-300/10 bg-gradient-to-br from-[#4A1A2A]/85 via-[#2A1020]/90 to-[#120612]/80 px-10 md:px-12 py-10 md:py-12 text-white/90 whitespace-pre-line pb-32">
-                          <div className="text-3xl md:text-4xl font-black text-white tracking-tight">
-                            The single most important point.
-                          </div>
-                          <div className="mt-5 text-base md:text-lg leading-relaxed text-white/80">
-                            {screen.keyPoint}
-                          </div>
+                        <div className="mt-8 w-full max-w-[784px] mx-auto">
+                          <Dropdown
+                            dropdownId={`${screen.id}:key-point`}
+                            header="The single most important point."
+                            body={screen.keyPoint}
+                            onOpenChange={handleDropdownOpenChange}
+                            containerClassName="rounded-xl"
+                            buttonClassName="h-[64px]"
+                          />
                         </div>
                       ) : screen.id === 15 ? null : (
                         <KeyPoint>{screen.keyPoint}</KeyPoint>
@@ -1457,7 +1474,9 @@ export default function MindSyncTeacherTrainingModule01Page() {
 
                     {screen.type === 'accordion' && screen.accordionItems ? (
                       <div className="pt-2">
-                        {screen.t2 ? (
+                        {screen.t2 &&
+                        screen.id !== 11 &&
+                        activeSidebarSectionKey !== 'learn' ? (
                           <div className="text-center">
                             <h2 className="text-2xl md:text-3xl font-black text-slate-900">
                               {screen.t2}
@@ -1774,10 +1793,13 @@ export default function MindSyncTeacherTrainingModule01Page() {
               <div className="flex items-center justify-between gap-2">
                 <button
                   type="button"
-                  disabled={index === 0}
-                  onClick={() => setIndex((v) => Math.max(0, v - 1))}
+                  disabled={prevVisibleIndex === null}
+                  onClick={() => {
+                    if (prevVisibleIndex === null) return;
+                    setIndex(prevVisibleIndex);
+                  }}
                   className={`flex items-center gap-2 h-12 px-5 rounded-full text-sm font-semibold border transition-colors ${
-                    index === 0
+                    prevVisibleIndex === null
                       ? 'bg-slate-50 border-slate-200 text-slate-400 cursor-not-allowed'
                       : 'bg-slate-50 hover:bg-slate-100 border-slate-200 text-slate-700'
                   }`}
@@ -1788,17 +1810,18 @@ export default function MindSyncTeacherTrainingModule01Page() {
 
                 <button
                   type="button"
-                  disabled={!canGoNext}
+                  disabled={!canGoNext || nextVisibleIndex === null}
                   onClick={() => {
                     if (screen.id === 29) {
                       navigate('/dashboard/my-learning/mind-sync');
                       return;
                     }
 
-                    setIndex((v) => Math.min(screens.length - 1, v + 1));
+                    if (nextVisibleIndex === null) return;
+                    setIndex(nextVisibleIndex);
                   }}
                   className={`flex items-center gap-2 h-12 px-6 rounded-full text-sm font-semibold border border-transparent transition-colors ${
-                    canGoNext
+                    canGoNext && nextVisibleIndex !== null
                       ? 'bg-gradient-to-r from-[#60A5FA] to-[#9333EA] text-white hover:shadow-indigo-500/20'
                       : 'bg-slate-100 text-slate-400 cursor-not-allowed'
                   }`}
