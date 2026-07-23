@@ -96,7 +96,7 @@ type SidebarSection = {
 const TAKEAWAY_HIGHLIGHT_TEXT =
   '“Yesterday I misread what was going on for you. I should have checked in rather than snapped. I am sorry. You did not deserve that.” No “but.” No explanation. No asking them to apologise back. Then let them go.';
 
-const HIDDEN_NAV_BLOCK_IDS = new Set<number>([8, 9, 10, 20, 23, 26]);
+const HIDDEN_NAV_BLOCK_IDS = new Set<number>([8, 9, 10]);
 
 const SCENARIOS: Record<1 | 2 | 3, Scenario> = {
   1: {
@@ -281,6 +281,237 @@ function Dropdown({
   );
 }
 
+function LearnAccordionItem({
+  dropdownId,
+  header,
+  body,
+  open,
+  onToggle,
+}: {
+  dropdownId: string;
+  header: string;
+  body: string;
+  open: boolean;
+  onToggle: (dropdownId: string, open: boolean) => void;
+}) {
+  const meta = (() => {
+    const lower = header.toLowerCase();
+    if (lower.startsWith('green')) {
+      return {
+        iconBg: 'bg-emerald-100',
+        dotBg: 'bg-emerald-500',
+        accentBorder: 'border-emerald-100',
+        caption: 'The thinking brain is in charge',
+      };
+    }
+    if (lower.startsWith('amber')) {
+      return {
+        iconBg: 'bg-amber-100',
+        dotBg: 'bg-amber-500',
+        accentBorder: 'border-amber-100',
+        caption: 'Energy going on staying in the room',
+      };
+    }
+    if (lower.startsWith('red')) {
+      return {
+        iconBg: 'bg-red-100',
+        dotBg: 'bg-red-500',
+        accentBorder: 'border-red-100',
+        caption: 'The alarm system is in charge',
+      };
+    }
+    if (lower.includes('bit more on the brain')) {
+      return {
+        iconBg: 'bg-slate-100',
+        dotBg: 'bg-slate-400',
+        accentBorder: 'border-slate-200',
+        caption: 'Optional extra detail',
+      };
+    }
+    return {
+      iconBg: 'bg-slate-100',
+      dotBg: 'bg-slate-400',
+      accentBorder: 'border-slate-200',
+      caption: '',
+    };
+  })();
+
+  return (
+    <div
+      className={`rounded-xl overflow-hidden cursor-pointer border border-slate-200 bg-white shadow-[0_20px_40px_-15px_rgba(47,99,120,0.06)] transition-shadow ${
+        open ? 'shadow-[0_24px_48px_-12px_rgba(47,99,120,0.12)]' : ''
+      }`}
+    >
+      <button
+        type="button"
+        onClick={() => onToggle(dropdownId, !open)}
+        className="w-full p-6 flex items-center justify-between gap-4 text-left"
+      >
+        <div className="flex items-center gap-6 min-w-0">
+          <div
+            className={`w-12 h-12 rounded-full flex items-center justify-center shrink-0 ${meta.iconBg}`}
+          >
+            <span className={`w-4 h-4 rounded-full ${meta.dotBg}`} />
+          </div>
+          <div className="min-w-0">
+            <div className="text-[18px] font-semibold text-slate-900 truncate">
+              {header}
+            </div>
+            {meta.caption ? (
+              <div className="text-[12px] text-slate-500 truncate">
+                {meta.caption}
+              </div>
+            ) : null}
+          </div>
+        </div>
+
+        <span
+          className={`material-symbols-outlined text-slate-500 transition-transform duration-300 ${
+            open ? 'rotate-180' : ''
+          }`}
+        >
+          expand_more
+        </span>
+      </button>
+
+      <div
+        className="overflow-hidden transition-[max-height] duration-300 ease-in-out"
+        style={{ maxHeight: open ? 700 : 0 }}
+      >
+        <div className="px-6 pb-8 pt-2 ml-12 lg:ml-20 flex flex-col gap-6">
+          <div
+            className={`bg-[#F7F9FB] p-4 rounded-lg border ${meta.accentBorder}`}
+          >
+            <div className="text-[15px] text-slate-700 whitespace-pre-line leading-relaxed">
+              {body}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function parseLearnStateSections(body: string): {
+  whatYouSee?: string;
+  underneath?: string;
+  whatHelps?: string;
+} {
+  const parts = body
+    .split(/\n\n+/)
+    .map((p) => p.trim())
+    .filter(Boolean);
+
+  const res: {
+    whatYouSee?: string;
+    underneath?: string;
+    whatHelps?: string;
+  } = {};
+
+  for (const p of parts) {
+    const lower = p.toLowerCase();
+    if (lower.startsWith('what you see:')) {
+      res.whatYouSee = p.replace(/^what you see:\s*/i, '');
+      continue;
+    }
+    if (lower.startsWith('underneath:')) {
+      res.underneath = p.replace(/^underneath:\s*/i, '');
+      continue;
+    }
+    if (lower.startsWith('what helps:')) {
+      res.whatHelps = p.replace(/^what helps:\s*/i, '');
+      continue;
+    }
+  }
+
+  return res;
+}
+
+function LearnStateModal({
+  open,
+  title,
+  accentColor,
+  body,
+  onClose,
+}: {
+  open: boolean;
+  title: string;
+  accentColor: string;
+  body: string;
+  onClose: () => void;
+}) {
+  if (!open) return null;
+  const sections = parseLearnStateSections(body);
+
+  return (
+    <div
+      className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/20 backdrop-blur-sm"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
+    >
+      <div className="bg-white max-w-2xl w-full rounded-xl shadow-xl overflow-hidden">
+        <div className="p-8">
+          <div className="flex justify-between items-start gap-6 mb-6">
+            <h2
+              className="text-2xl md:text-3xl font-black"
+              style={{ color: accentColor }}
+            >
+              {title}
+            </h2>
+            <button
+              type="button"
+              onClick={onClose}
+              className="p-2 rounded-full hover:bg-slate-100 transition-colors"
+              aria-label="Close"
+            >
+              <span className="material-symbols-outlined">close</span>
+            </button>
+          </div>
+
+          <div className="space-y-6">
+            {sections.whatYouSee ? (
+              <div>
+                <div className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">
+                  What you see
+                </div>
+                <div className="text-sm md:text-base text-slate-800 leading-relaxed">
+                  {sections.whatYouSee}
+                </div>
+              </div>
+            ) : null}
+
+            {sections.underneath ? (
+              <div
+                className="p-4 rounded-lg"
+                style={{ backgroundColor: `${accentColor}14` }}
+              >
+                <div className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">
+                  Underneath
+                </div>
+                <div className="text-sm md:text-base text-slate-800 leading-relaxed">
+                  {sections.underneath}
+                </div>
+              </div>
+            ) : null}
+
+            {sections.whatHelps ? (
+              <div>
+                <div className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">
+                  What helps
+                </div>
+                <div className="text-sm md:text-base text-slate-800 leading-relaxed">
+                  {sections.whatHelps}
+                </div>
+              </div>
+            ) : null}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function KeyPoint({ children }: { children: string }) {
   return (
     <div className="rounded-2xl border border-amber-300/60 bg-amber-50 px-5 py-4 text-slate-900 whitespace-pre-line">
@@ -300,14 +531,14 @@ export default function MindSyncTeacherTrainingModule01Page() {
             type: 'cover',
             t1: 'The Three Second Pause',
             t2: 'Reading behaviour in the moment',
-            body: 'How to tell the difference between distress, defiance and overwhelm. And what to do in the three seconds before you respond.',
+            body: 'How to tell the difference between distress, defiance and overwhelm. ',
           },
           {
             id: 2,
             type: 'text',
             t2: 'About this module',
             lead: 'Sometimes a pupil’s behaviour can look like defiance when what is really going on is distress.',
-            body: 'This module is about the three seconds before you respond. Same pupil, same behaviour, a different read, a completely different outcome.',
+            body: 'Same pupil, same behaviour, a different read, a completely different outcome.',
             dropdowns: [
               {
                 header: 'Does this only apply to pupils with a diagnosis?',
@@ -480,7 +711,22 @@ export default function MindSyncTeacherTrainingModule01Page() {
           {
             id: 17,
             type: 'text',
-            body: 'Evidence base. The three state model used here is consistent with research by Mullally and colleagues at Newcastle University on school distress, and with the Neurodivergence Task and Finish Group report, which finds that behaviour, including stimming, is too often read as defiance when it is in fact communication of overwhelm or distress.',
+            t2: 'Where this comes from',
+            body: 'The film keeps things simple. The evidence sits here.',
+            dropdowns: [
+              {
+                header: 'The three state model',
+                body: 'Consistent with research by Mullally and colleagues at Newcastle University on school distress, and with the Neurodivergence Task and Finish Group report, which finds that behaviour, including stimming, is too often understood as defiance when it is in fact communication of overwhelm or distress.',
+              },
+              {
+                header: 'Why a pause changes what happens next',
+                body: 'When we respond on reflex, the emotional part of the brain acts before the thinking part has caught up. A short, deliberate pause is what lets the thinking brain come back online, so you can recognise distress rather than defiance and choose your response. This is the basis of co regulation and de escalation practice in schools.',
+              },
+              {
+                header: 'Why three seconds',
+                body: 'The one second and three second figures are anchored in wait time research from the 1970s (Rowe, M. B. 1974, Wait time and rewards as instructional variables, Journal of Research in Science Teaching), which found that teachers naturally pause for about one second, and that stretching that pause to three seconds or more measurably improves what happens in the classroom.\n\nThat research looked at the pause after a teacher asks a question, rather than the pause before responding to distress. So we use it here as a principle and a memorable anchor, not as a study of behaviour. Three seconds is long enough to interrupt the reflex, and short enough that it is realistic in a live classroom.',
+              },
+            ],
           },
           {
             id: 18,
@@ -517,11 +763,14 @@ export default function MindSyncTeacherTrainingModule01Page() {
               'Next in the pathway: Module 2, Don’t Break What’s Working. How to tell when a quietly off task pupil is actually coping, and the cost of taking their coping away.\n\nMind Sync · Evidence based insight, in plain language. Designed by educational psychologists. Aligned to the Ofsted Education Inspection Framework, November 2025.',
           },
         ] as Screen[]
-      ).filter((s) => s.id !== 6),
+      ).filter((s) => s.id !== 6 && s.id !== 12),
     []
   );
 
   const [index, setIndex] = useState(0);
+  const [learnStateModalKey, setLearnStateModalKey] = useState<
+    'green' | 'amber' | 'red' | null
+  >(null);
   const [openDropdownIds, setOpenDropdownIds] = useState<Set<string>>(
     () => new Set()
   );
@@ -702,6 +951,24 @@ export default function MindSyncTeacherTrainingModule01Page() {
 
   const isAnyDropdownOpen = openDropdownIds.size > 0;
 
+  const learnStatesScreen = useMemo(
+    () => screens.find((s) => s.id === 11) ?? null,
+    [screens]
+  );
+
+  const learnStateItems = useMemo(() => {
+    const items = learnStatesScreen?.accordionItems ?? [];
+    const find = (prefix: string) =>
+      items.find((i) => i.header.toLowerCase().startsWith(prefix)) ?? null;
+    return {
+      green: find('green'),
+      amber: find('amber'),
+      red: find('red'),
+      brain: find('a bit more'),
+      keyPoint: learnStatesScreen?.keyPoint ?? '',
+    };
+  }, [learnStatesScreen]);
+
   const getPrevVisibleIndex = (fromIndex: number) => {
     for (let i = fromIndex - 1; i >= 0; i -= 1) {
       if (!HIDDEN_NAV_BLOCK_IDS.has(screens[i].id)) return i;
@@ -735,7 +1002,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
   return (
     <div
       className="flex flex-col min-h-screen bg-[#F7F9FC] text-slate-900"
-      style={{ fontFamily: 'Montserrat, system-ui, sans-serif' }}
+      style={{ fontFamily: 'Arial' }}
     >
       <header className="relative shrink-0 h-[238px] flex flex-col justify-end px-8 pb-8 overflow-hidden">
         <div className="absolute inset-0 z-0">
@@ -792,12 +1059,12 @@ export default function MindSyncTeacherTrainingModule01Page() {
                 ? (screen.lead ?? screen.t2 ?? screen.t3 ?? 'Part 2. Learn')
                 : (screen.t2 ?? 'Reading behaviour in the moment')}
           </h2>
-          <p
+          {/* <p
             className="text-[15px] leading-relaxed max-w-2xl whitespace-pre-line"
             style={{ color: '#6B6B6B' }}
           >
             Screen {index + 1} of {screens.length}
-          </p>
+          </p> */}
         </div>
 
         <div className="absolute right-0 bottom-0 w-1/3 h-full overflow-hidden pointer-events-none opacity-40">
@@ -821,52 +1088,160 @@ export default function MindSyncTeacherTrainingModule01Page() {
             >
               <section className="space-y-4">
                 {screen.type === 'cover' ? (
-                  <div className="p-6 md:p-6 card-glow">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
-                      <div className="space-y-6">
-                        <div className="text-2xl md:text-3xl leading-snug font-medium text-slate-700 whitespace-pre-line max-w-[560px]">
+                  <div className="p-6 md:p-6 md:px-6  md:py-12 ">
+                    <div className="max-w-[1100px] mx-auto">
+                      <div className="flex flex-col items-center text-center">
+                        <h2 className="text-xl md:text-3xl font-semibold text-[#1F3864] max-w-[920px]">
                           {screen.body}
+                        </h2>
+                      </div>
+
+                      <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <div className="bg-white p-8 rounded-3xl shadow-[0_20px_40px_rgba(15,23,42,0.05)] border border-slate-200 flex flex-col gap-4">
+                          <div className="w-12 h-12 bg-rose-50 rounded-2xl flex items-center justify-center">
+                            <span className="material-symbols-outlined text-rose-600">
+                              warning
+                            </span>
+                          </div>
+                          <h3 className="text-xl font-semibold text-slate-900">
+                            Distress
+                          </h3>
+                        </div>
+
+                        <div className="bg-white p-8 rounded-3xl shadow-[0_20px_40px_rgba(15,23,42,0.05)] border border-slate-200 flex flex-col gap-4">
+                          <div className="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center">
+                            <span className="material-symbols-outlined text-emerald-700">
+                              psychology
+                            </span>
+                          </div>
+                          <h3 className="text-xl font-semibold text-slate-900">
+                            Defiance
+                          </h3>
+                        </div>
+
+                        <div className="bg-white p-8 rounded-3xl shadow-[0_20px_40px_rgba(15,23,42,0.05)] border border-slate-200 flex flex-col gap-4">
+                          <div className="w-12 h-12 bg-sky-50 rounded-2xl flex items-center justify-center">
+                            <span className="material-symbols-outlined text-sky-700">
+                              block
+                            </span>
+                          </div>
+                          <h3 className="text-xl font-semibold text-slate-900">
+                            Overwhelm
+                          </h3>
                         </div>
                       </div>
 
-                      <div className="flex justify-center md:justify-end">
-                        <div className="w-full max-w-[420px] md:w-[420px] rounded-3xl overflow-hidden border border-slate-200 bg-white">
-                          <img
-                            src={image}
-                            alt="Module visual"
-                            className="w-full h-[280px] md:h-[320px] object-cover"
-                          />
+                      <div className="mt-12 bg-[#0857e1]/5 border border-[#0857e1]/10 p-6 rounded-[2.5rem] flex flex-col md:flex-row items-center gap-8 max-w-3xl mx-auto">
+                        <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-[0_20px_40px_rgba(15,23,42,0.05)] shrink-0">
+                          <span className="material-symbols-outlined text-[#0857e1] text-[32px]">
+                            timer
+                          </span>
+                        </div>
+                        <div className="text-lg md:text-xl text-slate-800 text-center md:text-left">
+                          And what to do in the three seconds before you
+                          respond.
                         </div>
                       </div>
                     </div>
                   </div>
                 ) : (
-                  <div className="p-5 md:p-6 md:px-14 card-glow flex flex-col min-h-0 ">
+                  <div className="p-5 md:p-6 md:px-14 flex flex-col min-h-0 ">
                     {screen.id === 2 ? (
-                      <div className="flex-1 flex flex-col gap-4 min-h-0">
-                        {screen.lead ? (
-                          <div className="w-full md:w-auto">
-                            <div className="text-[24px] leading-relaxed font-semibold text-slate-900 whitespace-pre-line mb-6">
-                              {screen.lead}
+                      <div className="flex-1 flex flex-col gap-8 min-h-0">
+                        <div className="grid lg:grid-cols-2 gap-12 items-center">
+                          <div className="min-w-0">
+                            <h1 className="text-3xl md:text-5xl mt-[-60px] font-black text-slate-900 tracking-tight">
+                              Defiance or{' '}
+                              <span
+                                className="italic"
+                                style={{ color: '#0857e1' }}
+                              >
+                                Distress?
+                              </span>
+                            </h1>
+
+                            {screen.lead ? (
+                              <div className="mt-5 text-lg md:text-2xl font-normal text-slate-700 leading-snug whitespace-pre-line">
+                                {screen.lead}
+                              </div>
+                            ) : null}
+
+                            {screen.body ? (
+                              <div className=" mt-10 font-semibold  md:text-lg text-slate-600 leading-relaxed whitespace-pre-line max-w-[720px]">
+                                {screen.body}
+                              </div>
+                            ) : null}
+                          </div>
+
+                          <div className="relative flex justify-center items-center h-[360px] md:h-[440px] overflow-hidden">
+                            <div
+                              className="absolute inset-0 pointer-events-none"
+                              style={{
+                                backgroundImage:
+                                  'url("https://www.transparenttextures.com/patterns/felt.png")',
+                                opacity: 0.03,
+                              }}
+                            />
+
+                            <div className="absolute w-72 h-72 md:w-80 md:h-80 rounded-full bg-[#0857e1]/25 ms-animate-soft-pulse" />
+                            <div
+                              className="absolute w-56 h-56 md:w-64 md:h-64 rounded-full bg-[#0857e1]/20 ms-animate-soft-pulse"
+                              style={{ animationDelay: '1s' }}
+                            />
+                            <div
+                              className="absolute w-44 h-44 md:w-48 md:h-48 rounded-full bg-[#0857e1]/16 ms-animate-soft-pulse"
+                              style={{ animationDelay: '2s' }}
+                            />
+
+                            <div className="relative z-10 w-full flex flex-col items-center gap-10">
+                              <div className="flex justify-between w-full max-w-sm relative">
+                                <div className="absolute top-1/3 left-0 w-full h-px bg-[#2F6378] -translate-y-1/2 -z-10" />
+
+                                <div className="flex flex-col items-center gap-2">
+                                  <div className="w-3.5 h-3.5 rounded-full bg-rose-600 ring-4 ring-rose-200" />
+                                  <div className="text-[10px] font-bold uppercase tracking-widest text-slate-500">
+                                    Trigger
+                                  </div>
+                                </div>
+
+                                <div className="flex flex-col items-center gap-2">
+                                  <div className="px-4 py-2 bg-white shadow-sm border border-slate-200 rounded-lg text-sm font-semibold text-[#0857e1] ms-animate-bounce-3s">
+                                    3s
+                                  </div>
+                                  <div className="text-[10px] font-bold text-[#0857e1]">
+                                    The Pause
+                                  </div>
+                                </div>
+
+                                <div className="flex flex-col items-center gap-2">
+                                  <div className="w-3.5 h-3.5 rounded-full bg-sky-700 ring-4 ring-sky-200" />
+                                  <div className="text-[10px] font-bold uppercase tracking-widest text-slate-500">
+                                    Response
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div className="bg-white p-7 rounded-xl border border-slate-200 shadow-[0_20px_40px_rgba(15,23,42,0.05)] max-w-xs text-center">
+                                <span
+                                  className="material-symbols-outlined text-[44px] mb-3"
+                                  style={{ color: '#0857e1' }}
+                                >
+                                  psychology
+                                </span>
+                                <div className="text-sm md:text-base text-slate-700">
+                                  This module is about the three seconds before
+                                  you respond.
+                                </div>
+                              </div>
                             </div>
                           </div>
-                        ) : null}
+                        </div>
 
-                        {screen.body ? (
-                          <div className="text-sm md:text-lg text-slate-700 whitespace-pre-line leading-relaxed max-w-[1000px]">
+                        {/* {screen.body ? (
+                          <div className="mt-[-40px] font-semibold  md:text-lg text-slate-600 leading-relaxed whitespace-pre-line max-w-[720px]">
                             {screen.body}
                           </div>
-                        ) : null}
-
-                        <div className="flex justify-center">
-                          <div className="w-full max-w-[461px] md:w-[451px] rounded-2xl overflow-hidden border border-slate-200 bg-white">
-                            <img
-                              src={image}
-                              alt="About this module"
-                              className="w-full h-[200px] md:h-[260px] object-cover"
-                            />
-                          </div>
-                        </div>
+                        ) : null} */}
 
                         {screen.dropdowns && screen.dropdowns.length ? (
                           <div className="space-y-3">
@@ -1010,11 +1385,11 @@ export default function MindSyncTeacherTrainingModule01Page() {
                               ) : null}
                             </div>
                           ) : screen.id === 5 ? (
-                            <div className="text-left">
+                            <div className="text-center">
                               <h1 className="text-2xl md:text-4xl font-black text-slate-900">
                                 {screen.t1}
                               </h1>
-                              <div className="mt-3 h-1 w-24 rounded-full bg-gradient-to-r from-[#60A5FA] to-[#9333EA]" />
+                              <div className="mt-4 h-1 w-20 bg-[#0857e1]/30 mx-auto rounded-full" />
                             </div>
                           ) : screen.id === 7 ? null : (
                             <div className="text-center">
@@ -1027,25 +1402,19 @@ export default function MindSyncTeacherTrainingModule01Page() {
                         ) : null}
 
                         {screen.id === 5 ? (
-                          <div className="pt-6 space-y-6">
-                            {screen.body ? (
-                              <div className="w-full md:w-auto">
-                                <div className="text-base md:text-xl leading-relaxed font-medium text-slate-700 whitespace-pre-line">
-                                  {screen.body}
-                                </div>
-                              </div>
-                            ) : null}
-
+                          <div className="pt-6 space-y-8">
                             <div className="flex justify-center">
-                              <div className="w-full max-w-[584px] md:w-[754px] space-y-3">
-                                <VideoLessonPlayer
-                                  title={
-                                    screen.videoTitle ??
-                                    'Module 1 film, around 2 minutes'
-                                  }
-                                  videoUrl={screen.videoUrl ?? null}
-                                  className="rounded-[18px]"
-                                />
+                              <div className="w-full max-w-2xl">
+                                <div className="aspect-video bg-[#F7F9FB] rounded-[2.5rem] border border-[#C9D6E5] shadow-[0_20px_40px_rgba(15,23,42,0.05)] overflow-hidden">
+                                  <VideoLessonPlayer
+                                    title={
+                                      screen.videoTitle ??
+                                      'Module 1 film, around 2 minutes'
+                                    }
+                                    videoUrl={screen.videoUrl ?? null}
+                                    className="rounded-none"
+                                  />
+                                </div>
                               </div>
                             </div>
 
@@ -1077,29 +1446,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
                           </div>
                         ) : null}
 
-                        {screen.id === 7 ? (
-                          <div className="pt-6">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
-                              <div className="space-y-6">
-                                {screen.body ? (
-                                  <div className="text-lg md:text-xl text-slate-700 whitespace-pre-line leading-relaxed">
-                                    {screen.body}
-                                  </div>
-                                ) : null}
-                              </div>
-
-                              <div className="flex justify-center md:justify-end">
-                                <div className="w-full max-w-[420px] md:w-[420px] rounded-3xl overflow-hidden border border-slate-200 bg-white">
-                                  <img
-                                    src={learnHeroImage}
-                                    alt="Learn"
-                                    className="w-full h-[280px] md:h-[320px] object-cover"
-                                  />
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        ) : null}
+                        {screen.id === 7 ? null : null}
 
                         {screen.t1 &&
                         screen.type !== 'divider' &&
@@ -1118,26 +1465,180 @@ export default function MindSyncTeacherTrainingModule01Page() {
                           )
                         ) : null}
 
-                        {screen.id === 12 ? (
+                        {screen.id === 7 ? (
                           <div className="pt-2">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
-                              <div className="space-y-6">
-                                {screen.body ? (
-                                  <div className="text-lg md:text-xl text-slate-700 whitespace-pre-line leading-relaxed">
+                            <div className="max-w-[1200px] mx-auto">
+                              <header className="mb-10">
+                                <h2
+                                  className="text-[32px] leading-tight font-bold"
+                                  style={{ color: '#1F3864' }}
+                                >
+                                  Three states, and why the difference matters.
+                                </h2>
+                                <div
+                                  className="mt-6 max-w-3xl bg-[#F7F9FB] p-8 rounded-xl border-l-4"
+                                  style={{ borderLeftColor: '#1F7A7A' }}
+                                >
+                                  <p
+                                    className="text-[18px] leading-relaxed"
+                                    style={{ color: '#333333' }}
+                                  >
                                     {screen.body}
-                                  </div>
-                                ) : null}
-                              </div>
+                                  </p>
+                                </div>
+                              </header>
 
-                              <div className="flex justify-center md:justify-end">
-                                <div className="w-full max-w-[420px] md:w-[420px] rounded-3xl overflow-hidden border border-slate-200 bg-white">
-                                  <img
-                                    src={learnHeroImage}
-                                    alt="Learn"
-                                    className="w-full h-[280px] md:h-[320px] object-cover"
-                                  />
+                              <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-10 items-start">
+                                <div>
+                                  <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-6">
+                                    {(
+                                      [
+                                        {
+                                          key: 'green' as const,
+                                          title: 'State One',
+                                          subtitle: 'Ready for learning',
+                                          accentText: 'text-emerald-800',
+                                          iconBg: 'bg-emerald-100',
+                                          iconText: 'text-emerald-700',
+                                          barBg: 'bg-emerald-100',
+                                          icon: 'psychology',
+                                        },
+                                        {
+                                          key: 'amber' as const,
+                                          title: 'State Two',
+                                          subtitle: 'Escalation imminent',
+                                          accentText: 'text-amber-700',
+                                          iconBg: 'bg-amber-100',
+                                          iconText: 'text-amber-700',
+                                          barBg: 'bg-amber-100',
+                                          icon: 'warning',
+                                        },
+                                        {
+                                          key: 'red' as const,
+                                          title: 'State Three',
+                                          subtitle: 'Full survival mode',
+                                          accentText: 'text-rose-700',
+                                          iconBg: 'bg-rose-100',
+                                          iconText: 'text-rose-700',
+                                          barBg: 'bg-rose-100',
+                                          icon: 'emergency_home',
+                                        },
+                                      ] as const
+                                    ).map((card) => {
+                                      return (
+                                        <div
+                                          key={card.key}
+                                          className="bg-white rounded-xl overflow-hidden border border-slate-200 shadow-[0_20px_40px_-15px_rgba(47,99,120,0.06)] transition-shadow"
+                                        >
+                                          <button
+                                            type="button"
+                                            onClick={() =>
+                                              setLearnStateModalKey(card.key)
+                                            }
+                                            className="w-full h-[180px] p-10 flex flex-col items-center text-center transition-all duration-300 hover:-translate-y-2"
+                                          >
+                                            <div
+                                              className={`w-20 h-20 rounded-full ${card.iconBg} flex items-center justify-center mb-8`}
+                                            >
+                                              <span
+                                                className={`material-symbols-outlined text-[40px] ${card.iconText}`}
+                                                style={{
+                                                  fontVariationSettings:
+                                                    '"FILL" 1',
+                                                }}
+                                              >
+                                                {card.icon}
+                                              </span>
+                                            </div>
+                                            <div
+                                              className={`text-[20px] font-semibold mb-4 ${card.accentText}`}
+                                            >
+                                              {card.title}
+                                            </div>
+                                            <div
+                                              className={`h-1.5 w-16 rounded-full mb-6 ${card.barBg}`}
+                                            />
+
+                                            <div className="mt-auto pt-8">
+                                              <span className="material-symbols-outlined text-slate-400">
+                                                expand_more
+                                              </span>
+                                            </div>
+                                          </button>
+                                        </div>
+                                      );
+                                    })}
+                                  </div>
+
+                                  {learnStateItems.brain?.body ? (
+                                    <div className="mt-6">
+                                      <LearnAccordionItem
+                                        dropdownId={`${screen.id}:A bit more on the brain`}
+                                        header="A bit more on the brain"
+                                        body={learnStateItems.brain.body}
+                                        open={openDropdownIds.has(
+                                          `${screen.id}:A bit more on the brain`
+                                        )}
+                                        onToggle={handleDropdownOpenChange}
+                                      />
+                                    </div>
+                                  ) : null}
+                                </div>
+
+                                <div
+                                  className="rounded-xl overflow-hidden shadow-sm border border-[#0E606A]/10"
+                                  style={{ backgroundColor: '#0E606A' }}
+                                >
+                                  <div className="p-8">
+                                    <div className="flex items-start gap-4">
+                                      <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center shrink-0">
+                                        <span className="material-symbols-outlined text-white">
+                                          lightbulb
+                                        </span>
+                                      </div>
+                                      <div>
+                                        <div className="text-[18px] font-semibold text-white">
+                                          Key Teaching Insight
+                                        </div>
+                                        <div className="mt-4 text-[14px] leading-relaxed text-white/90">
+                                          {learnStateItems.keyPoint}
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
                                 </div>
                               </div>
+
+                              <LearnStateModal
+                                open={learnStateModalKey === 'green'}
+                                title={
+                                  learnStateItems.green?.header ??
+                                  'State One: Green. Calmly engaged'
+                                }
+                                accentColor="#37675e"
+                                body={learnStateItems.green?.body ?? ''}
+                                onClose={() => setLearnStateModalKey(null)}
+                              />
+                              <LearnStateModal
+                                open={learnStateModalKey === 'amber'}
+                                title={
+                                  learnStateItems.amber?.header ??
+                                  'State Two: Amber. Dysregulated'
+                                }
+                                accentColor="#ba7a1a"
+                                body={learnStateItems.amber?.body ?? ''}
+                                onClose={() => setLearnStateModalKey(null)}
+                              />
+                              <LearnStateModal
+                                open={learnStateModalKey === 'red'}
+                                title={
+                                  learnStateItems.red?.header ??
+                                  'State Three: Red. Shut down'
+                                }
+                                accentColor="#ba1a1a"
+                                body={learnStateItems.red?.body ?? ''}
+                                onClose={() => setLearnStateModalKey(null)}
+                              />
                             </div>
                           </div>
                         ) : null}
@@ -1206,18 +1707,6 @@ export default function MindSyncTeacherTrainingModule01Page() {
                         {screen.lead && screen.id !== 7 ? (
                           <div className="text-base md:text-lg font-semibold text-slate-900 whitespace-pre-line">
                             {screen.lead}
-                          </div>
-                        ) : null}
-
-                        {screen.id === 17 && screen.body ? (
-                          <div className="flex justify-center pt-2">
-                            <div className="w-full max-w-[781px] md:w-[781px] h-auto md:h-[315px] rounded-lg border border-slate-200 bg-white overflow-hidden">
-                              <div className="px-9 pt-8 pb-8 md:px-9 md:pt-[33px] md:pb-8">
-                                <div className="text-sm md:text-2xl text-slate-900 whitespace-pre-line leading-relaxed">
-                                  {screen.body}
-                                </div>
-                              </div>
-                            </div>
                           </div>
                         ) : null}
 
@@ -1310,7 +1799,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
 
                     {screen.bullets && screen.id === 3 ? (
                       <div className="space-y-8">
-                        <div className="rounded-lg border border-[#818CF8] bg-[#04216b]/100 backdrop-blur-[12px] p-6 md:p-8 md:w-[1103px] md:mt-8">
+                        <div className="rounded-lg border border-[#818CF8] bg-[#1F3864] backdrop-blur-[12px] p-6 md:p-8 md:w-[1103px] md:mt-8">
                           <div className="space-y-4">
                             <div className="space-y-6">
                               {screen.bullets.map((b) => (
@@ -1413,7 +1902,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
                             buttonClassName="h-[64px]"
                           />
                         </div>
-                      ) : screen.id === 15 ? null : (
+                      ) : screen.id === 11 || screen.id === 15 ? null : (
                         <KeyPoint>{screen.keyPoint}</KeyPoint>
                       )
                     ) : null}
@@ -1491,19 +1980,57 @@ export default function MindSyncTeacherTrainingModule01Page() {
                           </div>
                         ) : null}
 
-                        <div className="mt-8 space-y-4 max-w-[920px] mx-auto">
-                          {screen.accordionItems.map((item) => (
-                            <Dropdown
-                              key={item.header}
-                              dropdownId={`${screen.id}:${item.header}`}
-                              header={item.header}
-                              body={item.body}
-                              onOpenChange={handleDropdownOpenChange}
-                              containerClassName="rounded-xl"
-                              buttonClassName="h-[64px]"
-                            />
-                          ))}
-                        </div>
+                        {screen.id === 11 ? (
+                          <div className="mt-8 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                            <div className="lg:col-span-8 flex flex-col gap-4">
+                              {screen.accordionItems.map((item) => {
+                                const dropdownId = `${screen.id}:${item.header}`;
+                                return (
+                                  <LearnAccordionItem
+                                    key={item.header}
+                                    dropdownId={dropdownId}
+                                    header={item.header}
+                                    body={item.body}
+                                    open={openDropdownIds.has(dropdownId)}
+                                    onToggle={handleDropdownOpenChange}
+                                  />
+                                );
+                              })}
+                            </div>
+
+                            <aside className="lg:col-span-4">
+                              <div className="lg:sticky lg:top-6 p-8 bg-[#1F7A7A] rounded-xl text-white shadow-[0_20px_40px_-15px_rgba(47,99,120,0.18)] flex flex-col gap-6">
+                                <div className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center">
+                                  <span className="material-symbols-outlined text-white">
+                                    lightbulb
+                                  </span>
+                                </div>
+                                <h4 className="text-[20px] font-semibold">
+                                  Key Teaching Insight
+                                </h4>
+                                {screen.keyPoint ? (
+                                  <div className="text-[15px] opacity-90 leading-relaxed whitespace-pre-line">
+                                    {screen.keyPoint}
+                                  </div>
+                                ) : null}
+                              </div>
+                            </aside>
+                          </div>
+                        ) : (
+                          <div className="mt-8 space-y-4 max-w-[920px] mx-auto">
+                            {screen.accordionItems.map((item) => (
+                              <Dropdown
+                                key={item.header}
+                                dropdownId={`${screen.id}:${item.header}`}
+                                header={item.header}
+                                body={item.body}
+                                onOpenChange={handleDropdownOpenChange}
+                                containerClassName="rounded-xl"
+                                buttonClassName="h-[64px]"
+                              />
+                            ))}
+                          </div>
+                        )}
                       </div>
                     ) : null}
 
@@ -1710,7 +2237,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
                           </div>
 
                           <div className="relative z-10 p-4 md:p-5">
-                            <div className="glass-panel p-5 rounded-2xl border border-white/10 card-glow max-w-[920px]">
+                            <div className="glass-panel p-5 rounded-2xl border border-white/10   max-w-[920px]">
                               <div className="text-left">
                                 <div className="text-[10px] text-[#60A5FA] px-2 py-1 bg-white/5 rounded-full inline-block mb-3 uppercase tracking-widest font-semibold">
                                   Mind Sync Pocket
@@ -1872,20 +2399,25 @@ export default function MindSyncTeacherTrainingModule01Page() {
                 return true;
               });
 
+              const isQuestionBlock = [20, 23, 26].includes(screen.id);
+              const isSectionActive =
+                isActiveSection ||
+                (section.key === 'practise' && isQuestionBlock);
+
               const canCollapse = isCollapsible && visibleIndices.length > 1;
               const shouldShowItems = canCollapse && isOpen;
               return (
                 <div key={section.key} className="border-b border-slate-200">
                   <div
                     className={`w-full text-left px-4 py-4 flex items-center justify-between gap-3 transition-colors relative ${
-                      isActiveSection
+                      isSectionActive
                         ? 'bg-[#bdd2f8]'
                         : isOpen
                           ? 'bg-[#EEF4FF]'
                           : 'hover:bg-slate-50'
                     }`}
                   >
-                    {isActiveSection ? (
+                    {isSectionActive ? (
                       <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#2E7CF6]/60 to-transparent" />
                     ) : null}
 
@@ -1963,7 +2495,14 @@ export default function MindSyncTeacherTrainingModule01Page() {
                       {visibleIndices.map((i) => {
                         const item = toc[i];
                         if (!item) return null;
-                        const isCurrent = item.index === index;
+                        const questionToScenarioMap: Record<number, number> = {
+                          20: 19,
+                          23: 22,
+                          26: 25,
+                        };
+                        const isCurrent =
+                          item.index === index ||
+                          questionToScenarioMap[screen.id] === item.blockId;
                         return (
                           <button
                             key={`${item.blockId}-${item.index}`}
