@@ -348,7 +348,7 @@ export default function MindSyncModulePage() {
   }, [active]);
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#030713] text-white">
+    <div className="flex flex-col min-h-screen bg-[#F7F9FC] text-slate-900">
       <header className="relative shrink-0 min-h-[200px] md:min-h-[240px] flex flex-col justify-end p-6 md:p-8 overflow-hidden">
         <div className="absolute inset-0 z-0">
           <img
@@ -966,9 +966,7 @@ export default function MindSyncModulePage() {
                       </div>
 
                       <div>
-                        <h3 className="text-2xl font-bold text-white mb-3">
-                          The honest part
-                        </h3>
+                        
                         <div
                           className="h-1 w-20 md:w-28 rounded-full mb-5"
                           style={{

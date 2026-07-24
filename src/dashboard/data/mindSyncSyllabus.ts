@@ -179,7 +179,7 @@ export const MIND_SYNC_TEACHER_TRAINING_MODULE_01: MindSyncModule = {
     'Reading behaviour in the moment. How to tell the difference between distress, defiance and overwhelm, and what to do in the three seconds before you respond.',
   about: [
     'Most teachers have read a pupil’s behaviour as defiance and only later realised it was distress.',
-    'This module is about the three seconds before you respond. Same pupil, same behaviour, a different read, a completely different outcome.',
+    ' Same pupil, same behaviour, a different read, a completely different outcome.',
   ],
   learningOutcomes: [
     'Spot the three patterns staff most often misread: distress as defiance, overwhelm as rudeness, stimming as off task.',

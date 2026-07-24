@@ -51,6 +51,119 @@
   }
 }
 
+@keyframes msSoftPulseOut {
+  0% {
+    transform: scale(0.5);
+    opacity: 0.5;
+  }
+  70% {
+    opacity: 0.25;
+  }
+  100% {
+    transform: scale(1.25);
+    opacity: 0;
+  }
+}
+
+.ms-animate-soft-pulse {
+  animation: msSoftPulseOut 3s ease-out infinite;
+}
+
+@keyframes msDiagramDotPulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  8%,
+  28% {
+    transform: scale(1.35);
+  }
+  36%,
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes msDiagramDotRing {
+  0%,
+  100% {
+    box-shadow: 0 0 0 4px var(--ms-ring-color, rgba(254, 205, 211, 0.65));
+  }
+  8%,
+  28% {
+    box-shadow:
+      0 0 0 8px var(--ms-ring-color, rgba(254, 205, 211, 0.9)),
+      0 0 18px var(--ms-glow-color, rgba(225, 29, 72, 0.35));
+  }
+  36%,
+  100% {
+    box-shadow: 0 0 0 4px var(--ms-ring-color, rgba(254, 205, 211, 0.65));
+  }
+}
+
+@keyframes msDiagramPausePulse {
+  0%,
+  100% {
+    transform: scale(1);
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
+    border-color: rgb(226 232 240);
+  }
+  8%,
+  28% {
+    transform: scale(1.1);
+    box-shadow: 0 10px 28px rgba(46, 124, 246, 0.22);
+    border-color: rgba(46, 124, 246, 0.45);
+  }
+  36%,
+  100% {
+    transform: scale(1);
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
+    border-color: rgb(226 232 240);
+  }
+}
+
+@keyframes msDiagramLabelPulse {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  8%,
+  28% {
+    opacity: 1;
+  }
+  36%,
+  100% {
+    opacity: 0.55;
+  }
+}
+
+.ms-animate-diagram-dot {
+  animation:
+    msDiagramDotPulse 3s ease-in-out infinite,
+    msDiagramDotRing 3s ease-in-out infinite;
+}
+
+.ms-animate-diagram-pause {
+  animation: msDiagramPausePulse 3s ease-in-out infinite;
+}
+
+.ms-animate-diagram-label {
+  animation: msDiagramLabelPulse 3s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ms-animate-soft-pulse {
+    animation: none;
+    opacity: 0.2;
+  }
+
+  .ms-animate-diagram-dot,
+  .ms-animate-diagram-pause,
+  .ms-animate-diagram-label {
+    animation: none;
+  }
+}
+
 .animate-shimmer {
   animation: shimmer 2s infinite;
 }
