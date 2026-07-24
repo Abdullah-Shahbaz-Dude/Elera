@@ -19,15 +19,44 @@ type ScreenType =
   | 'video'
   | 'accordion'
   | 'key'
+  | 'technique'
+  | 'technique_intro'
+  | 'technique_honest'
+  | 'timeline'
   | 'scenario_situation'
   | 'scenario_choose'
   | 'scenario_feedback'
   | 'takeaway'
   | 'closing';
 
+type TechniqueStateCard = {
+  state: 'green' | 'amber' | 'red';
+  label: string;
+  description: string;
+};
+
+type TechniqueStep = {
+  number: number;
+  title: string;
+  body: string;
+  bodyExtra?: string;
+  expand?: DropdownItem;
+  showTrafficLight?: boolean;
+  stateCards?: TechniqueStateCard[];
+};
+
 type DropdownItem = {
   header: string;
   body: string;
+};
+
+type TimelineStep = {
+  shortLabel: string;
+  icon: string;
+  header: string;
+  body: string;
+  keyInsight: string;
+  image: string;
 };
 
 const SCENARIO_IMAGES: Record<1 | 2 | 3, string> = {
@@ -77,6 +106,8 @@ type Screen = {
   takeawayHeading?: string;
   takeawayBody?: string;
   closingBody?: string;
+  techniqueSteps?: TechniqueStep[];
+  timelineSteps?: TimelineStep[];
 };
 
 type SidebarSectionKey =
@@ -287,12 +318,14 @@ function LearnAccordionItem({
   body,
   open,
   onToggle,
+  compact = false,
 }: {
   dropdownId: string;
   header: string;
   body: string;
   open: boolean;
   onToggle: (dropdownId: string, open: boolean) => void;
+  compact?: boolean;
 }) {
   const meta = (() => {
     const lower = header.toLowerCase();
@@ -345,20 +378,34 @@ function LearnAccordionItem({
       <button
         type="button"
         onClick={() => onToggle(dropdownId, !open)}
-        className="w-full p-6 flex items-center justify-between gap-4 text-left"
+        className={`w-full flex items-center justify-between gap-4 text-left ${
+          compact ? 'p-4' : 'p-6'
+        }`}
       >
-        <div className="flex items-center gap-6 min-w-0">
+        <div
+          className={`flex items-center min-w-0 ${compact ? 'gap-4' : 'gap-6'}`}
+        >
           <div
-            className={`w-12 h-12 rounded-full flex items-center justify-center shrink-0 ${meta.iconBg}`}
+            className={`rounded-full flex items-center justify-center shrink-0 ${meta.iconBg} ${
+              compact ? 'w-10 h-10' : 'w-12 h-12'
+            }`}
           >
-            <span className={`w-4 h-4 rounded-full ${meta.dotBg}`} />
+            <span className={`rounded-full ${meta.dotBg} ${compact ? 'w-3 h-3' : 'w-4 h-4'}`} />
           </div>
           <div className="min-w-0">
-            <div className="text-[18px] font-semibold text-slate-900 truncate">
+            <div
+              className={`font-semibold text-slate-900 ${
+                compact
+                  ? 'text-[16px] leading-snug'
+                  : 'text-[18px] truncate'
+              }`}
+            >
               {header}
             </div>
             {meta.caption ? (
-              <div className="text-[12px] text-slate-500 truncate">
+              <div
+                className={`text-[12px] text-slate-500 ${compact ? '' : 'truncate'}`}
+              >
                 {meta.caption}
               </div>
             ) : null}
@@ -378,7 +425,11 @@ function LearnAccordionItem({
         className="overflow-hidden transition-[max-height] duration-300 ease-in-out"
         style={{ maxHeight: open ? 700 : 0 }}
       >
-        <div className="px-6 pb-8 pt-2 ml-12 lg:ml-20 flex flex-col gap-6">
+        <div
+          className={`flex flex-col gap-6 ${
+            compact ? 'px-4 pb-6 pt-2 ml-10' : 'px-6 pb-8 pt-2 ml-12 lg:ml-20'
+          }`}
+        >
           <div
             className={`bg-[#F7F9FB] p-4 rounded-lg border ${meta.accentBorder}`}
           >
@@ -387,6 +438,493 @@ function LearnAccordionItem({
             </div>
           </div>
         </div>
+      </div>
+    </div>
+  );
+}
+
+const TECHNIQUE_STATE_STYLES: Record<
+  'green' | 'amber' | 'red',
+  {
+    cardBg: string;
+    border: string;
+    icon: string;
+    iconColor: string;
+    labelColor: string;
+  }
+> = {
+  green: {
+    cardBg: 'bg-emerald-50/40',
+    border: 'border-emerald-500',
+    icon: 'check_circle',
+    iconColor: 'text-emerald-600',
+    labelColor: 'text-emerald-700',
+  },
+  amber: {
+    cardBg: 'bg-[#fff8e1]',
+    border: 'border-[#ffb300]',
+    icon: 'warning',
+    iconColor: 'text-[#ffb300]',
+    labelColor: 'text-[#b28900]',
+  },
+  red: {
+    cardBg: 'bg-rose-50/40',
+    border: 'border-rose-500',
+    icon: 'emergency',
+    iconColor: 'text-rose-600',
+    labelColor: 'text-rose-700',
+  },
+};
+
+function TechniqueIntroSection({ screen }: { screen: Screen }) {
+  return (
+    <div className="max-w-[1200px] mx-auto flex flex-col justify-center min-h-[calc(100vh-320px)]">
+      <header>
+        <h1 className="text-[32px] leading-tight font-bold text-[#1F3864] mb-6">
+          {screen.t2}
+        </h1>
+        {screen.lead ? (
+          <div className="max-w-3xl bg-[#F7F9FB] p-8 rounded-xl border-l-4 border-[#1F7A7A]">
+            <p className="text-[18px] leading-relaxed text-[#333333]">
+              {screen.lead}
+            </p>
+          </div>
+        ) : null}
+      </header>
+    </div>
+  );
+}
+
+function TechniqueStepsSection({
+  screen,
+  openDropdownIds,
+  onDropdownToggle,
+}: {
+  screen: Screen;
+  openDropdownIds: Set<string>;
+  onDropdownToggle: (dropdownId: string, open: boolean) => void;
+}) {
+  const steps = screen.techniqueSteps ?? [];
+
+  return (
+    <div className="max-w-[1200px] mx-auto">
+      <h1 className="text-[32px] leading-tight font-bold text-[#1F3864] mb-8">
+        {screen.t2}
+      </h1>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {steps.map((step) => (
+          <div
+            key={step.number}
+            className="bg-white p-8 rounded-xl flex flex-col h-full border border-slate-200 shadow-[0_20px_40px_-15px_rgba(47,99,120,0.06)]"
+          >
+            <div className="flex items-center gap-4 mb-6">
+              <span className="flex items-center justify-center w-10 h-10 rounded-full bg-[#E6F4F4] text-[#1F7A7A] text-sm font-semibold shrink-0">
+                {step.number}
+              </span>
+              <h2 className="text-[18px] font-semibold text-slate-900">
+                {step.title}
+              </h2>
+            </div>
+
+            <p className="text-[15px] text-slate-700 mb-6 leading-relaxed">
+              {step.number === 2 ? (
+                <>
+                  During the pause, ask yourself:{' '}
+                  <span className="italic">
+                    &ldquo;Where is this pupil right now?&rdquo;
+                  </span>
+                </>
+              ) : (
+                step.body
+              )}
+            </p>
+
+            {step.bodyExtra ? (
+              <p className="text-[15px] text-slate-700 mb-6 leading-relaxed">
+                {step.number === 2 ? (
+                  <>
+                    Quickly check their internal traffic light. Are they in
+                    Green (calm), Amber (frustrated/anxious), or Red
+                    (fight/flight)? This shift in focus from the{' '}
+                    <span className="font-semibold">behavior</span> to the{' '}
+                    <span className="font-semibold">internal state</span>{' '}
+                    changes everything.
+                  </>
+                ) : (
+                  step.bodyExtra
+                )}
+              </p>
+            ) : null}
+
+            {step.expand ? (
+              <div className="mt-auto -mx-2 -mb-2">
+                <LearnAccordionItem
+                  dropdownId={`${screen.id}:${step.expand.header}`}
+                  header={step.expand.header}
+                  body={step.expand.body}
+                  open={openDropdownIds.has(
+                    `${screen.id}:${step.expand.header}`
+                  )}
+                  onToggle={onDropdownToggle}
+                />
+              </div>
+            ) : null}
+
+            {step.showTrafficLight ? (
+              <div className="mt-auto flex gap-2">
+                <div className="w-full h-1.5 rounded-full bg-[#1F7A7A]/20 overflow-hidden">
+                  <div className="h-full bg-[#1F7A7A] w-1/3" />
+                </div>
+              </div>
+            ) : null}
+
+            {step.stateCards && step.stateCards.length ? (
+              <div className="space-y-4">
+                {step.stateCards.map((card) => {
+                  const styles = TECHNIQUE_STATE_STYLES[card.state];
+                  return (
+                    <div
+                      key={card.state}
+                      className={`flex items-start gap-3 p-3 rounded-lg border-l-4 ${styles.cardBg} ${styles.border}`}
+                    >
+                      <span
+                        className={`material-symbols-outlined mt-0.5 ${styles.iconColor}`}
+                      >
+                        {styles.icon}
+                      </span>
+                      <div>
+                        <p
+                          className={`text-sm font-semibold ${styles.labelColor}`}
+                        >
+                          {card.label}
+                        </p>
+                        <p className="text-xs text-slate-600">
+                          {card.description}
+                        </p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : null}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function TechniqueHonestSection({
+  screen,
+  onNavigateToBlock,
+}: {
+  screen: Screen;
+  onNavigateToBlock: (blockId: number) => void;
+}) {
+  return (
+    <div className="max-w-[1200px] mx-auto">
+      <h1 className="text-[32px] leading-tight font-bold text-[#1F3864] mb-8">
+        {screen.t2}
+      </h1>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+        <div className="space-y-8">
+          {screen.keyPoint ? (
+            <div className="p-8 bg-[#1F7A7A] rounded-xl text-white shadow-[0_20px_40px_-15px_rgba(47,99,120,0.18)]">
+              <div className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center mb-6">
+                <span className="material-symbols-outlined text-white">
+                  lightbulb
+                </span>
+              </div>
+              <h3 className="text-[20px] font-semibold mb-4">
+                The honest part
+              </h3>
+              <p className="text-[15px] opacity-90 leading-relaxed italic">
+                &ldquo;{screen.keyPoint}&rdquo;
+              </p>
+            </div>
+          ) : null}
+
+         
+        </div>
+
+        <div className="h-[400px] relative overflow-hidden rounded-3xl shadow-lg">
+          <img
+            className="w-full h-full object-cover"
+            src={learnHeroImage}
+            alt="A teacher sitting quietly in a light-filled classroom after school hours"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#1F3864]/30 to-transparent" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function WhatNotToDoStepperSection({ screen }: { screen: Screen }) {
+  const steps = screen.timelineSteps ?? [];
+  const [activeStep, setActiveStep] = useState(0);
+  const [contentVisible, setContentVisible] = useState(true);
+  const active = steps[activeStep];
+
+  const switchStep = (index: number) => {
+    if (index === activeStep || !steps[index]) return;
+    setContentVisible(false);
+    setTimeout(() => {
+      setActiveStep(index);
+      setContentVisible(true);
+    }, 300);
+  };
+
+  const progressWidth =
+    steps.length > 1 ? (activeStep / (steps.length - 1)) * 100 : 0;
+
+  return (
+    <div className="max-w-5xl mx-auto relative flex flex-col flex-1 min-h-0 h-full overflow-hidden">
+      <div className="shrink-0">
+        <span className="inline-block text-[11px] font-semibold uppercase tracking-wider text-[#1F7A7A] bg-[#E6F4F4] px-3 py-1 rounded-full mb-2">
+          In the moment
+        </span>
+        <h1 className="text-[24px] md:text-[28px] leading-tight font-bold text-[#1F3864] mb-2">
+          {screen.t2}
+        </h1>
+        {screen.body ? (
+          <p className="text-[14px] text-slate-600 leading-snug mb-4 max-w-3xl">
+            {screen.body}
+          </p>
+        ) : null}
+      </div>
+
+      <div className="relative flex items-start justify-between mb-6 px-2 md:px-6 shrink-0">
+        <div className="absolute h-1 w-full bg-slate-200 top-5 left-0 z-0 rounded-full" />
+        <div
+          className="absolute h-1 bg-[#1F7A7A] top-5 left-0 z-0 rounded-full transition-all duration-500"
+          style={{ width: `${progressWidth}%` }}
+        />
+        {steps.map((step, index) => {
+          const isActive = activeStep === index;
+          const isCompleted = index <= activeStep;
+          return (
+            <button
+              key={step.header}
+              type="button"
+              onClick={() => switchStep(index)}
+              className="relative z-10 flex flex-col items-center group flex-1 min-w-0"
+            >
+              <div
+                className={`w-10 h-10 rounded-full border-2 flex items-center justify-center transition-all duration-300 group-hover:scale-110 active:scale-95 shrink-0 ${
+                  isActive
+                    ? 'border-[#1F7A7A] bg-[#E6F4F4] text-[#1F7A7A] ring-4 ring-[#E6F4F4]'
+                    : isCompleted
+                      ? 'border-[#1F7A7A] bg-[#E6F4F4] text-[#1F7A7A]'
+                      : 'border-slate-300 bg-white text-slate-500 group-hover:border-[#1F7A7A]'
+                }`}
+              >
+                <span className="material-symbols-outlined text-xl">
+                  {step.icon}
+                </span>
+              </div>
+              <span
+                className={`mt-2 text-[11px] font-medium text-center leading-tight px-0.5 hidden sm:block ${
+                  isActive
+                    ? 'text-[#1F7A7A] font-bold'
+                    : 'text-slate-500 opacity-60'
+                }`}
+              >
+                {index + 1}. {step.shortLabel}
+              </span>
+            </button>
+          );
+        })}
+      </div>
+
+      {active ? (
+        <div
+          className={`grid grid-cols-12 gap-4 flex-1 min-h-0 overflow-hidden transition-all duration-300 ${
+            contentVisible
+              ? 'opacity-100 translate-y-0'
+              : 'opacity-0 translate-y-4'
+          }`}
+        >
+          <div className="col-span-12 lg:col-span-7 bg-white p-4 md:p-5 rounded-xl border border-slate-200 shadow-[0_20px_40px_-15px_rgba(47,99,120,0.06)] flex flex-col min-h-0 overflow-hidden">
+            <div className="flex items-center gap-3 mb-3 shrink-0">
+              <div className="p-3 rounded-lg bg-[#F7F9FB] text-[#1F7A7A] shrink-0">
+                <span className="material-symbols-outlined text-3xl">
+                  {active.icon}
+                </span>
+              </div>
+              <div className="min-w-0">
+                <h2 className="text-lg md:text-xl font-semibold text-[#1F3864] leading-snug">
+                  {active.header}
+                </h2>
+                <p className="text-xs font-medium text-[#1F7A7A] mt-0.5">
+                  {activeStep + 1} of {steps.length}
+                </p>
+              </div>
+            </div>
+            <p className="text-[14px] md:text-[15px] text-slate-700 leading-snug">
+              {active.body}
+            </p>
+          </div>
+
+          <div className="hidden lg:block col-span-5 min-h-0 h-full">
+            <div className="relative h-full min-h-[120px] rounded-xl overflow-hidden border border-slate-200">
+              <img
+                className="w-full h-full object-cover"
+                src={active.image}
+                alt=""
+              />
+            </div>
+          </div>
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+const EVIDENCE_TAB_META = [
+  { shortLabel: 'Three State Model', icon: 'psychology_alt' },
+  { shortLabel: 'The Pause', icon: 'pause_circle' },
+  { shortLabel: 'Why 3 Seconds', icon: 'timer_3' },
+] as const;
+
+function EvidenceTabsSection({ screen }: { screen: Screen }) {
+  const [activeTab, setActiveTab] = useState(0);
+  const tabs = screen.dropdowns ?? [];
+  const active = tabs[activeTab];
+  const meta = EVIDENCE_TAB_META[activeTab] ?? EVIDENCE_TAB_META[0];
+
+  return (
+    <div className="max-w-[1200px] mx-auto">
+      <h1 className="text-[32px] leading-tight font-bold text-[#1F3864] mb-3">
+        {screen.t2}
+      </h1>
+      {screen.body ? (
+        <p className="text-[15px] text-slate-600 leading-relaxed mb-8 max-w-3xl">
+          {screen.body}
+        </p>
+      ) : null}
+
+      <div className="max-w-4xl mx-auto">
+        <div className="flex gap-1 p-1 rounded-xl bg-[#F7F9FB] mb-8">
+          {tabs.map((tab, index) => {
+            const tabMeta = EVIDENCE_TAB_META[index];
+            const isActive = activeTab === index;
+            return (
+              <button
+                key={tab.header}
+                type="button"
+                onClick={() => setActiveTab(index)}
+                className={`flex-1 px-4 py-3 rounded-lg flex items-center justify-center gap-2 transition-all duration-300 text-sm font-semibold ${
+                  isActive
+                    ? 'bg-[#1F7A7A] text-white shadow-sm'
+                    : 'text-slate-600 hover:bg-white'
+                }`}
+              >
+                {tabMeta ? (
+                  <span
+                    className={`material-symbols-outlined text-lg ${
+                      isActive ? 'text-white' : 'text-[#1F7A7A]'
+                    }`}
+                  >
+                    {tabMeta.icon}
+                  </span>
+                ) : null}
+                <span className="hidden sm:inline">{tabMeta?.shortLabel}</span>
+              </button>
+            );
+          })}
+        </div>
+
+        {active ? (
+          <div
+            key={activeTab}
+            className="bg-white rounded-2xl border border-slate-200 shadow-[0_20px_40px_-15px_rgba(47,99,120,0.06)] p-8 md:p-10"
+            style={{ animation: 'step-enter 0.3s ease-out' }}
+          >
+            <div className="flex items-start gap-8">
+              <div className="hidden md:flex flex-none w-16 h-16 bg-[#E6F4F4] rounded-full items-center justify-center">
+                <span className="material-symbols-outlined text-[#1F7A7A] text-3xl">
+                  {meta.icon}
+                </span>
+              </div>
+              <div className="min-w-0">
+                <h2 className="text-2xl md:text-3xl font-semibold text-[#1F3864] mb-6">
+                  {active.header}
+                </h2>
+                <p className="text-[15px] md:text-[18px] text-slate-700 leading-relaxed whitespace-pre-line max-w-3xl">
+                  {active.body}
+                </p>
+              </div>
+            </div>
+          </div>
+        ) : null}
+      </div>
+    </div>
+  );
+}
+
+function CardAccordionSection({
+  screenId,
+  title,
+  intro,
+  introStyle = 'compact',
+  compact = false,
+  items,
+  openDropdownIds,
+  onToggle,
+}: {
+  screenId: number;
+  title?: string;
+  intro?: string;
+  introStyle?: 'compact' | 'panel';
+  compact?: boolean;
+  items: DropdownItem[];
+  openDropdownIds: Set<string>;
+  onToggle: (dropdownId: string, open: boolean) => void;
+}) {
+  return (
+    <div className="max-w-[1200px] mx-auto">
+      {title ? (
+        <>
+          <h1 className="text-[32px] leading-tight font-bold text-[#1F3864] mb-3">
+            {title}
+          </h1>
+          {intro ? (
+            <p className="text-[15px] text-slate-600 leading-relaxed mb-6 max-w-3xl">
+              {intro}
+            </p>
+          ) : null}
+        </>
+      ) : intro ? (
+        introStyle === 'panel' ? (
+          <div className="max-w-3xl bg-[#F7F9FB] p-8 rounded-xl border-l-4 border-[#1F7A7A] mb-8">
+            <p className="text-[18px] leading-relaxed text-[#333333]">
+              {intro}
+            </p>
+          </div>
+        ) : (
+          <p className="text-[15px] text-slate-700 leading-relaxed mb-4 max-w-3xl">
+            {intro}
+          </p>
+        )
+      ) : null}
+      <div className={`flex flex-col ${compact ? 'gap-3' : 'gap-4'}`}>
+        {items.map((item) => {
+          const dropdownId = `${screenId}:${item.header}`;
+          return (
+            <LearnAccordionItem
+              key={item.header}
+              dropdownId={dropdownId}
+              header={item.header}
+              body={item.body}
+              open={openDropdownIds.has(dropdownId)}
+              onToggle={onToggle}
+              compact={compact}
+            />
+          );
+        })}
       </div>
     </div>
   );
@@ -650,61 +1188,117 @@ export default function MindSyncTeacherTrainingModule01Page() {
           },
           {
             id: 13,
-            type: 'text',
-            t3: 'Step 1. Notice the rise in yourself',
-            body: 'Your jaw tightens. Your chest feels hot. The feeling that you have been undermined, especially with others watching. That rise is information about you, not about the pupil. Notice it. Do not act on it yet.',
-            dropdowns: [
-              {
-                header: 'Why this is the hard step',
-                body: 'The rise feels like clarity. It is not. Catching it, and not acting on it, is the actual work of this technique.',
-              },
-            ],
+            type: 'technique_intro',
+            t2: 'The technique. The three second pause',
+            lead: 'It is not complicated. You make a small gap between what the pupil does and what you do next, and into that gap you fit one quiet check.',
           },
           {
             id: 14,
-            type: 'text',
-            t3: 'Step 2. Ask one quiet question',
-            body: 'Inside your head: is this pupil in green, amber or red? Two seconds of looking usually tells you. Aloud if you need to: “Quick check in. Are you with me, or somewhere else right now?” It works because it does not accuse or demand. It opens a door.',
+            type: 'technique',
+            t2: 'The three steps',
+            techniqueSteps: [
+              {
+                number: 1,
+                title: 'Notice the rise in yourself',
+                body: 'Before you act, feel your own physiological reaction. It might be a tightening in your jaw, a sudden flush of heat in your neck, or your breath catching. This is your body\'s alarm system.',
+                expand: {
+                  header: 'Why this is the hard step',
+                  body: 'Our biological wiring is designed for instant reaction. In a classroom, that survival instinct often misinterprets a student\'s behavior as a direct threat, bypassing your rational thought process. Observing the reaction without acting on it requires immense cognitive effort.',
+                },
+              },
+              {
+                number: 2,
+                title: 'Ask one quiet question',
+                body: 'During the pause, ask yourself: "Where is this pupil right now?"',
+                bodyExtra:
+                  'Quickly check their internal traffic light. Are they in Green (calm), Amber (frustrated/anxious), or Red (fight/flight)? This shift in focus from the behavior to the internal state changes everything.',
+                showTrafficLight: true,
+              },
+              {
+                number: 3,
+                title: 'Match response to state',
+                body: 'Your goal is to match your intervention to the student\'s emotional capacity, not to the disruption itself.',
+                stateCards: [
+                  {
+                    state: 'green',
+                    label: 'Green State',
+                    description:
+                      'Low-level correction, humor, or direct instruction works.',
+                  },
+                  {
+                    state: 'amber',
+                    label: 'Amber State',
+                    description:
+                      'Validation, distraction, and offering choices to lower anxiety.',
+                  },
+                  {
+                    state: 'red',
+                    label: 'Red State',
+                    description:
+                      'Safety first. Reduce words, increase space, co-regulate.',
+                  },
+                ],
+              },
+            ],
           },
           {
             id: 15,
-            type: 'key',
-            t3: 'Step 3. Match your response to the state, not the behaviour',
-            bullets: [
-              'Green, and they chose not to comply: the calm, firm, named behaviour conversation.',
-              'Amber: lower the demand briefly, slow your voice, offer a small choice. Most return to green within two minutes.',
-              'Red: reduce demands to almost zero. Offer space, not solutions. The conversation comes later.',
-            ],
+            type: 'technique_honest',
+            t2: 'The honest part',
             keyPoint:
-              'The honest part. You will not manage this every time. The goal is not perfection. It is catching the rise more often than you used to. Within a couple of months, the pupils who used to escalate start to settle.',
+              'This is not about being a perfect, zen-like presence every single day. There will be days where you react before you can think. The goal isn\'t perfection; the goal is consistent progress. Every time you successfully find that three-second gap, you are building a stronger bridge to a pupil who needs your stability more than your discipline.',
           },
           {
             id: 16,
-            type: 'accordion',
-            t2: 'What not to do, in the moment',
-            body: 'Five moves that look reasonable under pressure but tend to escalate a dysregulated pupil. Tap each one.',
-            accordionTitle: 'What not to do, in the moment',
-            accordionItems: [
+            type: 'timeline',
+            t2: 'Five things that tend to make it harder',
+            body: 'Five responses that look perfectly reasonable under pressure, and tend to escalate a pupil who is already dysregulated. Worth a look. Tap each one.',
+            timelineSteps: [
               {
-                header: 'Do not raise your voice to match theirs',
-                body: 'The calmer you sound, the more likely they are to come down.',
+                shortLabel: 'Voice',
+                icon: 'record_voice_over',
+                header: 'Raising your voice to match theirs',
+                body: 'The calmer you sound, the more likely they are to come down with you.',
+                keyInsight:
+                  'The calmer you sound, the more likely they are to come down with you.',
+                image: learnHeroImage,
               },
               {
-                header: 'Do not demand eye contact',
-                body: 'For many neurodivergent pupils it costs cognitive load they do not have. Eye contact is not the test of respect.',
+                shortLabel: 'Eye contact',
+                icon: 'visibility_off',
+                header: 'Asking for eye contact',
+                body: 'For many neurodivergent pupils it costs thinking capacity they do not have right now. Eye contact is not the test of whether a pupil respects you.',
+                keyInsight:
+                  'For many neurodivergent pupils it costs thinking capacity they do not have right now. Eye contact is not the test of whether a pupil respects you.',
+                image: scenario1Image,
               },
               {
-                header: 'Do not stack instructions on a dysregulated pupil',
-                body: 'Working memory is reduced. One instruction at a time, with a pause after each, lands.',
+                shortLabel: 'Instructions',
+                icon: 'checklist',
+                header: 'Stacking up instructions',
+                body: 'Working memory shrinks when a pupil is dysregulated. One instruction at a time, with a pause after each, is far more likely to work.',
+                keyInsight:
+                  'Working memory shrinks when a pupil is dysregulated. One instruction at a time, with a pause after each, is far more likely to work.',
+                image: scenario2Image,
               },
               {
+                shortLabel: 'In public',
+                icon: 'groups',
                 header:
-                  'Do not give a public consequence to a dysregulated pupil',
-                body: 'It almost always escalates. Deliver it quietly later, when the pupil is back in green. That is when it teaches.',
+                  'Telling a pupil what will happen to them in front of the class',
+                body: 'It almost always escalates, and a pupil in amber or red cannot take it in anyway. Anything that needs saying is better said quietly, later, once they are back in green.',
+                keyInsight:
+                  'It almost always escalates, and a pupil in amber or red cannot take it in anyway. Anything that needs saying is better said quietly, later, once they are back in green.',
+                image: scenario3Image,
               },
               {
-                header: 'Do not read stimming as off task behaviour',
-                body: 'Tapping, rocking, fiddling are usually self regulation. Asking them to stop removes what is keeping them engaged.',
+                shortLabel: 'Stimming',
+                icon: 'touch_app',
+                header: 'Reading stimming as being off task',
+                body: 'Tapping, rocking and fiddling are usually self regulation. Asking a pupil to stop often removes the very thing keeping them in the lesson.',
+                keyInsight:
+                  'Tapping, rocking and fiddling are usually self regulation. Asking a pupil to stop often removes the very thing keeping them in the lesson.',
+                image: structureLearnImage,
               },
             ],
           },
@@ -812,6 +1406,14 @@ export default function MindSyncTeacherTrainingModule01Page() {
       };
     });
   }, [screens]);
+
+  const navigateToBlockId = (blockId: number) => {
+    const targetIndex = toc.find((t) => t.blockId === blockId)?.index;
+    if (typeof targetIndex === 'number') {
+      suppressAutoOpenRef.current = true;
+      setIndex(targetIndex);
+    }
+  };
 
   const sidebarSections = useMemo((): SidebarSection[] => {
     const indicesByBlockId = new Map<number, number>();
@@ -1056,7 +1658,11 @@ export default function MindSyncTeacherTrainingModule01Page() {
             {screen.id === 5
               ? (screen.t2 ?? 'The three second pause, in a real classroom')
               : activeSidebarSectionKey === 'learn'
-                ? (screen.lead ?? screen.t2 ?? screen.t3 ?? 'Part 2. Learn')
+                ? screen.type === 'technique_intro' ||
+                  screen.type === 'technique' ||
+                  screen.type === 'technique_honest'
+                  ? (screen.t2 ?? 'Part 2. Learn')
+                  : (screen.lead ?? screen.t2 ?? screen.t3 ?? 'Part 2. Learn')
                 : (screen.t2 ?? 'Reading behaviour in the moment')}
           </h2>
           {/* <p
@@ -1080,13 +1686,23 @@ export default function MindSyncTeacherTrainingModule01Page() {
           >
             <div
               ref={scrollAreaRef}
-              className={`flex-1 min-h-0 custom-scrollbar pb-24 scroll-smooth ${
-                isAnyDropdownOpen || screen.type === 'scenario_feedback'
+              className={`flex-1 min-h-0 custom-scrollbar scroll-smooth ${
+                screen.id === 16 ? 'pb-4' : 'pb-24'
+              } ${
+                isAnyDropdownOpen ||
+                screen.type === 'scenario_feedback' ||
+                screen.id === 17
                   ? 'overflow-y-auto'
                   : 'overflow-hidden'
               }`}
             >
-              <section className="space-y-4">
+              <section
+                className={
+                  screen.id === 16
+                    ? 'flex flex-col flex-1 min-h-0 h-full'
+                    : 'space-y-4'
+                }
+              >
                 {screen.type === 'cover' ? (
                   <div className="p-6 md:p-6 md:px-6  md:py-12 ">
                     <div className="max-w-[1100px] mx-auto">
@@ -1143,6 +1759,33 @@ export default function MindSyncTeacherTrainingModule01Page() {
                         </div>
                       </div>
                     </div>
+                  </div>
+                ) : screen.type === 'technique_intro' ? (
+                  <div className="p-5 md:p-6 md:px-14">
+                    <TechniqueIntroSection screen={screen} />
+                  </div>
+                ) : screen.type === 'technique' ? (
+                  <div className="p-5 md:p-6 md:px-14">
+                    <TechniqueStepsSection
+                      screen={screen}
+                      openDropdownIds={openDropdownIds}
+                      onDropdownToggle={handleDropdownOpenChange}
+                    />
+                  </div>
+                ) : screen.type === 'technique_honest' ? (
+                  <div className="p-5 md:p-6 md:px-14">
+                    <TechniqueHonestSection
+                      screen={screen}
+                      onNavigateToBlock={navigateToBlockId}
+                    />
+                  </div>
+                ) : screen.id === 16 ? (
+                  <div className="p-5 md:p-6 md:px-14 flex flex-col flex-1 min-h-0 h-full overflow-hidden">
+                    <WhatNotToDoStepperSection screen={screen} />
+                  </div>
+                ) : screen.id === 17 ? (
+                  <div className="p-5 md:p-6 md:px-14">
+                    <EvidenceTabsSection screen={screen} />
                   </div>
                 ) : (
                   <div className="p-5 md:p-6 md:px-14 flex flex-col min-h-0 ">
@@ -1268,8 +1911,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
 
                         {screen.id === 8 ||
                         screen.id === 9 ||
-                        screen.id === 10 ||
-                        screen.id === 13 ? (
+                        screen.id === 10 ? (
                           <div className="flex-1 flex flex-col gap-6 min-h-0">
                             {activeSidebarSectionKey !== 'learn' ? (
                               <div className="text-center">
@@ -1306,12 +1948,8 @@ export default function MindSyncTeacherTrainingModule01Page() {
                               <div className="flex justify-center">
                                 <div className="w-full max-w-[520px] md:w-[520px] rounded-2xl overflow-hidden border border-slate-200 bg-white">
                                   <img
-                                    src={
-                                      screen.id === 13
-                                        ? learnHeroImage
-                                        : structureLearnImage
-                                    }
-                                    alt={screen.id === 13 ? 'Step 1' : 'Learn'}
+                                    src={structureLearnImage}
+                                    alt="Learn"
                                     className="w-full h-[220px] md:h-[280px] object-cover"
                                   />
                                 </div>
@@ -1643,30 +2281,6 @@ export default function MindSyncTeacherTrainingModule01Page() {
                           </div>
                         ) : null}
 
-                        {screen.id === 14 ? (
-                          <div className="pt-2">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
-                              <div className="space-y-6">
-                                {screen.body ? (
-                                  <div className="text-lg md:text-xl text-slate-700 whitespace-pre-line leading-relaxed">
-                                    {screen.body}
-                                  </div>
-                                ) : null}
-                              </div>
-
-                              <div className="flex justify-center md:justify-end">
-                                <div className="w-full max-w-[420px] md:w-[420px] rounded-3xl overflow-hidden border border-slate-200 bg-white">
-                                  <img
-                                    src={learnHeroImage}
-                                    alt="Learn"
-                                    className="w-full h-[280px] md:h-[320px] object-cover"
-                                  />
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        ) : null}
-
                         {screen.t2 &&
                         !screen.t1 &&
                         screen.id !== 3 &&
@@ -1695,9 +2309,6 @@ export default function MindSyncTeacherTrainingModule01Page() {
                         screen.id !== 8 &&
                         screen.id !== 9 &&
                         screen.id !== 10 &&
-                        screen.id !== 13 &&
-                        screen.id !== 14 &&
-                        screen.id !== 15 &&
                         activeSidebarSectionKey !== 'learn' ? (
                           <h3 className="text-lg md:text-xl font-bold text-slate-900">
                             {screen.t3}
@@ -1716,11 +2327,8 @@ export default function MindSyncTeacherTrainingModule01Page() {
                         screen.id !== 8 &&
                         screen.id !== 9 &&
                         screen.id !== 10 &&
-                        screen.id !== 13 &&
-                        screen.id !== 14 &&
                         screen.id !== 12 &&
                         screen.id !== 18 &&
-                        screen.id !== 17 &&
                         screen.type !== 'accordion' ? (
                           <div
                             className={`text-sm md:text-base text-slate-700 whitespace-pre-line leading-relaxed ${
@@ -1732,70 +2340,6 @@ export default function MindSyncTeacherTrainingModule01Page() {
                         ) : null}
                       </>
                     )}
-
-                    {screen.id === 15 ? (
-                      <div className="space-y-8">
-                        {activeSidebarSectionKey !== 'learn' ? (
-                          <div className="text-center">
-                            {screen.t3 ? (
-                              <h3 className="text-lg md:text-xl font-bold text-slate-900">
-                                {screen.t3}
-                              </h3>
-                            ) : null}
-                            <div className="mt-3 h-1 w-24 mx-auto rounded-full bg-gradient-to-r from-[#60A5FA] to-[#9333EA]" />
-                          </div>
-                        ) : null}
-
-                        {screen.bullets && screen.bullets.length ? (
-                          <div className="space-y-7">
-                            {screen.bullets.map((b, i) => {
-                              const isGreen = /^Green\b/i.test(b);
-                              const isAmber = /^Amber\b/i.test(b);
-                              const icon = isGreen
-                                ? 'insert_chart'
-                                : isAmber
-                                  ? 'chat'
-                                  : 'looks_3';
-                              return (
-                                <div
-                                  key={`${i}-${b}`}
-                                  className="flex items-start gap-6"
-                                >
-                                  <div className="w-12 h-12 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-center shrink-0">
-                                    {i === 2 && !isGreen && !isAmber ? (
-                                      <span className="text-[#A5B4FC] font-bold text-lg leading-none">
-                                        3
-                                      </span>
-                                    ) : (
-                                      <span className="material-symbols-outlined text-[#A5B4FC]">
-                                        {icon}
-                                      </span>
-                                    )}
-                                  </div>
-                                  <div className="text-sm md:text-base text-slate-700 leading-relaxed">
-                                    {b}
-                                  </div>
-                                </div>
-                              );
-                            })}
-                          </div>
-                        ) : null}
-
-                        {screen.keyPoint ? (
-                          <div className="mt-8 w-full max-w-[1100px] mx-auto rounded-3xl border border-rose-300/10 bg-gradient-to-br from-[#4A1A2A]/85 via-[#2A1020]/90 to-[#120612]/80 px-10 md:px-12 py-10 md:py-12 text-white/90 whitespace-pre-line">
-                            <div className="text-3xl md:text-4xl font-black text-white tracking-tight">
-                              The honest part.
-                            </div>
-                            <div className="mt-5 text-base md:text-lg leading-relaxed text-white/80">
-                              {screen.keyPoint.replace(
-                                /^The honest part\.?\s*/i,
-                                ''
-                              )}
-                            </div>
-                          </div>
-                        ) : null}
-                      </div>
-                    ) : null}
 
                     {screen.bullets && screen.id === 3 ? (
                       <div className="space-y-8">
@@ -1880,7 +2424,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
                           </div>
                         </div>
                       </div>
-                    ) : screen.bullets && screen.id !== 15 ? (
+                    ) : screen.bullets ? (
                       <ul className="list-disc pl-6 space-y-2 text-sm md:text-base text-slate-200">
                         {screen.bullets.map((b) => (
                           <li key={b} className="leading-relaxed">
@@ -1902,7 +2446,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
                             buttonClassName="h-[64px]"
                           />
                         </div>
-                      ) : screen.id === 11 || screen.id === 15 ? null : (
+                      ) : screen.id === 11 ? null : (
                         <KeyPoint>{screen.keyPoint}</KeyPoint>
                       )
                     ) : null}
@@ -1942,8 +2486,6 @@ export default function MindSyncTeacherTrainingModule01Page() {
                     screen.id !== 8 &&
                     screen.id !== 9 &&
                     screen.id !== 10 &&
-                    screen.id !== 13 &&
-                    screen.id !== 14 &&
                     screen.id !== 18 ? (
                       <div className="space-y-3">
                         {screen.dropdowns.map((d) => (
@@ -1965,6 +2507,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
                       <div className="pt-2">
                         {screen.t2 &&
                         screen.id !== 11 &&
+                        screen.id !== 16 &&
                         activeSidebarSectionKey !== 'learn' ? (
                           <div className="text-center">
                             <h2 className="text-2xl md:text-3xl font-black text-slate-900">
@@ -1974,7 +2517,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
                           </div>
                         ) : null}
 
-                        {screen.body ? (
+                        {screen.body && screen.id !== 16 ? (
                           <div className="text-sm md:text-base text-slate-600 text-center whitespace-pre-line leading-relaxed max-w-[720px] mx-auto">
                             {screen.body}
                           </div>
