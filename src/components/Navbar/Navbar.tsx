@@ -8,11 +8,14 @@ const Navbar: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isHeroSection, setIsHeroSection] = useState(false);
+  const useNewNavbar = location.pathname !== '/home-1';
 
   // Check if we're on the home page (hero section)
   useEffect(() => {
     setIsHeroSection(
-      location.pathname === '/' || location.pathname === '/home-2'
+      location.pathname === '/' ||
+        location.pathname === '/home-2' ||
+        location.pathname === '/our-offer/mind-sync'
     );
   }, [location.pathname]);
 
@@ -44,16 +47,31 @@ const Navbar: React.FC = () => {
   // Only apply prominent styling when second video is active AND in hero section AND navbar is transparent
   // When navbar is visible (scrolled), don't apply color changes
   const isSecondVideo =
-    currentVideoIndex === 1 && isHeroSection && isTransparent;
+    location.pathname === '/' &&
+    currentVideoIndex === 1 &&
+    isHeroSection &&
+    isTransparent;
 
-  const navigationLinks = [
-    { path: '/', label: 'Home' },
-    { path: '/why-elara', label: 'Why Elara' },
-    { path: '/our-services', label: 'Our Services' },
-    { path: '/who-we-are', label: 'Who we are' },
-    { path: '/research-and-education', label: 'Research & Education' },
-    { path: '/contact-us', label: 'Contact Us' },
-  ];
+  const navigationLinks = useNewNavbar
+    ? [
+        { path: '/our-goals-values', label: 'Our Goals & Values' },
+        { path: '/who-we-are', label: 'Who We Are' },
+        { path: '/our-offer', label: 'Our Offer' },
+        { path: '/faq', label: 'Frequently Asked Questions' },
+        { path: '/who-we-work-with', label: 'Who We Work With' },
+      ]
+    : [
+        { path: '/', label: 'Home' },
+        { path: '/why-elara', label: 'Why Elara' },
+        { path: '/our-services', label: 'Our Services' },
+        { path: '/who-we-are', label: 'Who we are' },
+        { path: '/research-and-education', label: 'Research & Education' },
+        { path: '/contact-us', label: 'Contact Us' },
+      ];
+
+  const ctaLink = useNewNavbar
+    ? { path: '/request-a-demo', label: 'Request A Demo' }
+    : { path: '/contact-us', label: 'Contact Us' };
 
   const isActive = (path: string) => {
     if (path === '/') {
@@ -61,6 +79,11 @@ const Navbar: React.FC = () => {
     }
     return location.pathname === path;
   };
+
+  const offerLinks = [
+    { path: '/our-offer/mind-sync', label: 'Mind Sync' },
+    { path: '/future-sync', label: 'Future Sync' },
+  ];
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-[100] w-full transition-all duration-300 pointer-events-none">
@@ -94,41 +117,123 @@ const Navbar: React.FC = () => {
 
               {/* Desktop Navigation Links */}
               <div className="hidden items-center gap-2 md:gap-3 lg:flex">
-                {navigationLinks.slice(0, -1).map((link) => (
-                  <Link
-                    key={link.path}
-                    to={link.path}
-                    className={`group relative px-2 md:px-4 py-2 text-xs md:text-sm font-medium transition-all duration-300 ease-out ${
-                      isActive(link.path)
-                        ? isSecondVideo
-                          ? 'text-black'
-                          : 'text-white'
-                        : isSecondVideo
-                          ? 'text-black/80 hover:text-black'
-                          : 'text-white/80 hover:text-white'
-                    }`}
-                  >
-                    <span className="relative z-10">{link.label}</span>
-                    {/* Animated underline */}
-                    <span
-                      className={`absolute bottom-0 left-0 h-0.5 w-full origin-left scale-x-0 rounded-full transition-transform duration-300 ease-out ${
+                {navigationLinks.map((link) => {
+                  if (useNewNavbar && link.path === '/our-offer') {
+                    return (
+                      <div
+                        key={link.path}
+                        className="group relative flex items-center"
+                      >
+                        <Link
+                          to={link.path}
+                          className={`group relative inline-flex items-center px-2 md:px-4 py-2 text-xs md:text-sm font-medium transition-all duration-300 ease-out ${
+                            isActive(link.path)
+                              ? isSecondVideo
+                                ? 'text-black'
+                                : 'text-white'
+                              : isSecondVideo
+                                ? 'text-black/80 hover:text-black'
+                                : 'text-white/80 hover:text-white'
+                          }`}
+                        >
+                          <span className="relative z-10 inline-flex items-center gap-1">
+                            {link.label}
+                            <span
+                              className="material-symbols-outlined text-[18px] leading-none text-current/80 transition-transform duration-200 group-hover:rotate-180"
+                              aria-hidden
+                            >
+                              expand_more
+                            </span>
+                          </span>
+                          <span
+                            className={`absolute bottom-0 left-0 h-0.5 w-full origin-left scale-x-0 rounded-full transition-transform duration-300 ease-out ${
+                              isActive(link.path)
+                                ? 'scale-x-100 bg-gradient-blue'
+                                : 'group-hover:scale-x-100 bg-gradient-blue'
+                            }`}
+                          />
+                          {isActive(link.path) && (
+                            <span className="absolute inset-0 rounded-lg bg-gradient-blue opacity-10 blur-sm transition-opacity duration-300" />
+                          )}
+                          <span className="absolute inset-0 rounded-lg bg-gradient-to-r from-primary-blue-start/10 to-primary-blue-end/10 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                        </Link>
+
+                        <div className="pointer-events-none absolute left-1/2 top-full z-30 mt-3 w-64 -translate-x-1/2 opacity-0 translate-y-1 scale-[0.98] transition-all duration-200 group-hover:pointer-events-auto group-hover:opacity-100 group-hover:translate-y-0 group-hover:scale-100">
+                          <div
+                            className="absolute -top-3 left-0 right-0 h-3"
+                            aria-hidden
+                          />
+                          <div
+                            className="rounded-2xl p-[1px]"
+                            style={{
+                              background:
+                                'linear-gradient(135deg, rgba(96,165,250,0.55), rgba(147,51,234,0.55))',
+                            }}
+                          >
+                            <div className="rounded-2xl border border-white/10 bg-[rgba(22,22,22,0.92)] backdrop-blur-md p-2 shadow-2xl">
+                              {offerLinks.map((o) => (
+                                <Link
+                                  key={o.path}
+                                  to={o.path}
+                                  className={`flex items-center justify-between rounded-xl px-3 py-2.5 text-sm font-medium transition-all ${
+                                    isActive(o.path)
+                                      ? 'text-white bg-white/10'
+                                      : 'text-white/85 hover:text-white hover:bg-white/10'
+                                  }`}
+                                >
+                                  <span>{o.label}</span>
+                                  <span
+                                    className="material-symbols-outlined text-white/50"
+                                    style={{ fontSize: '18px' }}
+                                    aria-hidden
+                                  >
+                                    arrow_forward
+                                  </span>
+                                </Link>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  }
+
+                  return (
+                    <Link
+                      key={link.path}
+                      to={link.path}
+                      className={`group relative px-2 md:px-4 py-2 text-xs md:text-sm font-medium transition-all duration-300 ease-out ${
                         isActive(link.path)
-                          ? 'scale-x-100 bg-gradient-blue'
-                          : 'group-hover:scale-x-100 bg-gradient-blue'
+                          ? isSecondVideo
+                            ? 'text-black'
+                            : 'text-white'
+                          : isSecondVideo
+                            ? 'text-black/80 hover:text-black'
+                            : 'text-white/80 hover:text-white'
                       }`}
-                    />
-                    {/* Active background glow */}
-                    {isActive(link.path) && (
-                      <span className="absolute inset-0 rounded-lg bg-gradient-blue opacity-10 blur-sm transition-opacity duration-300" />
-                    )}
-                    {/* Hover background */}
-                    <span className="absolute inset-0 rounded-lg bg-gradient-to-r from-primary-blue-start/10 to-primary-blue-end/10 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-                  </Link>
-                ))}
+                    >
+                      <span className="relative z-10">{link.label}</span>
+                      {/* Animated underline */}
+                      <span
+                        className={`absolute bottom-0 left-0 h-0.5 w-full origin-left scale-x-0 rounded-full transition-transform duration-300 ease-out ${
+                          isActive(link.path)
+                            ? 'scale-x-100 bg-gradient-blue'
+                            : 'group-hover:scale-x-100 bg-gradient-blue'
+                        }`}
+                      />
+                      {/* Active background glow */}
+                      {isActive(link.path) && (
+                        <span className="absolute inset-0 rounded-lg bg-gradient-blue opacity-10 blur-sm transition-opacity duration-300" />
+                      )}
+                      {/* Hover background */}
+                      <span className="absolute inset-0 rounded-lg bg-gradient-to-r from-primary-blue-start/10 to-primary-blue-end/10 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                    </Link>
+                  );
+                })}
                 <Link
-                  to="/contact-us"
+                  to={ctaLink.path}
                   className={`group relative overflow-hidden rounded-full px-4 md:px-8 py-2 md:py-2.5 text-xs md:text-base font-semibold transition-all duration-300 ease-out ${
-                    isActive('/contact-us')
+                    isActive(ctaLink.path)
                       ? isSecondVideo
                         ? 'bg-gradient-blue text-white shadow-lg shadow-primary-blue-end/50'
                         : 'bg-gradient-blue text-white shadow-lg shadow-primary-blue-accent/50'
@@ -137,23 +242,8 @@ const Navbar: React.FC = () => {
                         : 'border-2 border-primary-blue-accent bg-transparent text-primary-blue-accent hover:bg-gradient-blue hover:text-white hover:shadow-lg hover:shadow-primary-blue-accent/50'
                   }`}
                 >
-                  <span className="relative z-10">Contact Us</span>
+                  <span className="relative z-10">{ctaLink.label}</span>
                   {/* Shimmer effect on hover */}
-                  <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-700 ease-in-out group-hover:translate-x-full" />
-                </Link>
-                <Link
-                  to="/login"
-                  className={`group relative overflow-hidden rounded-full px-4 md:px-6 py-2 md:py-2.5 text-xs md:text-base font-semibold transition-all duration-300 ease-out ${
-                    isActive('/login')
-                      ? isSecondVideo
-                        ? 'bg-gradient-blue text-white shadow-lg shadow-primary-blue-end/50'
-                        : 'bg-gradient-blue text-white shadow-lg shadow-primary-blue-accent/50'
-                      : isSecondVideo
-                        ? 'border-2 border-primary-blue-end bg-transparent text-primary-blue-end hover:border-primary-blue-accent hover:bg-gradient-blue hover:text-white hover:shadow-lg hover:shadow-primary-blue-end/50'
-                        : 'border-2 border-primary-blue-accent bg-transparent text-primary-blue-accent hover:bg-gradient-blue hover:text-white hover:shadow-lg hover:shadow-primary-blue-accent/50'
-                  }`}
-                >
-                  <span className="relative z-10">Login</span>
                   <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-700 ease-in-out group-hover:translate-x-full" />
                 </Link>
               </div>
@@ -191,32 +281,90 @@ const Navbar: React.FC = () => {
                     : 'bg-[rgba(29,29,29,0.85)] backdrop-blur-md border-gray-700'
                 }`}
               >
-                {navigationLinks.map((link) => (
-                  <Link
-                    key={link.path}
-                    to={link.path}
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className={`group relative block rounded-lg px-4 py-2.5 md:py-3 text-sm md:text-base font-medium transition-all duration-300 ease-out ${
-                      isActive(link.path)
-                        ? isSecondVideo
-                          ? 'text-black bg-gradient-to-r from-primary-blue-start/20 to-primary-blue-end/20'
-                          : 'text-white bg-gradient-to-r from-primary-blue-start/20 to-primary-blue-end/20'
-                        : isSecondVideo
-                          ? 'text-black/80 hover:text-black hover:bg-gradient-to-r hover:from-primary-blue-start/10 hover:to-primary-blue-end/10'
-                          : 'text-white/80 hover:text-white hover:bg-gradient-to-r hover:from-primary-blue-start/10 hover:to-primary-blue-end/10'
-                    }`}
-                  >
-                    <span className="relative z-10">{link.label}</span>
-                    {isActive(link.path) && (
-                      <span className="absolute left-0 top-0 h-full w-1 rounded-r-full bg-gradient-blue" />
-                    )}
-                  </Link>
-                ))}
+                {navigationLinks.map((link) => {
+                  if (useNewNavbar && link.path === '/our-offer') {
+                    return (
+                      <div key={link.path} className="space-y-2">
+                        <Link
+                          to={link.path}
+                          onClick={() => setIsMobileMenuOpen(false)}
+                          className={`group relative block rounded-lg px-4 py-2.5 md:py-3 text-sm md:text-base font-medium transition-all duration-300 ease-out ${
+                            isActive(link.path)
+                              ? isSecondVideo
+                                ? 'text-black bg-gradient-to-r from-primary-blue-start/20 to-primary-blue-end/20'
+                                : 'text-white bg-gradient-to-r from-primary-blue-start/20 to-primary-blue-end/20'
+                              : isSecondVideo
+                                ? 'text-black/80 hover:text-black hover:bg-gradient-to-r hover:from-primary-blue-start/10 hover:to-primary-blue-end/10'
+                                : 'text-white/80 hover:text-white hover:bg-gradient-to-r hover:from-primary-blue-start/10 hover:to-primary-blue-end/10'
+                          }`}
+                        >
+                          <span className="relative z-10 inline-flex items-center gap-1">
+                            {link.label}
+                            <span
+                              className="material-symbols-outlined text-[20px] leading-none text-current/80"
+                              aria-hidden
+                            >
+                              expand_more
+                            </span>
+                          </span>
+                          {isActive(link.path) && (
+                            <span className="absolute left-0 top-0 h-full w-1 rounded-r-full bg-gradient-blue" />
+                          )}
+                        </Link>
+                        <div className="pl-3">
+                          {offerLinks.map((o) => (
+                            <Link
+                              key={o.path}
+                              to={o.path}
+                              onClick={() => setIsMobileMenuOpen(false)}
+                              className={`group relative block rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out ${
+                                isActive(o.path)
+                                  ? isSecondVideo
+                                    ? 'text-black bg-gradient-to-r from-primary-blue-start/20 to-primary-blue-end/20'
+                                    : 'text-white bg-gradient-to-r from-primary-blue-start/20 to-primary-blue-end/20'
+                                  : isSecondVideo
+                                    ? 'text-black/80 hover:text-black hover:bg-gradient-to-r hover:from-primary-blue-start/10 hover:to-primary-blue-end/10'
+                                    : 'text-white/80 hover:text-white hover:bg-gradient-to-r hover:from-primary-blue-start/10 hover:to-primary-blue-end/10'
+                              }`}
+                            >
+                              <span className="relative z-10">{o.label}</span>
+                              {isActive(o.path) && (
+                                <span className="absolute left-0 top-0 h-full w-1 rounded-r-full bg-gradient-blue" />
+                              )}
+                            </Link>
+                          ))}
+                        </div>
+                      </div>
+                    );
+                  }
+
+                  return (
+                    <Link
+                      key={link.path}
+                      to={link.path}
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className={`group relative block rounded-lg px-4 py-2.5 md:py-3 text-sm md:text-base font-medium transition-all duration-300 ease-out ${
+                        isActive(link.path)
+                          ? isSecondVideo
+                            ? 'text-black bg-gradient-to-r from-primary-blue-start/20 to-primary-blue-end/20'
+                            : 'text-white bg-gradient-to-r from-primary-blue-start/20 to-primary-blue-end/20'
+                          : isSecondVideo
+                            ? 'text-black/80 hover:text-black hover:bg-gradient-to-r hover:from-primary-blue-start/10 hover:to-primary-blue-end/10'
+                            : 'text-white/80 hover:text-white hover:bg-gradient-to-r hover:from-primary-blue-start/10 hover:to-primary-blue-end/10'
+                      }`}
+                    >
+                      <span className="relative z-10">{link.label}</span>
+                      {isActive(link.path) && (
+                        <span className="absolute left-0 top-0 h-full w-1 rounded-r-full bg-gradient-blue" />
+                      )}
+                    </Link>
+                  );
+                })}
                 <Link
-                  to="/login"
+                  to={ctaLink.path}
                   onClick={() => setIsMobileMenuOpen(false)}
                   className={`group relative block rounded-lg px-4 py-2.5 md:py-3 text-sm md:text-base font-medium transition-all duration-300 ease-out ${
-                    isActive('/login')
+                    isActive(ctaLink.path)
                       ? isSecondVideo
                         ? 'text-black bg-gradient-to-r from-primary-blue-start/20 to-primary-blue-end/20'
                         : 'text-white bg-gradient-to-r from-primary-blue-start/20 to-primary-blue-end/20'
@@ -225,8 +373,8 @@ const Navbar: React.FC = () => {
                         : 'text-white/80 hover:text-white hover:bg-gradient-to-r hover:from-primary-blue-start/10 hover:to-primary-blue-end/10'
                   }`}
                 >
-                  <span className="relative z-10">Login</span>
-                  {isActive('/login') && (
+                  <span className="relative z-10">{ctaLink.label}</span>
+                  {isActive(ctaLink.path) && (
                     <span className="absolute left-0 top-0 h-full w-1 rounded-r-full bg-gradient-blue" />
                   )}
                 </Link>

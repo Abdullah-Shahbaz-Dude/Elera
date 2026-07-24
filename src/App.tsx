@@ -3,6 +3,7 @@ import {
   Routes,
   Route,
   useLocation,
+  Link,
 } from 'react-router-dom';
 import ProtectedRoute from './components/ProtectedRoute';
 import Navbar from './components/Navbar/Navbar';
@@ -36,11 +37,42 @@ import MindSyncModuleResults from './pages/MindSyncModuleResults';
 import RevealHiddenBrilliance from './pages/our-ideas/RevealHiddenBrilliance';
 import MindSyncIdea from './pages/our-ideas/MindSync';
 import DigitalBiasImpactAssessment from './pages/our-ideas/DigitalBiasImpactAssessment';
+import OurOfferMindSync from './pages/OurOfferMindSync';
+import MindSyncForSchools from './pages/MindSyncForSchools';
+import MindSyncForParents from './pages/MindSyncForParents';
 import Login from './components/Login';
 import Signup from './components/Signup';
 import Home2 from './pages/Home2';
 import ComingSoon from './pages/ComingSoon';
 import { VideoProvider } from './contexts/VideoContext';
+
+function DashboardComingSoon({ title }: { title: string }) {
+  return (
+    <main className="min-h-screen bg-black text-white">
+      <div className="container mx-auto px-4 md:px-6 py-16">
+        <div className="mx-auto max-w-3xl">
+          <h1 className="text-4xl md:text-6xl font-bold mb-6">{title}</h1>
+          <p className="text-white/80 text-lg md:text-xl leading-relaxed">
+            Coming Soon
+          </p>
+
+          <div className="mt-10">
+            <Link
+              to="/dashboard/my-learning/mind-sync"
+              className="inline-flex items-center justify-center rounded-xl px-6 py-3 text-base font-semibold text-white shadow-xl transition-all hover:scale-[1.02] active:scale-[0.98]"
+              style={{
+                background: 'linear-gradient(135deg, #60A5FA, #9333EA)',
+                boxShadow: '0 8px 32px rgba(96, 165, 250, 0.35)',
+              }}
+            >
+              Back to Mind Sync
+            </Link>
+          </div>
+        </div>
+      </div>
+    </main>
+  );
+}
 
 function AppContent() {
   const location = useLocation();
@@ -54,7 +86,8 @@ function AppContent() {
     <div className="min-h-screen">
       {!isDashboard && <Navbar />}
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<Home2 />} />
+        <Route path="/home-1" element={<Home />} />
         <Route path="/home-2" element={<Home2 />} />
         <Route path="/why-elerea-exist" element={<WhyElereaExist />} />
         <Route path="/our-services" element={<OurServices />} />
@@ -97,8 +130,12 @@ function AppContent() {
             element={<MindSyncProgrammePage />}
           />
           <Route
-            path="my-learning/mind-sync/modules/1"
+            path="my-learning/mind-sync/modules/:moduleId"
             element={<MindSyncModulePage />}
+          />
+          <Route
+            path="my-learning/mind-sync/module-2"
+            element={<DashboardComingSoon title="Mind Sync Module 2" />}
           />
           <Route
             path="my-learning/programme/:programmeId"
@@ -135,14 +172,8 @@ function AppContent() {
           path="/future-sync"
           element={<ComingSoon title="Future Sync" />}
         />
-        <Route
-          path="/mind-sync-schools"
-          element={<ComingSoon title="Mind Sync for Schools" />}
-        />
-        <Route
-          path="/mind-sync-parents"
-          element={<ComingSoon title="Mind Sync for Parents" />}
-        />
+        <Route path="/mind-sync-schools" element={<MindSyncForSchools />} />
+        <Route path="/mind-sync-parents" element={<MindSyncForParents />} />
         <Route
           path="/mind-sync-school-discovery-call"
           element={<ComingSoon title="Mind Sync School Discovery Call" />}
@@ -162,6 +193,16 @@ function AppContent() {
         <Route
           path="/faq"
           element={<ComingSoon title="Frequently Asked Questions" />}
+        />
+        <Route
+          path="/our-goals-values"
+          element={<ComingSoon title="Our Goals & Values" />}
+        />
+        <Route path="/our-offer" element={<ComingSoon title="Our Offer" />} />
+        <Route path="/our-offer/mind-sync" element={<OurOfferMindSync />} />
+        <Route
+          path="/who-we-work-with"
+          element={<ComingSoon title="Who We Work With" />}
         />
         <Route
           path="/who-we-are-coming-soon"

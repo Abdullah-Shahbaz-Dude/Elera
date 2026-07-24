@@ -1,6 +1,9 @@
 import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { MIND_SYNC_MODULE_01 } from '../data/mindSyncSyllabus';
+import {
+  MIND_SYNC_MODULE_01,
+  MIND_SYNC_TEACHER_TRAINING_MODULE_01,
+} from '../data/mindSyncSyllabus';
 import image from '../../assets/images/mindsync/2.jpg';
 
 export default function MindSyncProgrammePage() {
@@ -8,10 +11,10 @@ export default function MindSyncProgrammePage() {
   const [search, setSearch] = useState('');
 
   const filtered = useMemo(() => {
-    const title = MIND_SYNC_MODULE_01.title.toLowerCase();
-    const matchSearch =
-      !search.trim() || title.includes(search.trim().toLowerCase());
-    return matchSearch ? [MIND_SYNC_MODULE_01] : [];
+    const modules = [MIND_SYNC_MODULE_01, MIND_SYNC_TEACHER_TRAINING_MODULE_01];
+    const q = search.trim().toLowerCase();
+    if (!q) return modules;
+    return modules.filter((m) => m.title.toLowerCase().includes(q));
   }, [search]);
 
   return (
@@ -62,11 +65,11 @@ export default function MindSyncProgrammePage() {
                 role="button"
                 tabIndex={0}
                 onClick={() =>
-                  navigate('/dashboard/my-learning/mind-sync/modules/1')
+                  navigate(`/dashboard/my-learning/mind-sync/modules/${mod.id}`)
                 }
                 onKeyDown={(e) =>
                   e.key === 'Enter' &&
-                  navigate('/dashboard/my-learning/mind-sync/modules/1')
+                  navigate(`/dashboard/my-learning/mind-sync/modules/${mod.id}`)
                 }
                 className="group relative aspect-[4/3] rounded-3xl overflow-hidden dashboard-card border border-white/10 hover:border-primary/50 transition-all duration-500 shadow-2xl bg-card-dark cursor-pointer"
               >

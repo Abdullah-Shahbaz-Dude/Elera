@@ -25,42 +25,42 @@ const Footer: React.FC = () => {
               <ul className="space-y-2 md:space-y-3">
                 <li>
                   <Link
-                    to="/"
-                    className="text-sm md:text-base text-white transition-colors hover:text-primary-blue-accent"
+                    to="/our-goals-values"
+                    className="text-sm md:text-base text-white/80 transition-colors hover:text-white"
                   >
-                    Home
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/why-elara"
-                    className="text-sm md:text-base text-white transition-colors hover:text-primary-blue-accent"
-                  >
-                    Why Elara
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/our-services"
-                    className="text-sm md:text-base text-white transition-colors hover:text-primary-blue-accent"
-                  >
-                    Our Services
+                    Our Goals & Values
                   </Link>
                 </li>
                 <li>
                   <Link
                     to="/who-we-are"
-                    className="text-sm md:text-base text-white transition-colors hover:text-primary-blue-accent"
+                    className="text-sm md:text-base text-white/80 transition-colors hover:text-white"
                   >
-                    Who we are
+                    Who We Are
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/our-offer"
+                    className="text-sm md:text-base text-white/80 transition-colors hover:text-white"
+                  >
+                    Our Offer
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/faq"
+                    className="text-sm md:text-base text-white/80 transition-colors hover:text-white"
+                  >
+                    Frequently Asked Questions
                   </Link>
                 </li>
                 <li>
                   <Link
                     to="/who-we-work-with"
-                    className="text-sm md:text-base text-white transition-colors hover:text-primary-blue-accent"
+                    className="text-sm md:text-base text-white/80 transition-colors hover:text-white"
                   >
-                    WResearch & Education
+                    Who We Work With
                   </Link>
                 </li>
               </ul>
@@ -72,11 +72,8 @@ const Footer: React.FC = () => {
                 Contact Us
               </h4>
               <ul className="space-y-2 md:space-y-3">
-                <li className="text-sm md:text-base text-white">
-                  +44 55 66 77 88
-                </li>
                 <li className="text-sm md:text-base text-white break-words">
-                  elayara@gmail.com
+                  Hello@elera.com
                 </li>
               </ul>
             </div>

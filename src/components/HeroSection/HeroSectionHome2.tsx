@@ -37,15 +37,15 @@ const HeroSectionHome2: React.FC = () => {
               <span>Differently</span>
             </h1>
 
-            <p className="mt-6 text-white/80 text-base sm:text-lg md:text-xl leading-relaxed max-w-xl">
+            {/* <p className="mt-6 text-white/80 text-base sm:text-lg md:text-xl leading-relaxed max-w-xl">
               Empower schools, families, and organisations with neurodiversity
               insights, future-proof strategies, and science-led understanding.
-            </p>
+            </p> */}
 
             <div className="mt-8 flex flex-wrap gap-4">
               <button
                 type="button"
-                onClick={() => navigate('/home-2')}
+                onClick={() => navigate('/')}
                 className="rounded-full px-7 py-3 text-sm sm:text-base font-semibold text-white shadow-xl transition-all hover:scale-[1.02] active:scale-[0.98]"
                 style={{
                   background: 'linear-gradient(135deg, #60A5FA, #9333EA)',
@@ -56,7 +56,7 @@ const HeroSectionHome2: React.FC = () => {
               </button>
               <button
                 type="button"
-                onClick={() => navigate('/home-2')}
+                onClick={() => navigate('/')}
                 className="rounded-full px-7 py-3 text-sm sm:text-base font-semibold transition-all hover:scale-[1.02] active:scale-[0.98]"
                 style={{
                   border: '1.5px solid rgba(96, 165, 250, 0.9)',
