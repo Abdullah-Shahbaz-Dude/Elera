@@ -31,8 +31,8 @@ export default function DashboardLayout() {
       isLessonView ? 'justify-center px-3' : 'px-4'
     } ${
       isActive
-        ? 'bg-primary/10 text-primary font-medium border border-primary/20'
-        : 'hover:bg-slate-100 text-slate-600 hover:text-slate-900'
+        ? 'bg-[#bdd2f8] text-[#1F3864] font-medium border border-[#bdd2f8]'
+        : 'hover:bg-[#EEF4FF] text-slate-600 hover:text-[#1F3864]'
     }`;
 
   const linkClass = isLessonView
