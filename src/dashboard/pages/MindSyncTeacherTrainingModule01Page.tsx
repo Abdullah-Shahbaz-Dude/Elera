@@ -10,6 +10,7 @@ import learnHeroImage from '../../assets/images/mindsync/shutterstock_2757853493
 import scenario1Image from '../../assets/images/mindsync/3.jpg';
 import scenario2Image from '../../assets/images/mindsync/4.jpg';
 import scenario3Image from '../../assets/images/mindsync/1.jpg';
+import logoFav from '../../assets/images/logo/logo-fav-removebg-preview.png';
 
 type ScreenType =
   | 'cover'
@@ -71,6 +72,7 @@ type DropdownProps = DropdownItem & {
   containerClassName?: string;
   buttonClassName?: string;
   bodyClassName?: string;
+  variant?: 'default' | 'cover';
 };
 
 type ScenarioOptionKey = 'A' | 'B' | 'C' | 'D';
@@ -122,6 +124,7 @@ type SidebarSection = {
   key: SidebarSectionKey;
   label: string;
   indices: number[];
+  landingBlockId?: number;
 };
 
 const TAKEAWAY_HIGHLIGHT_TEXT =
@@ -260,14 +263,18 @@ function Dropdown({
   containerClassName,
   buttonClassName,
   bodyClassName,
+  variant = 'default',
 }: DropdownProps) {
   const [open, setOpen] = useState(false);
+  const isCover = variant === 'cover';
   return (
     <div
-      className={`border md:w-auto rounded-lg overflow-hidden bg-white ${
-        containerClassName ?? ''
-      }`}
-      style={{ borderColor: '#E5E9F0' }}
+      className={`md:w-auto overflow-hidden bg-white ${
+        isCover
+          ? 'rounded-xl border border-slate-200 shadow-[0_4px_24px_-4px_rgba(10,31,68,0.08)]'
+          : 'border rounded-lg'
+      } ${containerClassName ?? ''}`}
+      style={isCover ? undefined : { borderColor: '#E5E9F0' }}
     >
       <button
         type="button"
@@ -278,13 +285,24 @@ function Dropdown({
             return next;
           });
         }}
-        className={`w-full h-[70px] flex items-center justify-between gap-4 px-[25px] bg-white hover:bg-slate-50 transition-colors text-left ${
-          buttonClassName ?? ''
-        }`}
+        className={`w-full flex items-center justify-between gap-4 bg-white hover:bg-slate-50 transition-colors text-left ${
+          isCover
+            ? 'py-4 px-5 md:px-6 min-h-[70px]'
+            : 'h-[70px] px-[25px]'
+        } ${buttonClassName ?? ''}`}
       >
-        <div className="text-sm font-arial text-slate-900">{header}</div>
+        <div
+          className={`${
+            isCover
+              ? 'text-[16px] md:text-[18px] font-medium leading-relaxed'
+              : 'text-sm font-arial text-slate-900'
+          }`}
+          style={isCover ? { color: '#1F3864' } : undefined}
+        >
+          {header}
+        </div>
         <span
-          className={`material-symbols-outlined transition-transform ${
+          className={`material-symbols-outlined transition-transform shrink-0 ${
             open ? 'rotate-180' : ''
           }`}
           style={{ color: '#1F7A7A' }}
@@ -298,12 +316,20 @@ function Dropdown({
         } ${bodyClassName ?? ''}`}
       >
         <div
-          className="px-[25px] py-4 text-slate-700 whitespace-pre-line"
-          style={{
-            background: '#FFFFFF',
-            fontSize: '15px',
-            fontWeight: 400,
-          }}
+          className={`whitespace-pre-line ${
+            isCover
+              ? 'px-5 md:px-6 pb-4 text-[15px] md:text-[16px] leading-relaxed text-slate-600'
+              : 'px-[25px] py-4 text-slate-700'
+          }`}
+          style={
+            isCover
+              ? undefined
+              : {
+                  background: '#FFFFFF',
+                  fontSize: '15px',
+                  fontWeight: 400,
+                }
+          }
         >
           {body}
         </div>
@@ -610,6 +636,246 @@ function TechniqueStepsSection({
             ) : null}
           </div>
         ))}
+      </div>
+    </div>
+  );
+}
+
+function AboutModuleTextContent({
+  screen,
+  onDropdownOpenChange,
+}: {
+  screen: Screen;
+  onDropdownOpenChange: (dropdownId: string, open: boolean) => void;
+}) {
+  return (
+    <>
+      {screen.lead ? (
+        <p
+          className="text-[20px] md:text-[24px] font-semibold leading-snug whitespace-pre-line"
+          style={{ color: '#1F3864' }}
+        >
+          {screen.lead}
+        </p>
+      ) : null}
+
+      {screen.body ? (
+        <p
+          className="text-[16px] md:text-[18px] font-medium leading-relaxed whitespace-pre-line"
+          style={{ color: '#1F3864' }}
+        >
+          {screen.body}
+        </p>
+      ) : null}
+
+      {screen.dropdowns && screen.dropdowns.length ? (
+        <div className="space-y-3">
+          {screen.dropdowns.map((d) => (
+            <Dropdown
+              key={d.header}
+              dropdownId={`${screen.id}:${d.header}`}
+              header={d.header}
+              body={d.body}
+              onOpenChange={onDropdownOpenChange}
+              variant="cover"
+            />
+          ))}
+        </div>
+      ) : null}
+    </>
+  );
+}
+
+function AboutModuleDiagram() {
+  return (
+    <div className="relative flex justify-center items-center py-4 md:py-6 min-h-[300px] md:min-h-[340px] overflow-visible">
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          backgroundImage:
+            'url("https://www.transparenttextures.com/patterns/felt.png")',
+          opacity: 0.03,
+        }}
+      />
+
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0 overflow-visible">
+        {[
+          { delay: '0s', color: 'bg-[#2E7CF6]/25' },
+          { delay: '1s', color: 'bg-[#2E7CF6]/20' },
+          { delay: '2s', color: 'bg-[#6BA3F8]/18' },
+        ].map(({ delay, color }) => (
+          <div
+            key={delay}
+            className={`absolute w-56 h-56 md:w-72 md:h-72 rounded-full ${color} ms-animate-soft-pulse`}
+            style={{ animationDelay: delay }}
+          />
+        ))}
+      </div>
+
+      <div className="relative z-10 w-full max-w-md flex flex-col items-center px-2">
+        <div className="flex justify-between w-full relative">
+          <div className="absolute top-1/3 left-0 w-full h-px bg-[#1F3864]/25 -translate-y-1/2 -z-10" />
+
+          <div className="flex flex-col items-center gap-2">
+            <div
+              className="w-3.5 h-3.5 rounded-full bg-rose-600 ms-animate-diagram-dot"
+              style={
+                {
+                  animationDelay: '0s, 0s',
+                  '--ms-ring-color': 'rgba(254, 205, 211, 0.65)',
+                  '--ms-glow-color': 'rgba(225, 29, 72, 0.35)',
+                } as React.CSSProperties
+              }
+            />
+            <div
+              className="text-[10px] font-bold uppercase tracking-widest text-slate-500 ms-animate-diagram-label"
+              style={{ animationDelay: '0s' }}
+            >
+              Trigger
+            </div>
+          </div>
+
+          <div className="flex flex-col items-center gap-2">
+            <div
+              className="px-4 py-2 bg-white shadow-sm border border-slate-200 rounded-lg text-sm font-semibold text-[#2E7CF6] ms-animate-diagram-pause"
+              style={{ animationDelay: '1s' }}
+            >
+              3s
+            </div>
+            <div
+              className="text-[10px] font-bold text-[#2E7CF6] ms-animate-diagram-label"
+              style={{ animationDelay: '1s' }}
+            >
+              The Pause
+            </div>
+          </div>
+
+          <div className="flex flex-col items-center gap-2">
+            <div
+              className="w-3.5 h-3.5 rounded-full bg-sky-700 ms-animate-diagram-dot"
+              style={
+                {
+                  animationDelay: '2s, 2s',
+                  '--ms-ring-color': 'rgba(186, 230, 253, 0.65)',
+                  '--ms-glow-color': 'rgba(3, 105, 161, 0.35)',
+                } as React.CSSProperties
+              }
+            />
+            <div
+              className="text-[10px] font-bold uppercase tracking-widest text-slate-500 ms-animate-diagram-label"
+              style={{ animationDelay: '2s' }}
+            >
+              Response
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function AboutModuleInsightBar() {
+  return (
+    <div className="flex items-center gap-4 py-4 px-5 md:px-6 rounded-xl bg-white border border-[#E5E9F0] shadow-[0_4px_24px_-4px_rgba(10,31,68,0.08)]">
+      <div
+        className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0"
+        style={{ backgroundColor: '#EEF3FA' }}
+      >
+        <span
+          className="material-symbols-outlined text-[26px]"
+          style={{ color: '#2E7CF6' }}
+        >
+          psychology
+        </span>
+      </div>
+      <p
+        className="text-[16px] md:text-[18px] leading-relaxed font-medium"
+        style={{ color: '#1F3864' }}
+      >
+        This module is about the three seconds before you respond.
+      </p>
+    </div>
+  );
+}
+
+function AboutModuleSection({
+  screen,
+  onDropdownOpenChange,
+}: {
+  screen: Screen;
+  onDropdownOpenChange: (dropdownId: string, open: boolean) => void;
+}) {
+  return (
+    <div className="w-full max-w-[1200px] mx-auto flex flex-col gap-6 lg:gap-8">
+      <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-start">
+        <div className="flex flex-col gap-5 border-l-4 border-l-[#2E7CF6] pl-5 md:pl-6 py-1">
+          <AboutModuleTextContent
+            screen={screen}
+            onDropdownOpenChange={onDropdownOpenChange}
+          />
+        </div>
+        <AboutModuleDiagram />
+      </div>
+      <AboutModuleInsightBar />
+    </div>
+  );
+}
+
+function CoverSection({ screen }: { screen: Screen }) {
+  const topics = [
+    { label: 'Distress', image: scenario1Image },
+    { label: 'Defiance', image: scenario2Image },
+    { label: 'Overwhelm', image: scenario3Image },
+  ] as const;
+
+  return (
+    <div className="max-w-[1200px] mx-auto flex flex-col flex-1 min-h-0 h-full gap-4 md:gap-5">
+      <p
+        className="shrink-0 text-[20px] md:text-[24px] font-semibold leading-snug max-w-3xl"
+        style={{ color: '#1F3864' }}
+      >
+        {screen.body?.trim()}
+      </p>
+
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 flex-1 min-h-0">
+        {topics.map((item) => (
+          <div key={item.label} className="flex flex-col min-h-0 gap-2">
+            <div className="flex-1 min-h-[120px] max-h-[200px] sm:max-h-none relative overflow-hidden rounded-2xl shadow-md">
+              <img
+                className="w-full h-full object-cover"
+                src={item.image}
+                alt={item.label}
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#1F3864]/40 to-transparent" />
+            </div>
+            <p
+              className="shrink-0 text-center text-[14px] font-semibold"
+              style={{ color: '#1F7A7A' }}
+            >
+              {item.label}
+            </p>
+          </div>
+        ))}
+      </div>
+
+      <div className="shrink-0 flex items-center gap-4 py-4 px-5 md:px-6 rounded-xl bg-white border border-slate-200 shadow-[0_4px_24px_-4px_rgba(10,31,68,0.08)]">
+        <div
+          className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0"
+          style={{ backgroundColor: '#E6F4F4' }}
+        >
+          <span
+            className="material-symbols-outlined text-[26px]"
+            style={{ color: '#1F7A7A' }}
+          >
+            timer
+          </span>
+        </div>
+        <p
+          className="text-[16px] md:text-[18px] leading-relaxed font-medium"
+          style={{ color: '#1F3864' }}
+        >
+          And what to do in the three seconds before you respond.
+        </p>
       </div>
     </div>
   );
@@ -1389,6 +1655,29 @@ export default function MindSyncTeacherTrainingModule01Page() {
     closing: false,
   });
 
+  const toggleSection = (key: SidebarSectionKey) => {
+    setOpenSections((prev) => {
+      if (prev[key]) {
+        return {
+          introduction: false,
+          watch: false,
+          learn: false,
+          practise: false,
+          takeaway: false,
+          closing: false,
+        };
+      }
+      return {
+        introduction: key === 'introduction',
+        watch: key === 'watch',
+        learn: key === 'learn',
+        practise: key === 'practise',
+        takeaway: key === 'takeaway',
+        closing: key === 'closing',
+      };
+    });
+  };
+
   const [isSidebarTranscriptOpen, setIsSidebarTranscriptOpen] = useState(false);
 
   const toc = useMemo(() => {
@@ -1429,10 +1718,25 @@ export default function MindSyncTeacherTrainingModule01Page() {
     };
 
     return [
-      { key: 'introduction', label: 'Introduction', indices: range(1, 4) },
+      {
+        key: 'introduction',
+        label: 'Introduction',
+        indices: range(1, 4),
+        landingBlockId: 1,
+      },
       { key: 'watch', label: 'Part 1. Watch', indices: range(5, 5) },
-      { key: 'learn', label: 'Part 2. Learn', indices: range(7, 17) },
-      { key: 'practise', label: 'Part 3. Practise', indices: range(18, 27) },
+      {
+        key: 'learn',
+        label: 'Part 2. Learn',
+        indices: range(7, 17),
+        landingBlockId: 7,
+      },
+      {
+        key: 'practise',
+        label: 'Part 3. Practise',
+        indices: range(18, 27),
+        landingBlockId: 18,
+      },
       { key: 'takeaway', label: 'Part 4. Take away', indices: range(28, 28) },
       { key: 'closing', label: 'Closing', indices: range(29, 29) },
     ];
@@ -1645,25 +1949,29 @@ export default function MindSyncTeacherTrainingModule01Page() {
             className="text-[32px] leading-tight font-bold mb-1 tracking-tight"
             style={{ color: '#1F3864' }}
           >
-            {screen.id === 5
-              ? (screen.t1 ?? 'Part 1. Watch')
-              : activeSidebarSectionKey === 'learn'
-                ? 'Part 2. Learn'
-                : 'MODULE 1 – THE THREE SECOND PAUSE'}
+            {screen.type === 'cover'
+              ? screen.t1
+              : screen.id === 5
+                ? (screen.t1 ?? 'Part 1. Watch')
+                : activeSidebarSectionKey === 'learn'
+                  ? 'Part 2. Learn'
+                  : 'MODULE 1 – THE THREE SECOND PAUSE'}
           </h1>
           <h2
             className="text-[24px] leading-snug font-bold mb-2"
             style={{ color: '#1F7A7A' }}
           >
-            {screen.id === 5
-              ? (screen.t2 ?? 'The three second pause, in a real classroom')
-              : activeSidebarSectionKey === 'learn'
-                ? screen.type === 'technique_intro' ||
-                  screen.type === 'technique' ||
-                  screen.type === 'technique_honest'
-                  ? (screen.t2 ?? 'Part 2. Learn')
-                  : (screen.lead ?? screen.t2 ?? screen.t3 ?? 'Part 2. Learn')
-                : (screen.t2 ?? 'Reading behaviour in the moment')}
+            {screen.type === 'cover'
+              ? screen.t2
+              : screen.id === 5
+                ? (screen.t2 ?? 'The three second pause, in a real classroom')
+                : activeSidebarSectionKey === 'learn'
+                  ? screen.type === 'technique_intro' ||
+                    screen.type === 'technique' ||
+                    screen.type === 'technique_honest'
+                    ? (screen.t2 ?? 'Part 2. Learn')
+                    : (screen.lead ?? screen.t2 ?? screen.t3 ?? 'Part 2. Learn')
+                  : (screen.t2 ?? 'Reading behaviour in the moment')}
           </h2>
           {/* <p
             className="text-[15px] leading-relaxed max-w-2xl whitespace-pre-line"
@@ -1687,78 +1995,35 @@ export default function MindSyncTeacherTrainingModule01Page() {
             <div
               ref={scrollAreaRef}
               className={`flex-1 min-h-0 custom-scrollbar scroll-smooth ${
-                screen.id === 16 ? 'pb-4' : 'pb-24'
+                screen.id === 16 ||
+                screen.type === 'cover' ||
+                screen.id === 2 ||
+                screen.id === 3
+                  ? 'pb-4 flex flex-col'
+                  : 'pb-24'
               } ${
                 isAnyDropdownOpen ||
                 screen.type === 'scenario_feedback' ||
-                screen.id === 17
+                screen.id === 17 ||
+                screen.id === 2 ||
+                screen.id === 3
                   ? 'overflow-y-auto'
                   : 'overflow-hidden'
               }`}
             >
               <section
                 className={
-                  screen.id === 16
-                    ? 'flex flex-col flex-1 min-h-0 h-full'
+                  screen.id === 16 ||
+                  screen.type === 'cover' ||
+                  screen.id === 2 ||
+                  screen.id === 3
+                    ? 'flex flex-col flex-1 min-h-full h-full'
                     : 'space-y-4'
                 }
               >
                 {screen.type === 'cover' ? (
-                  <div className="p-6 md:p-6 md:px-6  md:py-12 ">
-                    <div className="max-w-[1100px] mx-auto">
-                      <div className="flex flex-col items-center text-center">
-                        <h2 className="text-xl md:text-3xl font-semibold text-[#1F3864] max-w-[920px]">
-                          {screen.body}
-                        </h2>
-                      </div>
-
-                      <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8">
-                        <div className="bg-white p-8 rounded-3xl shadow-[0_20px_40px_rgba(15,23,42,0.05)] border border-slate-200 flex flex-col gap-4">
-                          <div className="w-12 h-12 bg-rose-50 rounded-2xl flex items-center justify-center">
-                            <span className="material-symbols-outlined text-rose-600">
-                              warning
-                            </span>
-                          </div>
-                          <h3 className="text-xl font-semibold text-slate-900">
-                            Distress
-                          </h3>
-                        </div>
-
-                        <div className="bg-white p-8 rounded-3xl shadow-[0_20px_40px_rgba(15,23,42,0.05)] border border-slate-200 flex flex-col gap-4">
-                          <div className="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center">
-                            <span className="material-symbols-outlined text-emerald-700">
-                              psychology
-                            </span>
-                          </div>
-                          <h3 className="text-xl font-semibold text-slate-900">
-                            Defiance
-                          </h3>
-                        </div>
-
-                        <div className="bg-white p-8 rounded-3xl shadow-[0_20px_40px_rgba(15,23,42,0.05)] border border-slate-200 flex flex-col gap-4">
-                          <div className="w-12 h-12 bg-sky-50 rounded-2xl flex items-center justify-center">
-                            <span className="material-symbols-outlined text-sky-700">
-                              block
-                            </span>
-                          </div>
-                          <h3 className="text-xl font-semibold text-slate-900">
-                            Overwhelm
-                          </h3>
-                        </div>
-                      </div>
-
-                      <div className="mt-12 bg-[#0857e1]/5 border border-[#0857e1]/10 p-6 rounded-[2.5rem] flex flex-col md:flex-row items-center gap-8 max-w-3xl mx-auto">
-                        <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-[0_20px_40px_rgba(15,23,42,0.05)] shrink-0">
-                          <span className="material-symbols-outlined text-[#0857e1] text-[32px]">
-                            timer
-                          </span>
-                        </div>
-                        <div className="text-lg md:text-xl text-slate-800 text-center md:text-left">
-                          And what to do in the three seconds before you
-                          respond.
-                        </div>
-                      </div>
-                    </div>
+                  <div className="p-5 md:p-6 md:px-14 flex flex-col flex-1 min-h-0 h-full">
+                    <CoverSection screen={screen} />
                   </div>
                 ) : screen.type === 'technique_intro' ? (
                   <div className="p-5 md:p-6 md:px-14">
@@ -1787,123 +2052,100 @@ export default function MindSyncTeacherTrainingModule01Page() {
                   <div className="p-5 md:p-6 md:px-14">
                     <EvidenceTabsSection screen={screen} />
                   </div>
-                ) : (
-                  <div className="p-5 md:p-6 md:px-14 flex flex-col min-h-0 ">
-                    {screen.id === 2 ? (
-                      <div className="flex-1 flex flex-col gap-8 min-h-0">
-                        <div className="grid lg:grid-cols-2 gap-12 items-center">
-                          <div className="min-w-0">
-                            <h1 className="text-3xl md:text-5xl mt-[-60px] font-black text-slate-900 tracking-tight">
-                              Defiance or{' '}
-                              <span
-                                className="italic"
-                                style={{ color: '#0857e1' }}
-                              >
-                                Distress?
-                              </span>
-                            </h1>
-
-                            {screen.lead ? (
-                              <div className="mt-5 text-lg md:text-2xl font-normal text-slate-700 leading-snug whitespace-pre-line">
-                                {screen.lead}
-                              </div>
-                            ) : null}
-
-                            {screen.body ? (
-                              <div className=" mt-10 font-semibold  md:text-lg text-slate-600 leading-relaxed whitespace-pre-line max-w-[720px]">
-                                {screen.body}
-                              </div>
-                            ) : null}
-                          </div>
-
-                          <div className="relative flex justify-center items-center h-[360px] md:h-[440px] overflow-hidden">
-                            <div
-                              className="absolute inset-0 pointer-events-none"
-                              style={{
-                                backgroundImage:
-                                  'url("https://www.transparenttextures.com/patterns/felt.png")',
-                                opacity: 0.03,
-                              }}
-                            />
-
-                            <div className="absolute w-72 h-72 md:w-80 md:h-80 rounded-full bg-[#0857e1]/25 ms-animate-soft-pulse" />
-                            <div
-                              className="absolute w-56 h-56 md:w-64 md:h-64 rounded-full bg-[#0857e1]/20 ms-animate-soft-pulse"
-                              style={{ animationDelay: '1s' }}
-                            />
-                            <div
-                              className="absolute w-44 h-44 md:w-48 md:h-48 rounded-full bg-[#0857e1]/16 ms-animate-soft-pulse"
-                              style={{ animationDelay: '2s' }}
-                            />
-
-                            <div className="relative z-10 w-full flex flex-col items-center gap-10">
-                              <div className="flex justify-between w-full max-w-sm relative">
-                                <div className="absolute top-1/3 left-0 w-full h-px bg-[#2F6378] -translate-y-1/2 -z-10" />
-
-                                <div className="flex flex-col items-center gap-2">
-                                  <div className="w-3.5 h-3.5 rounded-full bg-rose-600 ring-4 ring-rose-200" />
-                                  <div className="text-[10px] font-bold uppercase tracking-widest text-slate-500">
-                                    Trigger
-                                  </div>
-                                </div>
-
-                                <div className="flex flex-col items-center gap-2">
-                                  <div className="px-4 py-2 bg-white shadow-sm border border-slate-200 rounded-lg text-sm font-semibold text-[#0857e1] ms-animate-bounce-3s">
-                                    3s
-                                  </div>
-                                  <div className="text-[10px] font-bold text-[#0857e1]">
-                                    The Pause
-                                  </div>
-                                </div>
-
-                                <div className="flex flex-col items-center gap-2">
-                                  <div className="w-3.5 h-3.5 rounded-full bg-sky-700 ring-4 ring-sky-200" />
-                                  <div className="text-[10px] font-bold uppercase tracking-widest text-slate-500">
-                                    Response
-                                  </div>
-                                </div>
-                              </div>
-
-                              <div className="bg-white p-7 rounded-xl border border-slate-200 shadow-[0_20px_40px_rgba(15,23,42,0.05)] max-w-xs text-center">
-                                <span
-                                  className="material-symbols-outlined text-[44px] mb-3"
-                                  style={{ color: '#0857e1' }}
+                ) : screen.id === 2 ? (
+                  <div className="p-5 md:p-6 md:px-14 flex flex-1 flex-col min-h-0 h-full justify-center py-6">
+                    <AboutModuleSection
+                      screen={screen}
+                      onDropdownOpenChange={handleDropdownOpenChange}
+                    />
+                  </div>
+                ) : screen.id === 3 && screen.bullets ? (
+                  <div className="p-5 md:p-6 md:px-14 flex flex-1 flex-col min-h-full h-full">
+                    <div className="flex flex-1 w-full items-center justify-center min-h-full py-6">
+                      <div className="w-full max-w-5xl mx-auto space-y-8">
+                        <div className="rounded-2xl border border-[#E5E9F0] bg-white shadow-[0_4px_24px_-4px_rgba(10,31,68,0.08),0_2px_6px_-2px_rgba(10,31,68,0.04)] p-6 md:p-8 border-l-4 border-l-[#2E7CF6]">
+                          <div className="space-y-5">
+                            {screen.bullets.map((b) => (
+                              <div key={b} className="flex items-start gap-4">
+                                <img
+                                  alt=""
+                                  src={logoFav}
+                                  className="w-7 h-7 object-contain shrink-0 mt-0.5"
+                                />
+                                <div
+                                  className="text-[15px] md:text-[16px] leading-relaxed"
+                                  style={{ color: '#1F3864' }}
                                 >
-                                  psychology
-                                </span>
-                                <div className="text-sm md:text-base text-slate-700">
-                                  This module is about the three seconds before
-                                  you respond.
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* {screen.body ? (
-                          <div className="mt-[-40px] font-semibold  md:text-lg text-slate-600 leading-relaxed whitespace-pre-line max-w-[720px]">
-                            {screen.body}
-                          </div>
-                        ) : null} */}
-
-                        {screen.dropdowns && screen.dropdowns.length ? (
-                          <div className="space-y-3">
-                            {screen.dropdowns.map((d) => (
-                              <div key={d.header} className="w-full md:w-auto">
-                                <div className="[&>div>button]:py-4 [&>div>button]:px-5">
-                                  <Dropdown
-                                    dropdownId={`${screen.id}:${d.header}`}
-                                    header={d.header}
-                                    body={d.body}
-                                    onOpenChange={handleDropdownOpenChange}
-                                  />
+                                  {b}
                                 </div>
                               </div>
                             ))}
                           </div>
-                        ) : null}
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                          {[
+                          {
+                            title: 'Watch',
+                            subtitle: 'VIDEO INSIGHT',
+                            icon: 'play_circle',
+                            bg: structureWatchImage,
+                          },
+                          {
+                            title: 'Learn',
+                            subtitle: 'CORE THEORY',
+                            icon: 'menu_book',
+                            bg: structureLearnImage,
+                          },
+                          {
+                            title: 'Practise',
+                            subtitle: 'INTERACTIVE TASK',
+                            icon: 'task_alt',
+                            bg: structurePracticeImage,
+                          },
+                          {
+                            title: 'Take away',
+                            subtitle: 'PDF RESOURCES',
+                            icon: 'description',
+                            bg: structureTakeawayImage,
+                          },
+                          ].map((item) => (
+                            <div
+                              key={item.title}
+                              className="group relative aspect-square rounded-2xl overflow-hidden shadow-md"
+                            >
+                              <img
+                                alt=""
+                                src={item.bg}
+                                className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                              />
+                              <div className="absolute inset-0 bg-gradient-to-t from-[#1F3864]/80 via-[#1F3864]/25 to-transparent" />
+
+                              <div className="absolute inset-x-0 bottom-0 p-4 flex flex-col items-center gap-1.5 text-center">
+                                <span
+                                  className="material-symbols-outlined text-[22px]"
+                                  style={{ color: '#2E7CF6' }}
+                                >
+                                  {item.icon}
+                                </span>
+                                <div className="text-sm font-semibold text-white">
+                                  {item.title}
+                                </div>
+                                <div
+                                  className="text-[10px] font-semibold uppercase tracking-[0.18em]"
+                                  style={{ color: '#1F7A7A' }}
+                                >
+                                  {item.subtitle}
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
                       </div>
-                    ) : (
+                    </div>
+                  </div>
+                ) : (
+                  <div className="p-5 md:p-6 md:px-14 flex flex-col min-h-0">
                       <>
                         <div className="flex items-center justify-between gap-4">
                           <div className="flex items-center gap-2 flex-wrap" />
@@ -2339,93 +2581,9 @@ export default function MindSyncTeacherTrainingModule01Page() {
                           </div>
                         ) : null}
                       </>
-                    )}
 
-                    {screen.bullets && screen.id === 3 ? (
-                      <div className="space-y-8">
-                        <div className="rounded-lg border border-[#818CF8] bg-[#1F3864] backdrop-blur-[12px] p-6 md:p-8 md:w-[1103px] md:mt-8">
-                          <div className="space-y-4">
-                            <div className="space-y-6">
-                              {screen.bullets.map((b) => (
-                                <div
-                                  key={b}
-                                  className="flex items-start gap-6 rounded-md"
-                                >
-                                  <div className="w-10 h-10 rounded-xl bg-[#4D8EFF]/20 border border-[#ADC6FF]/20 flex items-center justify-center shrink-0">
-                                    <span className="material-symbols-outlined text-[#ADC6FF]">
-                                      check
-                                    </span>
-                                  </div>
-                                  <div className="text-sm md:text-base text-[#DADFFB] leading-relaxed">
-                                    {b}
-                                  </div>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="w-full md:w-[1000px] mx-auto  ">
-                          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                            {[
-                              {
-                                title: 'Watch',
-                                subtitle: 'VIDEO INSIGHT',
-                                icon: 'play_circle',
-                                bg: structureWatchImage,
-                              },
-                              {
-                                title: 'Learn',
-                                subtitle: 'CORE THEORY',
-                                icon: 'menu_book',
-                                bg: structureLearnImage,
-                              },
-                              {
-                                title: 'Practise',
-                                subtitle: 'INTERACTIVE TASK',
-                                icon: 'task_alt',
-                                bg: structurePracticeImage,
-                              },
-                              {
-                                title: 'Take away',
-                                subtitle: 'PDF RESOURCES',
-                                icon: 'description',
-                                bg: structureTakeawayImage,
-                              },
-                            ].map((item) => (
-                              <div
-                                key={item.title}
-                                className="relative w-full h-[170px] rounded-lg border border-slate-200 bg-white overflow-hidden flex flex-col items-center justify-center text-center shadow-sm"
-                              >
-                                <div className="absolute inset-0">
-                                  <img
-                                    alt=""
-                                    src={item.bg}
-                                    className="w-full h-full object-cover"
-                                  />
-                                </div>
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-black/10 to-transparent" />
-
-                                <div className="relative z-10 px-3">
-                                  <div className="inline-flex flex-col items-center gap-1 rounded-xl bg-white/75 backdrop-blur-md px-4 py-3 border border-white/70 shadow-[0_10px_28px_rgba(15,23,42,0.18)]">
-                                    <span className="material-symbols-outlined text-[#1F3864] text-[26px] drop-shadow-sm">
-                                      {item.icon}
-                                    </span>
-                                    <div className="text-sm font-semibold text-[#0B1020]">
-                                      {item.title}
-                                    </div>
-                                    <div className="text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-700">
-                                      {item.subtitle}
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      </div>
-                    ) : screen.bullets ? (
-                      <ul className="list-disc pl-6 space-y-2 text-sm md:text-base text-slate-200">
+                    {screen.bullets && screen.id !== 3 ? (
+                      <ul className="list-disc pl-6 space-y-2 text-sm md:text-base text-slate-200 ">
                         {screen.bullets.map((b) => (
                           <li key={b} className="leading-relaxed">
                             {b}
@@ -2859,6 +3017,8 @@ export default function MindSyncTeacherTrainingModule01Page() {
               </section>
             </div>
 
+            
+
             <div className="sticky bottom-0 mt-auto pt-4 pb-2 border-t border-slate-200 bg-white/90 backdrop-blur">
               <div className="flex items-center justify-between gap-2">
                 <button
@@ -2925,11 +3085,6 @@ export default function MindSyncTeacherTrainingModule01Page() {
               const visibleIndices = section.indices.filter((i) => {
                 const item = toc[i];
                 if (!item) return false;
-                if (section.key === 'introduction' && item.blockId === 1)
-                  return false;
-                if (section.key === 'learn' && item.blockId === 7) return false;
-                if (section.key === 'practise' && item.blockId === 18)
-                  return false;
                 if (
                   item.blockId === 8 ||
                   item.blockId === 9 ||
@@ -2951,19 +3106,47 @@ export default function MindSyncTeacherTrainingModule01Page() {
               const shouldShowItems = canCollapse && isOpen;
               return (
                 <div key={section.key} className="border-b border-slate-200">
-                  <div
-                    className={`w-full text-left px-4 py-4 flex items-center justify-between gap-3 transition-colors relative ${
-                      isSectionActive
-                        ? 'bg-[#bdd2f8]'
-                        : isOpen
-                          ? 'bg-[#EEF4FF]'
-                          : 'hover:bg-slate-50'
-                    }`}
-                  >
-                    {isSectionActive ? (
-                      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#2E7CF6]/60 to-transparent" />
-                    ) : null}
-
+                  {canCollapse ? (
+                    <button
+                      type="button"
+                      onClick={() => toggleSection(section.key)}
+                      data-sidebar-section-header="true"
+                      data-section-key={section.key}
+                      aria-expanded={isOpen}
+                      className={`w-full text-left px-4 py-4 flex items-center justify-between gap-3 transition-colors relative ${
+                        isSectionActive
+                          ? 'bg-[#bdd2f8]'
+                          : isOpen
+                            ? 'bg-[#EEF4FF]'
+                            : 'hover:bg-slate-50'
+                      }`}
+                    >
+                      {isSectionActive ? (
+                        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#2E7CF6]/60 to-transparent" />
+                      ) : null}
+                      <div className="min-w-0 flex-1">
+                        <div
+                          className={`text-xs font-bold uppercase tracking-widest truncate ${
+                            isActiveSection || isOpen
+                              ? 'text-[#1F3864]'
+                              : 'text-slate-700'
+                          }`}
+                        >
+                          {section.label}
+                        </div>
+                        <div className="text-[10px] text-slate-500">
+                          {visibleIndices.length} blocks
+                        </div>
+                      </div>
+                      <span
+                        className={`material-symbols-outlined text-slate-500 transition-transform shrink-0 ${
+                          isOpen ? 'rotate-180' : ''
+                        }`}
+                      >
+                        expand_more
+                      </span>
+                    </button>
+                  ) : (
                     <button
                       type="button"
                       onClick={() => {
@@ -2975,63 +3158,31 @@ export default function MindSyncTeacherTrainingModule01Page() {
                       }}
                       data-sidebar-section-header="true"
                       data-section-key={section.key}
-                      className="min-w-0 flex-1 text-left"
+                      className={`w-full text-left px-4 py-4 flex items-center justify-between gap-3 transition-colors relative ${
+                        isSectionActive
+                          ? 'bg-[#bdd2f8]'
+                          : 'hover:bg-slate-50'
+                      }`}
                     >
-                      <div
-                        className={`text-xs font-bold uppercase tracking-widest truncate ${
-                          isActiveSection || isOpen
-                            ? 'text-[#1F3864]'
-                            : 'text-slate-700'
-                        }`}
-                      >
-                        {section.label}
-                      </div>
-                      <div className="text-[10px] text-slate-500">
-                        {visibleIndices.length} blocks
-                      </div>
-                    </button>
-
-                    {canCollapse ? (
-                      <button
-                        type="button"
-                        aria-label={
-                          isOpen ? 'Collapse section' : 'Expand section'
-                        }
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          if (isOpen) {
-                            setOpenSections({
-                              introduction: false,
-                              watch: false,
-                              learn: false,
-                              practise: false,
-                              takeaway: false,
-                              closing: false,
-                            });
-                            return;
-                          }
-
-                          setOpenSections({
-                            introduction: section.key === 'introduction',
-                            watch: section.key === 'watch',
-                            learn: section.key === 'learn',
-                            practise: section.key === 'practise',
-                            takeaway: section.key === 'takeaway',
-                            closing: section.key === 'closing',
-                          });
-                        }}
-                        className="-mr-1 p-1 rounded-md hover:bg-slate-100 transition-colors"
-                      >
-                        <span
-                          className={`material-symbols-outlined text-slate-500 transition-transform ${
-                            isOpen ? 'rotate-180' : ''
+                      {isSectionActive ? (
+                        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#2E7CF6]/60 to-transparent" />
+                      ) : null}
+                      <div className="min-w-0 flex-1">
+                        <div
+                          className={`text-xs font-bold uppercase tracking-widest truncate ${
+                            isActiveSection
+                              ? 'text-[#1F3864]'
+                              : 'text-slate-700'
                           }`}
                         >
-                          expand_more
-                        </span>
-                      </button>
-                    ) : null}
-                  </div>
+                          {section.label}
+                        </div>
+                        <div className="text-[10px] text-slate-500">
+                          {visibleIndices.length} blocks
+                        </div>
+                      </div>
+                    </button>
+                  )}
 
                   {shouldShowItems ? (
                     <div>
@@ -3046,6 +3197,8 @@ export default function MindSyncTeacherTrainingModule01Page() {
                         const isCurrent =
                           item.index === index ||
                           questionToScenarioMap[screen.id] === item.blockId;
+                        const isLanding =
+                          section.landingBlockId === item.blockId;
                         return (
                           <button
                             key={`${item.blockId}-${item.index}`}
@@ -3079,7 +3232,9 @@ export default function MindSyncTeacherTrainingModule01Page() {
                                 {item.label}
                               </p>
                               <p className="text-[10px] text-slate-500">
-                                {`Block ${item.blockId}`}
+                                {isLanding
+                                  ? 'Section overview'
+                                  : `Block ${item.blockId}`}
                               </p>
                             </div>
                           </button>
