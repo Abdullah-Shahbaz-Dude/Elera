@@ -368,6 +368,7 @@ function LearnAccordionItem({
   open,
   onToggle,
   compact = false,
+  embedded = false,
 }: {
   dropdownId: string;
   header: string;
@@ -375,6 +376,7 @@ function LearnAccordionItem({
   open: boolean;
   onToggle: (dropdownId: string, open: boolean) => void;
   compact?: boolean;
+  embedded?: boolean;
 }) {
   const meta = (() => {
     const lower = header.toLowerCase();
@@ -420,32 +422,40 @@ function LearnAccordionItem({
 
   return (
     <div
-      className={`rounded-xl overflow-hidden cursor-pointer border border-slate-200 bg-white shadow-[0_20px_40px_-15px_rgba(47,99,120,0.06)] transition-shadow ${
-        open ? 'shadow-[0_24px_48px_-12px_rgba(47,99,120,0.12)]' : ''
-      }`}
+      className={
+        embedded
+          ? 'flex flex-col min-h-0 flex-1 overflow-hidden cursor-pointer'
+          : `rounded-xl overflow-hidden cursor-pointer border border-slate-200 bg-white shadow-[0_20px_40px_-15px_rgba(47,99,120,0.06)] transition-shadow ${
+              open ? 'shadow-[0_24px_48px_-12px_rgba(47,99,120,0.12)]' : ''
+            }`
+      }
     >
       <button
         type="button"
         onClick={() => onToggle(dropdownId, !open)}
-        className={`w-full flex items-center justify-between gap-4 text-left ${
-          compact ? 'p-4' : 'p-6'
+        className={`w-full flex items-center justify-between gap-3 text-left shrink-0 ${
+          embedded ? 'p-2' : compact ? 'p-4' : 'p-6'
         }`}
       >
         <div
-          className={`flex items-center min-w-0 ${compact ? 'gap-4' : 'gap-6'}`}
+          className={`flex items-center min-w-0 ${embedded || compact ? 'gap-3' : 'gap-6'}`}
         >
           <div
             className={`rounded-full flex items-center justify-center shrink-0 ${meta.iconBg} ${
-              compact ? 'w-10 h-10' : 'w-12 h-12'
+              embedded || compact ? 'w-9 h-9' : 'w-12 h-12'
             }`}
           >
-            <span className={`rounded-full ${meta.dotBg} ${compact ? 'w-3 h-3' : 'w-4 h-4'}`} />
+            <span
+              className={`rounded-full ${meta.dotBg} ${
+                embedded || compact ? 'w-2.5 h-2.5' : 'w-4 h-4'
+              }`}
+            />
           </div>
           <div className="min-w-0">
             <div
               className={`font-semibold text-slate-900 ${
-                compact
-                  ? 'text-[16px] leading-snug'
+                embedded || compact
+                  ? 'text-[14px] leading-snug'
                   : 'text-[18px] truncate'
               }`}
             >
@@ -453,7 +463,7 @@ function LearnAccordionItem({
             </div>
             {meta.caption ? (
               <div
-                className={`text-[12px] text-slate-500 ${compact ? '' : 'truncate'}`}
+                className={`text-[11px] text-slate-500 ${embedded || compact ? '' : 'truncate'}`}
               >
                 {meta.caption}
               </div>
@@ -462,32 +472,48 @@ function LearnAccordionItem({
         </div>
 
         <span
-          className={`material-symbols-outlined text-slate-500 transition-transform duration-300 ${
-            open ? 'rotate-180' : ''
-          }`}
+          className={`material-symbols-outlined text-slate-500 transition-transform duration-300 shrink-0 ${
+            embedded ? 'text-[20px]' : ''
+          } ${open ? 'rotate-180' : ''}`}
         >
           expand_more
         </span>
       </button>
 
-      <div
-        className="overflow-hidden transition-[max-height] duration-300 ease-in-out"
-        style={{ maxHeight: open ? 700 : 0 }}
-      >
+      {embedded ? (
+        open ? (
+          <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar">
+            <div className="pb-1">
+              <div
+                className={`bg-[#F7F9FB] p-3 rounded-lg border ${meta.accentBorder}`}
+              >
+                <div className="text-[14px] text-slate-700 whitespace-pre-line leading-relaxed">
+                  {body}
+                </div>
+              </div>
+            </div>
+          </div>
+        ) : null
+      ) : (
         <div
-          className={`flex flex-col gap-6 ${
-            compact ? 'px-4 pb-6 pt-2 ml-10' : 'px-6 pb-8 pt-2 ml-12 lg:ml-20'
-          }`}
+          className="overflow-hidden transition-[max-height] duration-300 ease-in-out"
+          style={{ maxHeight: open ? 700 : 0 }}
         >
           <div
-            className={`bg-[#F7F9FB] p-4 rounded-lg border ${meta.accentBorder}`}
+            className={`flex flex-col gap-6 ${
+              compact ? 'px-4 pb-6 pt-2 ml-10' : 'px-6 pb-8 pt-2 ml-12 lg:ml-20'
+            }`}
           >
-            <div className="text-[15px] text-slate-700 whitespace-pre-line leading-relaxed">
-              {body}
+            <div
+              className={`bg-[#F7F9FB] p-4 rounded-lg border ${meta.accentBorder}`}
+            >
+              <div className="text-[15px] text-slate-700 whitespace-pre-line leading-relaxed">
+                {body}
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
@@ -525,21 +551,135 @@ const TECHNIQUE_STATE_STYLES: Record<
   },
 };
 
-function TechniqueIntroSection({ screen }: { screen: Screen }) {
+function splitTechniqueTitle(t2?: string) {
+  if (!t2) return { eyebrow: 'The technique.', headline: 'The three second pause' };
+  const dotIndex = t2.indexOf('. ');
+  if (dotIndex === -1) return { eyebrow: '', headline: t2 };
+  return {
+    eyebrow: `${t2.slice(0, dotIndex + 1)}`,
+    headline: t2.slice(dotIndex + 2),
+  };
+}
+
+function TechniquePauseFlow() {
   return (
-    <div className="max-w-[1200px] mx-auto flex flex-col justify-center min-h-[calc(100vh-320px)]">
-      <header>
-        <h1 className="text-[32px] leading-tight font-bold text-[#1F3864] mb-6">
-          {screen.t2}
-        </h1>
-        {screen.lead ? (
-          <div className="max-w-3xl bg-[#F7F9FB] p-8 rounded-xl border-l-4 border-[#1F7A7A]">
-            <p className="text-[18px] leading-relaxed text-[#333333]">
-              {screen.lead}
-            </p>
+    <div className="relative overflow-hidden w-full min-h-[300px] lg:min-h-[360px] rounded-2xl border border-[#E5E9F0] shadow-[0_20px_40px_-15px_rgba(31,56,100,0.12)]">
+      <img
+        src={learnHeroImage}
+        alt=""
+        className="absolute inset-0 h-full w-full object-cover scale-105"
+        aria-hidden
+      />
+      <div
+        className="absolute inset-0"
+        style={{
+          background:
+            'linear-gradient(160deg, rgba(247,249,251,0.96) 0%, rgba(255,255,255,0.92) 45%, rgba(238,243,250,0.94) 100%)',
+        }}
+        aria-hidden
+      />
+      <div className="absolute inset-0 bg-gradient-to-t from-[#1F3864]/10 via-transparent to-transparent pointer-events-none" />
+
+      <div className="relative z-10 flex h-full flex-col items-center justify-between gap-4 p-5 md:p-6">
+        <div className="w-full rounded-xl border border-white/80 bg-white/95 px-4 py-3.5 shadow-[0_8px_24px_-8px_rgba(31,56,100,0.15)] backdrop-blur-sm">
+          <p className="text-[11px] font-bold uppercase tracking-widest text-slate-500 mb-1">
+            Pupil acts
+          </p>
+          <p
+            className="text-[15px] font-semibold"
+            style={{ color: '#1F3864' }}
+          >
+            Does something
+          </p>
+        </div>
+
+        <div className="flex w-full flex-col items-center gap-3 py-1">
+          <div className="h-5 w-px bg-[#2E7CF6]/30" aria-hidden />
+          <div className="flex items-center gap-2 rounded-full border border-white/80 bg-white/95 px-4 py-2 shadow-[0_8px_20px_-8px_rgba(46,124,246,0.35)] backdrop-blur-sm">
+            <span
+              className="material-symbols-outlined text-[20px]"
+              style={{ color: '#2E7CF6' }}
+            >
+              timer
+            </span>
+            <span
+              className="text-[14px] font-bold tracking-wide"
+              style={{ color: '#1F3864' }}
+            >
+              3 sec
+            </span>
           </div>
-        ) : null}
-      </header>
+          <p
+            className="text-[12px] font-semibold uppercase tracking-wide text-center"
+            style={{ color: '#64748B' }}
+          >
+            Ask: Green? Amber? Red?
+          </p>
+          <div className="flex items-center gap-3">
+            <span
+              className="size-3.5 rounded-full bg-emerald-500 ring-2 ring-white shadow-sm"
+              title="Green"
+            />
+            <span
+              className="size-3.5 rounded-full bg-amber-400 ring-2 ring-white shadow-sm"
+              title="Amber"
+            />
+            <span
+              className="size-3.5 rounded-full bg-rose-500 ring-2 ring-white shadow-sm"
+              title="Red"
+            />
+          </div>
+          <div className="h-5 w-px bg-[#1F7A7A]/30" aria-hidden />
+        </div>
+
+        <div className="w-full rounded-xl border border-white/80 bg-white/95 px-4 py-3.5 border-l-4 border-l-[#1F7A7A] shadow-[0_8px_24px_-8px_rgba(31,56,100,0.15)] backdrop-blur-sm">
+          <p className="text-[11px] font-bold uppercase tracking-widest text-slate-500 mb-1">
+            You
+          </p>
+          <p
+            className="text-[15px] font-semibold"
+            style={{ color: '#1F3864' }}
+          >
+            Match your response
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function TechniqueIntroSection({ screen }: { screen: Screen }) {
+  const { headline } = splitTechniqueTitle(screen.t2);
+
+  return (
+    <div className="flex flex-1 w-full items-start justify-start pt-2">
+      <div className="w-full max-w-[1200px] mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-start">
+          <div className="space-y-5 pt-6 lg:pt-10">
+            <header>
+              <h2
+                className="text-[32px] leading-tight font-bold"
+                style={{ color: '#1F3864' }}
+              >
+                {headline}
+              </h2>
+            </header>
+
+            {screen.lead ? (
+              <div className="bg-[#F7F9FB] p-6 md:p-8 rounded-xl border-l-4 border-l-[#2E7CF6]">
+                <p
+                  className="text-[18px] leading-relaxed"
+                  style={{ color: '#333333' }}
+                >
+                  {screen.lead}
+                </p>
+              </div>
+            ) : null}
+          </div>
+
+          <TechniquePauseFlow />
+        </div>
+      </div>
     </div>
   );
 }
@@ -556,109 +696,123 @@ function TechniqueStepsSection({
   const steps = screen.techniqueSteps ?? [];
 
   return (
-    <div className="max-w-[1200px] mx-auto">
-      <h1 className="text-[32px] leading-tight font-bold text-[#1F3864] mb-8">
-        {screen.t2}
-      </h1>
+    <div className="max-w-[1200px] mx-auto flex flex-col flex-1 min-h-0 h-full">
+      <header className="pt-2 mb-6 shrink-0">
+        <h2 className="text-[32px] leading-tight font-bold text-[#1F3864]">
+          {screen.t2}
+        </h2>
+      </header>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {steps.map((step) => (
-          <div
-            key={step.number}
-            className="bg-white p-8 rounded-xl flex flex-col h-full border border-slate-200 shadow-[0_20px_40px_-15px_rgba(47,99,120,0.06)]"
-          >
-            <div className="flex items-center gap-4 mb-6">
-              <span className="flex items-center justify-center w-10 h-10 rounded-full bg-[#E6F4F4] text-[#1F7A7A] text-sm font-semibold shrink-0">
-                {step.number}
-              </span>
-              <h2 className="text-[18px] font-semibold text-slate-900">
-                {step.title}
-              </h2>
-            </div>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch flex-1 min-h-0">
+        {steps.map((step) => {
+          const expandId = step.expand
+            ? `${screen.id}:${step.expand.header}`
+            : null;
+          const isExpandOpen = expandId
+            ? openDropdownIds.has(expandId)
+            : false;
 
-            <p className="text-[15px] text-slate-700 mb-6 leading-relaxed">
-              {step.number === 2 ? (
-                <>
-                  During the pause, ask yourself:{' '}
-                  <span className="italic">
-                    &ldquo;Where is this pupil right now?&rdquo;
-                  </span>
-                </>
-              ) : (
-                step.body
-              )}
-            </p>
-
-            {step.bodyExtra ? (
-              <p className="text-[15px] text-slate-700 mb-6 leading-relaxed">
-                {step.number === 2 ? (
-                  <>
-                    Quickly check their internal traffic light. Are they in
-                    Green (calm), Amber (frustrated/anxious), or Red
-                    (fight/flight)? This shift in focus from the{' '}
-                    <span className="font-semibold">behavior</span> to the{' '}
-                    <span className="font-semibold">internal state</span>{' '}
-                    changes everything.
-                  </>
-                ) : (
-                  step.bodyExtra
-                )}
-              </p>
-            ) : null}
-
-            {step.expand ? (
-              <div className="mt-auto -mx-2 -mb-2">
-                <LearnAccordionItem
-                  dropdownId={`${screen.id}:${step.expand.header}`}
-                  header={step.expand.header}
-                  body={step.expand.body}
-                  open={openDropdownIds.has(
-                    `${screen.id}:${step.expand.header}`
-                  )}
-                  onToggle={onDropdownToggle}
-                />
+          return (
+            <div
+              key={step.number}
+              className="bg-white p-6 md:p-7 rounded-xl flex flex-col h-full min-h-0 border border-slate-200 shadow-[0_20px_40px_-15px_rgba(47,99,120,0.06)] overflow-hidden"
+            >
+              <div className="flex items-center gap-4 mb-4 shrink-0">
+                <span className="flex items-center justify-center w-10 h-10 rounded-full bg-[#E6F4F4] text-[#1F7A7A] text-sm font-semibold shrink-0">
+                  {step.number}
+                </span>
+                <h2 className="text-[18px] font-semibold text-slate-900 leading-snug">
+                  {step.title}
+                </h2>
               </div>
-            ) : null}
 
-            {step.showTrafficLight ? (
-              <div className="mt-auto flex gap-2">
-                <div className="w-full h-1.5 rounded-full bg-[#1F7A7A]/20 overflow-hidden">
-                  <div className="h-full bg-[#1F7A7A] w-1/3" />
-                </div>
-              </div>
-            ) : null}
-
-            {step.stateCards && step.stateCards.length ? (
-              <div className="space-y-4">
-                {step.stateCards.map((card) => {
-                  const styles = TECHNIQUE_STATE_STYLES[card.state];
-                  return (
-                    <div
-                      key={card.state}
-                      className={`flex items-start gap-3 p-3 rounded-lg border-l-4 ${styles.cardBg} ${styles.border}`}
-                    >
-                      <span
-                        className={`material-symbols-outlined mt-0.5 ${styles.iconColor}`}
-                      >
-                        {styles.icon}
+              <div
+                className={`${
+                  isExpandOpen ? 'hidden' : 'flex-1 min-h-0 overflow-y-auto custom-scrollbar pr-1 -mr-1'
+                }`}
+              >
+                <p className="text-[15px] text-slate-700 mb-4 leading-relaxed">
+                  {step.number === 2 ? (
+                    <>
+                      During the pause, ask yourself:{' '}
+                      <span className="italic">
+                        &ldquo;Where is this pupil right now?&rdquo;
                       </span>
-                      <div>
-                        <p
-                          className={`text-sm font-semibold ${styles.labelColor}`}
+                    </>
+                  ) : (
+                    step.body
+                  )}
+                </p>
+
+                {step.bodyExtra ? (
+                  <p className="text-[15px] text-slate-700 mb-4 leading-relaxed">
+                    {step.number === 2 ? (
+                      <>
+                        Quickly check their internal traffic light. Are they in
+                        Green (calm), Amber (frustrated/anxious), or Red
+                        (fight/flight)? This shift in focus from the{' '}
+                        <span className="font-semibold">behavior</span> to the{' '}
+                        <span className="font-semibold">internal state</span>{' '}
+                        changes everything.
+                      </>
+                    ) : (
+                      step.bodyExtra
+                    )}
+                  </p>
+                ) : null}
+
+                {step.stateCards && step.stateCards.length ? (
+                  <div className="space-y-3 pb-1">
+                    {step.stateCards.map((card) => {
+                      const styles = TECHNIQUE_STATE_STYLES[card.state];
+                      return (
+                        <div
+                          key={card.state}
+                          className={`flex items-start gap-3 p-3 rounded-lg border border-[#E5E9F0] ${styles.cardBg}`}
                         >
-                          {card.label}
-                        </p>
-                        <p className="text-xs text-slate-600">
-                          {card.description}
-                        </p>
-                      </div>
-                    </div>
-                  );
-                })}
+                          <span
+                            className={`material-symbols-outlined mt-0.5 shrink-0 ${styles.iconColor}`}
+                          >
+                            {styles.icon}
+                          </span>
+                          <div className="min-w-0">
+                            <p
+                              className={`text-sm font-semibold ${styles.labelColor}`}
+                            >
+                              {card.label}
+                            </p>
+                            <p className="text-xs text-slate-600 leading-snug">
+                              {card.description}
+                            </p>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : null}
               </div>
-            ) : null}
-          </div>
-        ))}
+
+              {step.expand ? (
+                <div
+                  className={`pt-3 mt-2 border-t border-slate-100 ${
+                    isExpandOpen
+                      ? 'flex-1 min-h-0 flex flex-col overflow-hidden'
+                      : 'shrink-0'
+                  }`}
+                >
+                  <LearnAccordionItem
+                    dropdownId={expandId!}
+                    header={step.expand.header}
+                    body={step.expand.body}
+                    open={isExpandOpen}
+                    onToggle={onDropdownToggle}
+                    embedded
+                  />
+                </div>
+              ) : null}
+            </div>
+          );
+        })}
       </div>
     </div>
   );
@@ -958,7 +1112,7 @@ function WatchIntroSplitCards({
   return (
     <div className="space-y-4">
       <h3
-        className="text-left text-[18px] md:text-[20px] font-semibold leading-snug border-l-4 border-l-[#2E7CF6] pl-4"
+        className="text-left text-[32px] leading-tight font-bold"
         style={{ color: '#1F3864' }}
       >
         {intro.headline}
@@ -1093,12 +1247,12 @@ function CoverSection({ screen }: { screen: Screen }) {
 
   return (
     <div className="max-w-[1200px] mx-auto flex flex-col flex-1 min-h-0 h-full gap-4 md:gap-5">
-      <p
-        className="shrink-0 text-[20px] md:text-[24px] font-semibold leading-snug max-w-3xl"
+      <h2
+        className="shrink-0 text-[32px] leading-tight font-bold max-w-3xl"
         style={{ color: '#1F3864' }}
       >
         {screen.body?.trim()}
-      </p>
+      </h2>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 flex-1 min-h-0">
         {topics.map((item) => (
@@ -1160,18 +1314,27 @@ function TechniqueHonestSection({
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
         <div className="space-y-8">
           {screen.keyPoint ? (
-            <div className="p-8 bg-[#1F7A7A] rounded-xl text-white shadow-[0_20px_40px_-15px_rgba(47,99,120,0.18)]">
-              <div className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center mb-6">
-                <span className="material-symbols-outlined text-white">
-                  lightbulb
-                </span>
+            <div className="rounded-xl overflow-hidden shadow-[0_4px_24px_-4px_rgba(10,31,68,0.12)] border border-[#1F3864]/20 bg-[#1F3864]">
+              <div className="p-8">
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 rounded-xl bg-[#2E7CF6]/20 flex items-center justify-center shrink-0">
+                    <span
+                      className="material-symbols-outlined text-[26px]"
+                      style={{ color: '#2E7CF6' }}
+                    >
+                      lightbulb
+                    </span>
+                  </div>
+                  <div>
+                    <div className="text-[18px] font-semibold text-white">
+                      The honest part
+                    </div>
+                    <div className="mt-4 text-[14px] leading-relaxed text-white/90 italic">
+                      &ldquo;{screen.keyPoint}&rdquo;
+                    </div>
+                  </div>
+                </div>
               </div>
-              <h3 className="text-[20px] font-semibold mb-4">
-                The honest part
-              </h3>
-              <p className="text-[15px] opacity-90 leading-relaxed italic">
-                &ldquo;{screen.keyPoint}&rdquo;
-              </p>
             </div>
           ) : null}
 
@@ -1206,31 +1369,36 @@ function WhatNotToDoStepperSection({ screen }: { screen: Screen }) {
     }, 300);
   };
 
-  const progressWidth =
-    steps.length > 1 ? (activeStep / (steps.length - 1)) * 100 : 0;
+  const stepCount = steps.length;
+  const trackInset = stepCount > 0 ? `${50 / stepCount}%` : '0%';
+  const progressFill =
+    stepCount > 1 ? (activeStep / (stepCount - 1)) * 100 : 0;
 
   return (
-    <div className="max-w-5xl mx-auto relative flex flex-col flex-1 min-h-0 h-full overflow-hidden">
-      <div className="shrink-0">
-        <span className="inline-block text-[11px] font-semibold uppercase tracking-wider text-[#1F7A7A] bg-[#E6F4F4] px-3 py-1 rounded-full mb-2">
-          In the moment
-        </span>
-        <h1 className="text-[24px] md:text-[28px] leading-tight font-bold text-[#1F3864] mb-2">
-          {screen.t2}
-        </h1>
-        {screen.body ? (
-          <p className="text-[14px] text-slate-600 leading-snug mb-4 max-w-3xl">
+    <div className="max-w-[1200px] mx-auto relative flex flex-col flex-1 min-h-0 h-full overflow-hidden">
+      {screen.body ? (
+        <header className="pt-2 mb-6 shrink-0">
+          <h2
+            className="text-[32px] leading-tight font-bold"
+            style={{ color: '#1F3864' }}
+          >
             {screen.body}
-          </p>
-        ) : null}
-      </div>
+          </h2>
+        </header>
+      ) : null}
 
-      <div className="relative flex items-start justify-between mb-6 px-2 md:px-6 shrink-0">
-        <div className="absolute h-1 w-full bg-slate-200 top-5 left-0 z-0 rounded-full" />
+      <div className="relative flex items-start justify-between mb-6 shrink-0">
         <div
-          className="absolute h-1 bg-[#1F7A7A] top-5 left-0 z-0 rounded-full transition-all duration-500"
-          style={{ width: `${progressWidth}%` }}
-        />
+          className="absolute top-5 h-1 z-0 rounded-full overflow-hidden"
+          style={{ left: trackInset, right: trackInset }}
+        >
+          <div className="relative h-full w-full rounded-full bg-slate-200">
+            <div
+              className="absolute inset-y-0 left-0 rounded-full bg-[#2E7CF6] transition-all duration-500"
+              style={{ width: `${progressFill}%` }}
+            />
+          </div>
+        </div>
         {steps.map((step, index) => {
           const isActive = activeStep === index;
           const isCompleted = index <= activeStep;
@@ -1244,10 +1412,10 @@ function WhatNotToDoStepperSection({ screen }: { screen: Screen }) {
               <div
                 className={`w-10 h-10 rounded-full border-2 flex items-center justify-center transition-all duration-300 group-hover:scale-110 active:scale-95 shrink-0 ${
                   isActive
-                    ? 'border-[#1F7A7A] bg-[#E6F4F4] text-[#1F7A7A] ring-4 ring-[#E6F4F4]'
+                    ? 'border-[#2E7CF6] bg-[#2E7CF6]/10 text-[#2E7CF6] ring-4 ring-[#2E7CF6]/15'
                     : isCompleted
-                      ? 'border-[#1F7A7A] bg-[#E6F4F4] text-[#1F7A7A]'
-                      : 'border-slate-300 bg-white text-slate-500 group-hover:border-[#1F7A7A]'
+                      ? 'border-[#2E7CF6] bg-[#2E7CF6]/10 text-[#2E7CF6]'
+                      : 'border-slate-300 bg-white text-slate-500 group-hover:border-[#2E7CF6]'
                 }`}
               >
                 <span className="material-symbols-outlined text-xl">
@@ -1257,7 +1425,7 @@ function WhatNotToDoStepperSection({ screen }: { screen: Screen }) {
               <span
                 className={`mt-2 text-[11px] font-medium text-center leading-tight px-0.5 hidden sm:block ${
                   isActive
-                    ? 'text-[#1F7A7A] font-bold'
+                    ? 'text-[#1F3864] font-bold'
                     : 'text-slate-500 opacity-60'
                 }`}
               >
@@ -1278,7 +1446,7 @@ function WhatNotToDoStepperSection({ screen }: { screen: Screen }) {
         >
           <div className="col-span-12 lg:col-span-7 bg-white p-4 md:p-5 rounded-xl border border-slate-200 shadow-[0_20px_40px_-15px_rgba(47,99,120,0.06)] flex flex-col min-h-0 overflow-hidden">
             <div className="flex items-center gap-3 mb-3 shrink-0">
-              <div className="p-3 rounded-lg bg-[#F7F9FB] text-[#1F7A7A] shrink-0">
+              <div className="p-3 rounded-lg bg-[#2E7CF6]/10 text-[#2E7CF6] shrink-0">
                 <span className="material-symbols-outlined text-3xl">
                   {active.icon}
                 </span>
@@ -1287,12 +1455,12 @@ function WhatNotToDoStepperSection({ screen }: { screen: Screen }) {
                 <h2 className="text-lg md:text-xl font-semibold text-[#1F3864] leading-snug">
                   {active.header}
                 </h2>
-                <p className="text-xs font-medium text-[#1F7A7A] mt-0.5">
+                <p className="text-xs font-medium text-slate-500 mt-0.5">
                   {activeStep + 1} of {steps.length}
                 </p>
               </div>
             </div>
-            <p className="text-[14px] md:text-[15px] text-slate-700 leading-snug">
+            <p className="text-[15px] text-slate-700 leading-relaxed">
               {active.body}
             </p>
           </div>
@@ -2097,7 +2265,8 @@ export default function MindSyncTeacherTrainingModule01Page() {
 
   const handleDropdownOpenChange = (dropdownId: string, open: boolean) => {
     const el = scrollAreaRef.current;
-    const skipAutoScrollOnOpen = screen.id === 2 || screen.id === 3;
+    const skipAutoScrollOnOpen =
+      screen.id === 2 || screen.id === 3 || screen.type === 'technique';
 
     setOpenDropdownIds((prev) => {
       const next = new Set(prev);
@@ -2304,6 +2473,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
               className={`flex-1 min-h-0 custom-scrollbar scroll-smooth ${
                 screen.id === 16 ||
                 screen.type === 'cover' ||
+                screen.type === 'technique' ||
                 screen.id === 2 ||
                 screen.id === 3 ||
                 screen.id === 5
@@ -2312,6 +2482,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
               } ${
                 isCurrentScreenDropdownOpen ||
                 screen.type === 'scenario_feedback' ||
+                screen.type === 'technique_intro' ||
                 screen.id === 17 ||
                 (screen.id === 5 && isWatchScriptOpen)
                   ? 'overflow-y-auto'
@@ -2322,6 +2493,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
                 className={
                   screen.id === 16 ||
                   screen.type === 'cover' ||
+                  screen.type === 'technique' ||
                   screen.id === 2 ||
                   screen.id === 3 ||
                   screen.id === 5
@@ -2336,11 +2508,11 @@ export default function MindSyncTeacherTrainingModule01Page() {
                     <CoverSection screen={screen} />
                   </div>
                 ) : screen.type === 'technique_intro' ? (
-                  <div className="p-5 md:p-6 md:px-14">
+                  <div className="p-5 md:p-6 md:px-14 flex flex-col flex-1 min-h-0 h-full">
                     <TechniqueIntroSection screen={screen} />
                   </div>
                 ) : screen.type === 'technique' ? (
-                  <div className="p-5 md:p-6 md:px-14">
+                  <div className="p-5 md:p-6 md:px-14 flex flex-col flex-1 min-h-0 h-full">
                     <TechniqueStepsSection
                       screen={screen}
                       openDropdownIds={openDropdownIds}
@@ -2628,8 +2800,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
                                   Three states, and why the difference matters.
                                 </h2>
                                 <div
-                                  className="mt-6 max-w-3xl bg-[#F7F9FB] p-8 rounded-xl border-l-4"
-                                  style={{ borderLeftColor: '#1F7A7A' }}
+                                  className="mt-6 max-w-3xl bg-[#F7F9FB] p-8 rounded-xl border-l-4 border-l-[#2E7CF6]"
                                 >
                                   <p
                                     className="text-[18px] leading-relaxed"
@@ -2687,13 +2858,13 @@ export default function MindSyncTeacherTrainingModule01Page() {
                                             onClick={() =>
                                               setLearnStateModalKey(card.key)
                                             }
-                                            className="w-full h-[180px] p-10 flex flex-col items-center text-center transition-all duration-300 hover:-translate-y-2"
+                                            className="w-full h-[170px] p-5 flex flex-col items-center justify-between text-center transition-all duration-300 hover:-translate-y-1"
                                           >
                                             <div
-                                              className={`w-20 h-20 rounded-full ${card.iconBg} flex items-center justify-center mb-8`}
+                                              className={`size-14 shrink-0 aspect-square rounded-full ${card.iconBg} flex items-center justify-center`}
                                             >
                                               <span
-                                                className={`material-symbols-outlined text-[40px] ${card.iconText}`}
+                                                className={`material-symbols-outlined text-[28px] leading-none ${card.iconText}`}
                                                 style={{
                                                   fontVariationSettings:
                                                     '"FILL" 1',
@@ -2702,20 +2873,19 @@ export default function MindSyncTeacherTrainingModule01Page() {
                                                 {card.icon}
                                               </span>
                                             </div>
-                                            <div
-                                              className={`text-[20px] font-semibold mb-4 ${card.accentText}`}
-                                            >
-                                              {card.title}
+                                            <div className="flex flex-col items-center gap-1.5 shrink-0">
+                                              <div
+                                                className={`text-[15px] font-semibold leading-tight ${card.accentText}`}
+                                              >
+                                                {card.title}
+                                              </div>
+                                              <div
+                                                className={`h-1 w-12 rounded-full ${card.barBg}`}
+                                              />
                                             </div>
-                                            <div
-                                              className={`h-1.5 w-16 rounded-full mb-6 ${card.barBg}`}
-                                            />
-
-                                            <div className="mt-auto pt-8">
-                                              <span className="material-symbols-outlined text-slate-400">
-                                                expand_more
-                                              </span>
-                                            </div>
+                                            <span className="material-symbols-outlined text-slate-400 text-[18px] shrink-0">
+                                              expand_more
+                                            </span>
                                           </button>
                                         </div>
                                       );
@@ -2737,14 +2907,14 @@ export default function MindSyncTeacherTrainingModule01Page() {
                                   ) : null}
                                 </div>
 
-                                <div
-                                  className="rounded-xl overflow-hidden shadow-sm border border-[#0E606A]/10"
-                                  style={{ backgroundColor: '#0E606A' }}
-                                >
+                                <div className="rounded-xl overflow-hidden shadow-[0_4px_24px_-4px_rgba(10,31,68,0.12)] border border-[#1F3864]/20 bg-[#1F3864]">
                                   <div className="p-8">
                                     <div className="flex items-start gap-4">
-                                      <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center shrink-0">
-                                        <span className="material-symbols-outlined text-white">
+                                      <div className="w-12 h-12 rounded-xl bg-[#2E7CF6]/20 flex items-center justify-center shrink-0">
+                                        <span
+                                          className="material-symbols-outlined text-[26px]"
+                                          style={{ color: '#2E7CF6' }}
+                                        >
                                           lightbulb
                                         </span>
                                       </div>
