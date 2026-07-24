@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { Link, useNavigate } from 'react-router-dom';
 import VideoLessonPlayer from '../components/VideoLessonPlayer';
 import image from '../../assets/images/mindsync/2.jpg';
@@ -148,12 +149,12 @@ type SidebarSection = {
 const TAKEAWAY_HIGHLIGHT_TEXT =
   '“Yesterday I misread what was going on for you. I should have checked in rather than snapped. I am sorry. You did not deserve that.” No “but.” No explanation. No asking them to apologise back. Then let them go.';
 
-const HIDDEN_NAV_BLOCK_IDS = new Set<number>([8, 9, 10]);
+const HIDDEN_NAV_BLOCK_IDS = new Set<number>([8, 9, 10, 21, 24, 27]);
 
 const SCENARIOS: Record<1 | 2 | 3, Scenario> = {
   1: {
     id: 1,
-    title: 'Scenario 1. The pupil who will not start',
+    title: 'The pupil who will not start',
     situation:
       'It is period three on a Wednesday. You have set your Year 8 class a written task. The room is quiet, most pupils are working. One pupil, clear in your view, is staring at the page. Pen down. No writing. Two minutes have passed since you gave the instruction. You walked past once and gave a gentle prompt. Nothing changed. The pupils on either side of her have started. You have about ten seconds before you decide what to do.',
     question: 'What would you do?',
@@ -174,7 +175,7 @@ const SCENARIOS: Record<1 | 2 | 3, Scenario> = {
   },
   2: {
     id: 2,
-    title: 'Scenario 2. The pupil who walks out',
+    title: 'The pupil who walks out',
     situation:
       'You are teaching a Year 10 class. One pupil, tense throughout and not engaging with two earlier prompts, suddenly stands, picks up his bag, and walks toward the door. He does not speak. He does not look at you. He is about four seconds from the corridor. Other pupils are watching. You have to decide right now.',
     question: 'What would you do?',
@@ -195,7 +196,7 @@ const SCENARIOS: Record<1 | 2 | 3, Scenario> = {
   },
   3: {
     id: 3,
-    title: 'Scenario 3. The repair',
+    title: 'The repair',
     situation:
       'Yesterday, in a busy double lesson, you snapped at a pupil who was not following an instruction. You said something like “I have asked you three times. If you cannot follow simple instructions, you can sit outside.” She went quiet, did the work, did not look at you again. Afterwards her form tutor told you she had been crying at break and her grandmother had been admitted to hospital that morning. You feel sick about it. She is in your class again in twenty minutes.',
     question: 'What is the best thing to do now?',
@@ -1669,6 +1670,240 @@ function PracticeIntroSection({ screen }: { screen: Screen }) {
   );
 }
 
+function ScenarioHeading({ scenarioId }: { scenarioId: 1 | 2 | 3 }) {
+  return (
+    <h2
+      className="text-[32px] leading-tight font-bold mb-4 shrink-0"
+      style={{ color: '#1F3864' }}
+    >
+      Scenario {scenarioId} of 3
+    </h2>
+  );
+}
+
+function ScenarioInsightCard({ children }: { children: string }) {
+  return (
+    <div className="rounded-xl overflow-hidden shadow-[0_4px_24px_-4px_rgba(10,31,68,0.12)] border border-[#1F3864]/20 bg-[#1F3864]">
+      <div className="p-5 md:p-6">
+        <div className="flex items-start gap-4">
+          <div className="w-10 h-10 rounded-xl bg-[#2E7CF6]/20 flex items-center justify-center shrink-0">
+            <span
+              className="material-symbols-outlined text-[22px]"
+              style={{ color: '#2E7CF6' }}
+            >
+              lightbulb
+            </span>
+          </div>
+          <div>
+            <div className="text-[15px] font-semibold text-white mb-2">
+              The point
+            </div>
+            <div className="text-[14px] leading-relaxed text-white/90 whitespace-pre-line">
+              {children}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ScenarioSituationSection({ scenarioId }: { scenarioId: 1 | 2 | 3 }) {
+  const scenario = SCENARIOS[scenarioId];
+
+  return (
+    <div className="max-w-[1200px] mx-auto flex flex-col flex-1 min-h-0 h-full overflow-hidden pt-2">
+      <ScenarioHeading scenarioId={scenarioId} />
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 flex-1 min-h-0 items-stretch">
+        <div className="lg:col-span-7 flex flex-col min-h-0 overflow-hidden">
+          <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar pr-1 -mr-1">
+            <div className="bg-[#F7F9FB] p-6 md:p-8 rounded-xl border-l-4 border-l-[#2E7CF6]">
+              <p
+                className="text-[18px] leading-relaxed whitespace-pre-line"
+                style={{ color: '#333333' }}
+              >
+                {scenario.situation}
+              </p>
+            </div>
+          </div>
+        </div>
+        <div className="lg:col-span-5 flex flex-col min-h-[220px] lg:min-h-0">
+          <div className="relative flex-1 min-h-0 rounded-xl overflow-hidden border border-slate-200 shadow-[0_20px_40px_-15px_rgba(47,99,120,0.06)]">
+            <img
+              className="w-full h-full object-cover object-[center_65%]"
+              src={SCENARIO_IMAGES[scenarioId]}
+              alt=""
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ScenarioChooseSection({
+  scenarioId,
+  selected,
+  onSelect,
+}: {
+  scenarioId: 1 | 2 | 3;
+  selected: ScenarioOptionKey | null;
+  onSelect: (key: ScenarioOptionKey) => void;
+}) {
+  const scenario = SCENARIOS[scenarioId];
+
+  return (
+    <div className="max-w-[1200px] mx-auto flex flex-col flex-1 min-h-0 h-full overflow-hidden pt-2">
+      <ScenarioHeading scenarioId={scenarioId} />
+      <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar pr-1 -mr-1">
+        <h3
+          className="text-[36px] md:text-[40px] leading-tight font-bold mb-6"
+          style={{ color: '#1F3864' }}
+        >
+          {scenario.title}
+        </h3>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          {(Object.keys(scenario.options) as ScenarioOptionKey[]).map((key) => {
+            const isSelected = selected === key;
+            return (
+              <button
+                key={key}
+                type="button"
+                onClick={() => onSelect(key)}
+                className={`text-left rounded-xl border p-6 md:p-7 min-h-[120px] transition-all ${
+                  isSelected
+                    ? 'bg-[#EEF4FF] border-[#2E7CF6] shadow-[0_0_0_1px_rgba(46,124,246,0.25)]'
+                    : 'bg-white border-slate-200 hover:border-[#2E7CF6]/40 shadow-[0_20px_40px_-15px_rgba(47,99,120,0.06)]'
+                }`}
+              >
+                <div className="flex items-start gap-5">
+                  <span
+                    className={`flex items-center justify-center w-12 h-12 rounded-xl text-base font-bold shrink-0 ${
+                      isSelected
+                        ? 'bg-[#2E7CF6] text-white'
+                        : 'bg-[#F7F9FB] text-[#1F3864] border border-slate-200'
+                    }`}
+                  >
+                    {key}
+                  </span>
+                  <p className="text-[16px] text-slate-700 leading-relaxed">
+                    {scenario.options[key]}
+                  </p>
+                </div>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ScenarioCompareModal({
+  scenarioId,
+  selected,
+  open,
+  onClose,
+}: {
+  scenarioId: 1 | 2 | 3;
+  selected: ScenarioOptionKey;
+  open: boolean;
+  onClose: () => void;
+}) {
+  const scenario = SCENARIOS[scenarioId];
+  const [showAll, setShowAll] = useState(false);
+
+  useEffect(() => {
+    if (!open) setShowAll(false);
+  }, [open]);
+
+  if (!open) return null;
+
+  return createPortal(
+    <div className="fixed inset-0 z-[200] flex items-center justify-center p-6">
+      <button
+        type="button"
+        aria-label="Close compare feedback"
+        onClick={onClose}
+        className="absolute inset-0 bg-black/30"
+      />
+
+      <div className="relative w-full max-w-2xl max-h-[85vh] flex flex-col rounded-2xl border border-slate-200 bg-white shadow-[0_30px_120px_rgba(15,23,42,0.18)]">
+        <div className="flex items-start justify-between gap-4 shrink-0 p-5 md:p-6 border-b border-slate-200">
+          <div className="min-w-0">
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-[#2E7CF6] mb-1">
+              Compare your choice
+            </p>
+            <p className="text-[18px] font-semibold text-[#1F3864]">
+              Option {selected}
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            className="p-2 rounded-full text-slate-500 hover:text-slate-900 transition-colors shrink-0"
+            aria-label="Close compare feedback"
+          >
+            <span className="material-symbols-outlined">close</span>
+          </button>
+        </div>
+
+        <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar p-5 md:p-6 space-y-5">
+          <div className="bg-white rounded-xl border border-[#2E7CF6]/30 shadow-[0_20px_40px_-15px_rgba(47,99,120,0.06)] p-5 md:p-6">
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-[#2E7CF6] mb-2">
+              Your choice
+            </p>
+            <p className="text-[15px] text-slate-700 leading-relaxed whitespace-pre-line">
+              {scenario.feedback[selected]}
+            </p>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => setShowAll((v) => !v)}
+            className="text-[14px] font-semibold text-[#2E7CF6] hover:text-[#1F3864] transition-colors"
+          >
+            {showAll ? 'Hide other options' : 'See all options'}
+          </button>
+
+          {showAll ? (
+            <div className="space-y-3">
+              {(Object.keys(scenario.feedback) as ScenarioOptionKey[])
+                .filter((key) => key !== selected)
+                .map((key) => (
+                  <div
+                    key={key}
+                    className="bg-white rounded-xl border border-slate-200 p-4 md:p-5"
+                  >
+                    <p className="text-[13px] font-semibold text-slate-500 mb-2">
+                      Option {key}
+                    </p>
+                    <p className="text-[14px] text-slate-700 leading-relaxed whitespace-pre-line">
+                      {scenario.feedback[key]}
+                    </p>
+                  </div>
+                ))}
+            </div>
+          ) : null}
+
+          <ScenarioInsightCard>{scenario.point}</ScenarioInsightCard>
+        </div>
+      </div>
+    </div>,
+    document.body,
+  );
+}
+
+function getPractiseHeroSubtitle(screen: Screen): string {
+  if (screen.id === 18) return screen.t2 ?? 'Part 3. Practise';
+  if (screen.type === 'scenario_situation' && screen.scenarioId) {
+    return SCENARIOS[screen.scenarioId].title;
+  }
+  if (screen.type === 'scenario_choose') return 'What would you do?';
+  return screen.t2 ?? 'Part 3. Practise';
+}
+
 function CardAccordionSection({
   screenId,
   title,
@@ -2155,10 +2390,13 @@ export default function MindSyncTeacherTrainingModule01Page() {
           },
           { id: 19, type: 'scenario_situation', scenarioId: 1 },
           { id: 20, type: 'scenario_choose', scenarioId: 1 },
+          { id: 21, type: 'scenario_feedback', scenarioId: 1 },
           { id: 22, type: 'scenario_situation', scenarioId: 2 },
           { id: 23, type: 'scenario_choose', scenarioId: 2 },
+          { id: 24, type: 'scenario_feedback', scenarioId: 2 },
           { id: 25, type: 'scenario_situation', scenarioId: 3 },
           { id: 26, type: 'scenario_choose', scenarioId: 3 },
+          { id: 27, type: 'scenario_feedback', scenarioId: 3 },
           {
             id: 28,
             type: 'takeaway',
@@ -2192,9 +2430,12 @@ export default function MindSyncTeacherTrainingModule01Page() {
   const sidebarScrollRef = useRef<HTMLDivElement | null>(null);
   const suppressAutoOpenRef = useRef(false);
   const lastAutoOpenIndexRef = useRef<number | null>(null);
-  const [isScenarioFeedbackOpen, setIsScenarioFeedbackOpen] = useState(false);
   const [scenarioAnswers, setScenarioAnswers] = useState<
     Partial<Record<1 | 2 | 3, ScenarioOptionKey>>
+  >({});
+  const [isScenarioCompareOpen, setIsScenarioCompareOpen] = useState(false);
+  const [scenarioCompareSeen, setScenarioCompareSeen] = useState<
+    Partial<Record<1 | 2 | 3, boolean>>
   >({});
 
   const [openSections, setOpenSections] = useState<
@@ -2236,6 +2477,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
 
   useEffect(() => {
     setIsWatchScriptOpen(false);
+    setIsScenarioCompareOpen(false);
   }, [index]);
 
   const toc = useMemo(() => {
@@ -2244,8 +2486,12 @@ export default function MindSyncTeacherTrainingModule01Page() {
         s.type === 'cover'
           ? 'Cover'
           : s.type === 'scenario_situation' && s.scenarioId
-            ? SCENARIOS[s.scenarioId].title
-            : s.t1 || s.t2 || s.t3 || `Block ${s.id}`;
+            ? `Scenario ${s.scenarioId} · Read`
+            : s.type === 'scenario_choose' && s.scenarioId
+              ? `Scenario ${s.scenarioId} · Choose`
+              : s.type === 'scenario_feedback' && s.scenarioId
+                ? `Scenario ${s.scenarioId} · Compare`
+                : s.t1 || s.t2 || s.t3 || `Block ${s.id}`;
       return {
         index: i,
         label,
@@ -2355,11 +2601,10 @@ export default function MindSyncTeacherTrainingModule01Page() {
 
   useEffect(() => {
     setOpenDropdownIds(new Set());
-    setIsScenarioFeedbackOpen(false);
   }, [index]);
 
   useEffect(() => {
-    if (screen.type !== 'scenario_choose') return;
+    if (screen.type !== 'scenario_situation') return;
 
     const scenarioId = screen.scenarioId;
     if (scenarioId !== 1 && scenarioId !== 2 && scenarioId !== 3) return;
@@ -2471,8 +2716,12 @@ export default function MindSyncTeacherTrainingModule01Page() {
   const nextLabel = useMemo(() => {
     if (screen.id === 29) return 'Back to pathway';
     if (screen.id === 28) return 'Finish';
+    if (screen.type === 'scenario_situation') return 'Choose';
+    if (screen.type === 'scenario_choose' && screen.scenarioId) {
+      return scenarioCompareSeen[screen.scenarioId] ? 'Next' : 'Compare';
+    }
     return 'Next';
-  }, [screen.id]);
+  }, [screen.id, screen.type, screen.scenarioId, scenarioCompareSeen]);
 
   return (
     <div
@@ -2524,7 +2773,9 @@ export default function MindSyncTeacherTrainingModule01Page() {
                 ? (screen.t1 ?? 'Part 1. Watch')
                 : activeSidebarSectionKey === 'learn'
                   ? 'Part 2. Learn'
-                  : 'MODULE 1 – THE THREE SECOND PAUSE'}
+                  : activeSidebarSectionKey === 'practise'
+                    ? 'Part 3. Practise'
+                    : 'MODULE 1 – THE THREE SECOND PAUSE'}
           </h1>
           <h2
             className="text-[24px] leading-snug font-bold mb-2"
@@ -2540,7 +2791,9 @@ export default function MindSyncTeacherTrainingModule01Page() {
                     screen.type === 'technique_honest'
                     ? (screen.t2 ?? 'Part 2. Learn')
                     : (screen.lead ?? screen.t2 ?? screen.t3 ?? 'Part 2. Learn')
-                  : (screen.t2 ?? 'Reading behaviour in the moment')}
+                  : activeSidebarSectionKey === 'practise'
+                    ? getPractiseHeroSubtitle(screen)
+                    : (screen.t2 ?? 'Reading behaviour in the moment')}
           </h2>
           {/* <p
             className="text-[15px] leading-relaxed max-w-2xl whitespace-pre-line"
@@ -2583,6 +2836,8 @@ export default function MindSyncTeacherTrainingModule01Page() {
                 screen.id === 16 ||
                 screen.id === 17 ||
                 screen.id === 18 ||
+                screen.type === 'scenario_situation' ||
+                screen.type === 'scenario_choose' ||
                 screen.type === 'cover' ||
                 screen.type === 'technique' ||
                 screen.id === 2 ||
@@ -2592,7 +2847,6 @@ export default function MindSyncTeacherTrainingModule01Page() {
                   : 'pb-24'
               } ${
                 isCurrentScreenDropdownOpen ||
-                screen.type === 'scenario_feedback' ||
                 screen.type === 'technique_intro' ||
                 (screen.id === 5 && isWatchScriptOpen)
                   ? 'overflow-y-auto'
@@ -2604,6 +2858,8 @@ export default function MindSyncTeacherTrainingModule01Page() {
                   screen.id === 16 ||
                   screen.id === 17 ||
                   screen.id === 18 ||
+                  screen.type === 'scenario_situation' ||
+                  screen.type === 'scenario_choose' ||
                   screen.type === 'cover' ||
                   screen.type === 'technique' ||
                   screen.id === 2 ||
@@ -2649,6 +2905,27 @@ export default function MindSyncTeacherTrainingModule01Page() {
                 ) : screen.id === 18 ? (
                   <div className="p-5 md:p-6 md:px-14 flex flex-col flex-1 min-h-0 h-full overflow-hidden">
                     <PracticeIntroSection screen={screen} />
+                  </div>
+                ) : screen.type === 'scenario_situation' && screen.scenarioId ? (
+                  <div className="p-5 md:p-6 md:px-14 flex flex-col flex-1 min-h-0 h-full overflow-hidden">
+                    <ScenarioSituationSection scenarioId={screen.scenarioId} />
+                  </div>
+                ) : screen.type === 'scenario_choose' && screen.scenarioId ? (
+                  <div className="p-5 md:p-6 md:px-14 flex flex-col flex-1 min-h-0 h-full overflow-hidden">
+                    <ScenarioChooseSection
+                      scenarioId={screen.scenarioId}
+                      selected={scenarioAnswers[screen.scenarioId] ?? null}
+                      onSelect={(key) => {
+                        setScenarioAnswers((prev) => ({
+                          ...prev,
+                          [screen.scenarioId!]: key,
+                        }));
+                        setScenarioCompareSeen((prev) => ({
+                          ...prev,
+                          [screen.scenarioId!]: false,
+                        }));
+                      }}
+                    />
                   </div>
                 ) : screen.id === 2 ? (
                   <div
@@ -3247,196 +3524,6 @@ export default function MindSyncTeacherTrainingModule01Page() {
                       </div>
                     ) : null}
 
-                    {screen.type === 'scenario_situation' &&
-                    screen.scenarioId ? (
-                      <div className="space-y-6">
-                        <div className="text-center">
-                          <h2 className="text-2xl md:text-3xl font-black text-slate-900">
-                            {SCENARIOS[screen.scenarioId].title}
-                          </h2>
-                          <div className="mt-3 h-1 w-24 mx-auto rounded-full bg-gradient-to-r from-[#60A5FA] to-[#9333EA]" />
-                        </div>
-
-                        <div className="flex justify-center">
-                          <div className="w-full max-w-[784px] rounded-2xl overflow-hidden border border-slate-200 bg-white">
-                            <img
-                              src={SCENARIO_IMAGES[screen.scenarioId]}
-                              alt="Scenario"
-                              className="w-full h-[240px] md:h-[320px] object-cover"
-                            />
-                          </div>
-                        </div>
-
-                        <div className="w-full max-w-[784px] mx-auto">
-                          <div className="text-sm md:text-base text-slate-700 whitespace-pre-line leading-relaxed">
-                            {SCENARIOS[screen.scenarioId].situation}
-                          </div>
-                        </div>
-                      </div>
-                    ) : null}
-
-                    {screen.type === 'scenario_choose' && screen.scenarioId
-                      ? (() => {
-                          const scenarioId = screen.scenarioId;
-                          const scenario = SCENARIOS[scenarioId];
-                          const selected = scenarioAnswers[scenarioId] ?? null;
-                          return (
-                            <div className="space-y-6">
-                              <div className="w-full max-w-[784px] mb-6 md:mb-8">
-                                <h3 className="text-2xl md:text-[32px] md:leading-[38.4px] font-bold text-slate-900">
-                                  {scenario.question}
-                                </h3>
-                              </div>
-
-                              <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-[986px] mx-auto">
-                                {(
-                                  Object.keys(
-                                    scenario.options
-                                  ) as ScenarioOptionKey[]
-                                ).map((k) => {
-                                  const selected =
-                                    scenarioAnswers[scenarioId] === k;
-                                  return (
-                                    <button
-                                      key={k}
-                                      type="button"
-                                      onClick={() =>
-                                        setScenarioAnswers((prev) => ({
-                                          ...prev,
-                                          [scenarioId]: k,
-                                        }))
-                                      }
-                                      className={`text-left rounded-lg border px-[18px] py-[18px] md:px-[22px] md:py-[22px] transition-colors ${
-                                        selected
-                                          ? 'bg-slate-50 border-[#4F46E5] shadow-[0_0_0_1px_rgba(79,70,229,0.25)]'
-                                          : 'bg-white border-slate-200 hover:bg-slate-50'
-                                      }`}
-                                    >
-                                      <div className="flex items-start gap-5">
-                                        <div className="w-10 h-10 rounded-[12px] border-2 border-slate-300 flex items-center justify-center text-slate-700 font-bold shrink-0 bg-white">
-                                          {k}
-                                        </div>
-                                        <div className="text-sm md:text-base text-slate-700 leading-relaxed">
-                                          {scenario.options[k]}
-                                        </div>
-                                      </div>
-                                    </button>
-                                  );
-                                })}
-                              </div>
-
-                              <div className="flex flex-col items-center gap-4 pt-2">
-                                <button
-                                  type="button"
-                                  disabled={!selected}
-                                  onClick={() =>
-                                    setIsScenarioFeedbackOpen(true)
-                                  }
-                                  className={`px-10 py-4 rounded-full font-semibold shadow-2xl transition-all flex items-center gap-3 ${
-                                    selected
-                                      ? 'bg-gradient-to-r from-[#60A5FA] to-[#9333EA] text-white hover:scale-105 active:scale-95'
-                                      : 'bg-slate-100 text-slate-400 cursor-not-allowed'
-                                  }`}
-                                >
-                                  <span className="tracking-wider">
-                                    View feedback
-                                  </span>
-                                  <span className="material-symbols-outlined">
-                                    arrow_forward
-                                  </span>
-                                </button>
-                              </div>
-
-                              {isScenarioFeedbackOpen && selected ? (
-                                <div className="fixed inset-0 z-50 flex items-center justify-center p-6">
-                                  <button
-                                    type="button"
-                                    aria-label="Close feedback"
-                                    onClick={() =>
-                                      setIsScenarioFeedbackOpen(false)
-                                    }
-                                    className="absolute inset-0 bg-black/30"
-                                  />
-
-                                  <div className="relative w-full max-w-2xl rounded-2xl border border-slate-200 bg-white p-5 md:p-6 shadow-[0_30px_120px_rgba(15,23,42,0.18)] animate-in fade-in zoom-in-95 duration-200">
-                                    <div className="flex items-start justify-between gap-4">
-                                      <div className="min-w-0">
-                                        <div className="text-[11px] uppercase tracking-[0.2em] text-slate-500 font-semibold mb-2">
-                                          Feedback
-                                        </div>
-                                        <div className="text-sm font-bold text-slate-900">
-                                          Option {selected}
-                                        </div>
-                                      </div>
-
-                                      <button
-                                        type="button"
-                                        onClick={() =>
-                                          setIsScenarioFeedbackOpen(false)
-                                        }
-                                        className="p-2 rounded-full text-slate-500 hover:text-slate-900 transition-colors"
-                                        aria-label="Close feedback"
-                                      >
-                                        <span className="material-symbols-outlined">
-                                          close
-                                        </span>
-                                      </button>
-                                    </div>
-
-                                    <div className="mt-4 max-h-[60vh] overflow-y-auto custom-scrollbar text-sm text-slate-700 leading-relaxed whitespace-pre-line">
-                                      {scenario.feedback[selected]}
-                                    </div>
-                                  </div>
-                                </div>
-                              ) : null}
-                            </div>
-                          );
-                        })()
-                      : null}
-
-                    {screen.type === 'scenario_feedback' && screen.scenarioId
-                      ? (() => {
-                          const scenarioId = screen.scenarioId;
-                          const scenario = SCENARIOS[scenarioId];
-                          return (
-                            <div className="space-y-6">
-                              <div className="w-full max-w-[920px] mx-auto">
-                                <h3 className="text-2xl md:text-[32px] md:leading-[38.4px] font-bold text-slate-900">
-                                  Feedback
-                                </h3>
-                              </div>
-
-                              <div className="space-y-3 w-full max-w-[920px] mx-auto">
-                                {(
-                                  Object.keys(
-                                    scenario.feedback
-                                  ) as ScenarioOptionKey[]
-                                ).map((k) => {
-                                  const selected =
-                                    scenarioAnswers[scenarioId] === k;
-                                  return (
-                                    <div
-                                      key={k}
-                                      className={`rounded-2xl border p-5 whitespace-pre-line ${
-                                        selected
-                                          ? 'border-emerald-400/30 bg-emerald-500/10'
-                                          : 'border-slate-200 bg-white'
-                                      }`}
-                                    >
-                                      <div className="text-sm text-slate-700 leading-relaxed">
-                                        {scenario.feedback[k]}
-                                      </div>
-                                    </div>
-                                  );
-                                })}
-                              </div>
-
-                              <KeyPoint>{scenario.point}</KeyPoint>
-                            </div>
-                          );
-                        })()
-                      : null}
-
                     {screen.type === 'takeaway' ? (
                       <div className="space-y-4">
                         <div className="relative rounded-2xl mt-8 overflow-hidden border border-white/10">
@@ -3559,6 +3646,15 @@ export default function MindSyncTeacherTrainingModule01Page() {
                       return;
                     }
 
+                    if (
+                      screen.type === 'scenario_choose' &&
+                      screen.scenarioId &&
+                      !scenarioCompareSeen[screen.scenarioId]
+                    ) {
+                      setIsScenarioCompareOpen(true);
+                      return;
+                    }
+
                     if (nextVisibleIndex === null) return;
                     setIndex(nextVisibleIndex);
                   }}
@@ -3603,8 +3699,11 @@ export default function MindSyncTeacherTrainingModule01Page() {
                   item.blockId === 9 ||
                   item.blockId === 10 ||
                   item.blockId === 20 ||
+                  item.blockId === 21 ||
                   item.blockId === 23 ||
-                  item.blockId === 26
+                  item.blockId === 24 ||
+                  item.blockId === 26 ||
+                  item.blockId === 27
                 )
                   return false;
                 return true;
@@ -3818,6 +3917,23 @@ export default function MindSyncTeacherTrainingModule01Page() {
           ) : null}
         </aside>
       </main>
+
+      {screen.type === 'scenario_choose' &&
+      screen.scenarioId &&
+      scenarioAnswers[screen.scenarioId] ? (
+        <ScenarioCompareModal
+          scenarioId={screen.scenarioId}
+          selected={scenarioAnswers[screen.scenarioId]!}
+          open={isScenarioCompareOpen}
+          onClose={() => {
+            setIsScenarioCompareOpen(false);
+            setScenarioCompareSeen((prev) => ({
+              ...prev,
+              [screen.scenarioId!]: true,
+            }));
+          }}
+        />
+      ) : null}
     </div>
   );
 }
