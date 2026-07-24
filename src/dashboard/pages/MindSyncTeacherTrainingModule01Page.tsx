@@ -1481,9 +1481,21 @@ function WhatNotToDoStepperSection({ screen }: { screen: Screen }) {
 }
 
 const EVIDENCE_TAB_META = [
-  { shortLabel: 'Three State Model', icon: 'psychology_alt' },
-  { shortLabel: 'The Pause', icon: 'pause_circle' },
-  { shortLabel: 'Why 3 Seconds', icon: 'timer_3' },
+  {
+    shortLabel: 'Three State Model',
+    icon: 'psychology_alt',
+    image: structureLearnImage,
+  },
+  {
+    shortLabel: 'The Pause',
+    icon: 'pause_circle',
+    image: learnHeroImage,
+  },
+  {
+    shortLabel: 'Why 3 Seconds',
+    icon: 'timer_3',
+    image: structureWatchImage,
+  },
 ] as const;
 
 function EvidenceTabsSection({ screen }: { screen: Screen }) {
@@ -1493,70 +1505,165 @@ function EvidenceTabsSection({ screen }: { screen: Screen }) {
   const meta = EVIDENCE_TAB_META[activeTab] ?? EVIDENCE_TAB_META[0];
 
   return (
-    <div className="max-w-[1200px] mx-auto">
-      <h1 className="text-[32px] leading-tight font-bold text-[#1F3864] mb-3">
-        {screen.t2}
-      </h1>
+    <div className="max-w-[1200px] mx-auto flex flex-col flex-1 min-h-0 h-full overflow-hidden">
       {screen.body ? (
-        <p className="text-[15px] text-slate-600 leading-relaxed mb-8 max-w-3xl">
-          {screen.body}
-        </p>
+        <header className="pt-2 mb-4 shrink-0">
+          <h2
+            className="text-[32px] leading-tight font-bold"
+            style={{ color: '#1F3864' }}
+          >
+            {screen.body}
+          </h2>
+        </header>
       ) : null}
 
-      <div className="max-w-4xl mx-auto">
-        <div className="flex gap-1 p-1 rounded-xl bg-[#F7F9FB] mb-8">
-          {tabs.map((tab, index) => {
-            const tabMeta = EVIDENCE_TAB_META[index];
-            const isActive = activeTab === index;
-            return (
-              <button
-                key={tab.header}
-                type="button"
-                onClick={() => setActiveTab(index)}
-                className={`flex-1 px-4 py-3 rounded-lg flex items-center justify-center gap-2 transition-all duration-300 text-sm font-semibold ${
-                  isActive
-                    ? 'bg-[#1F7A7A] text-white shadow-sm'
-                    : 'text-slate-600 hover:bg-white'
-                }`}
-              >
-                {tabMeta ? (
-                  <span
-                    className={`material-symbols-outlined text-lg ${
-                      isActive ? 'text-white' : 'text-[#1F7A7A]'
-                    }`}
-                  >
-                    {tabMeta.icon}
-                  </span>
-                ) : null}
-                <span className="hidden sm:inline">{tabMeta?.shortLabel}</span>
-              </button>
-            );
-          })}
-        </div>
+      <div className="flex gap-1 p-1 rounded-xl bg-[#F7F9FB] mb-4 shrink-0">
+        {tabs.map((tab, index) => {
+          const tabMeta = EVIDENCE_TAB_META[index];
+          const isActive = activeTab === index;
+          return (
+            <button
+              key={tab.header}
+              type="button"
+              onClick={() => setActiveTab(index)}
+              className={`flex-1 px-4 py-3 rounded-lg flex items-center justify-center gap-2 transition-all duration-300 text-sm font-semibold ${
+                isActive
+                  ? 'bg-[#2E7CF6] text-white shadow-sm'
+                  : 'bg-white text-[#1F3864] border border-slate-200 shadow-[0_1px_3px_rgba(47,99,120,0.08)] hover:border-[#1F3864]/25 hover:shadow-sm'
+              }`}
+            >
+              {tabMeta ? (
+                <span
+                  className={`material-symbols-outlined text-lg ${
+                    isActive ? 'text-white' : 'text-[#1F3864]'
+                  }`}
+                >
+                  {tabMeta.icon}
+                </span>
+              ) : null}
+              <span className="hidden sm:inline">{tabMeta?.shortLabel}</span>
+            </button>
+          );
+        })}
+      </div>
 
-        {active ? (
-          <div
-            key={activeTab}
-            className="bg-white rounded-2xl border border-slate-200 shadow-[0_20px_40px_-15px_rgba(47,99,120,0.06)] p-8 md:p-10"
-            style={{ animation: 'step-enter 0.3s ease-out' }}
-          >
-            <div className="flex items-start gap-8">
-              <div className="hidden md:flex flex-none w-16 h-16 bg-[#E6F4F4] rounded-full items-center justify-center">
-                <span className="material-symbols-outlined text-[#1F7A7A] text-3xl">
+      {active ? (
+        <div
+          key={activeTab}
+          className="bg-white rounded-xl border border-slate-200 shadow-[0_20px_40px_-15px_rgba(47,99,120,0.06)] overflow-hidden flex flex-col flex-1 min-h-0"
+          style={{ animation: 'step-enter 0.3s ease-out' }}
+        >
+          <div className="relative w-full h-[150px] md:h-[175px] shrink-0 overflow-hidden">
+            <img
+              className="w-full h-full object-cover object-[center_30%]"
+              src={meta.image}
+              alt=""
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#1F3864]/90 from-0% via-[#1F3864]/45 via-[35%] to-transparent to-90%" />
+            <div className="absolute inset-x-0 bottom-0 px-4 md:px-5 pb-3 md:pb-4 pt-6 flex items-center gap-3">
+              <div className="flex-none w-11 h-11 bg-white/15 backdrop-blur-sm rounded-xl flex items-center justify-center border border-white/20">
+                <span className="material-symbols-outlined text-white text-[24px]">
                   {meta.icon}
                 </span>
               </div>
-              <div className="min-w-0">
-                <h2 className="text-2xl md:text-3xl font-semibold text-[#1F3864] mb-6">
-                  {active.header}
-                </h2>
-                <p className="text-[15px] md:text-[18px] text-slate-700 leading-relaxed whitespace-pre-line max-w-3xl">
-                  {active.body}
-                </p>
-              </div>
+              <h2 className="text-lg md:text-xl font-semibold text-white leading-snug min-w-0">
+                {active.header}
+              </h2>
             </div>
           </div>
-        ) : null}
+
+          <div className="p-5 md:p-6 flex flex-col flex-1 min-h-0 overflow-hidden">
+            <p className="text-[15px] text-slate-700 leading-relaxed whitespace-pre-line flex-1 min-h-0 overflow-y-auto custom-scrollbar pr-1 -mr-1">
+              {active.body}
+            </p>
+          </div>
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+const PRACTICE_INTRO_STEPS = [
+  { number: 1, label: 'Read it', detail: 'Read the situation', icon: 'menu_book' },
+  {
+    number: 2,
+    label: 'Choose',
+    detail: 'Pick what you would do',
+    icon: 'touch_app',
+  },
+  {
+    number: 3,
+    label: 'Compare',
+    detail: 'See the feedback',
+    icon: 'compare_arrows',
+  },
+] as const;
+
+function PracticeIntroSection({ screen }: { screen: Screen }) {
+  return (
+    <div className="max-w-[1200px] mx-auto flex flex-col flex-1 min-h-0 h-full overflow-hidden pt-2">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 flex-1 min-h-0 items-stretch">
+        <div className="lg:col-span-7 flex flex-col min-h-0 overflow-hidden">
+          <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar pr-1 -mr-1">
+            {screen.t2 ? (
+              <h2
+                className="text-[32px] leading-tight font-bold mb-4"
+                style={{ color: '#1F3864' }}
+              >
+                {screen.t2}
+              </h2>
+            ) : null}
+
+            {screen.lead ? (
+              <p
+                className="text-[18px] leading-relaxed mb-6"
+                style={{ color: '#333333' }}
+              >
+                {screen.lead}
+              </p>
+            ) : null}
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
+              {PRACTICE_INTRO_STEPS.map((step) => (
+                <div
+                  key={step.number}
+                  className="bg-white rounded-xl border border-slate-200 shadow-[0_20px_40px_-15px_rgba(47,99,120,0.06)] p-4 flex flex-col gap-2"
+                >
+                  <div className="flex items-center gap-2">
+                    <span className="flex items-center justify-center w-8 h-8 rounded-full bg-[#2E7CF6]/10 text-[#2E7CF6] text-sm font-semibold shrink-0">
+                      {step.number}
+                    </span>
+                    <span className="material-symbols-outlined text-[#2E7CF6] text-[20px]">
+                      {step.icon}
+                    </span>
+                  </div>
+                  <p className="text-[15px] font-semibold text-[#1F3864] leading-snug">
+                    {step.label}
+                  </p>
+                  <p className="text-[13px] text-slate-600 leading-snug">
+                    {step.detail}
+                  </p>
+                </div>
+              ))}
+            </div>
+
+            {screen.body ? (
+              <p className="text-[15px] text-slate-700 leading-relaxed">
+                {screen.body}
+              </p>
+            ) : null}
+          </div>
+        </div>
+
+        <div className="lg:col-span-5 flex flex-col min-h-[220px] lg:min-h-0">
+          <div className="relative flex-1 min-h-0 rounded-xl overflow-hidden border border-slate-200 shadow-[0_20px_40px_-15px_rgba(47,99,120,0.06)]">
+            <img
+              className="w-full h-full object-cover object-[center_65%]"
+              src={structurePracticeImage}
+              alt="Practise scenarios"
+            />
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -2036,7 +2143,9 @@ export default function MindSyncTeacherTrainingModule01Page() {
             id: 18,
             type: 'divider',
             t1: 'Part 3. Practise',
-            body: 'Three situations you will recognise. Read it, choose what you would do, then compare. There are no trick questions, and the aim is not to score well. It is to notice your own instinct, and where a small shift might help. Some options feel reasonable and quietly make things harder.',
+            t2: 'Three situations you will recognise.',
+            lead: 'Read it, choose what you would do, then compare.',
+            body: 'There are no trick questions, and the aim is not to score well. It is to notice your own instinct, and where a small shift might help. Some options feel reasonable and quietly make things harder.',
             // dropdowns: [
             //   {
             //     header: 'How to get the most from this',
@@ -2472,6 +2581,8 @@ export default function MindSyncTeacherTrainingModule01Page() {
               ref={scrollAreaRef}
               className={`flex-1 min-h-0 custom-scrollbar scroll-smooth ${
                 screen.id === 16 ||
+                screen.id === 17 ||
+                screen.id === 18 ||
                 screen.type === 'cover' ||
                 screen.type === 'technique' ||
                 screen.id === 2 ||
@@ -2483,7 +2594,6 @@ export default function MindSyncTeacherTrainingModule01Page() {
                 isCurrentScreenDropdownOpen ||
                 screen.type === 'scenario_feedback' ||
                 screen.type === 'technique_intro' ||
-                screen.id === 17 ||
                 (screen.id === 5 && isWatchScriptOpen)
                   ? 'overflow-y-auto'
                   : 'overflow-hidden'
@@ -2492,6 +2602,8 @@ export default function MindSyncTeacherTrainingModule01Page() {
               <section
                 className={
                   screen.id === 16 ||
+                  screen.id === 17 ||
+                  screen.id === 18 ||
                   screen.type === 'cover' ||
                   screen.type === 'technique' ||
                   screen.id === 2 ||
@@ -2531,8 +2643,12 @@ export default function MindSyncTeacherTrainingModule01Page() {
                     <WhatNotToDoStepperSection screen={screen} />
                   </div>
                 ) : screen.id === 17 ? (
-                  <div className="p-5 md:p-6 md:px-14">
+                  <div className="p-5 md:p-6 md:px-14 flex flex-col flex-1 min-h-0 h-full overflow-hidden">
                     <EvidenceTabsSection screen={screen} />
+                  </div>
+                ) : screen.id === 18 ? (
+                  <div className="p-5 md:p-6 md:px-14 flex flex-col flex-1 min-h-0 h-full overflow-hidden">
+                    <PracticeIntroSection screen={screen} />
                   </div>
                 ) : screen.id === 2 ? (
                   <div
@@ -2714,53 +2830,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
                         ) : null}
 
                         {screen.type === 'divider' && screen.t1 ? (
-                          screen.id === 18 ? (
-                            <div className="flex flex-col gap-6">
-                              <div className="text-center">
-                                <h1 className="text-2xl md:text-4xl font-black text-slate-900">
-                                  {screen.t1}
-                                </h1>
-                                <div className="mt-3 h-1 w-24 mx-auto rounded-full bg-gradient-to-r from-[#60A5FA] to-[#9333EA]" />
-                              </div>
-
-                              {screen.body ? (
-                                <div className="w-full max-w-[784px] mx-auto">
-                                  <div className="text-sm md:text-base text-slate-700 whitespace-pre-line leading-relaxed text-center md:text-left">
-                                    {screen.body}
-                                  </div>
-                                </div>
-                              ) : null}
-
-                              <div className="flex justify-center">
-                                <div className="w-full max-w-[520px] md:w-[520px] rounded-2xl overflow-hidden border border-slate-200 bg-white">
-                                  <img
-                                    src={structurePracticeImage}
-                                    alt="Practise"
-                                    className="w-full h-[220px] md:h-[280px] object-cover"
-                                  />
-                                </div>
-                              </div>
-
-                              {screen.dropdowns && screen.dropdowns.length ? (
-                                <div className="space-y-3 w-full max-w-[920px] mx-auto">
-                                  {screen.dropdowns.map((d) => (
-                                    <div key={d.header} className="w-full">
-                                      <div className="[&>div>button]:py-4 [&>div>button]:px-5">
-                                        <Dropdown
-                                          dropdownId={`${screen.id}:${d.header}`}
-                                          header={d.header}
-                                          body={d.body}
-                                          onOpenChange={
-                                            handleDropdownOpenChange
-                                          }
-                                        />
-                                      </div>
-                                    </div>
-                                  ))}
-                                </div>
-                              ) : null}
-                            </div>
-                          ) : screen.id === 7 ? null : (
+                          screen.id === 18 ? null : screen.id === 7 ? null : (
                             <div className="text-center">
                               <h1 className="text-2xl md:text-4xl font-black text-slate-900">
                                 {screen.t1}
