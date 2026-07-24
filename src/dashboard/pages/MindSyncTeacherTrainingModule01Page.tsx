@@ -73,7 +73,19 @@ type DropdownProps = DropdownItem & {
   buttonClassName?: string;
   bodyClassName?: string;
   variant?: 'default' | 'cover';
+  fullExpand?: boolean;
 };
+
+function isDropdownOpenForScreen(
+  openDropdownIds: Set<string>,
+  screenId: number
+) {
+  const prefix = `${screenId}:`;
+  for (const id of openDropdownIds) {
+    if (id.startsWith(prefix)) return true;
+  }
+  return false;
+}
 
 type ScenarioOptionKey = 'A' | 'B' | 'C' | 'D';
 
@@ -110,6 +122,12 @@ type Screen = {
   closingBody?: string;
   techniqueSteps?: TechniqueStep[];
   timelineSteps?: TimelineStep[];
+  watchIntro?: {
+    headline: string;
+    before: { version: string; timing: string; description: string };
+    after: { version: string; timing: string; description: string };
+    footer: string;
+  };
 };
 
 type SidebarSectionKey =
@@ -264,6 +282,7 @@ function Dropdown({
   buttonClassName,
   bodyClassName,
   variant = 'default',
+  fullExpand = false,
 }: DropdownProps) {
   const [open, setOpen] = useState(false);
   const isCover = variant === 'cover';
@@ -312,7 +331,11 @@ function Dropdown({
       </button>
       <div
         className={`overflow-hidden transition-all duration-300 ease-out ${
-          open ? 'max-h-[520px] opacity-100' : 'max-h-0 opacity-0'
+          open
+            ? fullExpand
+              ? 'max-h-none opacity-100'
+              : 'max-h-[520px] opacity-100'
+            : 'max-h-0 opacity-0'
         } ${bodyClassName ?? ''}`}
       >
         <div
@@ -678,6 +701,7 @@ function AboutModuleTextContent({
               body={d.body}
               onOpenChange={onDropdownOpenChange}
               variant="cover"
+              fullExpand
             />
           ))}
         </div>
@@ -817,6 +841,252 @@ function AboutModuleSection({
         <AboutModuleDiagram />
       </div>
       <AboutModuleInsightBar />
+    </div>
+  );
+}
+
+function ScriptSidebarPanel({
+  header,
+  body,
+  onClose,
+}: {
+  header: string;
+  body: string;
+  onClose: () => void;
+}) {
+  const panelContent = (
+    <>
+      <div className="flex items-start justify-between gap-3 shrink-0 px-4 py-4 md:px-5 border-b border-[#E5E9F0]">
+        <div className="min-w-0">
+          <div className="text-xs font-bold uppercase tracking-widest text-slate-500">
+            Script
+          </div>
+          <div
+            className="mt-1 text-[16px] font-semibold leading-snug"
+            style={{ color: '#1F3864' }}
+          >
+            {header}
+          </div>
+        </div>
+        <button
+          type="button"
+          aria-label="Close script"
+          onClick={onClose}
+          className="w-9 h-9 rounded-lg border border-[#E5E9F0] bg-[#F7F9FC] hover:bg-[#EEF3FA] transition-colors flex items-center justify-center shrink-0"
+        >
+          <span
+            className="material-symbols-outlined text-[20px]"
+            style={{ color: '#1F7A7A' }}
+          >
+            close
+          </span>
+        </button>
+      </div>
+      <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar px-4 py-4 md:px-5 text-[15px] md:text-[16px] text-slate-600 leading-relaxed whitespace-pre-line">
+        {body}
+      </div>
+    </>
+  );
+
+  return (
+    <>
+      <aside className="hidden lg:flex flex-col shrink-0 w-[min(380px,40%)] h-full min-h-0 border-r border-[#E5E9F0] bg-white overflow-hidden">
+        {panelContent}
+      </aside>
+      <div className="lg:hidden absolute inset-0 z-10 flex flex-col bg-white overflow-hidden">
+        {panelContent}
+      </div>
+    </>
+  );
+}
+
+function WatchVersionCard({
+  version,
+  icon,
+  timing,
+  description,
+  accentColor,
+}: {
+  version: string;
+  icon: 'bolt' | 'timer';
+  timing: string;
+  description: string;
+  accentColor: '#2E7CF6' | '#1F7A7A';
+}) {
+  return (
+    <div
+      className="rounded-xl border border-[#E5E9F0] bg-white p-4 md:p-5 border-l-4 shadow-[0_4px_24px_-4px_rgba(10,31,68,0.06)]"
+      style={{ borderLeftColor: accentColor }}
+    >
+      <div className="text-[11px] font-bold uppercase tracking-widest text-slate-500 mb-3">
+        {version}
+      </div>
+      <div className="flex items-center gap-3 mb-2">
+        <div
+          className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0"
+          style={{ backgroundColor: '#EEF3FA' }}
+        >
+          <span
+            className="material-symbols-outlined text-[20px]"
+            style={{ color: accentColor }}
+          >
+            {icon}
+          </span>
+        </div>
+        <span
+          className="text-[15px] md:text-[16px] font-semibold"
+          style={{ color: '#1F3864' }}
+        >
+          {timing}
+        </span>
+      </div>
+      <p
+        className="text-[14px] md:text-[15px] leading-relaxed"
+        style={{ color: '#4B5563' }}
+      >
+        {description}
+      </p>
+    </div>
+  );
+}
+
+function WatchIntroSplitCards({
+  intro,
+}: {
+  intro: NonNullable<Screen['watchIntro']>;
+}) {
+  return (
+    <div className="space-y-4">
+      <h3
+        className="text-left text-[18px] md:text-[20px] font-semibold leading-snug border-l-4 border-l-[#2E7CF6] pl-4"
+        style={{ color: '#1F3864' }}
+      >
+        {intro.headline}
+      </h3>
+
+      <WatchVersionCard
+        version={intro.before.version}
+        icon="bolt"
+        timing={intro.before.timing}
+        description={intro.before.description}
+        accentColor="#2E7CF6"
+      />
+
+      <WatchVersionCard
+        version={intro.after.version}
+        icon="timer"
+        timing={intro.after.timing}
+        description={intro.after.description}
+        accentColor="#1F7A7A"
+      />
+
+      <p
+        className="text-left text-[14px] md:text-[15px] font-medium pl-1"
+        style={{ color: '#1F7A7A' }}
+      >
+        {intro.footer}
+      </p>
+    </div>
+  );
+}
+
+function WatchSection({
+  screen,
+  isScriptOpen,
+  onOpenScript,
+}: {
+  screen: Screen;
+  isScriptOpen: boolean;
+  onOpenScript: () => void;
+}) {
+  const videoTitle = screen.videoTitle ?? 'Module 1 film, around 3 minutes';
+
+  const videoBlock = (
+    <>
+      <div
+        className={`w-full shrink min-h-0 ${
+          isScriptOpen ? 'flex justify-center' : ''
+        }`}
+      >
+        <div
+          className={`rounded-2xl border border-[#E5E9F0] bg-white shadow-[0_4px_24px_-4px_rgba(10,31,68,0.08),0_2px_6px_-2px_rgba(10,31,68,0.04)] overflow-hidden p-2 md:p-3 ${
+            isScriptOpen ? 'w-full max-w-[280px]' : 'w-full'
+          }`}
+        >
+          <div
+            className={
+              isScriptOpen
+                ? 'w-full aspect-square'
+                : 'w-full aspect-video max-h-[min(320px,36vh)]'
+            }
+          >
+            <VideoLessonPlayer
+              title={videoTitle}
+              videoUrl={screen.videoUrl ?? null}
+              theme="light"
+              compact
+              hideFooter={!screen.videoUrl}
+              className="h-full w-full rounded-xl border-0"
+            />
+          </div>
+        </div>
+      </div>
+
+      {screen.transcriptDropdown ? (
+        <div
+          className={`shrink-0 w-full text-left ${
+            isScriptOpen ? 'flex justify-center' : ''
+          }`}
+        >
+          <button
+            type="button"
+            onClick={onOpenScript}
+            className={`flex items-center justify-between gap-4 bg-white hover:bg-slate-50 transition-colors text-left py-3 px-5 md:px-6 min-h-[56px] rounded-xl border border-slate-200 shadow-[0_4px_24px_-4px_rgba(10,31,68,0.08)] ${
+              isScriptOpen ? 'w-full max-w-[280px]' : 'w-full'
+            }`}
+          >
+            <div
+              className="text-[16px] md:text-[18px] font-medium leading-relaxed"
+              style={{ color: '#1F3864' }}
+            >
+              {screen.transcriptDropdown.header}
+            </div>
+            <span
+              className="material-symbols-outlined shrink-0"
+              style={{ color: '#1F7A7A' }}
+            >
+              menu_book
+            </span>
+          </button>
+        </div>
+      ) : null}
+    </>
+  );
+
+  return (
+    <div className="flex flex-1 w-full min-h-0 items-center justify-center py-6">
+      <div className="w-full max-w-5xl mx-auto">
+        {screen.watchIntro ? (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10 items-start">
+            <WatchIntroSplitCards intro={screen.watchIntro} />
+            <div className="flex flex-col gap-4 min-w-0">{videoBlock}</div>
+          </div>
+        ) : (
+          <div className="space-y-8">
+            {screen.body ? (
+              <div className="border-l-4 border-l-[#2E7CF6] pl-5 md:pl-6 py-1">
+                <p
+                  className="text-left text-[15px] md:text-[16px] font-semibold leading-relaxed whitespace-pre-line"
+                  style={{ color: '#1F3864' }}
+                >
+                  {screen.body}
+                </p>
+              </div>
+            ) : null}
+            {videoBlock}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
@@ -1364,16 +1634,29 @@ export default function MindSyncTeacherTrainingModule01Page() {
           {
             id: 5,
             type: 'divider',
-
-            body: 'The same moment, twice. In the first version the teacher responds in about a second, the way any of us might. In the second she waits three. Watch what changes.',
-            videoTitle: 'Module 1 film, around 2 minutes',
-            videoUrl: null,
-            dropdowns: [
-              {
-                header: 'Read the full script ',
-                body: 'OPEN. Clean Elara logo, then a soft dissolve into the classroom.\n\nSCENE 1, a pupil who has checked out. A Year 9 English lesson in full flow. Daniel is near the back.\nHis book is closed and he is turning a pen over and over in his hands, bending it, clicking it, eyes\nsomewhere else. The pupils either side of him are writing.\n\nNarrator: Year 9 English, period four on a Wednesday. Watch the boy at the back. His book is shut,\nand he is turning a pen over and over in his hands. He is not being difficult and he is not being loud. He\nhas just stopped being able to join in.\n\nSCENE 2, the ask, and two realities. Ms Patel asks him calmly to get his book out. He does not open it.\nA small tense shake of the head, and a low mutter. From the front it looks like a knock back. Then a\nshort view from Daniel’s side: the room tilts, the light hums, a pencil tap is too loud.\n\nNarrator: A fair, ordinary instruction. From the front of the room, that looks like a refusal. But from\ninside his head, it is not refusal at all. He heard the tone, not the words. Same moment. Two\ncompletely different realities.\n\nSCENE 3, what often happens. She responds in about a second, on reflex. She asks again, harder,\nand names a consequence. It stops being about a book and starts being about winning.\n\nSCENE 4, what could happen instead. The same moment again. Narrator: In a classroom, most of us\nwait about one second before we respond. Researchers have actually measured it. And when a\nteacher holds that pause for just a few seconds longer, what happens next in the room can change\ncompletely. She feels herself about to react, and instead she waits. Three seconds. Then she comes\ndown to his level, off to the side, and asks one quiet question.\n\nSCENE 5, the outcome. He takes two minutes, comes back, and does the work. Narrator: Two\nversions of the same lesson, and the only real difference between them was about two seconds. Not a\nbetter teacher. Not a different pupil. Two seconds.\n\nCLOSE. Clean Elara logo.',
+            t2: 'The three second pause, in a real classroom',
+            watchIntro: {
+              headline: 'The same moment, twice.',
+              before: {
+                version: 'Version 1',
+                timing: '~1 second',
+                description:
+                  'The teacher responds on reflex, the way any of us might.',
               },
-            ],
+              after: {
+                version: 'Version 2',
+                timing: '3 seconds',
+                description:
+                  'She pauses, then responds to what is actually happening.',
+              },
+              footer: 'Watch what changes.',
+            },
+            videoTitle: 'Module 1 film, around 3 minutes',
+            videoUrl: null,
+            transcriptDropdown: {
+                header: 'Read the full script',
+                body: 'OPEN. Clean Elara logo, then a soft dissolve into the classroom.\n\nSCENE 1, a pupil who has checked out. A Year 9 English lesson in full flow. Daniel is near the back.\nHis book is closed and he is turning a pen over and over in his hands, bending it, clicking it, eyes\nsomewhere else. The pupils either side of him are writing.\n\nNarrator: Year 9 English, period four on a Wednesday. Watch the boy at the back. His book is shut,\nand he is turning a pen over and over in his hands. He is not being difficult and he is not being loud. He\nhas just stopped being able to join in.\n\nSCENE 2, the ask, and two realities. Ms Patel asks him calmly to get his book out. He does not open it.\nA small tense shake of the head, and a low mutter. From the front it looks like a knock back. Then a\nshort view from Daniel’s side: the room tilts, the light hums, a pencil tap is too loud.\n\nNarrator: A fair, ordinary instruction. From the front of the room, that looks like a refusal. But from\ninside his head, it is not refusal at all. He heard the tone, not the words. Same moment. Two\ncompletely different realities.\n\nSCENE 3, what often happens. She responds in about a second, on reflex. She asks again, harder,\nand names a consequence. It stops being about a book and starts being about winning.\n\nSCENE 4, what could happen instead. The same moment again. Narrator: In a classroom, most of us\nwait about one second before we respond. Researchers have actually measured it. And when a\nteacher holds that pause for just a few seconds longer, what happens next in the room can change\ncompletely. She feels herself about to react, and instead she waits. Three seconds. Then she comes\ndown to his level, off to the side, and asks one quiet question.\n\nSCENE 5, the outcome. He takes two minutes, comes back, and does the work. Narrator: Two\nversions of the same lesson, and the only real difference between them was about two seconds. Not a\nbetter teacher. Not a different pupil. Two seconds.\n\nCLOSE. Clean Elara logo.',
+            },
           },
           {
             id: 6,
@@ -1679,6 +1962,11 @@ export default function MindSyncTeacherTrainingModule01Page() {
   };
 
   const [isSidebarTranscriptOpen, setIsSidebarTranscriptOpen] = useState(false);
+  const [isWatchScriptOpen, setIsWatchScriptOpen] = useState(false);
+
+  useEffect(() => {
+    setIsWatchScriptOpen(false);
+  }, [index]);
 
   const toc = useMemo(() => {
     return screens.map((s, i) => {
@@ -1816,18 +2104,19 @@ export default function MindSyncTeacherTrainingModule01Page() {
 
   const handleDropdownOpenChange = (dropdownId: string, open: boolean) => {
     const el = scrollAreaRef.current;
+    const skipAutoScrollOnOpen = screen.id === 2 || screen.id === 3;
 
     setOpenDropdownIds((prev) => {
       const next = new Set(prev);
-      const wasAnyOpen = prev.size > 0;
+      const wasCurrentScreenOpen = isDropdownOpenForScreen(prev, screen.id);
 
       if (open) next.add(dropdownId);
       else next.delete(dropdownId);
 
-      const willAnyOpen = next.size > 0;
+      const willCurrentScreenOpen = isDropdownOpenForScreen(next, screen.id);
 
       if (el) {
-        if (open && !wasAnyOpen) {
+        if (open && !wasCurrentScreenOpen) {
           scrollRestoreTopRef.current = el.scrollTop;
         }
 
@@ -1835,13 +2124,16 @@ export default function MindSyncTeacherTrainingModule01Page() {
           if (!el) return;
 
           if (open) {
-            if (screen.type !== 'accordion') {
+            if (screen.type !== 'accordion' && !skipAutoScrollOnOpen) {
               el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' });
             }
             return;
           }
 
-          if (!willAnyOpen && scrollRestoreTopRef.current !== null) {
+          if (
+            !willCurrentScreenOpen &&
+            scrollRestoreTopRef.current !== null
+          ) {
             el.scrollTo({
               top: scrollRestoreTopRef.current,
               behavior: 'smooth',
@@ -1855,7 +2147,13 @@ export default function MindSyncTeacherTrainingModule01Page() {
     });
   };
 
-  const isAnyDropdownOpen = openDropdownIds.size > 0;
+  const isCurrentScreenDropdownOpen = isDropdownOpenForScreen(
+    openDropdownIds,
+    screen.id
+  );
+  const isIntroReadMoreLayoutOpen =
+    isCurrentScreenDropdownOpen &&
+    (screen.id === 2 || screen.id === 3);
 
   const learnStatesScreen = useMemo(
     () => screens.find((s) => s.id === 11) ?? null,
@@ -1987,7 +2285,23 @@ export default function MindSyncTeacherTrainingModule01Page() {
       </header>
 
       <main className="flex w-full h-[calc(100vh-238px)] overflow-hidden">
-        <div className="w-3/4 flex flex-col min-h-0 overflow-hidden p-4">
+        <div
+          className={`w-3/4 min-h-0 overflow-hidden p-4 ${
+            screen.id === 5 && isWatchScriptOpen
+              ? 'relative flex flex-row'
+              : 'flex flex-col'
+          }`}
+        >
+          {screen.id === 5 &&
+          isWatchScriptOpen &&
+          screen.transcriptDropdown ? (
+            <ScriptSidebarPanel
+              header={screen.transcriptDropdown.header}
+              body={screen.transcriptDropdown.body}
+              onClose={() => setIsWatchScriptOpen(false)}
+            />
+          ) : null}
+          <div className="flex-1 min-h-0 flex flex-col overflow-hidden">
           <div
             key={index}
             className="step-transition flex flex-col flex-1 min-h-0 overflow-hidden"
@@ -1998,15 +2312,14 @@ export default function MindSyncTeacherTrainingModule01Page() {
                 screen.id === 16 ||
                 screen.type === 'cover' ||
                 screen.id === 2 ||
-                screen.id === 3
+                screen.id === 3 ||
+                screen.id === 5
                   ? 'pb-4 flex flex-col'
                   : 'pb-24'
               } ${
-                isAnyDropdownOpen ||
+                isCurrentScreenDropdownOpen ||
                 screen.type === 'scenario_feedback' ||
-                screen.id === 17 ||
-                screen.id === 2 ||
-                screen.id === 3
+                screen.id === 17
                   ? 'overflow-y-auto'
                   : 'overflow-hidden'
               }`}
@@ -2016,8 +2329,11 @@ export default function MindSyncTeacherTrainingModule01Page() {
                   screen.id === 16 ||
                   screen.type === 'cover' ||
                   screen.id === 2 ||
-                  screen.id === 3
-                    ? 'flex flex-col flex-1 min-h-full h-full'
+                  screen.id === 3 ||
+                  screen.id === 5
+                    ? isIntroReadMoreLayoutOpen
+                      ? 'flex flex-col'
+                      : 'flex flex-col flex-1 min-h-full h-full'
                     : 'space-y-4'
                 }
               >
@@ -2053,10 +2369,24 @@ export default function MindSyncTeacherTrainingModule01Page() {
                     <EvidenceTabsSection screen={screen} />
                   </div>
                 ) : screen.id === 2 ? (
-                  <div className="p-5 md:p-6 md:px-14 flex flex-1 flex-col min-h-0 h-full justify-center py-6">
+                  <div
+                    className={`p-5 md:p-6 md:px-14 flex flex-col py-6 ${
+                      isIntroReadMoreLayoutOpen
+                        ? 'justify-start'
+                        : 'flex-1 min-h-0 h-full justify-center'
+                    }`}
+                  >
                     <AboutModuleSection
                       screen={screen}
                       onDropdownOpenChange={handleDropdownOpenChange}
+                    />
+                  </div>
+                ) : screen.id === 5 ? (
+                  <div className="p-5 md:p-6 md:px-14 flex flex-1 flex-col min-h-full h-full">
+                    <WatchSection
+                      screen={screen}
+                      isScriptOpen={isWatchScriptOpen}
+                      onOpenScript={() => setIsWatchScriptOpen(true)}
                     />
                   </div>
                 ) : screen.id === 3 && screen.bullets ? (
@@ -2264,13 +2594,6 @@ export default function MindSyncTeacherTrainingModule01Page() {
                                 </div>
                               ) : null}
                             </div>
-                          ) : screen.id === 5 ? (
-                            <div className="text-center">
-                              <h1 className="text-2xl md:text-4xl font-black text-slate-900">
-                                {screen.t1}
-                              </h1>
-                              <div className="mt-4 h-1 w-20 bg-[#0857e1]/30 mx-auto rounded-full" />
-                            </div>
                           ) : screen.id === 7 ? null : (
                             <div className="text-center">
                               <h1 className="text-2xl md:text-4xl font-black text-slate-900">
@@ -2279,51 +2602,6 @@ export default function MindSyncTeacherTrainingModule01Page() {
                               <div className="mt-3 h-1 w-24 mx-auto rounded-full bg-gradient-to-r from-[#60A5FA] to-[#9333EA]" />
                             </div>
                           )
-                        ) : null}
-
-                        {screen.id === 5 ? (
-                          <div className="pt-6 space-y-8">
-                            <div className="flex justify-center">
-                              <div className="w-full max-w-2xl">
-                                <div className="aspect-video bg-[#F7F9FB] rounded-[2.5rem] border border-[#C9D6E5] shadow-[0_20px_40px_rgba(15,23,42,0.05)] overflow-hidden">
-                                  <VideoLessonPlayer
-                                    title={
-                                      screen.videoTitle ??
-                                      'Module 1 film, around 2 minutes'
-                                    }
-                                    videoUrl={screen.videoUrl ?? null}
-                                    className="rounded-none"
-                                  />
-                                </div>
-                              </div>
-                            </div>
-
-                            {screen.videoPrompt ? (
-                              <div className="text-sm text-slate-600 text-center">
-                                {screen.videoPrompt}
-                              </div>
-                            ) : null}
-
-                            {screen.dropdowns && screen.dropdowns.length ? (
-                              <div className="space-y-3">
-                                {screen.dropdowns.map((d) => (
-                                  <div
-                                    key={d.header}
-                                    className="w-full md:w-auto"
-                                  >
-                                    <div className="[&>div>button]:py-4 [&>div>button]:px-5">
-                                      <Dropdown
-                                        dropdownId={`${screen.id}:${d.header}`}
-                                        header={d.header}
-                                        body={d.body}
-                                        onOpenChange={handleDropdownOpenChange}
-                                      />
-                                    </div>
-                                  </div>
-                                ))}
-                              </div>
-                            ) : null}
-                          </div>
                         ) : null}
 
                         {screen.id === 7 ? null : null}
@@ -3063,6 +3341,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
                 </button>
               </div>
             </div>
+          </div>
           </div>
         </div>
 
