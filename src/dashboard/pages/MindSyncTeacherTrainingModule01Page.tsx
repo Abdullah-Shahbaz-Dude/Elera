@@ -147,9 +147,31 @@ type SidebarSection = {
 };
 
 const TAKEAWAY_HIGHLIGHT_TEXT =
-  '“Yesterday I misread what was going on for you. I should have checked in rather than snapped. I am sorry. You did not deserve that.” No “but.” No explanation. No asking them to apologise back. Then let them go.';
+  '“Yesterday I misunderstood what was going on for you. I should have checked in rather than snapped. I am sorry. You did not deserve that.” No “but”. No explanation. No asking them to apologise back. Then let them go.';
 
-const HIDDEN_NAV_BLOCK_IDS = new Set<number>([8, 9, 10, 21, 24, 27]);
+const HIDDEN_NAV_BLOCK_IDS = new Set<number>([8, 9, 10, 11, 14, 21, 24, 27]);
+
+const TECHNIQUE_STEPS: TechniqueStep[] = [
+  {
+    number: 1,
+    title: 'Notice the rise in yourself',
+    body: 'Your jaw tightens. Your chest feels hot. There is a feeling of being undermined, especially with others watching. That rise is information about you, not about the pupil. Notice it. Do not act on it yet.',
+    expand: {
+      header: 'Why this is the hard step',
+      body: 'The rise feels like clarity. It is not. Catching it, and not acting on it, is the actual work of this technique.',
+    },
+  },
+  {
+    number: 2,
+    title: 'Ask one quiet question',
+    body: 'Inside your head: is this pupil in green, amber or red? Two seconds of looking usually tells you. Out loud if you need to: “Quick check in. Are you with me, or somewhere else right now?” It works because it does not accuse and it does not demand. It opens a door.',
+  },
+  {
+    number: 3,
+    title: 'Match your response to the state, not the behaviour',
+    body: '• Green, and they have chosen not to get on with it: the calm, firm, named conversation about what you have asked for.\n\n• Amber: lower the demand briefly, slow your voice, offer a small choice.\n\n• Red: reduce demands to almost zero. Offer space, not solutions. The conversation comes later.',
+  },
+];
 
 const SCENARIOS: Record<1 | 2 | 3, Scenario> = {
   1: {
@@ -159,37 +181,37 @@ const SCENARIOS: Record<1 | 2 | 3, Scenario> = {
       'It is period three on a Wednesday. You have set your Year 8 class a written task. The room is quiet, most pupils are working. One pupil, clear in your view, is staring at the page. Pen down. No writing. Two minutes have passed since you gave the instruction. You walked past once and gave a gentle prompt. Nothing changed. The pupils on either side of her have started. You have about ten seconds before you decide what to do.',
     question: 'What would you do?',
     options: {
-      A: 'Walk over and say firmly, in a voice the class can hear, “I asked you to start. I will not ask again.” Stand by her desk until she picks up the pen.',
-      B: 'Walk over and stand silently next to her desk for ten seconds, looking down at her work, waiting for her to start.',
-      C: 'Crouch to her eye level, side on rather than face on. Lower your voice. Say quietly, “Quick check in. Is the task the problem, or is something else going on?” Wait for her answer.',
-      D: 'Ignore it for a few more minutes. She will start eventually if you do not make a thing of it.',
+      A: 'Say firmly, in a voice the class can hear, that she needs to start now.',
+      B: 'Walk over and stand silently next to her desk for ten seconds.',
+      C: 'Crouch to her eye level, side on rather than face on. Lower your voice. Ask one open question.',
+      D: 'Leave it for a few more minutes. She will start eventually.',
     },
     feedback: {
-      A: 'Option A. Looks reasonable, almost always backfires.\n\nLoud, in front of the class, to a pupil whose state you have not checked. If she is in amber or red you have raised the demand and made her the centre of attention. High chance she now refuses, walks out, or shuts down. Even genuine defiance, much rarer than it feels, rarely lands well with a public consequence.',
-      B: 'Option B. Better, but only partly.\n\nSilent presence works for some pupils. For others, especially autistic and anxious pupils, it reads as pressure and increases dysregulation. You cannot know which without checking, and if she starts you do not know whether she was fine or forced from a dysregulated state.',
-      C: 'Option C. This is the technique in action.\n\nYou have put the rise through the pause. Eye level not towering, side on not face on, voice lowered, one open question. “Is the task the problem, or is something else going on?” gives her two doors, and either is fine. Fifteen seconds spent, the rest of the lesson kept.',
-      D: 'Option D. Avoidant, with a hidden cost.\n\nIgnoring sometimes works but quietly signals that you have given up. Other pupils notice. If the message is that some pupils are held to the standard and some are not, your authority slowly weakens.',
+      A: 'Option A. Looks reasonable, and usually backfires. Loud, in front of the class, to a pupil whose state you have not checked yet. If she is in amber or red, you have raised the demand and made her the centre of attention. There is a high chance she now refuses, walks out, or shuts down.',
+      B: 'Option B. Better, but only partly. Silent presence works for some pupils. For others, especially autistic and anxious pupils, it reads as pressure and increases dysregulation. You cannot know which without checking. And if she starts, you still do not know whether she was fine or forced.',
+      C: 'Option C. This is the technique in action. You have put the rise through the pause. Eye level not towering, side on not face on, voice lowered, one open question. “Is the task the problem, or is something else going on?” gives her two doors, and either is fine. Fifteen seconds spent, the rest of the lesson kept.',
+      D: 'Option D. Avoidant, with a hidden cost. Leaving it sometimes works, but it quietly signals that you have stopped expecting anything. Other pupils notice. Checking in costs you fifteen seconds and keeps the expectation intact.',
     },
     point:
-      'The point. The difference between the best response and the worst is not whether you set a limit. It is whether you read the pupil’s state before you set it.',
+      'The point. The difference between the best response and the worst is not whether you hold the line. It is whether you understand where the pupil is before you do.',
   },
   2: {
     id: 2,
     title: 'The pupil who walks out',
     situation:
-      'You are teaching a Year 10 class. One pupil, tense throughout and not engaging with two earlier prompts, suddenly stands, picks up his bag, and walks toward the door. He does not speak. He does not look at you. He is about four seconds from the corridor. Other pupils are watching. You have to decide right now.',
+      'You are teaching a Year 10 class. One pupil, tense throughout and not engaging with two earlier prompts, suddenly stands, picks up his bag, and walks towards the door. He does not speak. He does not look at you. He is about four seconds from the corridor. Other pupils are watching. You have to decide right now.',
     question: 'What would you do?',
     options: {
-      A: 'Step in front of the door to block him. Tell him firmly he is not leaving until he sits back down.',
-      B: 'Let him walk out. Do not chase. Do not raise your voice. Note to follow up with pastoral and with him personally, separately, when he is calm.',
-      C: 'Shout after him as he leaves: “If you walk out of my lesson, that is an automatic detention.”',
+      A: 'Step in front of the door. Tell him firmly he is not leaving.',
+      B: 'Let him walk. Do not follow, do not raise your voice. Flag it to pastoral and speak to him later.',
+      C: 'Call after him as he leaves, so the class hears there will be a consequence.',
       D: 'Send another pupil after him to bring him back.',
     },
     feedback: {
-      A: 'Option A. Almost guaranteed to escalate.\n\nBlocking the door of a pupil already in red is the fastest way to a serious incident. He is leaving because his brain has tipped past tolerance. Standing in his way pushes fight or flight into fight. Pupils who would never normally be physical have hurt staff in this exact moment.',
-      B: 'Option B. Counter intuitive, but right.\n\nLetting him walk feels like losing control. It is not. Pupils in red need to discharge the alarm response, and walking is one of the safest ways the body does that. The follow up matters as much: flag to pastoral, speak when he is back in green. Pupils who were not chased or shouted at return more easily.',
-      C: 'Option C. Understandable, costs you.\n\nShouting after him serves the audience in the room more than him. He is not coming back because you raised your voice. You have added a public threat to a public exit, making re entry harder. Every other pupil just saw you answer distress with a threat.',
-      D: 'Option D. Well meant, occasionally disastrous.\n\nThe peer is now responsible for something that is not their job. A dysregulated pupil approached in the corridor by a peer can escalate fast. Adults handle it.',
+      A: 'Option A. Almost certain to escalate. Blocking the door of a pupil already in red is the fastest route to a serious incident. He is leaving because his brain has tipped past what it can hold. Standing in his way turns flight into fight. Pupils who would never normally be physical have hurt staff in exactly this moment.',
+      B: 'Option B. Counter intuitive, and right. Letting him walk can feel like losing control. It is not. A pupil in red needs to discharge the alarm response, and walking is one of the safest ways the body does that. The follow up matters as much as the moment: flag it, and speak when he is back in green. Pupils who were not chased or shouted at come back more easily.',
+      C: 'Option C. Understandable, and it costs you. Calling after him serves the audience in the room more than it serves him. He is not coming back because you raised your voice. You have added a public threat to a public exit, which makes coming back harder. Every other pupil just watched you answer distress with a threat.',
+      D: 'Option D. Well meant, occasionally disastrous. The peer is now carrying something that is not their job. A dysregulated pupil approached in a corridor by another pupil can escalate quickly. Adults handle this.',
     },
     point:
       'The point. A pupil walking out is not the disaster it can feel like. The disaster is what happens if you turn that walk out into a confrontation. Your job in those four seconds is to keep it safe, not tidy.',
@@ -198,22 +220,22 @@ const SCENARIOS: Record<1 | 2 | 3, Scenario> = {
     id: 3,
     title: 'The repair',
     situation:
-      'Yesterday, in a busy double lesson, you snapped at a pupil who was not following an instruction. You said something like “I have asked you three times. If you cannot follow simple instructions, you can sit outside.” She went quiet, did the work, did not look at you again. Afterwards her form tutor told you she had been crying at break and her grandmother had been admitted to hospital that morning. You feel sick about it. She is in your class again in twenty minutes.',
+      'Yesterday, in a busy double lesson, you snapped at a pupil who was not following an instruction. You said something like: “I have asked you three times. If you cannot follow simple instructions, you can sit outside.” She went quiet, did the work, and did not look at you again. Afterwards her form tutor told you she had been crying at break, and that her grandmother had been admitted to hospital that morning. You feel sick about it. She is in your class again in twenty minutes.',
     question: 'What is the best thing to do now?',
     options: {
-      A: 'Do not bring it up. Just be especially kind to her in the lesson and hope she notices.',
-      B: 'At the start of the lesson, in front of the class, apologise publicly so the whole class sees you model accountability.',
-      C: 'Catch her quietly before or as the lesson settles: “Yesterday, when I asked you to follow the instruction, I did not know what was going on for you. I should have checked in rather than snapped. I am sorry. You did not deserve that.” Then leave her with it.',
-      D: 'Add a kind comment to her book when you mark tonight, but do not say anything in person.',
+      A: 'Do not bring it up. Just be especially kind to her in the lesson.',
+      B: 'At the start of the lesson, apologise to her in front of the class.',
+      C: 'Catch her quietly as the lesson settles. Name what happened, own it, and leave her with it.',
+      D: 'Add a kind comment in her book when you mark tonight, but do not raise it in person.',
     },
     feedback: {
-      A: 'Option A. The most damaging of the options.\n\nPretending it did not happen costs trust the most. She has not forgotten. Without repair, the moment becomes part of her quiet picture of you. Pupils who never receive repair stop believing repair is possible.',
-      B: 'Option B. Right values, wrong stage.\n\nA public apology for a one to one moment makes her the centre of unwanted attention. The real repair gets diluted. Keep private repair private.',
-      C: 'Option C. Repair done well.\n\nYou named what happened, owned the misreading, did not ask her to apologise, did not defend yourself, and then let her go. “Leave her with it” is the part most people miss. She may say nothing, or “it is fine.” That is enough. You have given her an adult naming a mistake without making her manage it. That is rare, and it sticks.',
-      D: 'Option D. Kind, but incomplete.\n\nA note has too much work to do on its own. She does not know if it means sorry, or well done. Use it as well if you like, but spoken repair comes first.',
+      A: 'Option A. The most costly of the options. Saying nothing costs trust the most, because she has not forgotten. Without repair, the moment becomes part of her quiet picture of you. Pupils who never receive repair stop believing repair is possible.',
+      B: 'Option B. Right instinct, wrong setting. A public apology for a private moment makes her the centre of attention she did not ask for, and the real repair gets diluted. Keep private repair private.',
+      C: 'Option C. Repair done well. You named what happened, owned the misunderstanding, did not ask her to apologise, did not defend yourself, and then let her go. Leaving her with it is the part most of us miss. She may say nothing, or just “it is fine”. That is enough. You have given her an adult naming a mistake without making her manage it. That is rare, and it sticks.',
+      D: 'Option D. Kind, but incomplete. A note has too much work to do on its own. She does not know whether it means sorry, or well done. Use it as well if you like, but the spoken repair comes first.',
     },
     point:
-      'The point. You will misread distress as defiance sometimes. What matters almost as much as the technique is what you do afterwards. Clean repair, no “but,” no asking the pupil to apologise back. Then let them go.',
+      'The point. Anyone can misunderstand distress in a busy lesson. What matters almost as much as the technique is what you do afterwards. Clean repair. No “but”. No asking the pupil to apologise for the thing you misread.',
   },
 };
 
@@ -362,6 +384,14 @@ function Dropdown({
   );
 }
 
+function ModuleFavicon({
+  className = 'w-7 h-7 object-contain shrink-0',
+}: {
+  className?: string;
+}) {
+  return <img alt="" src={logoFav} className={className} />;
+}
+
 function LearnAccordionItem({
   dropdownId,
   header,
@@ -383,39 +413,29 @@ function LearnAccordionItem({
     const lower = header.toLowerCase();
     if (lower.startsWith('green')) {
       return {
-        iconBg: 'bg-emerald-100',
-        dotBg: 'bg-emerald-500',
         accentBorder: 'border-emerald-100',
         caption: 'The thinking brain is in charge',
       };
     }
     if (lower.startsWith('amber')) {
       return {
-        iconBg: 'bg-amber-100',
-        dotBg: 'bg-amber-500',
         accentBorder: 'border-amber-100',
         caption: 'Energy going on staying in the room',
       };
     }
     if (lower.startsWith('red')) {
       return {
-        iconBg: 'bg-red-100',
-        dotBg: 'bg-red-500',
         accentBorder: 'border-red-100',
         caption: 'The alarm system is in charge',
       };
     }
     if (lower.includes('bit more on the brain')) {
       return {
-        iconBg: 'bg-slate-100',
-        dotBg: 'bg-slate-400',
         accentBorder: 'border-slate-200',
         caption: 'Optional extra detail',
       };
     }
     return {
-      iconBg: 'bg-slate-100',
-      dotBg: 'bg-slate-400',
       accentBorder: 'border-slate-200',
       caption: '',
     };
@@ -441,17 +461,9 @@ function LearnAccordionItem({
         <div
           className={`flex items-center min-w-0 ${embedded || compact ? 'gap-3' : 'gap-6'}`}
         >
-          <div
-            className={`rounded-full flex items-center justify-center shrink-0 ${meta.iconBg} ${
-              embedded || compact ? 'w-9 h-9' : 'w-12 h-12'
-            }`}
-          >
-            <span
-              className={`rounded-full ${meta.dotBg} ${
-                embedded || compact ? 'w-2.5 h-2.5' : 'w-4 h-4'
-              }`}
-            />
-          </div>
+          <ModuleFavicon
+            className={embedded || compact ? 'w-5 h-5' : 'w-7 h-7'}
+          />
           <div className="min-w-0">
             <div
               className={`font-semibold text-slate-900 ${
@@ -564,84 +576,73 @@ function splitTechniqueTitle(t2?: string) {
 
 function TechniquePauseFlow() {
   return (
-    <div className="relative overflow-hidden w-full min-h-[300px] lg:min-h-[360px] rounded-2xl border border-[#E5E9F0] shadow-[0_20px_40px_-15px_rgba(31,56,100,0.12)]">
-      <img
-        src={learnHeroImage}
-        alt=""
-        className="absolute inset-0 h-full w-full object-cover scale-105"
-        aria-hidden
-      />
-      <div
-        className="absolute inset-0"
-        style={{
-          background:
-            'linear-gradient(160deg, rgba(247,249,251,0.96) 0%, rgba(255,255,255,0.92) 45%, rgba(238,243,250,0.94) 100%)',
-        }}
-        aria-hidden
-      />
-      <div className="absolute inset-0 bg-gradient-to-t from-[#1F3864]/10 via-transparent to-transparent pointer-events-none" />
-
-      <div className="relative z-10 flex h-full flex-col items-center justify-between gap-4 p-5 md:p-6">
-        <div className="w-full rounded-xl border border-white/80 bg-white/95 px-4 py-3.5 shadow-[0_8px_24px_-8px_rgba(31,56,100,0.15)] backdrop-blur-sm">
-          <p className="text-[11px] font-bold uppercase tracking-widest text-slate-500 mb-1">
+    <div className="w-full max-w-[480px] lg:max-w-none lg:ml-auto rounded-2xl border border-slate-200 bg-white shadow-[0_20px_40px_-15px_rgba(47,99,120,0.06)] p-5 md:p-6">
+      <div className="flex items-center justify-between gap-3 md:gap-4">
+        <div className="flex flex-col items-center gap-2 text-center shrink-0 min-w-[72px]">
+          <div className="size-12 rounded-full bg-[#2E7CF6]/10 flex items-center justify-center border border-[#2E7CF6]/15">
+            <span
+              className="material-symbols-outlined text-[24px] text-[#2E7CF6]"
+              style={{ fontVariationSettings: '"FILL" 1' }}
+            >
+              person
+            </span>
+          </div>
+          <p className="text-[11px] font-bold uppercase tracking-widest text-slate-500 leading-tight">
             Pupil acts
-          </p>
-          <p
-            className="text-[15px] font-semibold"
-            style={{ color: '#1F3864' }}
-          >
-            Does something
           </p>
         </div>
 
-        <div className="flex w-full flex-col items-center gap-3 py-1">
-          <div className="h-5 w-px bg-[#2E7CF6]/30" aria-hidden />
-          <div className="flex items-center gap-2 rounded-full border border-white/80 bg-white/95 px-4 py-2 shadow-[0_8px_20px_-8px_rgba(46,124,246,0.35)] backdrop-blur-sm">
+        <div className="h-px flex-1 min-w-[12px] bg-[#2E7CF6]/25" aria-hidden />
+
+        <div className="flex flex-col items-center gap-2 shrink-0">
+          <div className="flex items-center gap-2 rounded-full border border-slate-200 bg-[#F7F9FB] px-3 py-1.5">
             <span
-              className="material-symbols-outlined text-[20px]"
-              style={{ color: '#2E7CF6' }}
+              className="material-symbols-outlined text-[18px] text-[#2E7CF6]"
             >
               timer
             </span>
             <span
-              className="text-[14px] font-bold tracking-wide"
+              className="text-[13px] font-bold tracking-wide whitespace-nowrap"
               style={{ color: '#1F3864' }}
             >
               3 sec
             </span>
           </div>
           <p
-            className="text-[12px] font-semibold uppercase tracking-wide text-center"
+            className="text-[10px] font-semibold uppercase tracking-wide text-center whitespace-nowrap"
             style={{ color: '#64748B' }}
           >
-            Ask: Green? Amber? Red?
+            Green? Amber? Red?
           </p>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             <span
-              className="size-3.5 rounded-full bg-emerald-500 ring-2 ring-white shadow-sm"
+              className="size-3 rounded-full bg-emerald-500 ring-2 ring-white shadow-sm"
               title="Green"
             />
             <span
-              className="size-3.5 rounded-full bg-amber-400 ring-2 ring-white shadow-sm"
+              className="size-3 rounded-full bg-amber-400 ring-2 ring-white shadow-sm"
               title="Amber"
             />
             <span
-              className="size-3.5 rounded-full bg-rose-500 ring-2 ring-white shadow-sm"
+              className="size-3 rounded-full bg-rose-500 ring-2 ring-white shadow-sm"
               title="Red"
             />
           </div>
-          <div className="h-5 w-px bg-[#1F7A7A]/30" aria-hidden />
         </div>
 
-        <div className="w-full rounded-xl border border-white/80 bg-white/95 px-4 py-3.5 border-l-4 border-l-[#1F7A7A] shadow-[0_8px_24px_-8px_rgba(31,56,100,0.15)] backdrop-blur-sm">
-          <p className="text-[11px] font-bold uppercase tracking-widest text-slate-500 mb-1">
+        <div className="h-px flex-1 min-w-[12px] bg-[#1F7A7A]/25" aria-hidden />
+
+        <div className="flex flex-col items-center gap-2 text-center shrink-0 min-w-[72px]">
+          <div className="size-12 rounded-full bg-[#E6F4F4] flex items-center justify-center border border-[#1F7A7A]/20">
+            <span
+              className="material-symbols-outlined text-[24px] text-[#1F7A7A]"
+              style={{ fontVariationSettings: '"FILL" 1' }}
+            >
+              psychology
+            </span>
+          </div>
+          <p className="text-[11px] font-bold uppercase tracking-widest text-slate-500 leading-tight">
             You
-          </p>
-          <p
-            className="text-[15px] font-semibold"
-            style={{ color: '#1F3864' }}
-          >
-            Match your response
           </p>
         </div>
       </div>
@@ -649,37 +650,296 @@ function TechniquePauseFlow() {
   );
 }
 
-function TechniqueIntroSection({ screen }: { screen: Screen }) {
-  const { headline } = splitTechniqueTitle(screen.t2);
+function TechniqueStepPreviewCards({
+  steps,
+  sectionTitle,
+  onStepClick,
+}: {
+  steps: TechniqueStep[];
+  sectionTitle: string;
+  onStepClick: (stepNumber: number) => void;
+}) {
+  if (!steps.length) return null;
 
   return (
-    <div className="flex flex-1 w-full items-start justify-start pt-2">
-      <div className="w-full max-w-[1200px] mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-start">
-          <div className="space-y-5 pt-6 lg:pt-10">
-            <header>
-              <h2
-                className="text-[32px] leading-tight font-bold"
-                style={{ color: '#1F3864' }}
-              >
-                {headline}
-              </h2>
-            </header>
+    <div className="w-full">
+      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-2 sm:gap-4 mb-5 md:mb-6">
+        <h2 className="text-[32px] leading-tight font-bold text-[#1F3864]">
+          {sectionTitle}
+        </h2>
+        <p className="text-[11px] font-bold uppercase tracking-widest text-slate-500">
+          Tap a step to explore
+        </p>
+      </div>
 
-            {screen.lead ? (
-              <div className="bg-[#F7F9FB] p-6 md:p-8 rounded-xl border-l-4 border-l-[#2E7CF6]">
-                <p
-                  className="text-[18px] leading-relaxed"
-                  style={{ color: '#333333' }}
-                >
-                  {screen.lead}
-                </p>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-6">
+        {steps.map((step) => (
+          <button
+            key={step.number}
+            type="button"
+            onClick={() => onStepClick(step.number)}
+            className="group bg-white rounded-xl border border-slate-200 border-l-4 border-l-transparent shadow-[0_20px_40px_-15px_rgba(47,99,120,0.06)] overflow-hidden text-center transition-all duration-300 hover:-translate-y-1 hover:border-[#2E7CF6]/30 hover:border-l-[#2E7CF6] hover:shadow-[0_24px_48px_-15px_rgba(47,99,120,0.14)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2E7CF6]/30"
+          >
+            <div className="w-full min-h-[170px] p-5 flex flex-col items-center justify-between gap-4">
+              <span className="flex items-center justify-center w-12 h-12 rounded-full bg-[#2E7CF6]/10 text-[#2E7CF6] text-base font-bold shrink-0 transition-colors group-hover:bg-[#2E7CF6]/15">
+                {step.number}
+              </span>
+
+              <div className="flex flex-col items-center gap-2 shrink-0 min-w-0 px-1">
+                <h3 className="text-[15px] font-semibold leading-snug text-[#1F3864]">
+                  {step.title}
+                </h3>
+                <div className="h-1 w-12 rounded-full bg-[#2E7CF6]/20 transition-colors group-hover:bg-[#2E7CF6]/45" />
               </div>
-            ) : null}
-          </div>
 
-          <TechniquePauseFlow />
+              <span
+                className="material-symbols-outlined text-[22px] leading-none text-[#2E7CF6]/70 transition-colors group-hover:text-[#2E7CF6] shrink-0"
+                style={{ fontVariationSettings: '"FILL" 1' }}
+              >
+                touch_app
+              </span>
+            </div>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function TechniqueStepBodyContent({
+  step,
+  includeExpand = true,
+  includeTrafficLight = true,
+  variant = 'card',
+}: {
+  step: TechniqueStep;
+  includeExpand?: boolean;
+  includeTrafficLight?: boolean;
+  variant?: 'card' | 'modal';
+}) {
+  const leadPanel = (content: React.ReactNode) => (
+    <div className="bg-[#F7F9FB] p-5 md:p-6 rounded-xl border-l-4 border-l-[#2E7CF6] mb-4">
+      <div
+        className="text-[18px] leading-relaxed"
+        style={{ color: '#333333' }}
+      >
+        {content}
+      </div>
+    </div>
+  );
+
+  return (
+    <>
+      {variant === 'modal' && (step.number === 1 || step.number === 2) ? (
+        leadPanel(step.body)
+      ) : (
+        <p className="text-[15px] text-slate-700 mb-4 leading-relaxed whitespace-pre-line">
+          {step.body}
+        </p>
+      )}
+
+      {includeTrafficLight && step.showTrafficLight ? (
+        <div className="flex items-center justify-center gap-6 my-4 p-4 rounded-xl bg-[#F7F9FB] border border-slate-200">
+          <div className="flex flex-col items-center gap-1.5">
+            <span className="size-5 rounded-full bg-emerald-500 ring-2 ring-white shadow-sm" />
+            <span className="text-[11px] font-semibold text-emerald-700">
+              Green
+            </span>
+          </div>
+          <div className="flex flex-col items-center gap-1.5">
+            <span className="size-5 rounded-full bg-amber-400 ring-2 ring-white shadow-sm" />
+            <span className="text-[11px] font-semibold text-amber-700">
+              Amber
+            </span>
+          </div>
+          <div className="flex flex-col items-center gap-1.5">
+            <span className="size-5 rounded-full bg-rose-500 ring-2 ring-white shadow-sm" />
+            <span className="text-[11px] font-semibold text-rose-700">Red</span>
+          </div>
         </div>
+      ) : null}
+
+      {step.stateCards && step.stateCards.length ? (
+        <div
+          className={`${variant === 'modal' ? 'space-y-4' : 'space-y-3'} pb-1`}
+        >
+          {step.stateCards.map((card) => {
+            const styles = TECHNIQUE_STATE_STYLES[card.state];
+            return (
+              <div
+                key={card.state}
+                className={`flex items-start gap-3 p-3 rounded-lg border border-[#E5E9F0] ${styles.cardBg}`}
+              >
+                <span
+                  className={`material-symbols-outlined mt-0.5 shrink-0 ${styles.iconColor}`}
+                >
+                  {styles.icon}
+                </span>
+                <div className="min-w-0">
+                  <p className={`text-sm font-semibold ${styles.labelColor}`}>
+                    {card.label}
+                  </p>
+                  <p className="text-xs text-slate-600 leading-snug">
+                    {card.description}
+                  </p>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      ) : null}
+
+      {includeExpand && step.expand ? (
+        <div className="mt-6 pt-5 border-t border-slate-200">
+          <p className="text-[11px] font-semibold uppercase tracking-wider text-[#2E7CF6] mb-2">
+            {step.expand.header}
+          </p>
+          <p className="text-[15px] text-slate-700 leading-relaxed">
+            {step.expand.body}
+          </p>
+        </div>
+      ) : null}
+    </>
+  );
+}
+
+function TechniqueStepDetailModal({
+  open,
+  step,
+  onClose,
+}: {
+  open: boolean;
+  step: TechniqueStep;
+  onClose: () => void;
+}) {
+  const [expandOpen, setExpandOpen] = useState(false);
+
+  useEffect(() => {
+    if (!open) setExpandOpen(false);
+  }, [open]);
+
+  if (!open) return null;
+
+  const expandId = step.expand
+    ? `modal:${step.number}:${step.expand.header}`
+    : null;
+
+  return createPortal(
+    <div className="fixed inset-0 z-[200] flex items-center justify-center p-6">
+      <button
+        type="button"
+        aria-label="Close step detail"
+        onClick={onClose}
+        className="absolute inset-0 bg-black/30"
+      />
+
+      <div className="relative w-full max-w-[420px] max-h-[85vh] flex flex-col rounded-xl border border-slate-200 bg-white shadow-[0_20px_40px_-15px_rgba(47,99,120,0.06)] overflow-hidden">
+        <div className="shrink-0 flex items-start justify-between gap-4 px-6 md:px-7 pt-6 md:pt-7 pb-4 border-b border-slate-100">
+          <div className="flex items-center gap-4 min-w-0">
+            <span className="flex items-center justify-center w-10 h-10 rounded-full bg-[#E6F4F4] text-[#1F7A7A] text-sm font-semibold shrink-0">
+              {step.number}
+            </span>
+            <h2 className="text-[18px] font-semibold text-slate-900 leading-snug">
+              {step.title}
+            </h2>
+          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            className="p-2 rounded-full text-slate-500 hover:text-slate-900 transition-colors shrink-0 -mr-1 -mt-1"
+            aria-label="Close step detail"
+          >
+            <span className="material-symbols-outlined">close</span>
+          </button>
+        </div>
+
+        <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar px-6 md:px-7 py-4">
+          <TechniqueStepBodyContent
+            step={step}
+            variant="modal"
+            includeExpand={false}
+            includeTrafficLight={false}
+          />
+
+          {step.expand && expandId ? (
+            <div className="pt-3 mt-2 border-t border-slate-100 shrink-0">
+              <LearnAccordionItem
+                dropdownId={expandId}
+                header={step.expand.header}
+                body={step.expand.body}
+                open={expandOpen}
+                onToggle={(_, isOpen) => setExpandOpen(isOpen)}
+                embedded
+              />
+            </div>
+          ) : null}
+        </div>
+      </div>
+    </div>,
+    document.body,
+  );
+}
+
+function TechniqueIntroSection({
+  screen,
+  onStepClick,
+}: {
+  screen: Screen;
+  onStepClick: (stepNumber: number) => void;
+}) {
+  const { eyebrow, headline } = splitTechniqueTitle(screen.t2);
+  const steps = screen.techniqueSteps ?? [];
+
+  return (
+    <div className="flex flex-col flex-1 min-h-0 h-full w-full pt-2">
+      <div className="w-full max-w-[1200px] mx-auto flex flex-col flex-1 min-h-0 h-full">
+        <div className="flex-1 flex items-center min-h-0 w-full">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-center w-full shrink-0">
+            <div className="space-y-5">
+              <header>
+                {eyebrow ? (
+                  <p
+                    className="text-[15px] font-semibold mb-1"
+                    style={{ color: '#1F7A7A' }}
+                  >
+                    {eyebrow}
+                  </p>
+                ) : null}
+                <h2
+                  className="text-[32px] leading-tight font-bold"
+                  style={{ color: '#1F3864' }}
+                >
+                  {headline}
+                </h2>
+              </header>
+
+              {screen.lead ? (
+                <div className="bg-[#F7F9FB] p-6 md:p-8 rounded-xl border-l-4 border-l-[#2E7CF6]">
+                  <p
+                    className="text-[18px] leading-relaxed"
+                    style={{ color: '#333333' }}
+                  >
+                    {screen.lead}
+                  </p>
+                </div>
+              ) : null}
+            </div>
+
+            <div className="w-full pt-6 lg:pt-10">
+              <TechniquePauseFlow />
+            </div>
+          </div>
+        </div>
+
+        {steps.length ? (
+          <div className="shrink-0 mt-8 lg:mt-10 pt-8 lg:pt-10 border-t border-slate-200">
+            <TechniqueStepPreviewCards
+              steps={steps}
+              sectionTitle={screen.t3 ?? 'The three steps'}
+              onStepClick={onStepClick}
+            />
+          </div>
+        ) : null}
       </div>
     </div>
   );
@@ -702,6 +962,11 @@ function TechniqueStepsSection({
         <h2 className="text-[32px] leading-tight font-bold text-[#1F3864]">
           {screen.t2}
         </h2>
+        {screen.lead ? (
+          <p className="text-[15px] text-slate-600 leading-relaxed mt-3 max-w-3xl">
+            {screen.lead}
+          </p>
+        ) : null}
       </header>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch flex-1 min-h-0">
@@ -732,33 +997,13 @@ function TechniqueStepsSection({
                   isExpandOpen ? 'hidden' : 'flex-1 min-h-0 overflow-y-auto custom-scrollbar pr-1 -mr-1'
                 }`}
               >
-                <p className="text-[15px] text-slate-700 mb-4 leading-relaxed">
-                  {step.number === 2 ? (
-                    <>
-                      During the pause, ask yourself:{' '}
-                      <span className="italic">
-                        &ldquo;Where is this pupil right now?&rdquo;
-                      </span>
-                    </>
-                  ) : (
-                    step.body
-                  )}
+                <p className="text-[15px] text-slate-700 mb-4 leading-relaxed whitespace-pre-line">
+                  {step.body}
                 </p>
 
                 {step.bodyExtra ? (
-                  <p className="text-[15px] text-slate-700 mb-4 leading-relaxed">
-                    {step.number === 2 ? (
-                      <>
-                        Quickly check their internal traffic light. Are they in
-                        Green (calm), Amber (frustrated/anxious), or Red
-                        (fight/flight)? This shift in focus from the{' '}
-                        <span className="font-semibold">behavior</span> to the{' '}
-                        <span className="font-semibold">internal state</span>{' '}
-                        changes everything.
-                      </>
-                    ) : (
-                      step.bodyExtra
-                    )}
+                  <p className="text-[15px] text-slate-700 mb-4 leading-relaxed whitespace-pre-line">
+                    {step.bodyExtra}
                   </p>
                 ) : null}
 
@@ -829,36 +1074,40 @@ function AboutModuleTextContent({
   return (
     <>
       {screen.lead ? (
-        <p
-          className="text-[20px] md:text-[24px] font-semibold leading-snug whitespace-pre-line"
+        <h2
+          className="shrink-0 text-[32px] leading-tight font-bold max-w-3xl whitespace-pre-line"
           style={{ color: '#1F3864' }}
         >
           {screen.lead}
-        </p>
+        </h2>
       ) : null}
 
-      {screen.body ? (
-        <p
-          className="text-[16px] md:text-[18px] font-medium leading-relaxed whitespace-pre-line"
-          style={{ color: '#1F3864' }}
-        >
-          {screen.body}
-        </p>
-      ) : null}
+      {screen.body || (screen.dropdowns && screen.dropdowns.length) ? (
+        <div className="flex flex-col gap-5 border-l-4 border-l-[#2E7CF6] pl-5 md:pl-6 py-1">
+          {screen.body ? (
+            <p
+              className="text-[16px] md:text-[18px] font-medium leading-relaxed whitespace-pre-line"
+              style={{ color: '#1F3864' }}
+            >
+              {screen.body}
+            </p>
+          ) : null}
 
-      {screen.dropdowns && screen.dropdowns.length ? (
-        <div className="space-y-3">
-          {screen.dropdowns.map((d) => (
-            <Dropdown
-              key={d.header}
-              dropdownId={`${screen.id}:${d.header}`}
-              header={d.header}
-              body={d.body}
-              onOpenChange={onDropdownOpenChange}
-              variant="cover"
-              fullExpand
-            />
-          ))}
+          {screen.dropdowns && screen.dropdowns.length ? (
+            <div className="space-y-3">
+              {screen.dropdowns.map((d) => (
+                <Dropdown
+                  key={d.header}
+                  dropdownId={`${screen.id}:${d.header}`}
+                  header={d.header}
+                  body={d.body}
+                  onOpenChange={onDropdownOpenChange}
+                  variant="cover"
+                  fullExpand
+                />
+              ))}
+            </div>
+          ) : null}
         </div>
       ) : null}
     </>
@@ -956,17 +1205,7 @@ function AboutModuleDiagram() {
 function AboutModuleInsightBar() {
   return (
     <div className="flex items-center gap-4 py-4 px-5 md:px-6 rounded-xl bg-white border border-[#E5E9F0] shadow-[0_4px_24px_-4px_rgba(10,31,68,0.08)]">
-      <div
-        className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0"
-        style={{ backgroundColor: '#EEF3FA' }}
-      >
-        <span
-          className="material-symbols-outlined text-[26px]"
-          style={{ color: '#2E7CF6' }}
-        >
-          psychology
-        </span>
-      </div>
+      <ModuleFavicon className="w-12 h-12 object-contain shrink-0" />
       <p
         className="text-[16px] md:text-[18px] leading-relaxed font-medium"
         style={{ color: '#1F3864' }}
@@ -987,7 +1226,7 @@ function AboutModuleSection({
   return (
     <div className="w-full max-w-[1200px] mx-auto flex flex-col gap-6 lg:gap-8">
       <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-start">
-        <div className="flex flex-col gap-5 border-l-4 border-l-[#2E7CF6] pl-5 md:pl-6 py-1">
+        <div className="flex flex-col gap-5">
           <AboutModuleTextContent
             screen={screen}
             onDropdownOpenChange={onDropdownOpenChange}
@@ -1057,13 +1296,11 @@ function ScriptSidebarPanel({
 
 function WatchVersionCard({
   version,
-  icon,
   timing,
   description,
   accentColor,
 }: {
   version: string;
-  icon: 'bolt' | 'timer';
   timing: string;
   description: string;
   accentColor: '#2E7CF6' | '#1F7A7A';
@@ -1077,17 +1314,7 @@ function WatchVersionCard({
         {version}
       </div>
       <div className="flex items-center gap-3 mb-2">
-        <div
-          className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0"
-          style={{ backgroundColor: '#EEF3FA' }}
-        >
-          <span
-            className="material-symbols-outlined text-[20px]"
-            style={{ color: accentColor }}
-          >
-            {icon}
-          </span>
-        </div>
+        <ModuleFavicon className="w-5 h-5" />
         <span
           className="text-[15px] md:text-[16px] font-semibold"
           style={{ color: '#1F3864' }}
@@ -1121,7 +1348,6 @@ function WatchIntroSplitCards({
 
       <WatchVersionCard
         version={intro.before.version}
-        icon="bolt"
         timing={intro.before.timing}
         description={intro.before.description}
         accentColor="#2E7CF6"
@@ -1129,7 +1355,6 @@ function WatchIntroSplitCards({
 
       <WatchVersionCard
         version={intro.after.version}
-        icon="timer"
         timing={intro.after.timing}
         description={intro.after.description}
         accentColor="#1F7A7A"
@@ -1277,17 +1502,7 @@ function CoverSection({ screen }: { screen: Screen }) {
       </div>
 
       <div className="shrink-0 flex items-center gap-4 py-4 px-5 md:px-6 rounded-xl bg-white border border-slate-200 shadow-[0_4px_24px_-4px_rgba(10,31,68,0.08)]">
-        <div
-          className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0"
-          style={{ backgroundColor: '#E6F4F4' }}
-        >
-          <span
-            className="material-symbols-outlined text-[26px]"
-            style={{ color: '#1F7A7A' }}
-          >
-            timer
-          </span>
-        </div>
+        <ModuleFavicon className="w-12 h-12 object-contain shrink-0" />
         <p
           className="text-[16px] md:text-[18px] leading-relaxed font-medium"
           style={{ color: '#1F3864' }}
@@ -1308,29 +1523,21 @@ function TechniqueHonestSection({
 }) {
   return (
     <div className="max-w-[1200px] mx-auto">
-      <h1 className="text-[32px] leading-tight font-bold text-[#1F3864] mb-8">
-        {screen.t2}
-      </h1>
-
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
-        <div className="space-y-8">
+        <div className="space-y-6 pt-10 lg:pt-16">
+          <h1 className="text-[40px] md:text-[48px] leading-[1.1] font-bold text-[#1F3864]">
+            {screen.t2}
+          </h1>
+
           {screen.keyPoint ? (
             <div className="rounded-xl overflow-hidden shadow-[0_4px_24px_-4px_rgba(10,31,68,0.12)] border border-[#1F3864]/20 bg-[#1F3864]">
               <div className="p-8">
                 <div className="flex items-start gap-4">
                   <div className="w-12 h-12 rounded-xl bg-[#2E7CF6]/20 flex items-center justify-center shrink-0">
-                    <span
-                      className="material-symbols-outlined text-[26px]"
-                      style={{ color: '#2E7CF6' }}
-                    >
-                      lightbulb
-                    </span>
+                    <ModuleFavicon className="w-7 h-7" />
                   </div>
                   <div>
-                    <div className="text-[18px] font-semibold text-white">
-                      The honest part
-                    </div>
-                    <div className="mt-4 text-[14px] leading-relaxed text-white/90 italic">
+                    <div className="mt-1 text-[14px] leading-relaxed text-white/90 italic">
                       &ldquo;{screen.keyPoint}&rdquo;
                     </div>
                   </div>
@@ -1338,8 +1545,6 @@ function TechniqueHonestSection({
               </div>
             </div>
           ) : null}
-
-         
         </div>
 
         <div className="h-[400px] relative overflow-hidden rounded-3xl shadow-lg">
@@ -1624,26 +1829,31 @@ function PracticeIntroSection({ screen }: { screen: Screen }) {
               </p>
             ) : null}
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
+            <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
               {PRACTICE_INTRO_STEPS.map((step) => (
                 <div
                   key={step.number}
-                  className="bg-white rounded-xl border border-slate-200 shadow-[0_20px_40px_-15px_rgba(47,99,120,0.06)] p-4 flex flex-col gap-2"
+                  className="bg-white rounded-xl overflow-hidden border border-slate-200 shadow-[0_20px_40px_-15px_rgba(47,99,120,0.06)]"
                 >
-                  <div className="flex items-center gap-2">
-                    <span className="flex items-center justify-center w-8 h-8 rounded-full bg-[#2E7CF6]/10 text-[#2E7CF6] text-sm font-semibold shrink-0">
-                      {step.number}
-                    </span>
-                    <span className="material-symbols-outlined text-[#2E7CF6] text-[20px]">
-                      {step.icon}
-                    </span>
+                  <div
+                    className="w-full h-[170px] p-5 flex flex-col items-center justify-center text-center gap-4"
+                    aria-label={`${step.label}. ${step.detail}`}
+                  >
+                    <div className="size-14 shrink-0 aspect-square rounded-full bg-[#2E7CF6]/10 flex items-center justify-center">
+                      <span
+                        className="material-symbols-outlined text-[28px] leading-none text-[#2E7CF6]"
+                        style={{ fontVariationSettings: '"FILL" 1' }}
+                      >
+                        {step.icon}
+                      </span>
+                    </div>
+                    <div className="flex flex-col items-center gap-1.5 shrink-0">
+                      <div className="text-[15px] font-semibold leading-tight text-[#1F3864]">
+                        {step.label}
+                      </div>
+                      <div className="h-1 w-12 rounded-full bg-[#2E7CF6]/20" />
+                    </div>
                   </div>
-                  <p className="text-[15px] font-semibold text-[#1F3864] leading-snug">
-                    {step.label}
-                  </p>
-                  <p className="text-[13px] text-slate-600 leading-snug">
-                    {step.detail}
-                  </p>
                 </div>
               ))}
             </div>
@@ -1902,6 +2112,195 @@ function getPractiseHeroSubtitle(screen: Screen): string {
   }
   if (screen.type === 'scenario_choose') return 'What would you do?';
   return screen.t2 ?? 'Part 3. Practise';
+}
+
+function parseTakeawaySteps(text: string): {
+  steps: { number: number; body: string }[];
+  footerLabel?: string;
+} {
+  const steps: { number: number; body: string }[] = [];
+  let footerLabel: string | undefined;
+
+  for (const block of text.trim().split(/\n\n+/)) {
+    const trimmed = block.trim();
+    if (!trimmed) continue;
+
+    const stepMatch = trimmed.match(/^(\d+)\.\s+([\s\S]+)/);
+    if (stepMatch) {
+      steps.push({
+        number: Number(stepMatch[1]),
+        body: stepMatch[2].trim(),
+      });
+      continue;
+    }
+
+    footerLabel = trimmed;
+  }
+
+  return { steps, footerLabel };
+}
+
+function ClosingSection({ screen }: { screen: Screen }) {
+  return (
+    <div className="max-w-[1200px] mx-auto flex flex-col flex-1 min-h-0 h-full justify-center gap-5 md:gap-6">
+      <h2
+        className="shrink-0 text-[32px] leading-tight font-bold max-w-3xl"
+        style={{ color: '#1F3864' }}
+      >
+        {screen.t2}
+      </h2>
+
+      <div className="rounded-xl border border-slate-200 bg-white shadow-[0_20px_40px_-15px_rgba(47,99,120,0.06)] overflow-hidden border-l-4 border-l-[#2E7CF6] p-6 md:p-8">
+        <div className="flex items-start gap-4 md:gap-5">
+          <ModuleFavicon className="w-8 h-8 mt-0.5 shrink-0" />
+          <div className="space-y-5 min-w-0">
+            <p
+              className="text-[16px] md:text-[17px] leading-relaxed"
+              style={{ color: '#333333' }}
+            >
+              {screen.closingBody}
+            </p>
+            <Link
+              to="/dashboard/my-learning/mind-sync/module-2"
+              className="inline-flex items-center justify-center gap-2 rounded-xl px-6 py-3 text-sm md:text-base font-semibold text-white bg-[#2E7CF6] hover:bg-[#2563EB] transition-colors"
+            >
+              <span>Start Module 2</span>
+              <span className="material-symbols-outlined text-[20px]">
+                arrow_forward
+              </span>
+            </Link>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function TakeawayCardSection({ screen }: { screen: Screen }) {
+  const [headingLine1, headingLine2 = ''] = (
+    screen.takeawayHeading ?? ''
+  ).split('\n');
+
+  const hasHighlight = Boolean(
+    screen.takeawayBody?.includes(TAKEAWAY_HIGHLIGHT_TEXT)
+  );
+  const highlightParts = hasHighlight
+    ? (screen.takeawayBody ?? '').split(TAKEAWAY_HIGHLIGHT_TEXT)
+    : [];
+  const parsedSteps = hasHighlight
+    ? parseTakeawaySteps(highlightParts[0] ?? '')
+    : { steps: [] as { number: number; body: string }[], footerLabel: undefined as string | undefined };
+
+  const renderCardBody = () => {
+    if (!screen.takeawayBody) return null;
+
+    if (!hasHighlight) {
+      return (
+        <p className="whitespace-pre-wrap leading-relaxed">{screen.takeawayBody}</p>
+      );
+    }
+
+    return (
+      <>
+        <div className="space-y-2">
+          {parsedSteps.steps.map((step) => (
+            <div
+              key={step.number}
+              className="flex items-start gap-3 rounded-lg border border-slate-100 bg-[#F7F9FB] p-3"
+            >
+              <span className="flex items-center justify-center w-7 h-7 rounded-full bg-[#2E7CF6]/10 text-[#2E7CF6] text-xs font-bold shrink-0 mt-0.5">
+                {step.number}
+              </span>
+              <p className="text-[13px] md:text-[14px] leading-snug flex-1 min-w-0">
+                {step.body}
+              </p>
+            </div>
+          ))}
+        </div>
+
+        {highlightParts[1] ? (
+          <p className="whitespace-pre-wrap leading-snug">{highlightParts[1]}</p>
+        ) : null}
+      </>
+    );
+  };
+
+  return (
+    <div className="max-w-[1200px] mx-auto flex flex-col gap-3 lg:gap-4">
+      {screen.body ? (
+        <h2
+          className="text-[24px] md:text-[32px] leading-tight font-semibold mb-4 shrink-0 max-w-6xl"
+          style={{ color: '#1F3864' }}
+        >
+          {screen.body}
+        </h2>
+      ) : null}
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6 items-start">
+        <div className="rounded-xl border border-slate-200 bg-white shadow-[0_20px_40px_-15px_rgba(47,99,120,0.06)] overflow-hidden border-l-4 border-l-[#2E7CF6]">
+          <div className="p-4 md:p-5 flex flex-col">
+            <div className="flex items-start gap-3 mb-3">
+              <ModuleFavicon className="w-6 h-6 mt-0.5" />
+              <div className="min-w-0">
+                <div className="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1">
+                  Printable, saveable card
+                </div>
+                {headingLine1 ? (
+                  <h3
+                    className="text-[17px] md:text-[18px] font-normal "
+                    style={{ color: '#1F3864' }}
+                  >
+                    {headingLine1}
+                  </h3>
+                ) : null}
+                {headingLine2 ? (
+                  <p
+                    className="text-[13px] font-semibold mt-0.5"
+                    style={{ color: '#1F7A7A' }}
+                  >
+                    {headingLine2}
+                  </p>
+                ) : null}
+              </div>
+            </div>
+
+            <div className="space-y-3 pb-1" style={{ color: '#333333' }}>
+              {renderCardBody()}
+            </div>
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-4">
+          {hasHighlight ? (
+            <div className="space-y-3">
+              {parsedSteps.footerLabel ? (
+                <p
+                  className="text-[12px] font-semibold uppercase tracking-wide"
+                  style={{ color: '#1F3864' }}
+                >
+                  {parsedSteps.footerLabel}
+                </p>
+              ) : null}
+              <div className="bg-[#F7F9FB] p-3 md:p-4 rounded-xl border-l-4 border-l-[#2E7CF6]">
+                <p className="text-[13px] md:text-[14px] leading-snug text-[#333333] whitespace-pre-wrap">
+                  {TAKEAWAY_HIGHLIGHT_TEXT}
+                </p>
+              </div>
+            </div>
+          ) : null}
+
+          <div className="relative min-h-[220px] lg:min-h-[320px] rounded-xl overflow-hidden border border-slate-200 shadow-[0_20px_40px_-15px_rgba(47,99,120,0.06)]">
+            <img
+              src={structureTakeawayImage}
+              alt=""
+              className="absolute inset-0 w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#1F3864]/30 to-transparent" />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 function CardAccordionSection({
@@ -2177,7 +2576,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
             type: 'divider',
             t1: 'Part 2. Learn',
             lead: 'What you just watched, in plain language.',
-            body: 'There are three states a pupil’s brain can be in during a lesson. They look different, they need different responses, and the costliest mistake is treating one as if it were another.',
+            body: 'During a lesson, a pupil’s brain can be in one of three states. From the front of the room they can look similar. They need very different things from you, and the costly mistake is treating one as if it were another. Tap each state.',
           },
           {
             id: 8,
@@ -2242,63 +2641,23 @@ export default function MindSyncTeacherTrainingModule01Page() {
             id: 13,
             type: 'technique_intro',
             t2: 'The technique. The three second pause',
+            t3: 'The three steps',
             lead: 'It is not complicated. You make a small gap between what the pupil does and what you do next, and into that gap you fit one quiet check.',
+            techniqueSteps: TECHNIQUE_STEPS,
           },
           {
             id: 14,
             type: 'technique',
             t2: 'The three steps',
-            techniqueSteps: [
-              {
-                number: 1,
-                title: 'Notice the rise in yourself',
-                body: 'Before you act, feel your own physiological reaction. It might be a tightening in your jaw, a sudden flush of heat in your neck, or your breath catching. This is your body\'s alarm system.',
-                expand: {
-                  header: 'Why this is the hard step',
-                  body: 'Our biological wiring is designed for instant reaction. In a classroom, that survival instinct often misinterprets a student\'s behavior as a direct threat, bypassing your rational thought process. Observing the reaction without acting on it requires immense cognitive effort.',
-                },
-              },
-              {
-                number: 2,
-                title: 'Ask one quiet question',
-                body: 'During the pause, ask yourself: "Where is this pupil right now?"',
-                bodyExtra:
-                  'Quickly check their internal traffic light. Are they in Green (calm), Amber (frustrated/anxious), or Red (fight/flight)? This shift in focus from the behavior to the internal state changes everything.',
-                showTrafficLight: true,
-              },
-              {
-                number: 3,
-                title: 'Match response to state',
-                body: 'Your goal is to match your intervention to the student\'s emotional capacity, not to the disruption itself.',
-                stateCards: [
-                  {
-                    state: 'green',
-                    label: 'Green State',
-                    description:
-                      'Low-level correction, humor, or direct instruction works.',
-                  },
-                  {
-                    state: 'amber',
-                    label: 'Amber State',
-                    description:
-                      'Validation, distraction, and offering choices to lower anxiety.',
-                  },
-                  {
-                    state: 'red',
-                    label: 'Red State',
-                    description:
-                      'Safety first. Reduce words, increase space, co-regulate.',
-                  },
-                ],
-              },
-            ],
+            lead: 'Full view — all three steps side by side for comparison.',
+            techniqueSteps: TECHNIQUE_STEPS,
           },
           {
             id: 15,
             type: 'technique_honest',
             t2: 'The honest part',
             keyPoint:
-              'This is not about being a perfect, zen-like presence every single day. There will be days where you react before you can think. The goal isn\'t perfection; the goal is consistent progress. Every time you successfully find that three-second gap, you are building a stronger bridge to a pupil who needs your stability more than your discipline.',
+              'You will not manage this every time, and you are not meant to. The goal is not perfection. It is catching the rise a little more often than you used to. Within a couple of months, the pupils who used to escalate start to settle.',
           },
           {
             id: 16,
@@ -2401,17 +2760,17 @@ export default function MindSyncTeacherTrainingModule01Page() {
             id: 28,
             type: 'takeaway',
             t1: 'Part 4. Your take away card',
-            body: 'A one page summary of the whole module, made to fit a phone screen, a lanyard insert, or a noticeboard. Do not try to remember the module. Just keep this card close.',
+            body: 'A one page summary of the whole module, made to fit a phone screen, a lanyard insert, or a noticeboard. Do not try to remember the module. Just keep this close.',
             takeawayHeading: 'THE THREE SECOND PAUSE\nThe pocket version',
             takeawayBody:
-              '1. Notice the rise in yourself. The tight chest, the urge to snap, the feeling of being undermined. Notice it. Do not reply yet.\n\n2. Ask one quiet question. Inside: is this pupil green, amber or red? If you need to, aloud: “Quick check in. Are you with me, or somewhere else?”\n\n3. Match your response to the state, not the behaviour. Green: teach. Amber: lower the demand, offer a choice, buy ninety seconds. Red: reduce demands to almost zero, offer space, save the conversation for later.\n\nAnd when you get it wrong:\n\n“Yesterday I misread what was going on for you. I should have checked in rather than snapped. I am sorry. You did not deserve that.” No “but.” No explanation. No asking them to apologise back. Then let them go.',
+              '1. Notice the rise in yourself. The tight chest, the urge to snap, the feeling of being undermined. Notice it. Do not reply yet.\n\n2. Ask one quiet question. Inside: is this pupil green, amber or red? Out loud if you need to: “Quick check in. Are you with me, or somewhere else?”\n\n3. Match your response to the state, not the behaviour. Green: teach. Amber: lower the demand, offer a choice, buy ninety seconds. Red: reduce demands to almost zero, offer space, save the conversation for later.\n\nAnd when it does not go well:\n\n“Yesterday I misunderstood what was going on for you. I should have checked in rather than snapped. I am sorry. You did not deserve that.” No “but”. No explanation. No asking them to apologise back. Then let them go.',
           },
           {
             id: 29,
             type: 'closing',
             t2: 'That is Module 1',
             closingBody:
-              'Next in the pathway: Module 2, Don’t Break What’s Working. How to tell when a quietly off task pupil is actually coping, and the cost of taking their coping away.\n\nMind Sync · Evidence based insight, in plain language. Designed by educational psychologists. Aligned to the Ofsted Education Inspection Framework, November 2025.',
+              'Next in the pathway: Module 2, Don’t Break What’s Working. How to tell when a quietly off task pupil is actually coping, and what it costs to take their coping away.',
           },
         ] as Screen[]
       ).filter((s) => s.id !== 6 && s.id !== 12),
@@ -2437,6 +2796,9 @@ export default function MindSyncTeacherTrainingModule01Page() {
   const [scenarioCompareSeen, setScenarioCompareSeen] = useState<
     Partial<Record<1 | 2 | 3, boolean>>
   >({});
+  const [activeTechniqueStep, setActiveTechniqueStep] = useState<number | null>(
+    null
+  );
 
   const [openSections, setOpenSections] = useState<
     Record<SidebarSectionKey, boolean>
@@ -2478,6 +2840,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
   useEffect(() => {
     setIsWatchScriptOpen(false);
     setIsScenarioCompareOpen(false);
+    setActiveTechniqueStep(null);
   }, [index]);
 
   const toc = useMemo(() => {
@@ -2775,7 +3138,11 @@ export default function MindSyncTeacherTrainingModule01Page() {
                   ? 'Part 2. Learn'
                   : activeSidebarSectionKey === 'practise'
                     ? 'Part 3. Practise'
-                    : 'MODULE 1 – THE THREE SECOND PAUSE'}
+                    : activeSidebarSectionKey === 'takeaway'
+                      ? 'Part 4. Take away'
+                      : activeSidebarSectionKey === 'closing'
+                        ? 'Closing'
+                        : 'MODULE 1 – THE THREE SECOND PAUSE'}
           </h1>
           <h2
             className="text-[24px] leading-snug font-bold mb-2"
@@ -2793,7 +3160,11 @@ export default function MindSyncTeacherTrainingModule01Page() {
                     : (screen.lead ?? screen.t2 ?? screen.t3 ?? 'Part 2. Learn')
                   : activeSidebarSectionKey === 'practise'
                     ? getPractiseHeroSubtitle(screen)
-                    : (screen.t2 ?? 'Reading behaviour in the moment')}
+                    : activeSidebarSectionKey === 'takeaway'
+                      ? (screen.t1 ?? 'Your take away card')
+                      : activeSidebarSectionKey === 'closing'
+                        ? (screen.t2 ?? 'That is Module 1')
+                        : (screen.t2 ?? 'Reading behaviour in the moment')}
           </h2>
           {/* <p
             className="text-[15px] leading-relaxed max-w-2xl whitespace-pre-line"
@@ -2836,10 +3207,12 @@ export default function MindSyncTeacherTrainingModule01Page() {
                 screen.id === 16 ||
                 screen.id === 17 ||
                 screen.id === 18 ||
+                screen.type === 'closing' ||
                 screen.type === 'scenario_situation' ||
                 screen.type === 'scenario_choose' ||
                 screen.type === 'cover' ||
                 screen.type === 'technique' ||
+                screen.type === 'technique_intro' ||
                 screen.id === 2 ||
                 screen.id === 3 ||
                 screen.id === 5
@@ -2848,6 +3221,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
               } ${
                 isCurrentScreenDropdownOpen ||
                 screen.type === 'technique_intro' ||
+                screen.type === 'takeaway' ||
                 (screen.id === 5 && isWatchScriptOpen)
                   ? 'overflow-y-auto'
                   : 'overflow-hidden'
@@ -2858,10 +3232,12 @@ export default function MindSyncTeacherTrainingModule01Page() {
                   screen.id === 16 ||
                   screen.id === 17 ||
                   screen.id === 18 ||
+                  screen.type === 'closing' ||
                   screen.type === 'scenario_situation' ||
                   screen.type === 'scenario_choose' ||
                   screen.type === 'cover' ||
                   screen.type === 'technique' ||
+                  screen.type === 'technique_intro' ||
                   screen.id === 2 ||
                   screen.id === 3 ||
                   screen.id === 5
@@ -2877,7 +3253,10 @@ export default function MindSyncTeacherTrainingModule01Page() {
                   </div>
                 ) : screen.type === 'technique_intro' ? (
                   <div className="p-5 md:p-6 md:px-14 flex flex-col flex-1 min-h-0 h-full">
-                    <TechniqueIntroSection screen={screen} />
+                    <TechniqueIntroSection
+                      screen={screen}
+                      onStepClick={setActiveTechniqueStep}
+                    />
                   </div>
                 ) : screen.type === 'technique' ? (
                   <div className="p-5 md:p-6 md:px-14 flex flex-col flex-1 min-h-0 h-full">
@@ -2886,6 +3265,14 @@ export default function MindSyncTeacherTrainingModule01Page() {
                       openDropdownIds={openDropdownIds}
                       onDropdownToggle={handleDropdownOpenChange}
                     />
+                  </div>
+                ) : screen.type === 'takeaway' ? (
+                  <div className="p-5 md:p-6 md:px-14">
+                    <TakeawayCardSection screen={screen} />
+                  </div>
+                ) : screen.type === 'closing' ? (
+                  <div className="p-5 md:p-6 md:px-14 flex flex-col flex-1 min-h-0 h-full overflow-hidden">
+                    <ClosingSection screen={screen} />
                   </div>
                 ) : screen.type === 'technique_honest' ? (
                   <div className="p-5 md:p-6 md:px-14">
@@ -2956,11 +3343,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
                           <div className="space-y-5">
                             {screen.bullets.map((b) => (
                               <div key={b} className="flex items-start gap-4">
-                                <img
-                                  alt=""
-                                  src={logoFav}
-                                  className="w-7 h-7 object-contain shrink-0 mt-0.5"
-                                />
+                                <ModuleFavicon className="w-7 h-7 mt-0.5" />
                                 <div
                                   className="text-[15px] md:text-[16px] leading-relaxed"
                                   style={{ color: '#1F3864' }}
@@ -3258,16 +3641,11 @@ export default function MindSyncTeacherTrainingModule01Page() {
                                   <div className="p-8">
                                     <div className="flex items-start gap-4">
                                       <div className="w-12 h-12 rounded-xl bg-[#2E7CF6]/20 flex items-center justify-center shrink-0">
-                                        <span
-                                          className="material-symbols-outlined text-[26px]"
-                                          style={{ color: '#2E7CF6' }}
-                                        >
-                                          lightbulb
-                                        </span>
+                                        <ModuleFavicon className="w-7 h-7" />
                                       </div>
                                       <div>
                                         <div className="text-[18px] font-semibold text-white">
-                                          Key Teaching Insight
+                                          The single most important point.
                                         </div>
                                         <div className="mt-4 text-[14px] leading-relaxed text-white/90">
                                           {learnStateItems.keyPoint}
@@ -3496,7 +3874,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
                                   </span>
                                 </div>
                                 <h4 className="text-[20px] font-semibold">
-                                  Key Teaching Insight
+                                  The single most important point.
                                 </h4>
                                 {screen.keyPoint ? (
                                   <div className="text-[15px] opacity-90 leading-relaxed whitespace-pre-line">
@@ -3524,93 +3902,6 @@ export default function MindSyncTeacherTrainingModule01Page() {
                       </div>
                     ) : null}
 
-                    {screen.type === 'takeaway' ? (
-                      <div className="space-y-4">
-                        <div className="relative rounded-2xl mt-8 overflow-hidden border border-white/10">
-                          <div className="absolute inset-0">
-                            <img
-                              src={structureTakeawayImage}
-                              alt=""
-                              className="w-full h-full object-cover"
-                            />
-                            <div className="absolute inset-0 bg-gradient-to-r from-[#020617]/95 via-[#020617]/85 to-[#020617]/60" />
-                          </div>
-
-                          <div className="relative z-10 p-4 md:p-5">
-                            <div className="glass-panel p-5 rounded-2xl border border-white/10   max-w-[920px]">
-                              <div className="text-left">
-                                <div className="text-[10px] text-[#60A5FA] px-2 py-1 bg-white/5 rounded-full inline-block mb-3 uppercase tracking-widest font-semibold">
-                                  Mind Sync Pocket
-                                </div>
-                                <h4 className="text-xl md:text-2xl font-bold text-white whitespace-pre-line">
-                                  {screen.takeawayHeading}
-                                </h4>
-                              </div>
-
-                              <div className="mt-4 text-xs md:text-sm text-slate-200 leading-relaxed whitespace-pre-wrap md:columns-2 md:gap-8">
-                                {(() => {
-                                  if (!screen.takeawayBody) return null;
-                                  if (
-                                    !screen.takeawayBody.includes(
-                                      TAKEAWAY_HIGHLIGHT_TEXT
-                                    )
-                                  ) {
-                                    return screen.takeawayBody;
-                                  }
-
-                                  const parts = screen.takeawayBody.split(
-                                    TAKEAWAY_HIGHLIGHT_TEXT
-                                  );
-
-                                  return (
-                                    <>
-                                      {parts[0]}
-                                      <span className="inline-block bg-white/10 border border-white/10 rounded-xl px-3 py-2">
-                                        {TAKEAWAY_HIGHLIGHT_TEXT}
-                                      </span>
-                                      {parts[1] ?? null}
-                                    </>
-                                  );
-                                })()}
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    ) : null}
-
-                    {screen.type === 'closing' ? (
-                      <div className="pt-4">
-                        <div className="w-full max-w-[1100px] mx-auto rounded-3xl border border-white/10 bg-gradient-to-br from-[#24104A]/85 via-[#140A2A]/90 to-[#05020D]/90 px-7 md:px-10 py-8 md:py-10 text-white/90 overflow-hidden relative">
-                          <div className="absolute -top-32 -left-32 w-[520px] h-[520px] bg-fuchsia-500/10 blur-[120px] rounded-full" />
-                          <div className="absolute -bottom-32 -right-32 w-[520px] h-[520px] bg-indigo-500/10 blur-[120px] rounded-full" />
-
-                          <div className="relative z-10">
-                            <h2 className="text-3xl md:text-5xl font-black text-white tracking-tight">
-                              Great job. You've finished
-                              <br />
-                              Module 1.
-                            </h2>
-
-                            <div className="mt-5 max-w-[820px] text-sm md:text-base text-white/70 leading-relaxed whitespace-pre-line">
-                              {screen.closingBody}
-                            </div>
-
-                            <div className="mt-8">
-                              <Link
-                                to="/dashboard/my-learning/mind-sync/module-2"
-                                className="inline-flex items-center justify-center gap-3 rounded-xl px-8 py-3.5 text-sm md:text-base font-semibold text-[#0B1020] bg-[#B9C7FF] hover:bg-[#C7D2FE] transition-colors"
-                              >
-                                <span>Start Module 2</span>
-                                <span className="material-symbols-outlined">
-                                  arrow_forward
-                                </span>
-                              </Link>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    ) : null}
                   </div>
                 )}
               </section>
@@ -3698,6 +3989,8 @@ export default function MindSyncTeacherTrainingModule01Page() {
                   item.blockId === 8 ||
                   item.blockId === 9 ||
                   item.blockId === 10 ||
+                  item.blockId === 11 ||
+                  item.blockId === 14 ||
                   item.blockId === 20 ||
                   item.blockId === 21 ||
                   item.blockId === 23 ||
@@ -3727,9 +4020,9 @@ export default function MindSyncTeacherTrainingModule01Page() {
                       aria-expanded={isOpen}
                       className={`w-full text-left px-4 py-4 flex items-center justify-between gap-3 transition-colors relative ${
                         isSectionActive
-                          ? 'bg-[#bdd2f8]'
+                          ? 'bg-[#EEF4FF]'
                           : isOpen
-                            ? 'bg-[#EEF4FF]'
+                            ? 'bg-[#F7FAFF]'
                             : 'hover:bg-slate-50'
                       }`}
                     >
@@ -3772,7 +4065,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
                       data-section-key={section.key}
                       className={`w-full text-left px-4 py-4 flex items-center justify-between gap-3 transition-colors relative ${
                         isSectionActive
-                          ? 'bg-[#bdd2f8]'
+                          ? 'bg-[#EEF4FF]'
                           : 'hover:bg-slate-50'
                       }`}
                     >
@@ -3820,8 +4113,8 @@ export default function MindSyncTeacherTrainingModule01Page() {
                             data-toc-index={item.index}
                             className={`w-full text-left px-4 py-3 border-t flex items-start gap-3 transition-colors cursor-pointer ${
                               isCurrent
-                                ? 'border-slate-200 bg-slate-50'
-                                : 'border-slate-200 hover:bg-slate-50'
+                                ? 'border-slate-200 bg-[#bdd2f8]'
+                                : 'border-slate-200 hover:bg-[#EEF4FF]'
                             }`}
                           >
                             <div className="w-6 h-6 rounded-full flex items-center justify-center shrink-0 mt-0.5">
@@ -3932,6 +4225,19 @@ export default function MindSyncTeacherTrainingModule01Page() {
               [screen.scenarioId!]: true,
             }));
           }}
+        />
+      ) : null}
+
+      {activeTechniqueStep !== null &&
+      screen.techniqueSteps?.find((s) => s.number === activeTechniqueStep) ? (
+        <TechniqueStepDetailModal
+          open
+          step={
+            screen.techniqueSteps.find(
+              (s) => s.number === activeTechniqueStep
+            )!
+          }
+          onClose={() => setActiveTechniqueStep(null)}
         />
       ) : null}
     </div>
