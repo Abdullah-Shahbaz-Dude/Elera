@@ -1003,23 +1003,9 @@ function WatchSection({
 
   const videoBlock = (
     <>
-      <div
-        className={`w-full shrink min-h-0 ${
-          isScriptOpen ? 'flex justify-center' : ''
-        }`}
-      >
-        <div
-          className={`rounded-2xl border border-[#E5E9F0] bg-white shadow-[0_4px_24px_-4px_rgba(10,31,68,0.08),0_2px_6px_-2px_rgba(10,31,68,0.04)] overflow-hidden p-2 md:p-3 ${
-            isScriptOpen ? 'w-full max-w-[280px]' : 'w-full'
-          }`}
-        >
-          <div
-            className={
-              isScriptOpen
-                ? 'w-full aspect-square'
-                : 'w-full aspect-video max-h-[min(320px,36vh)]'
-            }
-          >
+      <div className="w-full shrink min-h-0">
+        <div className="w-full rounded-2xl border border-[#E5E9F0] bg-white shadow-[0_4px_24px_-4px_rgba(10,31,68,0.08),0_2px_6px_-2px_rgba(10,31,68,0.04)] overflow-hidden p-2 md:p-3">
+          <div className="w-full aspect-video max-h-[min(320px,36vh)]">
             <VideoLessonPlayer
               title={videoTitle}
               videoUrl={screen.videoUrl ?? null}
@@ -1032,18 +1018,12 @@ function WatchSection({
         </div>
       </div>
 
-      {screen.transcriptDropdown ? (
-        <div
-          className={`shrink-0 w-full text-left ${
-            isScriptOpen ? 'flex justify-center' : ''
-          }`}
-        >
+      {screen.transcriptDropdown && !isScriptOpen ? (
+        <div className="shrink-0 w-full text-left">
           <button
             type="button"
             onClick={onOpenScript}
-            className={`flex items-center justify-between gap-4 bg-white hover:bg-slate-50 transition-colors text-left py-3 px-5 md:px-6 min-h-[56px] rounded-xl border border-slate-200 shadow-[0_4px_24px_-4px_rgba(10,31,68,0.08)] ${
-              isScriptOpen ? 'w-full max-w-[280px]' : 'w-full'
-            }`}
+            className="w-full flex items-center justify-between gap-4 bg-white hover:bg-slate-50 transition-colors text-left py-3 px-5 md:px-6 min-h-[56px] rounded-xl border border-slate-200 shadow-[0_4px_24px_-4px_rgba(10,31,68,0.08)]"
           >
             <div
               className="text-[16px] md:text-[18px] font-medium leading-relaxed"
@@ -1064,13 +1044,26 @@ function WatchSection({
   );
 
   return (
-    <div className="flex flex-1 w-full min-h-0 items-center justify-center py-6">
+    <div
+      className={`flex flex-1 w-full min-h-0 py-6 ${
+        isScriptOpen
+          ? 'items-start justify-start py-4 md:py-6'
+          : 'items-center justify-center'
+      }`}
+    >
       <div className="w-full max-w-5xl mx-auto">
         {screen.watchIntro ? (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10 items-start">
-            <WatchIntroSplitCards intro={screen.watchIntro} />
-            <div className="flex flex-col gap-4 min-w-0">{videoBlock}</div>
-          </div>
+          isScriptOpen ? (
+            <div className="flex flex-col gap-6 w-full">
+              <div className="w-full flex flex-col gap-4">{videoBlock}</div>
+              <WatchIntroSplitCards intro={screen.watchIntro} />
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10 items-start">
+              <WatchIntroSplitCards intro={screen.watchIntro} />
+              <div className="flex flex-col gap-4 min-w-0">{videoBlock}</div>
+            </div>
+          )
         ) : (
           <div className="space-y-8">
             {screen.body ? (
@@ -1647,7 +1640,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
                 version: 'Version 2',
                 timing: '3 seconds',
                 description:
-                  'She pauses, then responds to what is actually happening.',
+                  'In the second she waits three. Watch what changes.',
               },
               footer: 'Watch what changes.',
             },
@@ -2319,7 +2312,8 @@ export default function MindSyncTeacherTrainingModule01Page() {
               } ${
                 isCurrentScreenDropdownOpen ||
                 screen.type === 'scenario_feedback' ||
-                screen.id === 17
+                screen.id === 17 ||
+                (screen.id === 5 && isWatchScriptOpen)
                   ? 'overflow-y-auto'
                   : 'overflow-hidden'
               }`}
