@@ -239,14 +239,6 @@ const SCENARIOS: Record<1 | 2 | 3, Scenario> = {
   },
 };
 
-function Tag({ children }: { children: string }) {
-  return (
-    <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/60 bg-white/5 border border-white/10 px-2 py-1 rounded-full">
-      {children}
-    </span>
-  );
-}
-
 // function ScriptDropdown({
 //   header,
 //   body,
@@ -1514,13 +1506,7 @@ function CoverSection({ screen }: { screen: Screen }) {
   );
 }
 
-function TechniqueHonestSection({
-  screen,
-  onNavigateToBlock,
-}: {
-  screen: Screen;
-  onNavigateToBlock: (blockId: number) => void;
-}) {
+function TechniqueHonestSection({ screen }: { screen: Screen }) {
   return (
     <div className="max-w-[1200px] mx-auto">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
@@ -2303,71 +2289,6 @@ function TakeawayCardSection({ screen }: { screen: Screen }) {
   );
 }
 
-function CardAccordionSection({
-  screenId,
-  title,
-  intro,
-  introStyle = 'compact',
-  compact = false,
-  items,
-  openDropdownIds,
-  onToggle,
-}: {
-  screenId: number;
-  title?: string;
-  intro?: string;
-  introStyle?: 'compact' | 'panel';
-  compact?: boolean;
-  items: DropdownItem[];
-  openDropdownIds: Set<string>;
-  onToggle: (dropdownId: string, open: boolean) => void;
-}) {
-  return (
-    <div className="max-w-[1200px] mx-auto">
-      {title ? (
-        <>
-          <h1 className="text-[32px] leading-tight font-bold text-[#1F3864] mb-3">
-            {title}
-          </h1>
-          {intro ? (
-            <p className="text-[15px] text-slate-600 leading-relaxed mb-6 max-w-3xl">
-              {intro}
-            </p>
-          ) : null}
-        </>
-      ) : intro ? (
-        introStyle === 'panel' ? (
-          <div className="max-w-3xl bg-[#F7F9FB] p-8 rounded-xl border-l-4 border-[#1F7A7A] mb-8">
-            <p className="text-[18px] leading-relaxed text-[#333333]">
-              {intro}
-            </p>
-          </div>
-        ) : (
-          <p className="text-[15px] text-slate-700 leading-relaxed mb-4 max-w-3xl">
-            {intro}
-          </p>
-        )
-      ) : null}
-      <div className={`flex flex-col ${compact ? 'gap-3' : 'gap-4'}`}>
-        {items.map((item) => {
-          const dropdownId = `${screenId}:${item.header}`;
-          return (
-            <LearnAccordionItem
-              key={item.header}
-              dropdownId={dropdownId}
-              header={item.header}
-              body={item.body}
-              open={openDropdownIds.has(dropdownId)}
-              onToggle={onToggle}
-              compact={compact}
-            />
-          );
-        })}
-      </div>
-    </div>
-  );
-}
-
 function parseLearnStateSections(body: string): {
   whatYouSee?: string;
   underneath?: string;
@@ -2863,14 +2784,6 @@ export default function MindSyncTeacherTrainingModule01Page() {
     });
   }, [screens]);
 
-  const navigateToBlockId = (blockId: number) => {
-    const targetIndex = toc.find((t) => t.blockId === blockId)?.index;
-    if (typeof targetIndex === 'number') {
-      suppressAutoOpenRef.current = true;
-      setIndex(targetIndex);
-    }
-  };
-
   const sidebarSections = useMemo((): SidebarSection[] => {
     const indicesByBlockId = new Map<number, number>();
     toc.forEach((t) => indicesByBlockId.set(t.blockId, t.index));
@@ -3276,10 +3189,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
                   </div>
                 ) : screen.type === 'technique_honest' ? (
                   <div className="p-5 md:p-6 md:px-14">
-                    <TechniqueHonestSection
-                      screen={screen}
-                      onNavigateToBlock={navigateToBlockId}
-                    />
+                    <TechniqueHonestSection screen={screen} />
                   </div>
                 ) : screen.id === 16 ? (
                   <div className="p-5 md:p-6 md:px-14 flex flex-col flex-1 min-h-0 h-full overflow-hidden">
