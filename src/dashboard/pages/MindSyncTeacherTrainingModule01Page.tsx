@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Link, useNavigate } from 'react-router-dom';
+import { useModuleTrainingSidebar } from '@/dashboard/contexts/ModuleTrainingSidebarContext';
 import VideoLessonPlayer from '../components/VideoLessonPlayer';
 import image from '../../assets/images/mindsync/2.jpg';
 import structureWatchImage from '../../assets/images/mindsync/5.jpg';
@@ -2254,6 +2255,283 @@ function LandingSection({
   );
 }
 
+type TocItem = { index: number; label: string; blockId: number };
+
+function ModuleContentsSidebar({
+  toc,
+  sidebarSections,
+  openSections,
+  activeSidebarSectionKey,
+  index,
+  screen,
+  toggleSection,
+  setIndex,
+  sidebarScrollRef,
+  suppressAutoOpenRef,
+  isSidebarTranscriptOpen,
+  setIsSidebarTranscriptOpen,
+}: {
+  toc: TocItem[];
+  sidebarSections: SidebarSection[];
+  openSections: Record<SidebarSectionKey, boolean>;
+  activeSidebarSectionKey: SidebarSectionKey | null;
+  index: number;
+  screen: Screen;
+  toggleSection: (key: SidebarSectionKey) => void;
+  setIndex: (index: number) => void;
+  sidebarScrollRef: React.MutableRefObject<HTMLDivElement | null>;
+  suppressAutoOpenRef: React.MutableRefObject<boolean>;
+  isSidebarTranscriptOpen: boolean;
+  setIsSidebarTranscriptOpen: (open: boolean) => void;
+}) {
+  return (
+    <div className="relative h-full flex flex-col overflow-hidden bg-white">
+      <div className="p-6 border-b border-slate-200">
+        <h2 className="text-sm font-bold uppercase tracking-widest text-slate-500 mb-1">
+          Module Contents
+        </h2>
+        <p className="text-xs text-slate-400">{toc.length} blocks</p>
+      </div>
+      <div
+        ref={sidebarScrollRef}
+        className="flex-1 min-h-0 overflow-y-auto custom-scrollbar bg-white"
+      >
+        {sidebarSections.map((section) => {
+          const isOpen = openSections[section.key];
+          const isActiveSection = section.key === activeSidebarSectionKey;
+          const isCollapsible =
+            section.key !== 'closing' && section.key !== 'watch';
+          const visibleIndices = section.indices.filter((i) => {
+            const item = toc[i];
+            if (!item) return false;
+            if (
+              item.blockId === 0 ||
+              item.blockId === 8 ||
+              item.blockId === 9 ||
+              item.blockId === 10 ||
+              item.blockId === 11 ||
+              item.blockId === 14 ||
+              item.blockId === 20 ||
+              item.blockId === 21 ||
+              item.blockId === 23 ||
+              item.blockId === 24 ||
+              item.blockId === 26 ||
+              item.blockId === 27
+            )
+              return false;
+            return true;
+          });
+
+          const isQuestionBlock = [20, 23, 26].includes(screen.id);
+          const isSectionActive =
+            isActiveSection ||
+            (section.key === 'practise' && isQuestionBlock);
+
+          const canCollapse = isCollapsible && visibleIndices.length > 1;
+          const shouldShowItems = canCollapse && isOpen;
+          return (
+            <div key={section.key} className="border-b border-slate-200">
+              {canCollapse ? (
+                <button
+                  type="button"
+                  onClick={() => toggleSection(section.key)}
+                  data-sidebar-section-header="true"
+                  data-section-key={section.key}
+                  aria-expanded={isOpen}
+                  className={`w-full text-left px-4 py-4 flex items-center justify-between gap-3 transition-colors relative ${
+                    isSectionActive
+                      ? 'bg-[#EEF4FF]'
+                      : isOpen
+                        ? 'bg-[#F7FAFF]'
+                        : 'hover:bg-slate-50'
+                  }`}
+                >
+                  {isSectionActive ? (
+                    <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#2E7CF6]/60 to-transparent" />
+                  ) : null}
+                  <div className="min-w-0 flex-1">
+                    <div
+                      className={`text-xs font-bold uppercase tracking-widest truncate ${
+                        isActiveSection || isOpen
+                          ? 'text-[#1F3864]'
+                          : 'text-slate-700'
+                      }`}
+                    >
+                      {section.label}
+                    </div>
+                    <div className="text-[10px] text-slate-500">
+                      {visibleIndices.length} blocks
+                    </div>
+                  </div>
+                  <span
+                    className={`material-symbols-outlined text-slate-500 transition-transform shrink-0 ${
+                      isOpen ? 'rotate-180' : ''
+                    }`}
+                  >
+                    expand_more
+                  </span>
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => {
+                    const targetIndex = section.indices[0];
+                    if (typeof targetIndex !== 'number') return;
+                    if (targetIndex !== index)
+                      suppressAutoOpenRef.current = true;
+                    setIndex(targetIndex);
+                  }}
+                  data-sidebar-section-header="true"
+                  data-section-key={section.key}
+                  className={`w-full text-left px-4 py-4 flex items-center justify-between gap-3 transition-colors relative ${
+                    isSectionActive
+                      ? 'bg-[#EEF4FF]'
+                      : 'hover:bg-slate-50'
+                  }`}
+                >
+                  {isSectionActive ? (
+                    <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#2E7CF6]/60 to-transparent" />
+                  ) : null}
+                  <div className="min-w-0 flex-1">
+                    <div
+                      className={`text-xs font-bold uppercase tracking-widest truncate ${
+                        isActiveSection
+                          ? 'text-[#1F3864]'
+                          : 'text-slate-700'
+                      }`}
+                    >
+                      {section.label}
+                    </div>
+                    <div className="text-[10px] text-slate-500">
+                      {visibleIndices.length} blocks
+                    </div>
+                  </div>
+                </button>
+              )}
+
+              {shouldShowItems ? (
+                <div>
+                  {visibleIndices.map((i) => {
+                    const item = toc[i];
+                    if (!item) return null;
+                    const questionToScenarioMap: Record<number, number> = {
+                      20: 19,
+                      23: 22,
+                      26: 25,
+                    };
+                    const isCurrent =
+                      item.index === index ||
+                      questionToScenarioMap[screen.id] === item.blockId;
+                    const isLanding =
+                      section.landingBlockId === item.blockId;
+                    return (
+                      <button
+                        key={`${item.blockId}-${item.index}`}
+                        type="button"
+                        onClick={() => setIndex(item.index)}
+                        data-sidebar-item="true"
+                        data-toc-index={item.index}
+                        className={`w-full text-left px-4 py-3 border-t flex items-start gap-3 transition-colors cursor-pointer ${
+                          isCurrent
+                            ? 'border-slate-200 bg-[#bdd2f8]'
+                            : 'border-slate-200 hover:bg-[#EEF4FF]'
+                        }`}
+                      >
+                        <div className="w-6 h-6 rounded-full flex items-center justify-center shrink-0 mt-0.5">
+                          {isCurrent ? (
+                            <div className="w-6 h-6 rounded-full border border-[#2E7CF6] flex items-center justify-center">
+                              <div className="w-2 h-2 bg-[#2E7CF6] rounded-full animate-pulse" />
+                            </div>
+                          ) : (
+                            <div className="w-6 h-6 rounded-full border border-slate-300" />
+                          )}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p
+                            className={`text-xs truncate ${
+                              isCurrent
+                                ? 'font-bold text-slate-900'
+                                : 'font-medium text-slate-700'
+                            }`}
+                          >
+                            {item.label}
+                          </p>
+                          <p className="text-[10px] text-slate-500">
+                            {isLanding
+                              ? 'Section overview'
+                              : `Block ${item.blockId}`}
+                          </p>
+                        </div>
+                      </button>
+                    );
+                  })}
+
+                  {section.key === 'watch' &&
+                  screen.type === 'video' &&
+                  screen.transcriptDropdown ? (
+                    <div className="p-4 border-t border-white/5">
+                      <button
+                        type="button"
+                        onClick={() => setIsSidebarTranscriptOpen(true)}
+                        className="w-full h-[56px] rounded-xl border border-white/10 bg-[#1A1A33]/60 hover:bg-[#1A1A33]/75 transition-colors flex items-center gap-3 px-4 text-left"
+                      >
+                        <span className="material-symbols-outlined text-[#818CF8]">
+                          menu_book
+                        </span>
+                        <span className="text-sm font-medium text-white/85 truncate">
+                          {screen.transcriptDropdown.header}
+                        </span>
+                      </button>
+                    </div>
+                  ) : null}
+                </div>
+              ) : null}
+            </div>
+          );
+        })}
+      </div>
+
+      {isSidebarTranscriptOpen &&
+      screen.type === 'video' &&
+      screen.transcriptDropdown ? (
+        <div className="absolute inset-0 z-20">
+          <button
+            type="button"
+            aria-label="Close transcript"
+            onClick={() => setIsSidebarTranscriptOpen(false)}
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+          />
+          <div className="absolute inset-3 glass-panel rounded-2xl border border-white/10 bg-[#020617]/90 backdrop-blur p-4 shadow-[0_30px_120px_rgba(0,0,0,0.7)] overflow-hidden flex flex-col">
+            <div className="flex items-start justify-between gap-3">
+              <div className="min-w-0">
+                <div className="text-xs font-bold uppercase tracking-[0.2em] text-white/60">
+                  Transcript
+                </div>
+                <div className="mt-1 text-sm font-semibold text-white truncate">
+                  {screen.transcriptDropdown.header}
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsSidebarTranscriptOpen(false)}
+                className="w-9 h-9 rounded-xl border border-white/10 bg-white/[0.04] hover:bg-white/[0.08] transition-colors flex items-center justify-center shrink-0"
+              >
+                <span className="material-symbols-outlined text-white/80">
+                  close
+                </span>
+              </button>
+            </div>
+
+            <div className="mt-4 flex-1 min-h-0 overflow-y-auto custom-scrollbar text-sm text-slate-200 whitespace-pre-line leading-relaxed pr-1">
+              {screen.transcriptDropdown.body}
+            </div>
+          </div>
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
 function parseTakeawaySteps(text: string): {
   steps: { number: number; body: string }[];
   footerLabel?: string;
@@ -2930,7 +3208,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
         s.type === 'landing'
           ? 'Module 1'
           : s.type === 'cover'
-            ? 'Cover'
+            ? (s.t2 ?? 'Reading behaviour in the moment')
           : s.type === 'scenario_situation' && s.scenarioId
             ? `Scenario ${s.scenarioId} · Read`
             : s.type === 'scenario_choose' && s.scenarioId
@@ -2963,8 +3241,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
       {
         key: 'introduction',
         label: 'Introduction',
-        indices: range(0, 4),
-        landingBlockId: 0,
+        indices: range(1, 4),
       },
       { key: 'watch', label: 'Part 1. Watch', indices: range(5, 5) },
       {
@@ -3161,6 +3438,41 @@ export default function MindSyncTeacherTrainingModule01Page() {
     return 'Next';
   }, [screen.id, screen.type, screen.scenarioId, scenarioCompareSeen]);
 
+  const { setSidebar } = useModuleTrainingSidebar();
+
+  const moduleSidebarContent = useMemo(() => {
+    if (screen.type === 'landing') return null;
+    return (
+      <ModuleContentsSidebar
+        toc={toc}
+        sidebarSections={sidebarSections}
+        openSections={openSections}
+        activeSidebarSectionKey={activeSidebarSectionKey}
+        index={index}
+        screen={screen}
+        toggleSection={toggleSection}
+        setIndex={setIndex}
+        sidebarScrollRef={sidebarScrollRef}
+        suppressAutoOpenRef={suppressAutoOpenRef}
+        isSidebarTranscriptOpen={isSidebarTranscriptOpen}
+        setIsSidebarTranscriptOpen={setIsSidebarTranscriptOpen}
+      />
+    );
+  }, [
+    screen,
+    toc,
+    sidebarSections,
+    openSections,
+    activeSidebarSectionKey,
+    index,
+    isSidebarTranscriptOpen,
+  ]);
+
+  useEffect(() => {
+    setSidebar(moduleSidebarContent);
+    return () => setSidebar(null);
+  }, [moduleSidebarContent, setSidebar]);
+
   return (
     <div
       className="flex flex-col min-h-screen bg-[#F7F9FC] text-slate-900"
@@ -3171,7 +3483,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
       ) : (
       <main className="flex w-full h-screen overflow-hidden">
         <div
-          className={`w-3/4 min-h-0 overflow-hidden flex flex-col ${
+          className={`flex-1 min-w-0 w-full overflow-hidden flex flex-col ${
             screen.id === 5 && isWatchScriptOpen
               ? 'relative flex-row p-4'
               : 'p-0'
@@ -3963,249 +4275,6 @@ export default function MindSyncTeacherTrainingModule01Page() {
         </div>
         </div>
 
-        <aside className="relative w-1/4 h-full border-l border-slate-200 bg-white flex flex-col shrink-0 overflow-hidden">
-          <div className="p-6 border-b border-slate-200">
-            <h2 className="text-sm font-bold uppercase tracking-widest text-slate-500 mb-1">
-              Module Contents
-            </h2>
-            <p className="text-xs text-slate-400">{toc.length} blocks</p>
-          </div>
-          <div
-            ref={sidebarScrollRef}
-            className="flex-1 min-h-0 overflow-y-auto custom-scrollbar bg-white"
-          >
-            {sidebarSections.map((section) => {
-              const isOpen = openSections[section.key];
-              const isActiveSection = section.key === activeSidebarSectionKey;
-              const isCollapsible =
-                section.key !== 'closing' && section.key !== 'watch';
-              const visibleIndices = section.indices.filter((i) => {
-                const item = toc[i];
-                if (!item) return false;
-                if (
-                  item.blockId === 8 ||
-                  item.blockId === 9 ||
-                  item.blockId === 10 ||
-                  item.blockId === 11 ||
-                  item.blockId === 14 ||
-                  item.blockId === 20 ||
-                  item.blockId === 21 ||
-                  item.blockId === 23 ||
-                  item.blockId === 24 ||
-                  item.blockId === 26 ||
-                  item.blockId === 27
-                )
-                  return false;
-                return true;
-              });
-
-              const isQuestionBlock = [20, 23, 26].includes(screen.id);
-              const isSectionActive =
-                isActiveSection ||
-                (section.key === 'practise' && isQuestionBlock);
-
-              const canCollapse = isCollapsible && visibleIndices.length > 1;
-              const shouldShowItems = canCollapse && isOpen;
-              return (
-                <div key={section.key} className="border-b border-slate-200">
-                  {canCollapse ? (
-                    <button
-                      type="button"
-                      onClick={() => toggleSection(section.key)}
-                      data-sidebar-section-header="true"
-                      data-section-key={section.key}
-                      aria-expanded={isOpen}
-                      className={`w-full text-left px-4 py-4 flex items-center justify-between gap-3 transition-colors relative ${
-                        isSectionActive
-                          ? 'bg-[#EEF4FF]'
-                          : isOpen
-                            ? 'bg-[#F7FAFF]'
-                            : 'hover:bg-slate-50'
-                      }`}
-                    >
-                      {isSectionActive ? (
-                        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#2E7CF6]/60 to-transparent" />
-                      ) : null}
-                      <div className="min-w-0 flex-1">
-                        <div
-                          className={`text-xs font-bold uppercase tracking-widest truncate ${
-                            isActiveSection || isOpen
-                              ? 'text-[#1F3864]'
-                              : 'text-slate-700'
-                          }`}
-                        >
-                          {section.label}
-                        </div>
-                        <div className="text-[10px] text-slate-500">
-                          {visibleIndices.length} blocks
-                        </div>
-                      </div>
-                      <span
-                        className={`material-symbols-outlined text-slate-500 transition-transform shrink-0 ${
-                          isOpen ? 'rotate-180' : ''
-                        }`}
-                      >
-                        expand_more
-                      </span>
-                    </button>
-                  ) : (
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const targetIndex = section.indices[0];
-                        if (typeof targetIndex !== 'number') return;
-                        if (targetIndex !== index)
-                          suppressAutoOpenRef.current = true;
-                        setIndex(targetIndex);
-                      }}
-                      data-sidebar-section-header="true"
-                      data-section-key={section.key}
-                      className={`w-full text-left px-4 py-4 flex items-center justify-between gap-3 transition-colors relative ${
-                        isSectionActive
-                          ? 'bg-[#EEF4FF]'
-                          : 'hover:bg-slate-50'
-                      }`}
-                    >
-                      {isSectionActive ? (
-                        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#2E7CF6]/60 to-transparent" />
-                      ) : null}
-                      <div className="min-w-0 flex-1">
-                        <div
-                          className={`text-xs font-bold uppercase tracking-widest truncate ${
-                            isActiveSection
-                              ? 'text-[#1F3864]'
-                              : 'text-slate-700'
-                          }`}
-                        >
-                          {section.label}
-                        </div>
-                        <div className="text-[10px] text-slate-500">
-                          {visibleIndices.length} blocks
-                        </div>
-                      </div>
-                    </button>
-                  )}
-
-                  {shouldShowItems ? (
-                    <div>
-                      {visibleIndices.map((i) => {
-                        const item = toc[i];
-                        if (!item) return null;
-                        const questionToScenarioMap: Record<number, number> = {
-                          20: 19,
-                          23: 22,
-                          26: 25,
-                        };
-                        const isCurrent =
-                          item.index === index ||
-                          questionToScenarioMap[screen.id] === item.blockId;
-                        const isLanding =
-                          section.landingBlockId === item.blockId;
-                        return (
-                          <button
-                            key={`${item.blockId}-${item.index}`}
-                            type="button"
-                            onClick={() => setIndex(item.index)}
-                            data-sidebar-item="true"
-                            data-toc-index={item.index}
-                            className={`w-full text-left px-4 py-3 border-t flex items-start gap-3 transition-colors cursor-pointer ${
-                              isCurrent
-                                ? 'border-slate-200 bg-[#bdd2f8]'
-                                : 'border-slate-200 hover:bg-[#EEF4FF]'
-                            }`}
-                          >
-                            <div className="w-6 h-6 rounded-full flex items-center justify-center shrink-0 mt-0.5">
-                              {isCurrent ? (
-                                <div className="w-6 h-6 rounded-full border border-[#2E7CF6] flex items-center justify-center">
-                                  <div className="w-2 h-2 bg-[#2E7CF6] rounded-full animate-pulse" />
-                                </div>
-                              ) : (
-                                <div className="w-6 h-6 rounded-full border border-slate-300" />
-                              )}
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <p
-                                className={`text-xs truncate ${
-                                  isCurrent
-                                    ? 'font-bold text-slate-900'
-                                    : 'font-medium text-slate-700'
-                                }`}
-                              >
-                                {item.label}
-                              </p>
-                              <p className="text-[10px] text-slate-500">
-                                {isLanding
-                                  ? 'Section overview'
-                                  : `Block ${item.blockId}`}
-                              </p>
-                            </div>
-                          </button>
-                        );
-                      })}
-
-                      {section.key === 'watch' &&
-                      screen.type === 'video' &&
-                      screen.transcriptDropdown ? (
-                        <div className="p-4 border-t border-white/5">
-                          <button
-                            type="button"
-                            onClick={() => setIsSidebarTranscriptOpen(true)}
-                            className="w-full h-[56px] rounded-xl border border-white/10 bg-[#1A1A33]/60 hover:bg-[#1A1A33]/75 transition-colors flex items-center gap-3 px-4 text-left"
-                          >
-                            <span className="material-symbols-outlined text-[#818CF8]">
-                              menu_book
-                            </span>
-                            <span className="text-sm font-medium text-white/85 truncate">
-                              {screen.transcriptDropdown.header}
-                            </span>
-                          </button>
-                        </div>
-                      ) : null}
-                    </div>
-                  ) : null}
-                </div>
-              );
-            })}
-          </div>
-
-          {isSidebarTranscriptOpen &&
-          screen.type === 'video' &&
-          screen.transcriptDropdown ? (
-            <div className="absolute inset-0 z-20">
-              <button
-                type="button"
-                aria-label="Close transcript"
-                onClick={() => setIsSidebarTranscriptOpen(false)}
-                className="absolute inset-0 bg-black/60 backdrop-blur-sm"
-              />
-              <div className="absolute inset-3 glass-panel rounded-2xl border border-white/10 bg-[#020617]/90 backdrop-blur p-4 shadow-[0_30px_120px_rgba(0,0,0,0.7)] overflow-hidden flex flex-col">
-                <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0">
-                    <div className="text-xs font-bold uppercase tracking-[0.2em] text-white/60">
-                      Transcript
-                    </div>
-                    <div className="mt-1 text-sm font-semibold text-white truncate">
-                      {screen.transcriptDropdown.header}
-                    </div>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => setIsSidebarTranscriptOpen(false)}
-                    className="w-9 h-9 rounded-xl border border-white/10 bg-white/[0.04] hover:bg-white/[0.08] transition-colors flex items-center justify-center shrink-0"
-                  >
-                    <span className="material-symbols-outlined text-white/80">
-                      close
-                    </span>
-                  </button>
-                </div>
-
-                <div className="mt-4 flex-1 min-h-0 overflow-y-auto custom-scrollbar text-sm text-slate-200 whitespace-pre-line leading-relaxed pr-1">
-                  {screen.transcriptDropdown.body}
-                </div>
-              </div>
-            </div>
-          ) : null}
-        </aside>
       </main>
       )}
 
