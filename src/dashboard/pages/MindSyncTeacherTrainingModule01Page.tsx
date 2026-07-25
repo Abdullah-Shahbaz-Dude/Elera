@@ -1,14 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Link, useNavigate } from 'react-router-dom';
-import { useModuleTrainingSidebar } from '@/dashboard/contexts/ModuleTrainingSidebarContext';
 import VideoLessonPlayer from '../components/VideoLessonPlayer';
 import image from '../../assets/images/mindsync/2.jpg';
 import structureWatchImage from '../../assets/images/mindsync/5.jpg';
 import structureLearnImage from '../../assets/images/mindsync/6.jpg';
 import structurePracticeImage from '../../assets/images/mindsync/Untitled design.jpg';
 import structureTakeawayImage from '../../assets/images/mindsync/7.jpg';
-import learnHeroImage from '../../assets/images/mindsync/shutterstock_2757853493 (1).jpg';
 import scenario1Image from '../../assets/images/mindsync/3.jpg';
 import scenario2Image from '../../assets/images/mindsync/4.jpg';
 import scenario3Image from '../../assets/images/mindsync/1.jpg';
@@ -61,12 +59,6 @@ type TimelineStep = {
   body: string;
   keyInsight: string;
   image: string;
-};
-
-const SCENARIO_IMAGES: Record<1 | 2 | 3, string> = {
-  1: scenario1Image,
-  2: scenario2Image,
-  3: scenario3Image,
 };
 
 type DropdownProps = DropdownItem & {
@@ -559,13 +551,10 @@ const TECHNIQUE_STATE_STYLES: Record<
 };
 
 function splitTechniqueTitle(t2?: string) {
-  if (!t2) return { eyebrow: 'The technique.', headline: 'The three second pause' };
+  if (!t2) return { headline: 'The three second pause' };
   const dotIndex = t2.indexOf('. ');
-  if (dotIndex === -1) return { eyebrow: '', headline: t2 };
-  return {
-    eyebrow: `${t2.slice(0, dotIndex + 1)}`,
-    headline: t2.slice(dotIndex + 2),
-  };
+  if (dotIndex === -1) return { headline: t2 };
+  return { headline: t2.slice(dotIndex + 2) };
 }
 
 function TechniquePauseFlow() {
@@ -881,7 +870,7 @@ function TechniqueIntroSection({
   screen: Screen;
   onStepClick: (stepNumber: number) => void;
 }) {
-  const { eyebrow, headline } = splitTechniqueTitle(screen.t2);
+  const { headline } = splitTechniqueTitle(screen.t2);
   const steps = screen.techniqueSteps ?? [];
 
   return (
@@ -891,14 +880,6 @@ function TechniqueIntroSection({
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-center w-full shrink-0">
             <div className="space-y-5">
               <header>
-                {eyebrow ? (
-                  <p
-                    className="text-[15px] font-semibold mb-1"
-                    style={{ color: '#1F7A7A' }}
-                  >
-                    {eyebrow}
-                  </p>
-                ) : null}
                 <h2
                   className="text-[32px] leading-tight font-bold"
                   style={{ color: '#1F3864' }}
@@ -1069,7 +1050,7 @@ function AboutModuleTextContent({
     <>
       {screen.lead ? (
         <h2
-          className="shrink-0 text-[32px] leading-tight font-bold max-w-3xl whitespace-pre-line"
+          className="shrink-0 text-[32px] leading-tight font-bold max-w-[800px] whitespace-pre-line"
           style={{ color: '#1F3864' }}
         >
           {screen.lead}
@@ -1077,10 +1058,10 @@ function AboutModuleTextContent({
       ) : null}
 
       {screen.body || (screen.dropdowns && screen.dropdowns.length) ? (
-        <div className="flex flex-col gap-5 border-l-4 border-l-[#2E7CF6] pl-5 md:pl-6 py-1">
+        <div className="flex flex-col gap-10 border-l-4 border-l-[#2E7CF6] pl-5 md:pl-6 py-1 pt-10 md:pt-10">
           {screen.body ? (
             <p
-              className="text-[16px] md:text-[18px] font-medium leading-relaxed whitespace-pre-line"
+              className="text-[16px] md:text-[24px] font-medium leading-relaxed whitespace-pre-line"
               style={{ color: '#1F3864' }}
             >
               {screen.body}
@@ -1198,7 +1179,7 @@ function AboutModuleDiagram() {
 
 function AboutModuleInsightBar() {
   return (
-    <div className="flex items-center gap-4 py-4 px-5 md:px-6 rounded-xl bg-white border border-[#E5E9F0] shadow-[0_4px_24px_-4px_rgba(10,31,68,0.08)]">
+    <div className="flex mb-6 md:mb-2 items-center gap-4 py-4 px-5 md:px-6 rounded-xl bg-white border border-[#E5E9F0] shadow-[0_4px_24px_-4px_rgba(10,31,68,0.08)]">
       <ModuleFavicon className="w-12 h-12 object-contain shrink-0" />
       <p
         className="text-[16px] md:text-[18px] leading-relaxed font-medium"
@@ -1218,8 +1199,8 @@ function AboutModuleSection({
   onDropdownOpenChange: (dropdownId: string, open: boolean) => void;
 }) {
   return (
-    <div className="w-full max-w-[1200px] mx-auto flex flex-col gap-6 lg:gap-8">
-      <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-start">
+    <div className="w-full max-w-[1200px] mx-auto flex flex-col flex-1 min-h-0 h-full gap-6 lg:gap-8">
+      <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-start flex-1 min-h-0">
         <div className="flex flex-col gap-5">
           <AboutModuleTextContent
             screen={screen}
@@ -1355,7 +1336,7 @@ function WatchIntroSplitCards({
       />
 
       <p
-        className="text-left text-[14px] md:text-[15px] font-medium pl-1"
+        className="text-left text-[14px] md:text-[18px] font-medium pl-1"
         style={{ color: '#1F7A7A' }}
       >
         {intro.footer}
@@ -1418,42 +1399,34 @@ function WatchSection({
   );
 
   return (
-    <div
-      className={`flex flex-1 w-full min-h-0 py-6 ${
-        isScriptOpen
-          ? 'items-start justify-start py-4 md:py-6'
-          : 'items-center justify-center'
-      }`}
-    >
-      <div className="w-full max-w-5xl mx-auto">
-        {screen.watchIntro ? (
-          isScriptOpen ? (
-            <div className="flex flex-col gap-6 w-full">
-              <div className="w-full flex flex-col gap-4">{videoBlock}</div>
-              <WatchIntroSplitCards intro={screen.watchIntro} />
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10 items-start">
-              <WatchIntroSplitCards intro={screen.watchIntro} />
-              <div className="flex flex-col gap-4 min-w-0">{videoBlock}</div>
-            </div>
-          )
-        ) : (
-          <div className="space-y-8">
-            {screen.body ? (
-              <div className="border-l-4 border-l-[#2E7CF6] pl-5 md:pl-6 py-1">
-                <p
-                  className="text-left text-[15px] md:text-[16px] font-semibold leading-relaxed whitespace-pre-line"
-                  style={{ color: '#1F3864' }}
-                >
-                  {screen.body}
-                </p>
-              </div>
-            ) : null}
-            {videoBlock}
+    <div className="w-full max-w-[1200px] mx-auto flex flex-col flex-1 min-h-0 h-full gap-6 lg:gap-8">
+      {screen.watchIntro ? (
+        isScriptOpen ? (
+          <div className="flex flex-col gap-6 w-full flex-1 min-h-0">
+            <div className="w-full flex flex-col gap-4">{videoBlock}</div>
+            <WatchIntroSplitCards intro={screen.watchIntro} />
           </div>
-        )}
-      </div>
+        ) : (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10 items-start flex-1 min-h-0">
+            <WatchIntroSplitCards intro={screen.watchIntro} />
+            <div className="flex flex-col gap-4 min-w-0">{videoBlock}</div>
+          </div>
+        )
+      ) : (
+        <div className="space-y-8 flex-1 min-h-0">
+          {screen.body ? (
+            <div className="border-l-4 border-l-[#2E7CF6] pl-5 md:pl-6 py-1">
+              <p
+                className="text-left text-[15px] md:text-[16px] font-semibold leading-relaxed whitespace-pre-line"
+                style={{ color: '#1F3864' }}
+              >
+                {screen.body}
+              </p>
+            </div>
+          ) : null}
+          {videoBlock}
+        </div>
+      )}
     </div>
   );
 }
@@ -1510,40 +1483,23 @@ function CoverSection({ screen }: { screen: Screen }) {
 
 function TechniqueHonestSection({ screen }: { screen: Screen }) {
   return (
-    <div className="max-w-[1200px] mx-auto">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
-        <div className="space-y-6 pt-10 lg:pt-16">
-          <h1 className="text-[40px] md:text-[48px] leading-[1.1] font-bold text-[#1F3864]">
-            {screen.t2}
-          </h1>
-
-          {screen.keyPoint ? (
-            <div className="rounded-xl overflow-hidden shadow-[0_4px_24px_-4px_rgba(10,31,68,0.12)] border border-[#1F3864]/20 bg-[#1F3864]">
-              <div className="p-8">
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-[#2E7CF6]/20 flex items-center justify-center shrink-0">
-                    <ModuleFavicon className="w-7 h-7" />
-                  </div>
-                  <div>
-                    <div className="mt-1 text-[14px] leading-relaxed text-white/90 italic">
-                      &ldquo;{screen.keyPoint}&rdquo;
-                    </div>
-                  </div>
+    <div className="max-w-[1200px] mx-auto w-full">
+      {screen.keyPoint ? (
+        <div className="rounded-xl h-[400px] overflow-hidden shadow-[0_4px_24px_-4px_rgba(10,31,68,0.12)] border border-[#1F3864]/20 bg-[#1F3864]">
+          <div className="p-8 md:p-10 h-full flex flex-col justify-center">
+            <div className="flex items-start gap-4 md:gap-6">
+              <div className="w-12 h-12 md:w-14 md:h-14 rounded-xl bg-[#2E7CF6]/20 flex items-center justify-center shrink-0">
+                <ModuleFavicon className="w-7 h-7 md:w-8 md:h-8" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="text-[16px] md:text-[18px] leading-relaxed text-white/90 italic">
+                  &ldquo;{screen.keyPoint}&rdquo;
                 </div>
               </div>
             </div>
-          ) : null}
+          </div>
         </div>
-
-        <div className="h-[400px] relative overflow-hidden rounded-3xl shadow-lg">
-          <img
-            className="w-full h-full object-cover"
-            src={learnHeroImage}
-            alt="A teacher sitting quietly in a light-filled classroom after school hours"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#1F3864]/30 to-transparent" />
-        </div>
-      </div>
+      ) : null}
     </div>
   );
 }
@@ -1638,36 +1594,28 @@ function WhatNotToDoStepperSection({ screen }: { screen: Screen }) {
               : 'opacity-0 translate-y-4'
           }`}
         >
-          <div className="col-span-12 lg:col-span-7 bg-white p-4 md:p-5 rounded-xl border border-slate-200 shadow-[0_20px_40px_-15px_rgba(47,99,120,0.06)] flex flex-col min-h-0 overflow-hidden">
-            <div className="flex items-center gap-3 mb-3 shrink-0">
+          <div className="col-span-12 bg-white p-4 md:pt-10 md:px-5 rounded-xl border border-slate-200 shadow-[0_20px_40px_-15px_rgba(47,99,120,0.06)] flex flex-col min-h-0 overflow-hidden">
+            <div className="ml-0 md:ml-4 flex items-center gap-3 mb-3 shrink-0 ">
               <div className="p-3 rounded-lg bg-[#2E7CF6]/10 text-[#2E7CF6] shrink-0">
                 <span className="material-symbols-outlined text-3xl">
                   {active.icon}
                 </span>
               </div>
               <div className="min-w-0">
-                <h2 className="text-lg md:text-xl font-semibold text-[#1F3864] leading-snug">
+                <h2 className="text-lg md:text-2xl font-semibold text-[#1F3864] leading-snug">
                   {active.header}
                 </h2>
-                <p className="text-xs font-medium text-slate-500 mt-0.5">
+                <p className="text-sm md:text-base font-medium text-slate-500 mt-0.5">
                   {activeStep + 1} of {steps.length}
                 </p>
               </div>
             </div>
-            <p className="text-[15px] text-slate-700 leading-relaxed">
+            <p className="text-[15px] md:text-[20px]  ml-0 md:ml-4 py-2 overflow-y-auto custom-scrollbar text-slate-700 leading-relaxed">
               {active.body}
             </p>
           </div>
 
-          <div className="hidden lg:block col-span-5 min-h-0 h-full">
-            <div className="relative h-full min-h-[120px] rounded-xl overflow-hidden border border-slate-200">
-              <img
-                className="w-full h-full object-cover"
-                src={active.image}
-                alt=""
-              />
-            </div>
-          </div>
+          
         </div>
       ) : null}
     </div>
@@ -1678,17 +1626,14 @@ const EVIDENCE_TAB_META = [
   {
     shortLabel: 'Three State Model',
     icon: 'psychology_alt',
-    image: structureLearnImage,
   },
   {
     shortLabel: 'The Pause',
     icon: 'pause_circle',
-    image: learnHeroImage,
   },
   {
     shortLabel: 'Why 3 Seconds',
     icon: 'timer_3',
-    image: structureWatchImage,
   },
 ] as const;
 
@@ -1747,27 +1692,25 @@ function EvidenceTabsSection({ screen }: { screen: Screen }) {
           className="bg-white rounded-xl border border-slate-200 shadow-[0_20px_40px_-15px_rgba(47,99,120,0.06)] overflow-hidden flex flex-col flex-1 min-h-0"
           style={{ animation: 'step-enter 0.3s ease-out' }}
         >
-          <div className="relative w-full h-[150px] md:h-[175px] shrink-0 overflow-hidden">
-            <img
-              className="w-full h-full object-cover object-[center_30%]"
-              src={meta.image}
-              alt=""
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#1F3864]/90 from-0% via-[#1F3864]/45 via-[35%] to-transparent to-90%" />
-            <div className="absolute inset-x-0 bottom-0 px-4 md:px-5 pb-3 md:pb-4 pt-6 flex items-center gap-3">
-              <div className="flex-none w-11 h-11 bg-white/15 backdrop-blur-sm rounded-xl flex items-center justify-center border border-white/20">
-                <span className="material-symbols-outlined text-white text-[24px]">
-                  {meta.icon}
-                </span>
-              </div>
-              <h2 className="text-lg md:text-xl font-semibold text-white leading-snug min-w-0">
-                {active.header}
-              </h2>
+          <div className="shrink-0 px-5 md:px-6 py-4 md:py-5 border-b border-slate-200 bg-[#F7F9FC] flex items-center gap-3 md:gap-4">
+            <div className="flex-none w-11 h-11 rounded-xl bg-[#EEF4FF] border border-[#2E7CF6]/20 flex items-center justify-center shrink-0">
+              <span
+                className="material-symbols-outlined text-[24px]"
+                style={{ color: '#2E7CF6' }}
+              >
+                {meta.icon}
+              </span>
             </div>
+            <h2
+              className="text-lg md:text-xl font-semibold leading-snug min-w-0"
+              style={{ color: '#1F3864' }}
+            >
+              {active.header}
+            </h2>
           </div>
 
           <div className="p-5 md:p-6 flex flex-col flex-1 min-h-0 overflow-hidden">
-            <p className="text-[15px] text-slate-700 leading-relaxed whitespace-pre-line flex-1 min-h-0 overflow-y-auto custom-scrollbar pr-1 -mr-1">
+            <p className="text-[15px] md:text-[20px] text-slate-700 leading-relaxed whitespace-pre-line flex-1 min-h-0 overflow-y-auto custom-scrollbar pr-1 -mr-1">
               {active.body}
             </p>
           </div>
@@ -1912,27 +1855,14 @@ function ScenarioSituationSection({ scenarioId }: { scenarioId: 1 | 2 | 3 }) {
   return (
     <div className="max-w-[1200px] mx-auto flex flex-col flex-1 min-h-0 h-full overflow-hidden pt-2">
       <ScenarioHeading scenarioId={scenarioId} />
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 flex-1 min-h-0 items-stretch">
-        <div className="lg:col-span-7 flex flex-col min-h-0 overflow-hidden">
-          <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar pr-1 -mr-1">
-            <div className="bg-[#F7F9FB] p-6 md:p-8 rounded-xl border-l-4 border-l-[#2E7CF6]">
-              <p
-                className="text-[18px] leading-relaxed whitespace-pre-line"
-                style={{ color: '#333333' }}
-              >
-                {scenario.situation}
-              </p>
-            </div>
-          </div>
-        </div>
-        <div className="lg:col-span-5 flex flex-col min-h-[220px] lg:min-h-0">
-          <div className="relative flex-1 min-h-0 rounded-xl overflow-hidden border border-slate-200 shadow-[0_20px_40px_-15px_rgba(47,99,120,0.06)]">
-            <img
-              className="w-full h-full object-cover object-[center_65%]"
-              src={SCENARIO_IMAGES[scenarioId]}
-              alt=""
-            />
-          </div>
+      <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar pr-1 -mr-1">
+        <div className="w-full bg-[#F7F9FB] p-6 md:p-8 lg:p-10 rounded-xl border-l-4 border-l-[#2E7CF6]">
+          <p
+            className="text-[20px] md:text-[22px] lg:text-[24px] leading-relaxed whitespace-pre-line"
+            style={{ color: '#1F3864' }}
+          >
+            {scenario.situation}
+          </p>
         </div>
       </div>
     </div>
@@ -2107,8 +2037,8 @@ function getModulePageTitles(
   activeSidebarSectionKey: SidebarSectionKey | null
 ): { h1: string; h2: string } {
   const h1 =
-    screen.type === 'cover'
-      ? (screen.t1 ?? '')
+    activeSidebarSectionKey === 'introduction'
+      ? 'Introduction'
       : screen.id === 5
         ? (screen.t1 ?? 'Part 1. Watch')
         : activeSidebarSectionKey === 'learn'
@@ -2154,34 +2084,36 @@ function ModuleInlineHeader({
 
   return (
     <div className="shrink-0 px-5 md:px-14 pt-1 pb-4 border-b border-slate-200 bg-[#F7F9FC]">
-      <div className="flex items-center justify-between gap-4 mb-3">
-        <Link
-          to="/dashboard/my-learning/mind-sync"
-          className="flex items-center gap-2 text-slate-600 hover:text-[#1F3864] transition-colors group"
+      <div className="max-w-[1200px] mx-auto w-full">
+        <div className="flex items-center justify-between gap-4 mb-3">
+          <Link
+            to="/dashboard/my-learning/mind-sync"
+            className="flex items-center gap-2 text-slate-600 hover:text-[#1F3864] transition-colors group"
+          >
+            <span className="material-symbols-outlined text-lg group-hover:-translate-x-1 transition-transform">
+              arrow_back
+            </span>
+            <span className="text-xs font-medium uppercase tracking-widest">
+              Back to Mind Sync
+            </span>
+          </Link>
+          <span className="text-xs text-slate-500 font-medium">
+            Block {screen.id}
+          </span>
+        </div>
+        <h1
+          className="shrink-0 text-[32px] leading-tight font-bold max-w-3xl mb-1"
+          style={{ color: '#1F3864' }}
         >
-          <span className="material-symbols-outlined text-lg group-hover:-translate-x-1 transition-transform">
-            arrow_back
-          </span>
-          <span className="text-xs font-medium uppercase tracking-widest">
-            Back to Mind Sync
-          </span>
-        </Link>
-        <span className="text-xs text-slate-500 font-medium">
-          Block {screen.id}
-        </span>
+          {h1}
+        </h1>
+        <h2
+          className="shrink-0 text-[24px] leading-snug font-bold max-w-3xl"
+          style={{ color: '#1F7A7A' }}
+        >
+          {h2}
+        </h2>
       </div>
-      <h1
-        className="text-[32px] leading-tight font-bold mb-1 tracking-tight"
-        style={{ color: '#1F3864' }}
-      >
-        {h1}
-      </h1>
-      <h2
-        className="text-[24px] leading-snug font-bold"
-        style={{ color: '#1F7A7A' }}
-      >
-        {h2}
-      </h2>
     </div>
   );
 }
@@ -2285,7 +2217,7 @@ function ModuleContentsSidebar({
   setIsSidebarTranscriptOpen: (open: boolean) => void;
 }) {
   return (
-    <div className="relative h-full flex flex-col overflow-hidden bg-white">
+    <aside className="relative hidden md:flex flex-col shrink-0 w-[280px] h-full border-l border-slate-200 bg-white overflow-hidden">
       <div className="p-6 border-b border-slate-200">
         <h2 className="text-sm font-bold uppercase tracking-widest text-slate-500 mb-1">
           Module Contents
@@ -2528,7 +2460,7 @@ function ModuleContentsSidebar({
           </div>
         </div>
       ) : null}
-    </div>
+    </aside>
   );
 }
 
@@ -2614,7 +2546,9 @@ function TakeawayCardSection({ screen }: { screen: Screen }) {
 
     if (!hasHighlight) {
       return (
-        <p className="whitespace-pre-wrap leading-relaxed">{screen.takeawayBody}</p>
+        <p className="text-[14px] md:text-[18px] whitespace-pre-wrap leading-snug">
+          {screen.takeawayBody}
+        </p>
       );
     }
 
@@ -2624,12 +2558,12 @@ function TakeawayCardSection({ screen }: { screen: Screen }) {
           {parsedSteps.steps.map((step) => (
             <div
               key={step.number}
-              className="flex items-start gap-3 rounded-lg border border-slate-100 bg-[#F7F9FB] p-3"
+              className="flex items-start gap-3 rounded-lg border border-slate-100 bg-[#F7F9FB] p-3 md:p-3.5"
             >
-              <span className="flex items-center justify-center w-7 h-7 rounded-full bg-[#2E7CF6]/10 text-[#2E7CF6] text-xs font-bold shrink-0 mt-0.5">
+              <span className="flex items-center justify-center w-7 h-7 rounded-full bg-[#2E7CF6]/10 text-[#2E7CF6] text-xs font-bold shrink-0">
                 {step.number}
               </span>
-              <p className="text-[13px] md:text-[14px] leading-snug flex-1 min-w-0">
+              <p className="text-[14px] md:text-[15px] leading-snug flex-1 min-w-0">
                 {step.body}
               </p>
             </div>
@@ -2637,35 +2571,39 @@ function TakeawayCardSection({ screen }: { screen: Screen }) {
         </div>
 
         {highlightParts[1] ? (
-          <p className="whitespace-pre-wrap leading-snug">{highlightParts[1]}</p>
+          <p className="text-[14px] md:text-[15px] whitespace-pre-wrap leading-snug">
+            {highlightParts[1]}
+          </p>
         ) : null}
       </>
     );
   };
 
   return (
-    <div className="max-w-[1200px] mx-auto flex flex-col gap-3 lg:gap-4">
+    <div className="max-w-[1200px] mx-auto flex flex-col flex-1 min-h-0 h-full overflow-hidden gap-3">
       {screen.body ? (
-        <h2
-          className="text-[24px] md:text-[32px] leading-tight font-semibold mb-4 shrink-0 max-w-6xl"
-          style={{ color: '#1F3864' }}
-        >
-          {screen.body}
-        </h2>
+        <header className="pt-2 shrink-0">
+          <h2
+            className="text-[32px] leading-tight font-bold max-w-[1200px]"
+            style={{ color: '#1F3864' }}
+          >
+            {screen.body}
+          </h2>
+        </header>
       ) : null}
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6 items-start">
-        <div className="rounded-xl border border-slate-200 bg-white shadow-[0_20px_40px_-15px_rgba(47,99,120,0.06)] overflow-hidden border-l-4 border-l-[#2E7CF6]">
-          <div className="p-4 md:p-5 flex flex-col">
-            <div className="flex items-start gap-3 mb-3">
-              <ModuleFavicon className="w-6 h-6 mt-0.5" />
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-5 flex-1 min-h-0 items-stretch">
+        <div className="rounded-xl border border-slate-200 bg-white shadow-[0_20px_40px_-15px_rgba(47,99,120,0.06)] overflow-hidden border-l-4 border-l-[#2E7CF6] flex flex-col min-h-0">
+          <div className="p-5 md:p-6 flex flex-col min-h-0">
+            <div className="flex items-start gap-3 mb-3 shrink-0">
+              <ModuleFavicon className="w-7 h-7 mt-0.5 shrink-0" />
               <div className="min-w-0">
                 <div className="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1">
                   Printable, saveable card
                 </div>
                 {headingLine1 ? (
                   <h3
-                    className="text-[17px] md:text-[18px] font-normal "
+                    className="text-[20px] md:text-[22px] leading-tight font-bold"
                     style={{ color: '#1F3864' }}
                   >
                     {headingLine1}
@@ -2673,7 +2611,7 @@ function TakeawayCardSection({ screen }: { screen: Screen }) {
                 ) : null}
                 {headingLine2 ? (
                   <p
-                    className="text-[13px] font-semibold mt-0.5"
+                    className="text-[15px] md:text-[16px] font-semibold mt-0.5"
                     style={{ color: '#1F7A7A' }}
                   >
                     {headingLine2}
@@ -2682,40 +2620,37 @@ function TakeawayCardSection({ screen }: { screen: Screen }) {
               </div>
             </div>
 
-            <div className="space-y-3 pb-1" style={{ color: '#333333' }}>
+            <div className="space-y-2 min-h-0" style={{ color: '#1F3864' }}>
               {renderCardBody()}
             </div>
           </div>
         </div>
 
-        <div className="flex flex-col gap-4">
-          {hasHighlight ? (
-            <div className="space-y-3">
-              {parsedSteps.footerLabel ? (
-                <p
-                  className="text-[12px] font-semibold uppercase tracking-wide"
-                  style={{ color: '#1F3864' }}
-                >
-                  {parsedSteps.footerLabel}
-                </p>
-              ) : null}
-              <div className="bg-[#F7F9FB] p-3 md:p-4 rounded-xl border-l-4 border-l-[#2E7CF6]">
-                <p className="text-[13px] md:text-[14px] leading-snug text-[#333333] whitespace-pre-wrap">
-                  {TAKEAWAY_HIGHLIGHT_TEXT}
-                </p>
-              </div>
+        {hasHighlight ? (
+          <div className="flex flex-col gap-2 min-h-0 flex-1">
+            {parsedSteps.footerLabel ? (
+              <p
+                className="shrink-0 text-sm md:text-[15px] font-semibold uppercase tracking-wide"
+                style={{ color: '#1F3864' }}
+              >
+                {parsedSteps.footerLabel}
+              </p>
+            ) : null}
+            <div className="bg-[#F7F9FB] p-4 md:p-5 rounded-xl border-l-4 border-l-[#2E7CF6] shrink-0">
+              <p className="text-[14px] md:text-[15px] leading-snug text-[#1F3864] whitespace-pre-wrap">
+                {TAKEAWAY_HIGHLIGHT_TEXT}
+              </p>
             </div>
-          ) : null}
-
-          <div className="relative min-h-[220px] lg:min-h-[320px] rounded-xl overflow-hidden border border-slate-200 shadow-[0_20px_40px_-15px_rgba(47,99,120,0.06)]">
-            <img
-              src={structureTakeawayImage}
-              alt=""
-              className="absolute inset-0 w-full h-full object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#1F3864]/30 to-transparent" />
+            <div className="relative flex-1 min-h-[100px] rounded-xl overflow-hidden border border-slate-200 shadow-[0_20px_40px_-15px_rgba(47,99,120,0.06)]">
+              <img
+                src={structureTakeawayImage}
+                alt=""
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#1F3864]/30 to-transparent" />
+            </div>
           </div>
-        </div>
+        ) : null}
       </div>
     </div>
   );
@@ -3031,7 +2966,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
                 body: 'The calmer you sound, the more likely they are to come down with you.',
                 keyInsight:
                   'The calmer you sound, the more likely they are to come down with you.',
-                image: learnHeroImage,
+                // image: learnHeroImage,
               },
               {
                 shortLabel: 'Eye contact',
@@ -3438,41 +3373,6 @@ export default function MindSyncTeacherTrainingModule01Page() {
     return 'Next';
   }, [screen.id, screen.type, screen.scenarioId, scenarioCompareSeen]);
 
-  const { setSidebar } = useModuleTrainingSidebar();
-
-  const moduleSidebarContent = useMemo(() => {
-    if (screen.type === 'landing') return null;
-    return (
-      <ModuleContentsSidebar
-        toc={toc}
-        sidebarSections={sidebarSections}
-        openSections={openSections}
-        activeSidebarSectionKey={activeSidebarSectionKey}
-        index={index}
-        screen={screen}
-        toggleSection={toggleSection}
-        setIndex={setIndex}
-        sidebarScrollRef={sidebarScrollRef}
-        suppressAutoOpenRef={suppressAutoOpenRef}
-        isSidebarTranscriptOpen={isSidebarTranscriptOpen}
-        setIsSidebarTranscriptOpen={setIsSidebarTranscriptOpen}
-      />
-    );
-  }, [
-    screen,
-    toc,
-    sidebarSections,
-    openSections,
-    activeSidebarSectionKey,
-    index,
-    isSidebarTranscriptOpen,
-  ]);
-
-  useEffect(() => {
-    setSidebar(moduleSidebarContent);
-    return () => setSidebar(null);
-  }, [moduleSidebarContent, setSidebar]);
-
   return (
     <div
       className="flex flex-col min-h-screen bg-[#F7F9FC] text-slate-900"
@@ -3483,7 +3383,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
       ) : (
       <main className="flex w-full h-screen overflow-hidden">
         <div
-          className={`flex-1 min-w-0 w-full overflow-hidden flex flex-col ${
+          className={`flex-1 min-w-0 overflow-hidden flex flex-col ${
             screen.id === 5 && isWatchScriptOpen
               ? 'relative flex-row p-4'
               : 'p-0'
@@ -3519,6 +3419,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
                 screen.id === 17 ||
                 screen.id === 18 ||
                 screen.type === 'closing' ||
+                screen.type === 'takeaway' ||
                 screen.type === 'scenario_situation' ||
                 screen.type === 'scenario_choose' ||
                 screen.type === 'cover' ||
@@ -3531,8 +3432,6 @@ export default function MindSyncTeacherTrainingModule01Page() {
                   : 'pb-24'
               } ${
                 isCurrentScreenDropdownOpen ||
-                screen.type === 'technique_intro' ||
-                screen.type === 'takeaway' ||
                 (screen.id === 5 && isWatchScriptOpen)
                   ? 'overflow-y-auto'
                   : 'overflow-hidden'
@@ -3544,6 +3443,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
                   screen.id === 17 ||
                   screen.id === 18 ||
                   screen.type === 'closing' ||
+                  screen.type === 'takeaway' ||
                   screen.type === 'scenario_situation' ||
                   screen.type === 'scenario_choose' ||
                   screen.type === 'cover' ||
@@ -3578,7 +3478,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
                     />
                   </div>
                 ) : screen.type === 'takeaway' ? (
-                  <div className="p-5 md:p-6 md:px-14">
+                  <div className="p-5 md:p-6 md:px-14 flex flex-col flex-1 min-h-0 h-full overflow-hidden">
                     <TakeawayCardSection screen={screen} />
                   </div>
                 ) : screen.type === 'closing' ? (
@@ -3623,20 +3523,14 @@ export default function MindSyncTeacherTrainingModule01Page() {
                     />
                   </div>
                 ) : screen.id === 2 ? (
-                  <div
-                    className={`p-5 md:p-6 md:px-14 flex flex-col py-6 ${
-                      isIntroReadMoreLayoutOpen
-                        ? 'justify-start'
-                        : 'flex-1 min-h-0 h-full justify-center'
-                    }`}
-                  >
+                  <div className="p-5 md:p-6 md:px-14 flex flex-col flex-1 min-h-0 h-full">
                     <AboutModuleSection
                       screen={screen}
                       onDropdownOpenChange={handleDropdownOpenChange}
                     />
                   </div>
                 ) : screen.id === 5 ? (
-                  <div className="p-5 md:p-6 md:px-14 flex flex-1 flex-col min-h-full h-full">
+                  <div className="p-5 md:p-6 md:px-14 flex flex-col flex-1 min-h-0 h-full">
                     <WatchSection
                       screen={screen}
                       isScriptOpen={isWatchScriptOpen}
@@ -3644,10 +3538,9 @@ export default function MindSyncTeacherTrainingModule01Page() {
                     />
                   </div>
                 ) : screen.id === 3 && screen.bullets ? (
-                  <div className="p-5 md:p-6 md:px-14 flex flex-1 flex-col min-h-full h-full">
-                    <div className="flex flex-1 w-full items-center justify-center min-h-full py-6">
-                      <div className="w-full max-w-5xl mx-auto space-y-8">
-                        <div className="rounded-2xl border border-[#E5E9F0] bg-white shadow-[0_4px_24px_-4px_rgba(10,31,68,0.08),0_2px_6px_-2px_rgba(10,31,68,0.04)] p-6 md:p-8 border-l-4 border-l-[#2E7CF6]">
+                  <div className="p-5 md:p-6 md:px-14 flex flex-col flex-1 min-h-0 h-full">
+                    <div className="w-full max-w-[1200px] mx-auto flex flex-col flex-1 min-h-0 h-full gap-6 lg:gap-8">
+                      <div className="rounded-2xl border border-[#E5E9F0] bg-white shadow-[0_4px_24px_-4px_rgba(10,31,68,0.08),0_2px_6px_-2px_rgba(10,31,68,0.04)] p-6 md:p-8 border-l-4 border-l-[#2E7CF6] flex-1 min-h-0">
                           <div className="space-y-5">
                             {screen.bullets.map((b) => (
                               <div key={b} className="flex items-start gap-4">
@@ -3723,7 +3616,6 @@ export default function MindSyncTeacherTrainingModule01Page() {
                         </div>
                       </div>
                     </div>
-                  </div>
                 ) : (
                   <div className="p-5 md:p-6 md:px-14 flex flex-col min-h-0">
                       <>
@@ -4218,7 +4110,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
             
 
             <div className="sticky bottom-0 mt-auto pt-4 pb-2 border-t border-slate-200 bg-white/90 backdrop-blur">
-              <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center justify-between gap-2 max-w-[1280px] mx-auto">
                 <button
                   type="button"
                   disabled={prevVisibleIndex === null}
@@ -4275,6 +4167,20 @@ export default function MindSyncTeacherTrainingModule01Page() {
         </div>
         </div>
 
+        <ModuleContentsSidebar
+          toc={toc}
+          sidebarSections={sidebarSections}
+          openSections={openSections}
+          activeSidebarSectionKey={activeSidebarSectionKey}
+          index={index}
+          screen={screen}
+          toggleSection={toggleSection}
+          setIndex={setIndex}
+          sidebarScrollRef={sidebarScrollRef}
+          suppressAutoOpenRef={suppressAutoOpenRef}
+          isSidebarTranscriptOpen={isSidebarTranscriptOpen}
+          setIsSidebarTranscriptOpen={setIsSidebarTranscriptOpen}
+        />
       </main>
       )}
 
