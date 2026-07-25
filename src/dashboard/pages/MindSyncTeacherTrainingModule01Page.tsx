@@ -14,6 +14,7 @@ import scenario3Image from '../../assets/images/mindsync/1.jpg';
 import logoFav from '../../assets/images/logo/logo-fav-removebg-preview.png';
 
 type ScreenType =
+  | 'landing'
   | 'cover'
   | 'text'
   | 'bullets'
@@ -2100,6 +2101,159 @@ function getPractiseHeroSubtitle(screen: Screen): string {
   return screen.t2 ?? 'Part 3. Practise';
 }
 
+function getModulePageTitles(
+  screen: Screen,
+  activeSidebarSectionKey: SidebarSectionKey | null
+): { h1: string; h2: string } {
+  const h1 =
+    screen.type === 'cover'
+      ? (screen.t1 ?? '')
+      : screen.id === 5
+        ? (screen.t1 ?? 'Part 1. Watch')
+        : activeSidebarSectionKey === 'learn'
+          ? 'Part 2. Learn'
+          : activeSidebarSectionKey === 'practise'
+            ? 'Part 3. Practise'
+            : activeSidebarSectionKey === 'takeaway'
+              ? 'Part 4. Take away'
+              : activeSidebarSectionKey === 'closing'
+                ? 'Closing'
+                : 'MODULE 1 – THE THREE SECOND PAUSE';
+
+  const h2 =
+    screen.type === 'cover'
+      ? (screen.t2 ?? '')
+      : screen.id === 5
+        ? (screen.t2 ?? 'The three second pause, in a real classroom')
+        : activeSidebarSectionKey === 'learn'
+          ? screen.type === 'technique_intro' ||
+            screen.type === 'technique' ||
+            screen.type === 'technique_honest'
+            ? (screen.t2 ?? 'Part 2. Learn')
+            : (screen.lead ?? screen.t2 ?? screen.t3 ?? 'Part 2. Learn')
+          : activeSidebarSectionKey === 'practise'
+            ? getPractiseHeroSubtitle(screen)
+            : activeSidebarSectionKey === 'takeaway'
+              ? (screen.t1 ?? 'Your take away card')
+              : activeSidebarSectionKey === 'closing'
+                ? (screen.t2 ?? 'That is Module 1')
+                : (screen.t2 ?? 'Reading behaviour in the moment');
+
+  return { h1, h2 };
+}
+
+function ModuleInlineHeader({
+  screen,
+  activeSidebarSectionKey,
+}: {
+  screen: Screen;
+  activeSidebarSectionKey: SidebarSectionKey | null;
+}) {
+  const { h1, h2 } = getModulePageTitles(screen, activeSidebarSectionKey);
+
+  return (
+    <div className="shrink-0 px-5 md:px-14 pt-1 pb-4 border-b border-slate-200 bg-[#F7F9FC]">
+      <div className="flex items-center justify-between gap-4 mb-3">
+        <Link
+          to="/dashboard/my-learning/mind-sync"
+          className="flex items-center gap-2 text-slate-600 hover:text-[#1F3864] transition-colors group"
+        >
+          <span className="material-symbols-outlined text-lg group-hover:-translate-x-1 transition-transform">
+            arrow_back
+          </span>
+          <span className="text-xs font-medium uppercase tracking-widest">
+            Back to Mind Sync
+          </span>
+        </Link>
+        <span className="text-xs text-slate-500 font-medium">
+          Block {screen.id}
+        </span>
+      </div>
+      <h1
+        className="text-[32px] leading-tight font-bold mb-1 tracking-tight"
+        style={{ color: '#1F3864' }}
+      >
+        {h1}
+      </h1>
+      <h2
+        className="text-[24px] leading-snug font-bold"
+        style={{ color: '#1F7A7A' }}
+      >
+        {h2}
+      </h2>
+    </div>
+  );
+}
+
+function LandingSection({
+  screen,
+  onNext,
+}: {
+  screen: Screen;
+  onNext: () => void;
+}) {
+  return (
+    <div className="relative flex flex-col min-h-screen overflow-hidden">
+      <div className="absolute inset-0 z-0">
+        <img
+          src={image}
+          alt="Mind Sync"
+          className="w-full h-full object-cover object-[center_7%]"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-white/80 via-white/55 to-transparent" />
+        <div className="absolute inset-0 bg-white/10" />
+      </div>
+
+      <div className="absolute top-4 left-8 z-10 flex flex-col gap-2">
+        <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-700">
+          Mind Sync - Teacher Training
+        </span>
+        <Link
+          to="/dashboard/my-learning/mind-sync"
+          className="flex items-center gap-2 text-slate-700 hover:text-slate-900 transition-colors group"
+        >
+          <span className="material-symbols-outlined text-lg group-hover:-translate-x-1 transition-transform">
+            arrow_back
+          </span>
+          <span className="text-sm font-medium uppercase tracking-widest">
+            Back to Mind Sync
+          </span>
+        </Link>
+      </div>
+
+      <div className="relative z-10 flex flex-1 flex-col items-center justify-center text-center px-8">
+        {screen.t1 ? (
+          <h1
+            className="text-4xl md:text-5xl lg:text-6xl leading-tight font-bold mb-4 tracking-tight"
+            style={{ color: '#1F3864' }}
+          >
+            {screen.t1}
+          </h1>
+        ) : null}
+        {screen.t2 ? (
+          <h2
+            className="text-2xl md:text-3xl leading-snug font-bold max-w-2xl"
+            style={{ color: '#1F7A7A' }}
+          >
+            {screen.t2}
+          </h2>
+        ) : null}
+      </div>
+
+      <div className="relative z-10 flex justify-center pb-10 md:pb-14">
+        <button
+          type="button"
+          onClick={onNext}
+          className="inline-flex items-center gap-2 h-12 px-8 rounded-full text-sm md:text-base font-semibold text-white bg-[#2E7CF6] hover:bg-[#2563EB] transition-colors shadow-[0_4px_14px_-4px_rgba(46,124,246,0.45)]"
+        >
+          <span>Next</span>
+          <span className="material-symbols-outlined">arrow_forward</span>
+        </button>
+      </div>
+    </div>
+  );
+}
+
 function parseTakeawaySteps(text: string): {
   steps: { number: number; body: string }[];
   footerLabel?: string;
@@ -2423,6 +2577,12 @@ export default function MindSyncTeacherTrainingModule01Page() {
     () =>
       (
         [
+          {
+            id: 0,
+            type: 'landing',
+            t1: 'Module 1',
+            t2: 'The Three Second Pause',
+          },
           {
             id: 1,
             type: 'cover',
@@ -2767,8 +2927,10 @@ export default function MindSyncTeacherTrainingModule01Page() {
   const toc = useMemo(() => {
     return screens.map((s, i) => {
       const label =
-        s.type === 'cover'
-          ? 'Cover'
+        s.type === 'landing'
+          ? 'Module 1'
+          : s.type === 'cover'
+            ? 'Cover'
           : s.type === 'scenario_situation' && s.scenarioId
             ? `Scenario ${s.scenarioId} · Read`
             : s.type === 'scenario_choose' && s.scenarioId
@@ -2801,8 +2963,8 @@ export default function MindSyncTeacherTrainingModule01Page() {
       {
         key: 'introduction',
         label: 'Introduction',
-        indices: range(1, 4),
-        landingBlockId: 1,
+        indices: range(0, 4),
+        landingBlockId: 0,
       },
       { key: 'watch', label: 'Part 1. Watch', indices: range(5, 5) },
       {
@@ -3004,100 +3166,15 @@ export default function MindSyncTeacherTrainingModule01Page() {
       className="flex flex-col min-h-screen bg-[#F7F9FC] text-slate-900"
       style={{ fontFamily: 'Arial' }}
     >
-      <header className="relative shrink-0 h-[238px] flex flex-col justify-end px-8 pb-8 overflow-hidden">
-        <div className="absolute inset-0 z-0">
-          <img
-            src={image}
-            alt="Mind Sync"
-            className="w-full h-full object-cover object-[center_7%]"
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-white/80 via-white/55 to-transparent" />
-          <div className="absolute inset-0 bg-white/10" />
-        </div>
-
-        <div className="absolute top-4 left-8 flex flex-col gap-2">
-          <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-700">
-            Mind Sync - Teacher Training
-          </span>
-          <Link
-            to="/dashboard/my-learning/mind-sync"
-            className="flex items-center gap-2 text-slate-700 hover:text-slate-900 transition-colors group"
-          >
-            <span className="material-symbols-outlined text-lg group-hover:-translate-x-1 transition-transform">
-              arrow_back
-            </span>
-            <span className="text-sm font-medium uppercase tracking-widest">
-              Back to Mind Sync
-            </span>
-          </Link>
-        </div>
-
-        <div className="absolute top-4 right-8 text-right">
-          <span className="text-xs text-slate-700 font-medium">
-            Block {screen.id}
-          </span>
-        </div>
-
-        <div className="relative z-10 max-w-4xl mt-6">
-          <h1
-            className="text-[32px] leading-tight font-bold mb-1 tracking-tight"
-            style={{ color: '#1F3864' }}
-          >
-            {screen.type === 'cover'
-              ? screen.t1
-              : screen.id === 5
-                ? (screen.t1 ?? 'Part 1. Watch')
-                : activeSidebarSectionKey === 'learn'
-                  ? 'Part 2. Learn'
-                  : activeSidebarSectionKey === 'practise'
-                    ? 'Part 3. Practise'
-                    : activeSidebarSectionKey === 'takeaway'
-                      ? 'Part 4. Take away'
-                      : activeSidebarSectionKey === 'closing'
-                        ? 'Closing'
-                        : 'MODULE 1 – THE THREE SECOND PAUSE'}
-          </h1>
-          <h2
-            className="text-[24px] leading-snug font-bold mb-2"
-            style={{ color: '#1F7A7A' }}
-          >
-            {screen.type === 'cover'
-              ? screen.t2
-              : screen.id === 5
-                ? (screen.t2 ?? 'The three second pause, in a real classroom')
-                : activeSidebarSectionKey === 'learn'
-                  ? screen.type === 'technique_intro' ||
-                    screen.type === 'technique' ||
-                    screen.type === 'technique_honest'
-                    ? (screen.t2 ?? 'Part 2. Learn')
-                    : (screen.lead ?? screen.t2 ?? screen.t3 ?? 'Part 2. Learn')
-                  : activeSidebarSectionKey === 'practise'
-                    ? getPractiseHeroSubtitle(screen)
-                    : activeSidebarSectionKey === 'takeaway'
-                      ? (screen.t1 ?? 'Your take away card')
-                      : activeSidebarSectionKey === 'closing'
-                        ? (screen.t2 ?? 'That is Module 1')
-                        : (screen.t2 ?? 'Reading behaviour in the moment')}
-          </h2>
-          {/* <p
-            className="text-[15px] leading-relaxed max-w-2xl whitespace-pre-line"
-            style={{ color: '#6B6B6B' }}
-          >
-            Screen {index + 1} of {screens.length}
-          </p> */}
-        </div>
-
-        <div className="absolute right-0 bottom-0 w-1/3 h-full overflow-hidden pointer-events-none opacity-40">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[480px] h-[480px] bg-white/10 rounded-full blur-[120px]" />
-        </div>
-      </header>
-
-      <main className="flex w-full h-[calc(100vh-238px)] overflow-hidden">
+      {screen.type === 'landing' ? (
+        <LandingSection screen={screen} onNext={() => setIndex(1)} />
+      ) : (
+      <main className="flex w-full h-screen overflow-hidden">
         <div
-          className={`w-3/4 min-h-0 overflow-hidden p-4 ${
+          className={`w-3/4 min-h-0 overflow-hidden flex flex-col ${
             screen.id === 5 && isWatchScriptOpen
-              ? 'relative flex flex-row'
-              : 'flex flex-col'
+              ? 'relative flex-row p-4'
+              : 'p-0'
           }`}
         >
           {screen.id === 5 &&
@@ -3110,6 +3187,15 @@ export default function MindSyncTeacherTrainingModule01Page() {
             />
           ) : null}
           <div className="flex-1 min-h-0 flex flex-col overflow-hidden">
+          <ModuleInlineHeader
+            screen={screen}
+            activeSidebarSectionKey={activeSidebarSectionKey}
+          />
+          <div
+            className={`flex-1 min-h-0 flex flex-col overflow-hidden ${
+              screen.id === 5 && isWatchScriptOpen ? 'p-4 pt-0' : ''
+            }`}
+          >
           <div
             key={index}
             className="step-transition flex flex-col flex-1 min-h-0 overflow-hidden"
@@ -3875,6 +3961,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
           </div>
           </div>
         </div>
+        </div>
 
         <aside className="relative w-1/4 h-full border-l border-slate-200 bg-white flex flex-col shrink-0 overflow-hidden">
           <div className="p-6 border-b border-slate-200">
@@ -4120,6 +4207,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
           ) : null}
         </aside>
       </main>
+      )}
 
       {screen.type === 'scenario_choose' &&
       screen.scenarioId &&
