@@ -1218,13 +1218,17 @@ function ScriptSidebarPanel({
   header,
   body,
   onClose,
+  className = '',
 }: {
   header: string;
   body: string;
   onClose: () => void;
+  className?: string;
 }) {
-  const panelContent = (
-    <>
+  return (
+    <aside
+      className={`flex flex-col shrink-0 h-full min-h-0 border border-[#E5E9F0] bg-white overflow-hidden ${className}`}
+    >
       <div className="flex items-start justify-between gap-3 shrink-0 px-4 py-4 md:px-5 border-b border-[#E5E9F0]">
         <div className="min-w-0">
           <div className="text-xs font-bold uppercase tracking-widest text-slate-500">
@@ -1254,18 +1258,7 @@ function ScriptSidebarPanel({
       <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar px-4 py-4 md:px-5 text-[15px] md:text-[16px] text-slate-600 leading-relaxed whitespace-pre-line">
         {body}
       </div>
-    </>
-  );
-
-  return (
-    <>
-      <aside className="hidden lg:flex flex-col shrink-0 w-[min(380px,40%)] h-full min-h-0 border-r border-[#E5E9F0] bg-white overflow-hidden">
-        {panelContent}
-      </aside>
-      <div className="lg:hidden absolute inset-0 z-10 flex flex-col bg-white overflow-hidden">
-        {panelContent}
-      </div>
-    </>
+    </aside>
   );
 }
 
@@ -1282,7 +1275,7 @@ function WatchVersionCard({
 }) {
   return (
     <div
-      className="rounded-xl border border-[#E5E9F0] bg-white p-4 md:p-5 border-l-4 shadow-[0_4px_24px_-4px_rgba(10,31,68,0.06)]"
+      className="rounded-xl border border-[#E5E9F0] bg-white p-5 md:p-6 border-l-4 shadow-[0_4px_24px_-4px_rgba(10,31,68,0.06)] h-full"
       style={{ borderLeftColor: accentColor }}
     >
       <div className="text-[11px] font-bold uppercase tracking-widest text-slate-500 mb-3">
@@ -1307,36 +1300,50 @@ function WatchVersionCard({
   );
 }
 
-function WatchIntroSplitCards({
+function WatchIntroHeadline({
   intro,
 }: {
   intro: NonNullable<Screen['watchIntro']>;
 }) {
   return (
-    <div className="space-y-4">
-      <h3
-        className="text-left text-[32px] leading-tight font-bold"
-        style={{ color: '#1F3864' }}
-      >
-        {intro.headline}
-      </h3>
+    <h3
+      className="shrink-0 text-left text-[32px] leading-tight font-bold"
+      style={{ color: '#1F3864' }}
+    >
+      {intro.headline}
+    </h3>
+  );
+}
 
-      <WatchVersionCard
-        version={intro.before.version}
-        timing={intro.before.timing}
-        description={intro.before.description}
-        accentColor="#2E7CF6"
-      />
-
-      <WatchVersionCard
-        version={intro.after.version}
-        timing={intro.after.timing}
-        description={intro.after.description}
-        accentColor="#1F7A7A"
-      />
-
+function WatchIntroCompareCards({
+  intro,
+}: {
+  intro: NonNullable<Screen['watchIntro']>;
+}) {
+  return (
+    <div className="shrink-0 space-y-4">
+      <div className="relative grid grid-cols-1 md:grid-cols-2 gap-4 items-stretch">
+        <WatchVersionCard
+          version={intro.before.version}
+          timing={intro.before.timing}
+          description={intro.before.description}
+          accentColor="#2E7CF6"
+        />
+        <WatchVersionCard
+          version={intro.after.version}
+          timing={intro.after.timing}
+          description={intro.after.description}
+          accentColor="#1F7A7A"
+        />
+        <span
+          className="hidden md:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full bg-white border border-[#E5E9F0] text-xs font-bold items-center justify-center shadow-sm"
+          style={{ color: '#1F7A7A' }}
+        >
+          vs
+        </span>
+      </div>
       <p
-        className="text-left text-[14px] md:text-[18px] font-medium pl-1"
+        className="text-center md:text-left text-[14px] md:text-[18px] font-medium pl-1"
         style={{ color: '#1F7A7A' }}
       >
         {intro.footer}
@@ -1349,86 +1356,118 @@ function WatchSection({
   screen,
   isScriptOpen,
   onOpenScript,
+  onCloseScript,
 }: {
   screen: Screen;
   isScriptOpen: boolean;
   onOpenScript: () => void;
+  onCloseScript: () => void;
 }) {
   const videoTitle = screen.videoTitle ?? 'Module 1 film, around 3 minutes';
 
-  const videoBlock = (
-    <>
-      <div className="w-full shrink min-h-0">
-        <div className="w-full rounded-2xl border border-[#E5E9F0] bg-white shadow-[0_4px_24px_-4px_rgba(10,31,68,0.08),0_2px_6px_-2px_rgba(10,31,68,0.04)] overflow-hidden p-2 md:p-3">
-          <div className="w-full aspect-video max-h-[min(320px,36vh)]">
-            <VideoLessonPlayer
-              title={videoTitle}
-              videoUrl={screen.videoUrl ?? null}
-              theme="light"
-              compact
-              hideFooter={!screen.videoUrl}
-              className="h-full w-full rounded-xl border-0"
-            />
-          </div>
+  const videoPlayer = (
+    <div className="w-full flex-1 min-h-0 flex flex-col">
+      <div className="w-full flex-1 min-h-0 rounded-2xl border border-[#E5E9F0] bg-white shadow-[0_4px_24px_-4px_rgba(10,31,68,0.08),0_2px_6px_-2px_rgba(10,31,68,0.04)] overflow-hidden p-2 md:p-3 flex flex-col">
+        <div className="w-full flex-1 min-h-[200px] max-h-[min(480px,52vh)] aspect-video">
+          <VideoLessonPlayer
+            title={videoTitle}
+            videoUrl={screen.videoUrl ?? null}
+            theme="light"
+            compact
+            hideFooter={!screen.videoUrl}
+            className="h-full w-full rounded-xl border-0"
+          />
         </div>
       </div>
-
-      {screen.transcriptDropdown && !isScriptOpen ? (
-        <div className="shrink-0 w-full text-left">
-          <button
-            type="button"
-            onClick={onOpenScript}
-            className="w-full flex items-center justify-between gap-4 bg-white hover:bg-slate-50 transition-colors text-left py-3 px-5 md:px-6 min-h-[56px] rounded-xl border border-slate-200 shadow-[0_4px_24px_-4px_rgba(10,31,68,0.08)]"
-          >
-            <div
-              className="text-[16px] md:text-[18px] font-medium leading-relaxed"
-              style={{ color: '#1F3864' }}
-            >
-              {screen.transcriptDropdown.header}
-            </div>
-            <span
-              className="material-symbols-outlined shrink-0"
-              style={{ color: '#1F7A7A' }}
-            >
-              menu_book
-            </span>
-          </button>
-        </div>
-      ) : null}
-    </>
-  );
-
-  return (
-    <div className="w-full max-w-[1200px] mx-auto flex flex-col flex-1 min-h-0 h-full gap-6 lg:gap-8">
-      {screen.watchIntro ? (
-        isScriptOpen ? (
-          <div className="flex flex-col gap-6 w-full flex-1 min-h-0">
-            <div className="w-full flex flex-col gap-4">{videoBlock}</div>
-            <WatchIntroSplitCards intro={screen.watchIntro} />
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10 items-start flex-1 min-h-0">
-            <WatchIntroSplitCards intro={screen.watchIntro} />
-            <div className="flex flex-col gap-4 min-w-0">{videoBlock}</div>
-          </div>
-        )
-      ) : (
-        <div className="space-y-8 flex-1 min-h-0">
-          {screen.body ? (
-            <div className="border-l-4 border-l-[#2E7CF6] pl-5 md:pl-6 py-1">
-              <p
-                className="text-left text-[15px] md:text-[16px] font-semibold leading-relaxed whitespace-pre-line"
-                style={{ color: '#1F3864' }}
-              >
-                {screen.body}
-              </p>
-            </div>
-          ) : null}
-          {videoBlock}
-        </div>
-      )}
     </div>
   );
+
+  const scriptButton =
+    screen.transcriptDropdown && !isScriptOpen ? (
+      <div className="shrink-0 w-full text-left">
+        <button
+          type="button"
+          onClick={onOpenScript}
+          className="w-full flex items-center justify-between gap-4 bg-white hover:bg-slate-50 transition-colors text-left py-3 px-5 md:px-6 min-h-[56px] rounded-xl border border-slate-200 shadow-[0_4px_24px_-4px_rgba(10,31,68,0.08)]"
+        >
+          <div
+            className="text-[16px] md:text-[18px] font-medium leading-relaxed"
+            style={{ color: '#1F3864' }}
+          >
+            {screen.transcriptDropdown.header}
+          </div>
+          <span
+            className="material-symbols-outlined shrink-0"
+            style={{ color: '#1F7A7A' }}
+          >
+            menu_book
+          </span>
+        </button>
+      </div>
+    ) : null;
+
+  const watchBody = screen.watchIntro ? (
+    isScriptOpen ? (
+      <div className="flex flex-col gap-6 w-full flex-1 min-h-0">
+        <div className="w-full flex flex-col flex-1 min-h-0 gap-4">{videoPlayer}</div>
+        <WatchIntroHeadline intro={screen.watchIntro} />
+        <WatchIntroCompareCards intro={screen.watchIntro} />
+      </div>
+    ) : (
+      <div className="flex flex-col flex-1 min-h-0 gap-5 lg:gap-6">
+        <WatchIntroHeadline intro={screen.watchIntro} />
+        <div className="flex flex-col flex-1 min-h-0">{videoPlayer}</div>
+        {scriptButton}
+        <WatchIntroCompareCards intro={screen.watchIntro} />
+      </div>
+    )
+  ) : (
+    <div className="space-y-8 flex-1 min-h-0">
+      {screen.body ? (
+        <div className="border-l-4 border-l-[#2E7CF6] pl-5 md:pl-6 py-1">
+          <p
+            className="text-left text-[15px] md:text-[16px] font-semibold leading-relaxed whitespace-pre-line"
+            style={{ color: '#1F3864' }}
+          >
+            {screen.body}
+          </p>
+        </div>
+      ) : null}
+      {videoPlayer}
+      {scriptButton}
+    </div>
+  );
+
+  const contentClassName =
+    'w-full max-w-[1200px] mx-auto flex flex-col flex-1 min-h-0 h-full gap-6 lg:gap-8';
+
+  if (isScriptOpen && screen.transcriptDropdown) {
+    return (
+      <div className="relative w-full max-w-[1200px] mx-auto flex flex-1 min-h-0 h-full">
+        <div className="hidden lg:flex flex-1 min-h-0 gap-6 w-full">
+          <ScriptSidebarPanel
+            header={screen.transcriptDropdown.header}
+            body={screen.transcriptDropdown.body}
+            onClose={onCloseScript}
+            className="w-[min(380px,38%)] rounded-xl shrink-0"
+          />
+          <div className={`${contentClassName} min-w-0 !max-w-none flex-1`}>
+            {watchBody}
+          </div>
+        </div>
+        <div className="lg:hidden absolute inset-0 z-20 flex flex-col overflow-hidden">
+          <ScriptSidebarPanel
+            header={screen.transcriptDropdown.header}
+            body={screen.transcriptDropdown.body}
+            onClose={onCloseScript}
+            className="flex-1 w-full rounded-xl shadow-lg"
+          />
+        </div>
+      </div>
+    );
+  }
+
+  return <div className={contentClassName}>{watchBody}</div>;
 }
 
 function CoverSection({ screen }: { screen: Screen }) {
@@ -1525,9 +1564,9 @@ function WhatNotToDoStepperSection({ screen }: { screen: Screen }) {
     stepCount > 1 ? (activeStep / (stepCount - 1)) * 100 : 0;
 
   return (
-    <div className="max-w-[1200px] mx-auto relative flex flex-col flex-1 min-h-0 h-full overflow-hidden">
+    <div className="w-full max-w-[1200px] mx-auto relative flex flex-col flex-1 min-h-0 h-full overflow-hidden pt-2">
       {screen.body ? (
-        <header className="pt-2 mb-6 shrink-0">
+        <header className="shrink-0 mb-6">
           <h2
             className="text-[32px] leading-tight font-bold"
             style={{ color: '#1F3864' }}
@@ -1536,8 +1575,7 @@ function WhatNotToDoStepperSection({ screen }: { screen: Screen }) {
           </h2>
         </header>
       ) : null}
-
-      <div className="relative flex items-start justify-between mb-6 shrink-0">
+      <div className="relative flex items-start justify-between mb-6 shrink-0 px-1">
         <div
           className="absolute top-5 h-1 z-0 rounded-full overflow-hidden"
           style={{ left: trackInset, right: trackInset }}
@@ -1588,13 +1626,13 @@ function WhatNotToDoStepperSection({ screen }: { screen: Screen }) {
 
       {active ? (
         <div
-          className={`grid grid-cols-12 gap-4 flex-1 min-h-0 overflow-hidden transition-all duration-300 ${
+          className={`grid grid-cols-12 gap-4 w-full flex-1 min-h-0 overflow-hidden transition-all duration-300 ${
             contentVisible
               ? 'opacity-100 translate-y-0'
               : 'opacity-0 translate-y-4'
           }`}
         >
-          <div className="col-span-12 bg-white p-4 md:pt-10 md:px-5 rounded-xl border border-slate-200 shadow-[0_20px_40px_-15px_rgba(47,99,120,0.06)] flex flex-col min-h-0 overflow-hidden">
+          <div className="col-span-12 w-full bg-white p-4 md:pt-10 md:px-5 rounded-xl border border-slate-200 shadow-[0_20px_40px_-15px_rgba(47,99,120,0.06)] flex flex-col min-h-0 overflow-hidden">
             <div className="ml-0 md:ml-4 flex items-center gap-3 mb-3 shrink-0 ">
               <div className="p-3 rounded-lg bg-[#2E7CF6]/10 text-[#2E7CF6] shrink-0">
                 <span className="material-symbols-outlined text-3xl">
@@ -1645,17 +1683,6 @@ function EvidenceTabsSection({ screen }: { screen: Screen }) {
 
   return (
     <div className="max-w-[1200px] mx-auto flex flex-col flex-1 min-h-0 h-full overflow-hidden">
-      {screen.body ? (
-        <header className="pt-2 mb-4 shrink-0">
-          <h2
-            className="text-[32px] leading-tight font-bold"
-            style={{ color: '#1F3864' }}
-          >
-            {screen.body}
-          </h2>
-        </header>
-      ) : null}
-
       <div className="flex gap-1 p-1 rounded-xl bg-[#F7F9FB] mb-4 shrink-0">
         {tabs.map((tab, index) => {
           const tabMeta = EVIDENCE_TAB_META[index];
@@ -2076,31 +2103,48 @@ function getModulePageTitles(
 function ModuleInlineHeader({
   screen,
   activeSidebarSectionKey,
+  isModuleContentsOpen,
+  onToggleModuleContents,
 }: {
   screen: Screen;
   activeSidebarSectionKey: SidebarSectionKey | null;
+  isModuleContentsOpen: boolean;
+  onToggleModuleContents: () => void;
 }) {
   const { h1, h2 } = getModulePageTitles(screen, activeSidebarSectionKey);
 
   return (
-    <div className="shrink-0 px-5 md:px-14 pt-1 pb-4 border-b border-slate-200 bg-[#F7F9FC]">
-      <div className="max-w-[1200px] mx-auto w-full">
-        <div className="flex items-center justify-between gap-4 mb-3">
-          <Link
-            to="/dashboard/my-learning/mind-sync"
-            className="flex items-center gap-2 text-slate-600 hover:text-[#1F3864] transition-colors group"
-          >
-            <span className="material-symbols-outlined text-lg group-hover:-translate-x-1 transition-transform">
-              arrow_back
-            </span>
-            <span className="text-xs font-medium uppercase tracking-widest">
-              Back to Mind Sync
-            </span>
-          </Link>
-          <span className="text-xs text-slate-500 font-medium">
-            Block {screen.id}
+    <div className="shrink-0 pt-4 pb-2 border-b border-slate-200 bg-slate-100/50 backdrop-blur-sm">
+      <div className="flex items-stretch justify-between mb-3 w-full">
+        <Link
+          to="/dashboard/my-learning/mind-sync"
+          className="flex items-center gap-2.5 text-slate-600 hover:text-[#1F3864] transition-colors  px-3 py-2 hover:bg-[#EEF4FF] hover:border-[#2E7CF6]/30 shrink-0"
+        >
+          <span className="material-symbols-outlined text-lg">arrow_back</span>
+          <span className="text-sm font-semibold uppercase tracking-widest">
+            Back to Mind Sync
           </span>
-        </div>
+        </Link>
+        {!isModuleContentsOpen ? (
+          <button
+            type="button"
+            onClick={onToggleModuleContents}
+            aria-expanded={false}
+            aria-label="Open module contents"
+            className="hidden md:flex items-center gap-2.5 text-slate-600 hover:text-[#1F3864] transition-colors  px-3 py-2 hover:bg-[#EEF4FF] hover:border-[#2E7CF6]/30 shrink-0"
+          >
+            <ModuleFavicon className="w-6 h-6 shrink-0" />
+            <span className="text-sm font-semibold uppercase tracking-widest">
+              Module Contents
+            </span>
+            <span className="material-symbols-outlined text-lg">chevron_left</span>
+          </button>
+        ) : null}
+      </div>
+      <div className="px-5 md:px-14">
+      <div className="max-w-[1200px] mx-auto w-full">
+        <div className="flex items-start justify-between gap-4 mb-1">
+          <div className="min-w-0">
         <h1
           className="shrink-0 text-[32px] leading-tight font-bold max-w-3xl mb-1"
           style={{ color: '#1F3864' }}
@@ -2113,6 +2157,12 @@ function ModuleInlineHeader({
         >
           {h2}
         </h2>
+          </div>
+          <span className="text-xs text-slate-500 font-medium shrink-0 pt-2">
+            Block {screen.id}
+          </span>
+        </div>
+      </div>
       </div>
     </div>
   );
@@ -2137,27 +2187,27 @@ function LandingSection({
         <div className="absolute inset-0 bg-white/10" />
       </div>
 
-      <div className="absolute top-4 left-8 z-10 flex flex-col gap-2">
-        <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-700">
-          Mind Sync - Teacher Training
-        </span>
+      <div className="relative z-20 shrink-0 pt-4 pointer-events-auto">
         <Link
           to="/dashboard/my-learning/mind-sync"
-          className="flex items-center gap-2 text-slate-700 hover:text-slate-900 transition-colors group"
+          className="inline-flex items-center gap-2.5 text-slate-700 hover:text-slate-900 transition-colors px-3 py-2  hover:border-[#2E7CF6]/30 shrink-0"
         >
-          <span className="material-symbols-outlined text-lg group-hover:-translate-x-1 transition-transform">
-            arrow_back
-          </span>
-          <span className="text-sm font-medium uppercase tracking-widest">
+          <span className="material-symbols-outlined text-lg">arrow_back</span>
+          <span className="text-sm font-semibold uppercase tracking-widest">
             Back to Mind Sync
           </span>
         </Link>
       </div>
 
-      <div className="relative z-10 flex flex-1 flex-col items-center justify-center text-center px-8">
+      <button
+        type="button"
+        onClick={onNext}
+        aria-label="Start Module 1"
+        className="relative z-10 flex flex-1 flex-col items-center justify-center text-center px-8 w-full min-h-0 group cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#2E7CF6] focus-visible:ring-offset-2"
+      >
         {screen.t1 ? (
           <h1
-            className="text-4xl md:text-5xl lg:text-6xl leading-tight font-bold mb-4 tracking-tight"
+            className="text-4xl md:text-5xl lg:text-6xl leading-tight font-bold mb-4 tracking-tight transition-transform group-hover:scale-[1.02]"
             style={{ color: '#1F3864' }}
           >
             {screen.t1}
@@ -2165,23 +2215,20 @@ function LandingSection({
         ) : null}
         {screen.t2 ? (
           <h2
-            className="text-2xl md:text-3xl leading-snug font-bold max-w-2xl"
+            className="text-2xl md:text-3xl leading-snug font-bold max-w-2xl transition-transform group-hover:scale-[1.02]"
             style={{ color: '#1F7A7A' }}
           >
             {screen.t2}
           </h2>
         ) : null}
-      </div>
+        <span className="mt-6 text-xs font-semibold uppercase tracking-widest text-slate-500 opacity-0 group-hover:opacity-100 transition-opacity">
+          Click to begin
+        </span>
+        <ModuleFavicon className="w-20 h-20 object-contain transition-transform group-hover:scale-105" />
+      </button>
 
-      <div className="relative z-10 flex justify-center pb-10 md:pb-14">
-        <button
-          type="button"
-          onClick={onNext}
-          className="inline-flex items-center gap-2 h-12 px-8 rounded-full text-sm md:text-base font-semibold text-white bg-[#2E7CF6] hover:bg-[#2563EB] transition-colors shadow-[0_4px_14px_-4px_rgba(46,124,246,0.45)]"
-        >
-          <span>Next</span>
-          <span className="material-symbols-outlined">arrow_forward</span>
-        </button>
+      <div className="relative z-20 shrink-0 flex justify-center pb-10 md:pb-14 pointer-events-none">
+        {/* reserved bottom spacing */}
       </div>
     </div>
   );
@@ -2202,6 +2249,8 @@ function ModuleContentsSidebar({
   suppressAutoOpenRef,
   isSidebarTranscriptOpen,
   setIsSidebarTranscriptOpen,
+  isOpen,
+  onToggle,
 }: {
   toc: TocItem[];
   sidebarSections: SidebarSection[];
@@ -2215,18 +2264,38 @@ function ModuleContentsSidebar({
   suppressAutoOpenRef: React.MutableRefObject<boolean>;
   isSidebarTranscriptOpen: boolean;
   setIsSidebarTranscriptOpen: (open: boolean) => void;
+  isOpen: boolean;
+  onToggle: () => void;
 }) {
   return (
-    <aside className="relative hidden md:flex flex-col shrink-0 w-[280px] h-full border-l border-slate-200 bg-white overflow-hidden">
-      <div className="p-6 border-b border-slate-200">
-        <h2 className="text-sm font-bold uppercase tracking-widest text-slate-500 mb-1">
-          Module Contents
-        </h2>
-        <p className="text-xs text-slate-400">{toc.length} blocks</p>
+    <aside
+      className={`relative hidden md:flex flex-col shrink-0 h-full bg-white overflow-hidden transition-[width,opacity,border] duration-200 ${
+        isOpen
+          ? 'w-[280px] border-l border-slate-200 opacity-100'
+          : 'w-0 border-0 opacity-0 pointer-events-none'
+      }`}
+    >
+      <div className="p-6 border-b flex items-start justify-between gap-3 shrink-0 min-w-[280px]">
+        <div className="min-w-0">
+          <h2 className="text-sm font-bold uppercase tracking-widest text-slate-500 mb-1">
+            Module Contents
+          </h2>
+          <p className="text-xs text-slate-400">{toc.length} blocks</p>
+        </div>
+        <button
+          type="button"
+          onClick={onToggle}
+          aria-label="Close module contents"
+          className="w-8 h-8 rounded-lg border border-slate-200 bg-white hover:bg-[#EEF4FF] hover:border-[#2E7CF6]/30 transition-colors flex items-center justify-center shrink-0"
+        >
+          <span className="material-symbols-outlined text-slate-600 text-lg">
+            chevron_right
+          </span>
+        </button>
       </div>
       <div
         ref={sidebarScrollRef}
-        className="flex-1 min-h-0 overflow-y-auto custom-scrollbar bg-white"
+        className="flex-1 min-h-0 min-w-[280px] overflow-y-auto custom-scrollbar bg-white"
       >
         {sidebarSections.map((section) => {
           const isOpen = openSections[section.key];
@@ -2842,8 +2911,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
               after: {
                 version: 'Version 2',
                 timing: '3 seconds',
-                description:
-                  'In the second she waits three. Watch what changes.',
+                description: 'In the second she waits three.',
               },
               footer: 'Watch what changes.',
             },
@@ -3010,7 +3078,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
           {
             id: 17,
             type: 'text',
-            t2: 'Where this comes from',
+            t2: 'Evidence',
             body: 'The film keeps things simple. The evidence sits here.',
             dropdowns: [
               {
@@ -3130,6 +3198,8 @@ export default function MindSyncTeacherTrainingModule01Page() {
 
   const [isSidebarTranscriptOpen, setIsSidebarTranscriptOpen] = useState(false);
   const [isWatchScriptOpen, setIsWatchScriptOpen] = useState(false);
+  const [isModuleContentsOpen, setIsModuleContentsOpen] = useState(true);
+  const toggleModuleContents = () => setIsModuleContentsOpen((v) => !v);
 
   useEffect(() => {
     setIsWatchScriptOpen(false);
@@ -3382,32 +3452,15 @@ export default function MindSyncTeacherTrainingModule01Page() {
         <LandingSection screen={screen} onNext={() => setIndex(1)} />
       ) : (
       <main className="flex w-full h-screen overflow-hidden">
-        <div
-          className={`flex-1 min-w-0 overflow-hidden flex flex-col ${
-            screen.id === 5 && isWatchScriptOpen
-              ? 'relative flex-row p-4'
-              : 'p-0'
-          }`}
-        >
-          {screen.id === 5 &&
-          isWatchScriptOpen &&
-          screen.transcriptDropdown ? (
-            <ScriptSidebarPanel
-              header={screen.transcriptDropdown.header}
-              body={screen.transcriptDropdown.body}
-              onClose={() => setIsWatchScriptOpen(false)}
-            />
-          ) : null}
+        <div className="flex-1 min-w-0 overflow-hidden flex flex-col p-0">
           <div className="flex-1 min-h-0 flex flex-col overflow-hidden">
           <ModuleInlineHeader
             screen={screen}
             activeSidebarSectionKey={activeSidebarSectionKey}
+            isModuleContentsOpen={isModuleContentsOpen}
+            onToggleModuleContents={toggleModuleContents}
           />
-          <div
-            className={`flex-1 min-h-0 flex flex-col overflow-hidden ${
-              screen.id === 5 && isWatchScriptOpen ? 'p-4 pt-0' : ''
-            }`}
-          >
+          <div className="flex-1 min-h-0 flex flex-col overflow-hidden">
           <div
             key={index}
             className="step-transition flex flex-col flex-1 min-h-0 overflow-hidden"
@@ -3431,10 +3484,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
                   ? 'pb-4 flex flex-col'
                   : 'pb-24'
               } ${
-                isCurrentScreenDropdownOpen ||
-                (screen.id === 5 && isWatchScriptOpen)
-                  ? 'overflow-y-auto'
-                  : 'overflow-hidden'
+                isCurrentScreenDropdownOpen ? 'overflow-y-auto' : 'overflow-hidden'
               }`}
             >
               <section
@@ -3490,7 +3540,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
                     <TechniqueHonestSection screen={screen} />
                   </div>
                 ) : screen.id === 16 ? (
-                  <div className="p-5 md:p-6 md:px-14 flex flex-col flex-1 min-h-0 h-full overflow-hidden">
+                  <div className="w-full p-5 md:p-6 md:px-14 flex flex-col flex-1 min-h-0 h-full overflow-hidden">
                     <WhatNotToDoStepperSection screen={screen} />
                   </div>
                 ) : screen.id === 17 ? (
@@ -3535,6 +3585,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
                       screen={screen}
                       isScriptOpen={isWatchScriptOpen}
                       onOpenScript={() => setIsWatchScriptOpen(true)}
+                      onCloseScript={() => setIsWatchScriptOpen(false)}
                     />
                   </div>
                 ) : screen.id === 3 && screen.bullets ? (
@@ -4180,6 +4231,8 @@ export default function MindSyncTeacherTrainingModule01Page() {
           suppressAutoOpenRef={suppressAutoOpenRef}
           isSidebarTranscriptOpen={isSidebarTranscriptOpen}
           setIsSidebarTranscriptOpen={setIsSidebarTranscriptOpen}
+          isOpen={isModuleContentsOpen}
+          onToggle={toggleModuleContents}
         />
       </main>
       )}
