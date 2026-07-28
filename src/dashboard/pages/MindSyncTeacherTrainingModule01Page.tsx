@@ -2873,10 +2873,10 @@ export default function MindSyncTeacherTrainingModule01Page() {
             type: 'bullets',
             t2: 'By the end you will be able to',
             bullets: [
-              'Spot the three patterns staff most often misread: distress as defiance, overwhelm as rudeness, stimming as off task.',
-              'Understand what is happening inside a dysregulated pupil, and why pushing harder makes it worse.',
-              'Use the three second pause in real time.',
-              'Give consequences in a way that lands rather than escalates.',
+              'Understand the difference between distress, defiance and overwhelm.',
+              'Notice the early signs that a pupil is becoming overwhelmed.',
+              'Use the three second pause in the classroom.',
+              
             ],
           },
           {
