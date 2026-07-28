@@ -2,8 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Link, useNavigate } from 'react-router-dom';
 import VideoLessonPlayer from '../components/VideoLessonPlayer';
-import image from '../../assets/images/mindsync/2.jpg';
-import structureWatchImage from '../../assets/images/mindsync/5.jpg';
+import moduleBgImage from '../../assets/images/Module-1/module-1.jpg';
 import structureLearnImage from '../../assets/images/mindsync/6.jpg';
 import structurePracticeImage from '../../assets/images/mindsync/Untitled design.jpg';
 import structureTakeawayImage from '../../assets/images/mindsync/7.jpg';
@@ -29,7 +28,8 @@ type ScreenType =
   | 'scenario_choose'
   | 'scenario_feedback'
   | 'takeaway'
-  | 'closing';
+  | 'closing'
+  | 'research';
 
 type TechniqueStateCard = {
   state: 'green' | 'amber' | 'red';
@@ -117,16 +117,19 @@ type Screen = {
   closingBody?: string;
   techniqueSteps?: TechniqueStep[];
   timelineSteps?: TimelineStep[];
+  /** Optional explicit purple header title for this block (overrides auto-derived title). */
+  headerTitle?: string;
   watchIntro?: {
     headline: string;
-    before: { version: string; timing: string; description: string };
-    after: { version: string; timing: string; description: string };
-    footer: string;
+    // before: { version: string; timing: string; description: string };
+    // after: { version: string; timing: string; description: string };
+    // footer: string;
   };
 };
 
 type SidebarSectionKey =
   | 'introduction'
+  | 'research'
   | 'watch'
   | 'learn'
   | 'practise'
@@ -140,37 +143,207 @@ type SidebarSection = {
   landingBlockId?: number;
 };
 
+/** Sidebar Module Contents labels — edit here only for the right-hand nav. */
+const SIDEBAR_SECTION_LABELS: Record<SidebarSectionKey, string> = {
+  introduction: 'Introduction',
+  research: 'Research',
+  watch: 'Part 1. Watch',
+  learn: 'Part 2. Learn',
+  practise: 'Part 3. Practise',
+  takeaway: 'Part 4. Your Take Away Card',
+  closing: 'Closing',
+};
+
+/** Large purple header — section fallback when a block has no own title. */
+const MODULE_HEADER_TITLES: Record<SidebarSectionKey, string> = {
+  introduction: 'What you will learn on this module',
+  research: 'The research behind the technique',
+  watch: 'The three second pause in action',
+  learn: 'Underneath the behaviour: three states',
+  practise: 'Part 3. Practise',
+  takeaway: 'Part 4. Take Away ',
+  closing: 'Closing', 
+};
+
+/**
+ * Per-block purple header overrides (by block id).
+ * Edit here for a specific screen; sidebar labels are not affected.
+ * Omit a block to auto-use screen.headerTitle, t3, t2, or scenario title.
+ */
+const MODULE_BLOCK_HEADER_TITLES: Partial<Record<number, string>> = {
+  3: 'What You Will Learn On This Module',
+  4: 'The Research Behind The Technique',
+  5: 'The Three Second Pause In Action',
+  7: 'Underneath The Behaviour: Three States',
+};
+
+const RESEARCH_SOURCES_HEADER = 'Read the research in full';
+
+const RESEARCH_EVIDENCE_DROPDOWNS: DropdownItem[] = [
+  {
+    header: 'The evidence behind the three second pause',
+    body:
+      'In 1974, an education researcher called Mary Budd Rowe recorded and timed hundreds of classroom exchanges. She found that teachers, on average, wait only about one second before they respond.\n\nWhen she coached them to hold that pause for three seconds or more, the classroom changed. Pupils gave longer answers, more pupils joined in, and the pupils who usually said nothing began to contribute.\n\nRowe was studying the pause after a question, not the pause before responding to a pupil in distress. So we use her finding as the principle behind the technique, not as a study of behaviour. The lesson holds either way: a few deliberate seconds change what happens next.\n\nThree seconds is long enough to interrupt your reflex, and short enough to be realistic in a live classroom.',
+  },
+  {
+    header: 'UK Neurodivergence Task and Finish Group findings',
+    body:
+      'An independent group of experts, commissioned by the government and chaired by Professor Karen Guldberg of the University of Birmingham, reviewed how to support neurodivergent children in mainstream schools.\n\nIt found that neurodivergent pupils face much higher rates of suspension and absence, and it called for behaviour policies to be rooted in an inclusive culture that values understanding, acceptance and curiosity. This module is one small part of that shift.',
+  },
+  {
+    header: 'School distress research',
+    body:
+      'Sinéad Mullally and colleagues at Newcastle University studied children who struggle to attend school. In their sample, more than nine in ten of these children were neurodivergent, and the distress driving their absence was too often missed or misread.\n\nIt is a powerful reminder that behaviour which looks like refusal is frequently distress that has not yet been understood.',
+  },
+  {
+    header: RESEARCH_SOURCES_HEADER,
+    body:
+      'If you would like to go deeper, the full sources are here. Each opens in a new tab.',
+  },
+];
+
+function getDerivedBlockHeaderTitle(screen: Screen): string | undefined {
+  if (screen.headerTitle?.trim()) return screen.headerTitle.trim();
+
+  if (
+    (screen.type === 'scenario_situation' ||
+      screen.type === 'scenario_choose' ||
+      screen.type === 'scenario_feedback') &&
+    screen.scenarioId
+  ) {
+    if (screen.type === 'scenario_feedback') {
+      return `Scenario ${screen.scenarioId} of 3`;
+    }
+    return SCENARIOS[screen.scenarioId].title;
+  }
+
+  if (screen.type === 'takeaway') {
+    return MODULE_HEADER_TITLES.takeaway;
+  }
+
+  if (screen.type === 'closing') {
+    return screen.t2 ?? MODULE_HEADER_TITLES.closing;
+  }
+
+  if (screen.type === 'technique_intro' || screen.type === 'technique') {
+    return screen.t2;
+  }
+
+  if (screen.t3?.trim()) return screen.t3.trim();
+
+  if (screen.t2?.trim() && !/^part\s+\d/i.test(screen.t2.trim())) {
+    return screen.t2.trim();
+  }
+
+  return undefined;
+}
+
+function getModulePageTitle(
+  screen: Screen,
+  activeSidebarSectionKey: SidebarSectionKey | null
+): string {
+  const blockOverride = MODULE_BLOCK_HEADER_TITLES[screen.id];
+  if (blockOverride) return blockOverride;
+
+  const derived = getDerivedBlockHeaderTitle(screen);
+  if (derived) return derived;
+
+  if (activeSidebarSectionKey) {
+    return MODULE_HEADER_TITLES[activeSidebarSectionKey];
+  }
+  return 'MODULE 1 – THE THREE SECOND PAUSE';
+}
+
+function isSameAsBlockHeader(
+  text: string | undefined,
+  screen: Screen,
+  activeSidebarSectionKey: SidebarSectionKey | null
+): boolean {
+  if (!text?.trim()) return false;
+  return (
+    text.trim().toLowerCase() ===
+    getModulePageTitle(screen, activeSidebarSectionKey).trim().toLowerCase()
+  );
+}
+
+function isPartTitleDuplicate(
+  t1: string | undefined,
+  sectionKey: SidebarSectionKey | null
+): boolean {
+  if (!t1 || !sectionKey) return false;
+  const normalized = t1.trim().toLowerCase();
+  const headerPrefix = MODULE_HEADER_TITLES[sectionKey].toLowerCase().slice(0, 8);
+  const sidebarPrefix = SIDEBAR_SECTION_LABELS[sectionKey].toLowerCase().slice(0, 8);
+  return (
+    normalized.startsWith(headerPrefix) || normalized.startsWith(sidebarPrefix)
+  );
+}
+
+function ModulePartTitle({
+  title,
+  blockId: _blockId,
+}: {
+  title: string;
+  blockId: number;
+}) {
+  return (
+    <div className="flex items-start justify-between gap-6 mb-1 w-full min-w-0">
+      <h1
+        className="flex-1 min-w-0 text-[64px] leading-tight font-bold whitespace-nowrap pr-4"
+        style={{ color: '#6366F1' }}
+      >
+        {title}
+      </h1>
+      {/* <span className="text-xs text-slate-500 font-medium shrink-0 pt-2">
+        Block {blockId}
+      </span> */}
+    </div>
+  );
+}
+
 const TAKEAWAY_HIGHLIGHT_TEXT =
   '“Yesterday I misunderstood what was going on for you. I should have checked in rather than snapped. I am sorry. You did not deserve that.” No “but”. No explanation. No asking them to apologise back. Then let them go.';
 
-const HIDDEN_NAV_BLOCK_IDS = new Set<number>([8, 9, 10, 11, 14, 21, 24, 27]);
+const HIDDEN_NAV_BLOCK_IDS = new Set<number>([
+  8, 9, 10, 11, 14, 20, 21, 23, 24, 26, 27,
+]);
+
+const MODULE_BG_IMAGE = moduleBgImage;
+const MODULE_PAGE_TINT = 'bg-[#F7F9FC]/75';
+const MODULE_SURFACE = 'bg-white/30 backdrop-blur-sm ';
+
+function ModulePageBackground() {
+  return (
+    <div
+      aria-hidden
+      className="pointer-events-none absolute inset-0 z-0 bg-cover bg-center opacity-10"
+      style={{ backgroundImage: `url(${MODULE_BG_IMAGE})` }}
+    />
+  );
+}
 
 const TECHNIQUE_STEPS: TechniqueStep[] = [
   {
     number: 1,
     title: 'Notice the rise in yourself',
-    body: 'Your jaw tightens. Your chest feels hot. There is a feeling of being undermined, especially with others watching. That rise is information about you, not about the pupil. Notice it. Do not act on it yet.',
-    expand: {
-      header: 'Why this is the hard step',
-      body: 'The rise feels like clarity. It is not. Catching it, and not acting on it, is the actual work of this technique.',
-    },
+    body: 'The way a pupil behaves may trigger you. A lot of the time you could feel it before you think it. The urge to respond strongly. A sense of being shown up, especially with the class watching. Try your best to notice it but not act on it in the moment.',
   },
   {
     number: 2,
-    title: 'Ask one quiet question',
-    body: 'Inside your head: is this pupil in green, amber or red? Two seconds of looking usually tells you. Out loud if you need to: “Quick check in. Are you with me, or somewhere else right now?” It works because it does not accuse and it does not demand. It opens a door.',
+    title: 'Ask yourself one question',
+    body: 'Is this pupil in green, amber or red? Often you can read the answer just by looking. If you do need to ask, come alongside them and keep it quiet, so it stays between the two of you: “Is everything ok? You seem a bit somewhere else today.” This approach does not accuse and it does not demand, it just shows you have noticed and gives the pupil an opportunity to feel seen and respond in a way that feels safe and non judgmental.',
   },
   {
     number: 3,
-    title: 'Match your response to the state, not the behaviour',
-    body: '• Green, and they have chosen not to get on with it: the calm, firm, named conversation about what you have asked for.\n\n• Amber: lower the demand briefly, slow your voice, offer a small choice.\n\n• Red: reduce demands to almost zero. Offer space, not solutions. The conversation comes later.',
+    title: 'Try match your response to the state, not the behaviour',
+    body: '• Green: they can make a choice, so this is the calm, firm conversation about what you have asked for.\n\n• Amber: ask a little less for a moment, slow your voice, and offer a small choice.\n\n• Red: ask for almost nothing, give them space rather than solutions, and leave the conversation for later.',
   },
 ];
 
 const SCENARIOS: Record<1 | 2 | 3, Scenario> = {
   1: {
     id: 1,
-    title: 'The pupil who will not start',
+    title: 'The Pupil Who Will Not Start',
     situation:
       'It is period three on a Wednesday. You have set your Year 8 class a written task. The room is quiet, most pupils are working. One pupil, clear in your view, is staring at the page. Pen down. No writing. Two minutes have passed since you gave the instruction. You walked past once and gave a gentle prompt. Nothing changed. The pupils on either side of her have started. You have about ten seconds before you decide what to do.',
     question: 'What would you do?',
@@ -191,7 +364,7 @@ const SCENARIOS: Record<1 | 2 | 3, Scenario> = {
   },
   2: {
     id: 2,
-    title: 'The pupil who walks out',
+    title: 'The Pupil Who Walks Out',
     situation:
       'You are teaching a Year 10 class. One pupil, tense throughout and not engaging with two earlier prompts, suddenly stands, picks up his bag, and walks towards the door. He does not speak. He does not look at you. He is about four seconds from the corridor. Other pupils are watching. You have to decide right now.',
     question: 'What would you do?',
@@ -212,7 +385,7 @@ const SCENARIOS: Record<1 | 2 | 3, Scenario> = {
   },
   3: {
     id: 3,
-    title: 'The repair',
+    title: 'The Repair',
     situation:
       'Yesterday, in a busy double lesson, you snapped at a pupil who was not following an instruction. You said something like: “I have asked you three times. If you cannot follow simple instructions, you can sit outside.” She went quiet, did the work, and did not look at you again. Afterwards her form tutor told you she had been crying at break, and that her grandmother had been admitted to hospital that morning. You feel sick about it. She is in your class again in twenty minutes.',
     question: 'What is the best thing to do now?',
@@ -376,6 +549,142 @@ function ModuleFavicon({
   className?: string;
 }) {
   return <img alt="" src={logoFav} className={className} />;
+}
+
+function ResearchSourcesBody() {
+  return (
+    <div className="space-y-4 text-[15px] leading-relaxed text-slate-900">
+      <p>
+        If you would like to go deeper, the full sources are here. Each opens in
+        a new tab.
+      </p>
+      <ul className="space-y-3 list-none pl-0">
+        <li>
+          Rowe, M. B. (1974). Wait time and rewards as instructional variables.
+          Journal of Research in Science Teaching.{' '}
+          <a
+            href="https://eric.ed.gov/?id=ED061103"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[#2E7CF6] underline hover:text-[#2563EB]"
+          >
+            Free full text
+          </a>
+        </li>
+        <li>
+          The Neurodivergence Task and Finish Group: report (2026). Department
+          for Education.{' '}
+          <a
+            href="https://assets.publishing.service.gov.uk/media/69984861339ee33f3ad0b9d0/The_Neurodivergence_Task_and_Finish_Group_report.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[#2E7CF6] underline hover:text-[#2563EB]"
+          >
+            Read the report
+          </a>
+        </li>
+        <li>
+          Connolly, S. E., Constable, H. L. and Mullally, S. L. (2023). School
+          distress and the school attendance crisis. Frontiers in Psychiatry.{' '}
+          <a
+            href="https://www.frontiersin.org/journals/psychiatry/articles/10.3389/fpsyt.2023.1237052/full"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[#2E7CF6] underline hover:text-[#2563EB]"
+          >
+            Open access
+          </a>
+        </li>
+      </ul>
+    </div>
+  );
+}
+
+function ResearchEvidenceDropdown({
+  header,
+  body,
+  screenId,
+  onOpenChange,
+  isSources = false,
+}: {
+  header: string;
+  body: string;
+  screenId: number;
+  onOpenChange: (dropdownId: string, open: boolean) => void;
+  isSources?: boolean;
+}) {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <div
+      className={`rounded-2xl border border-[#E5E9EB] ${MODULE_SURFACE} shadow-[0_1px_2px_rgba(0,0,0,0.05)] p-[25px]`}
+    >
+      <button
+        type="button"
+        onClick={() => {
+          setOpen((v) => {
+            const next = !v;
+            onOpenChange(`${screenId}:${header}`, next);
+            return next;
+          });
+        }}
+        className="w-full flex items-start gap-6 text-left"
+        aria-expanded={open}
+      >
+        <ModuleFavicon className="w-10 h-10 rounded-xl object-contain shrink-0" />
+        <span className="flex-1 min-w-0 text-[18px] font-semibold leading-snug text-[#121B2C] pt-1.5">
+          {header}
+        </span>
+        <span
+          className={`material-symbols-outlined shrink-0 text-slate-500 transition-transform mt-2 ${
+            open ? 'rotate-180' : ''
+          }`}
+        >
+          expand_more
+        </span>
+      </button>
+      <div
+        className={`overflow-hidden transition-all duration-300 ease-out ${
+          open ? 'max-h-[2000px] opacity-100 mt-3' : 'max-h-0 opacity-0'
+        }`}
+      >
+        <div className="ml-[64px] border-t border-[#C4C6CF] pt-6">
+          {isSources ? (
+            <ResearchSourcesBody />
+          ) : (
+            <p className="whitespace-pre-line text-[15px] leading-relaxed text-slate-900">
+              {body}
+            </p>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ResearchSection({
+  screen,
+  onDropdownOpenChange,
+}: {
+  screen: Screen;
+  onDropdownOpenChange: (dropdownId: string, open: boolean) => void;
+}) {
+  const dropdowns = screen.dropdowns ?? RESEARCH_EVIDENCE_DROPDOWNS;
+
+  return (
+    <div className="max-w-[1226px] mx-auto w-full flex flex-col gap-4">
+      {dropdowns.map((d) => (
+        <ResearchEvidenceDropdown
+          key={d.header}
+          header={d.header}
+          body={d.body}
+          screenId={screen.id}
+          onOpenChange={onDropdownOpenChange}
+          isSources={d.header === RESEARCH_SOURCES_HEADER}
+        />
+      ))}
+    </div>
+  );
 }
 
 function LearnAccordionItem({
@@ -549,145 +858,6 @@ const TECHNIQUE_STATE_STYLES: Record<
     labelColor: 'text-rose-700',
   },
 };
-
-function splitTechniqueTitle(t2?: string) {
-  if (!t2) return { headline: 'The three second pause' };
-  const dotIndex = t2.indexOf('. ');
-  if (dotIndex === -1) return { headline: t2 };
-  return { headline: t2.slice(dotIndex + 2) };
-}
-
-function TechniquePauseFlow() {
-  return (
-    <div className="w-full max-w-[480px] lg:max-w-none lg:ml-auto rounded-2xl border border-slate-200 bg-white shadow-[0_20px_40px_-15px_rgba(47,99,120,0.06)] p-5 md:p-6">
-      <div className="flex items-center justify-between gap-3 md:gap-4">
-        <div className="flex flex-col items-center gap-2 text-center shrink-0 min-w-[72px]">
-          <div className="size-12 rounded-full bg-[#2E7CF6]/10 flex items-center justify-center border border-[#2E7CF6]/15">
-            <span
-              className="material-symbols-outlined text-[24px] text-[#2E7CF6]"
-              style={{ fontVariationSettings: '"FILL" 1' }}
-            >
-              person
-            </span>
-          </div>
-          <p className="text-[11px] font-bold uppercase tracking-widest text-slate-500 leading-tight">
-            Pupil acts
-          </p>
-        </div>
-
-        <div className="h-px flex-1 min-w-[12px] bg-[#2E7CF6]/25" aria-hidden />
-
-        <div className="flex flex-col items-center gap-2 shrink-0">
-          <div className="flex items-center gap-2 rounded-full border border-slate-200 bg-[#F7F9FB] px-3 py-1.5">
-            <span
-              className="material-symbols-outlined text-[18px] text-[#2E7CF6]"
-            >
-              timer
-            </span>
-            <span
-              className="text-[13px] font-bold tracking-wide whitespace-nowrap"
-              style={{ color: '#1F3864' }}
-            >
-              3 sec
-            </span>
-          </div>
-          <p
-            className="text-[10px] font-semibold uppercase tracking-wide text-center whitespace-nowrap"
-            style={{ color: '#64748B' }}
-          >
-            Green? Amber? Red?
-          </p>
-          <div className="flex items-center gap-2">
-            <span
-              className="size-3 rounded-full bg-emerald-500 ring-2 ring-white shadow-sm"
-              title="Green"
-            />
-            <span
-              className="size-3 rounded-full bg-amber-400 ring-2 ring-white shadow-sm"
-              title="Amber"
-            />
-            <span
-              className="size-3 rounded-full bg-rose-500 ring-2 ring-white shadow-sm"
-              title="Red"
-            />
-          </div>
-        </div>
-
-        <div className="h-px flex-1 min-w-[12px] bg-[#1F7A7A]/25" aria-hidden />
-
-        <div className="flex flex-col items-center gap-2 text-center shrink-0 min-w-[72px]">
-          <div className="size-12 rounded-full bg-[#E6F4F4] flex items-center justify-center border border-[#1F7A7A]/20">
-            <span
-              className="material-symbols-outlined text-[24px] text-[#1F7A7A]"
-              style={{ fontVariationSettings: '"FILL" 1' }}
-            >
-              psychology
-            </span>
-          </div>
-          <p className="text-[11px] font-bold uppercase tracking-widest text-slate-500 leading-tight">
-            You
-          </p>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function TechniqueStepPreviewCards({
-  steps,
-  sectionTitle,
-  onStepClick,
-}: {
-  steps: TechniqueStep[];
-  sectionTitle: string;
-  onStepClick: (stepNumber: number) => void;
-}) {
-  if (!steps.length) return null;
-
-  return (
-    <div className="w-full">
-      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-2 sm:gap-4 mb-5 md:mb-6">
-        <h2 className="text-[32px] leading-tight font-bold text-[#1F3864]">
-          {sectionTitle}
-        </h2>
-        <p className="text-[11px] font-bold uppercase tracking-widest text-slate-500">
-          Tap a step to explore
-        </p>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-6">
-        {steps.map((step) => (
-          <button
-            key={step.number}
-            type="button"
-            onClick={() => onStepClick(step.number)}
-            className="group bg-white rounded-xl border border-slate-200 border-l-4 border-l-transparent shadow-[0_20px_40px_-15px_rgba(47,99,120,0.06)] overflow-hidden text-center transition-all duration-300 hover:-translate-y-1 hover:border-[#2E7CF6]/30 hover:border-l-[#2E7CF6] hover:shadow-[0_24px_48px_-15px_rgba(47,99,120,0.14)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2E7CF6]/30"
-          >
-            <div className="w-full min-h-[170px] p-5 flex flex-col items-center justify-between gap-4">
-              <span className="flex items-center justify-center w-12 h-12 rounded-full bg-[#2E7CF6]/10 text-[#2E7CF6] text-base font-bold shrink-0 transition-colors group-hover:bg-[#2E7CF6]/15">
-                {step.number}
-              </span>
-
-              <div className="flex flex-col items-center gap-2 shrink-0 min-w-0 px-1">
-                <h3 className="text-[15px] font-semibold leading-snug text-[#1F3864]">
-                  {step.title}
-                </h3>
-                <div className="h-1 w-12 rounded-full bg-[#2E7CF6]/20 transition-colors group-hover:bg-[#2E7CF6]/45" />
-              </div>
-
-              <span
-                className="material-symbols-outlined text-[22px] leading-none text-[#2E7CF6]/70 transition-colors group-hover:text-[#2E7CF6] shrink-0"
-                style={{ fontVariationSettings: '"FILL" 1' }}
-              >
-                touch_app
-              </span>
-            </div>
-          </button>
-        ))}
-      </div>
-    </div>
-  );
-}
 
 function TechniqueStepBodyContent({
   step,
@@ -863,86 +1033,38 @@ function TechniqueStepDetailModal({
   );
 }
 
-function TechniqueIntroSection({
-  screen,
-  onStepClick,
-}: {
-  screen: Screen;
-  onStepClick: (stepNumber: number) => void;
-}) {
-  const { headline } = splitTechniqueTitle(screen.t2);
-  const steps = screen.techniqueSteps ?? [];
-
-  return (
-    <div className="flex flex-col flex-1 min-h-0 h-full w-full pt-2">
-      <div className="w-full max-w-[1200px] mx-auto flex flex-col flex-1 min-h-0 h-full">
-        <div className="flex-1 flex items-center min-h-0 w-full">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-center w-full shrink-0">
-            <div className="space-y-5">
-              <header>
-                <h2
-                  className="text-[32px] leading-tight font-bold"
-                  style={{ color: '#1F3864' }}
-                >
-                  {headline}
-                </h2>
-              </header>
-
-              {screen.lead ? (
-                <div className="bg-[#F7F9FB] p-6 md:p-8 rounded-xl border-l-4 border-l-[#2E7CF6]">
-                  <p
-                    className="text-[18px] leading-relaxed"
-                    style={{ color: '#333333' }}
-                  >
-                    {screen.lead}
-                  </p>
-                </div>
-              ) : null}
-            </div>
-
-            <div className="w-full pt-6 lg:pt-10">
-              <TechniquePauseFlow />
-            </div>
-          </div>
-        </div>
-
-        {steps.length ? (
-          <div className="shrink-0 mt-8 lg:mt-10 pt-8 lg:pt-10 border-t border-slate-200">
-            <TechniqueStepPreviewCards
-              steps={steps}
-              sectionTitle={screen.t3 ?? 'The three steps'}
-              onStepClick={onStepClick}
-            />
-          </div>
-        ) : null}
-      </div>
-    </div>
-  );
-}
-
 function TechniqueStepsSection({
   screen,
   openDropdownIds,
   onDropdownToggle,
+  activeSidebarSectionKey,
 }: {
   screen: Screen;
   openDropdownIds: Set<string>;
   onDropdownToggle: (dropdownId: string, open: boolean) => void;
+  activeSidebarSectionKey: SidebarSectionKey | null;
 }) {
   const steps = screen.techniqueSteps ?? [];
+  const showTitle =
+    screen.t2 &&
+    !isSameAsBlockHeader(screen.t2, screen, activeSidebarSectionKey);
 
   return (
     <div className="max-w-[1200px] mx-auto flex flex-col flex-1 min-h-0 h-full">
+      {showTitle || screen.lead ? (
       <header className="pt-2 mb-6 shrink-0">
+        {showTitle ? (
         <h2 className="text-[32px] leading-tight font-bold text-[#1F3864]">
           {screen.t2}
         </h2>
+        ) : null}
         {screen.lead ? (
           <p className="text-[15px] text-slate-600 leading-relaxed mt-3 max-w-3xl">
             {screen.lead}
           </p>
         ) : null}
       </header>
+      ) : null}
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch flex-1 min-h-0">
         {steps.map((step) => {
@@ -1179,7 +1301,7 @@ function AboutModuleDiagram() {
 
 function AboutModuleInsightBar() {
   return (
-    <div className="flex mb-6 md:mb-2 items-center gap-4 py-4 px-5 md:px-6 rounded-xl bg-white border border-[#E5E9F0] shadow-[0_4px_24px_-4px_rgba(10,31,68,0.08)]">
+    <div className={`flex mb-6 md:mb-2 items-center gap-4 py-4 px-5 md:px-6 rounded-xl ${MODULE_SURFACE} border border-[#E5E9F0] shadow-[0_4px_24px_-4px_rgba(10,31,68,0.08)]`}>
       <ModuleFavicon className="w-12 h-12 object-contain shrink-0" />
       <p
         className="text-[16px] md:text-[18px] leading-relaxed font-medium"
@@ -1262,44 +1384,6 @@ function ScriptSidebarPanel({
   );
 }
 
-function WatchVersionCard({
-  version,
-  timing,
-  description,
-  accentColor,
-}: {
-  version: string;
-  timing: string;
-  description: string;
-  accentColor: '#2E7CF6' | '#1F7A7A';
-}) {
-  return (
-    <div
-      className="rounded-xl border border-[#E5E9F0] bg-white p-5 md:p-6 border-l-4 shadow-[0_4px_24px_-4px_rgba(10,31,68,0.06)] h-full"
-      style={{ borderLeftColor: accentColor }}
-    >
-      <div className="text-[11px] font-bold uppercase tracking-widest text-slate-500 mb-3">
-        {version}
-      </div>
-      <div className="flex items-center gap-3 mb-2">
-        <ModuleFavicon className="w-5 h-5" />
-        <span
-          className="text-[15px] md:text-[16px] font-semibold"
-          style={{ color: '#1F3864' }}
-        >
-          {timing}
-        </span>
-      </div>
-      <p
-        className="text-[14px] md:text-[15px] leading-relaxed"
-        style={{ color: '#4B5563' }}
-      >
-        {description}
-      </p>
-    </div>
-  );
-}
-
 function WatchIntroHeadline({
   intro,
 }: {
@@ -1307,48 +1391,11 @@ function WatchIntroHeadline({
 }) {
   return (
     <h3
-      className="shrink-0 text-left text-[32px] leading-tight font-bold"
+      className="shrink-0 text-left text-[24px] leading-tight font-regular"
       style={{ color: '#1F3864' }}
     >
       {intro.headline}
     </h3>
-  );
-}
-
-function WatchIntroCompareCards({
-  intro,
-}: {
-  intro: NonNullable<Screen['watchIntro']>;
-}) {
-  return (
-    <div className="shrink-0 space-y-4">
-      <div className="relative grid grid-cols-1 md:grid-cols-2 gap-4 items-stretch">
-        <WatchVersionCard
-          version={intro.before.version}
-          timing={intro.before.timing}
-          description={intro.before.description}
-          accentColor="#2E7CF6"
-        />
-        <WatchVersionCard
-          version={intro.after.version}
-          timing={intro.after.timing}
-          description={intro.after.description}
-          accentColor="#1F7A7A"
-        />
-        <span
-          className="hidden md:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full bg-white border border-[#E5E9F0] text-xs font-bold items-center justify-center shadow-sm"
-          style={{ color: '#1F7A7A' }}
-        >
-          vs
-        </span>
-      </div>
-      <p
-        className="text-center md:text-left text-[14px] md:text-[18px] font-medium pl-1"
-        style={{ color: '#1F7A7A' }}
-      >
-        {intro.footer}
-      </p>
-    </div>
   );
 }
 
@@ -1367,7 +1414,7 @@ function WatchSection({
 
   const videoPlayer = (
     <div className="w-full flex-1 min-h-0 flex flex-col">
-      <div className="w-full flex-1 min-h-0 rounded-2xl border border-[#E5E9F0] bg-white shadow-[0_4px_24px_-4px_rgba(10,31,68,0.08),0_2px_6px_-2px_rgba(10,31,68,0.04)] overflow-hidden p-2 md:p-3 flex flex-col">
+      <div className={`w-full flex-1 min-h-0 rounded-2xl border border-[#E5E9F0] ${MODULE_SURFACE} shadow-[0_4px_24px_-4px_rgba(10,31,68,0.08),0_2px_6px_-2px_rgba(10,31,68,0.04)] overflow-hidden p-2 md:p-3 flex flex-col`}>
         <div className="w-full flex-1 min-h-[200px] max-h-[min(480px,52vh)] aspect-video">
           <VideoLessonPlayer
             title={videoTitle}
@@ -1411,14 +1458,14 @@ function WatchSection({
       <div className="flex flex-col gap-6 w-full flex-1 min-h-0">
         <div className="w-full flex flex-col flex-1 min-h-0 gap-4">{videoPlayer}</div>
         <WatchIntroHeadline intro={screen.watchIntro} />
-        <WatchIntroCompareCards intro={screen.watchIntro} />
+        {/* <WatchIntroCompareCards intro={screen.watchIntro} /> */}
       </div>
     ) : (
       <div className="flex flex-col flex-1 min-h-0 gap-5 lg:gap-6">
         <WatchIntroHeadline intro={screen.watchIntro} />
         <div className="flex flex-col flex-1 min-h-0">{videoPlayer}</div>
         {scriptButton}
-        <WatchIntroCompareCards intro={screen.watchIntro} />
+        {/* <WatchIntroCompareCards intro={screen.watchIntro} /> */}
       </div>
     )
   ) : (
@@ -1632,7 +1679,7 @@ function WhatNotToDoStepperSection({ screen }: { screen: Screen }) {
               : 'opacity-0 translate-y-4'
           }`}
         >
-          <div className="col-span-12 w-full bg-white p-4 md:pt-10 md:px-5 rounded-xl border border-slate-200 shadow-[0_20px_40px_-15px_rgba(47,99,120,0.06)] flex flex-col min-h-0 overflow-hidden">
+          <div className={`col-span-12 w-full ${MODULE_SURFACE} p-4 md:pt-10 md:px-5 rounded-xl border border-slate-200 shadow-[0_20px_40px_-15px_rgba(47,99,120,0.06)] flex flex-col min-h-0 overflow-hidden`}>
             <div className="ml-0 md:ml-4 flex items-center gap-3 mb-3 shrink-0 ">
               <div className="p-3 rounded-lg bg-[#2E7CF6]/10 text-[#2E7CF6] shrink-0">
                 <span className="material-symbols-outlined text-3xl">
@@ -1660,89 +1707,73 @@ function WhatNotToDoStepperSection({ screen }: { screen: Screen }) {
   );
 }
 
-const EVIDENCE_TAB_META = [
-  {
-    shortLabel: 'Three State Model',
-    icon: 'psychology_alt',
-  },
-  {
-    shortLabel: 'The Pause',
-    icon: 'pause_circle',
-  },
-  {
-    shortLabel: 'Why 3 Seconds',
-    icon: 'timer_3',
-  },
-] as const;
-
-function EvidenceTabsSection({ screen }: { screen: Screen }) {
-  const [activeTab, setActiveTab] = useState(0);
-  const tabs = screen.dropdowns ?? [];
-  const active = tabs[activeTab];
-  const meta = EVIDENCE_TAB_META[activeTab] ?? EVIDENCE_TAB_META[0];
+function TechniqueVerticalStepsSection({
+  screen,
+  onStepClick,
+}: {
+  screen: Screen;
+  onStepClick: (stepNumber: number) => void;
+}) {
+  const steps = screen.techniqueSteps ?? [];
 
   return (
     <div className="max-w-[1200px] mx-auto flex flex-col flex-1 min-h-0 h-full overflow-hidden">
-      <div className="flex gap-1 p-1 rounded-xl bg-[#F7F9FB] mb-4 shrink-0">
-        {tabs.map((tab, index) => {
-          const tabMeta = EVIDENCE_TAB_META[index];
-          const isActive = activeTab === index;
-          return (
-            <button
-              key={tab.header}
-              type="button"
-              onClick={() => setActiveTab(index)}
-              className={`flex-1 px-4 py-3 rounded-lg flex items-center justify-center gap-2 transition-all duration-300 text-sm font-semibold ${
-                isActive
-                  ? 'bg-[#2E7CF6] text-white shadow-sm'
-                  : 'bg-white text-[#1F3864] border border-slate-200 shadow-[0_1px_3px_rgba(47,99,120,0.08)] hover:border-[#1F3864]/25 hover:shadow-sm'
-              }`}
-            >
-              {tabMeta ? (
-                <span
-                  className={`material-symbols-outlined text-lg ${
-                    isActive ? 'text-white' : 'text-[#1F3864]'
-                  }`}
-                >
-                  {tabMeta.icon}
-                </span>
-              ) : null}
-              <span className="hidden sm:inline">{tabMeta?.shortLabel}</span>
-            </button>
-          );
-        })}
-      </div>
-
-      {active ? (
-        <div
-          key={activeTab}
-          className="bg-white rounded-xl border border-slate-200 shadow-[0_20px_40px_-15px_rgba(47,99,120,0.06)] overflow-hidden flex flex-col flex-1 min-h-0"
-          style={{ animation: 'step-enter 0.3s ease-out' }}
-        >
-          <div className="shrink-0 px-5 md:px-6 py-4 md:py-5 border-b border-slate-200 bg-[#F7F9FC] flex items-center gap-3 md:gap-4">
-            <div className="flex-none w-11 h-11 rounded-xl bg-[#EEF4FF] border border-[#2E7CF6]/20 flex items-center justify-center shrink-0">
-              <span
-                className="material-symbols-outlined text-[24px]"
-                style={{ color: '#2E7CF6' }}
+      <div className="flex  flex-col min-h-0 overflow-hidden">
+          <div className="flex-1  min-h-0 overflow-y-auto pt-2 custom-scrollbar pr-1 -mr-1">
+            {screen.lead ? (
+              <p
+                className="text-[18px]  leading-relaxed mb-10 pt-2"
+                style={{ color: '#333333' }}
               >
-                {meta.icon}
-              </span>
-            </div>
-            <h2
-              className="text-lg md:text-xl font-semibold leading-snug min-w-0"
-              style={{ color: '#1F3864' }}
-            >
-              {active.header}
-            </h2>
-          </div>
+                {screen.lead}
+              </p>
+            ) : null}
 
-          <div className="p-5 md:p-6 flex flex-col flex-1 min-h-0 overflow-hidden">
-            <p className="text-[15px] md:text-[20px] text-slate-700 leading-relaxed whitespace-pre-line flex-1 min-h-0 overflow-y-auto custom-scrollbar pr-1 -mr-1">
-              {active.body}
-            </p>
+            <div className="space-y-4  ">
+              {steps.map((step) => (
+                <button
+                  key={step.number}
+                  type="button"
+                  onClick={() => onStepClick(step.number)}
+                  className={`w-full ${MODULE_SURFACE} h-[120px] p-5 md:p-6 rounded-xl border-l-4 border-l-[#2E7CF6]  border-b-slate-600 text-left hover:bg-[#EEF4FF]/75 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2E7CF6]/30`}
+                >
+                  <div className="flex items-center justify-between gap-4 h-full">
+                    <div className="flex items-center gap-4 min-w-0">
+                      <ModuleFavicon className="w-8 h-8 shrink-0 object-contain" />
+                      <span
+                        className="text-[16px] md:text-[18px] font-semibold leading-snug"
+                        style={{ color: '#1F3864' }}
+                      >
+                        Step {step.number}. {step.title}
+                      </span>
+                    </div>
+                    <span
+                      className="material-symbols-outlined text-slate-400 text-[22px] shrink-0"
+                      aria-hidden
+                    >
+                      touch_app
+                    </span>
+                  </div>
+                </button>
+              ))}
+            </div>
+
+            {screen.keyPoint ? (
+              <div className="mt-8 rounded-xl overflow-hidden shadow-[0_4px_24px_-4px_rgba(10,31,68,0.12)] border border-[#1F3864]/20 bg-[#1F3864]">
+                <div className="p-6 md:p-8">
+                  <div className="flex items-start gap-4">
+                    <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-[#2E7CF6]/20 flex items-center justify-center shrink-0">
+                      <ModuleFavicon className="w-7 h-7 md:w-8 md:h-8" />
+                    </div>
+                    <p className="text-[15px] md:text-[16px] leading-relaxed text-white/90 italic">
+                      {screen.keyPoint}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ) : null}
           </div>
         </div>
-      ) : null}
     </div>
   );
 }
@@ -1791,7 +1822,7 @@ function PracticeIntroSection({ screen }: { screen: Screen }) {
               {PRACTICE_INTRO_STEPS.map((step) => (
                 <div
                   key={step.number}
-                  className="bg-white rounded-xl overflow-hidden border border-slate-200 shadow-[0_20px_40px_-15px_rgba(47,99,120,0.06)]"
+                  className={`${MODULE_SURFACE} rounded-xl overflow-hidden border border-slate-200 shadow-[0_20px_40px_-15px_rgba(47,99,120,0.06)]`}
                 >
                   <div
                     className="w-full h-[170px] p-5 flex flex-col items-center justify-center text-center gap-4"
@@ -1841,7 +1872,7 @@ function PracticeIntroSection({ screen }: { screen: Screen }) {
 function ScenarioHeading({ scenarioId }: { scenarioId: 1 | 2 | 3 }) {
   return (
     <h2
-      className="text-[32px] leading-tight font-bold mb-4 shrink-0"
+      className="text-[24px] leading-tight font-semibold mb-4 shrink-0"
       style={{ color: '#1F3864' }}
     >
       Scenario {scenarioId} of 3
@@ -1876,27 +1907,54 @@ function ScenarioInsightCard({ children }: { children: string }) {
   );
 }
 
-function ScenarioSituationSection({ scenarioId }: { scenarioId: 1 | 2 | 3 }) {
+function ScenarioChoiceGrid({
+  scenarioId,
+  selected,
+  onSelect,
+}: {
+  scenarioId: 1 | 2 | 3;
+  selected: ScenarioOptionKey | null;
+  onSelect: (key: ScenarioOptionKey) => void;
+}) {
   const scenario = SCENARIOS[scenarioId];
 
   return (
-    <div className="max-w-[1200px] mx-auto flex flex-col flex-1 min-h-0 h-full overflow-hidden pt-2">
-      <ScenarioHeading scenarioId={scenarioId} />
-      <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar pr-1 -mr-1">
-        <div className="w-full bg-[#F7F9FB] p-6 md:p-8 lg:p-10 rounded-xl border-l-4 border-l-[#2E7CF6]">
-          <p
-            className="text-[20px] md:text-[22px] lg:text-[24px] leading-relaxed whitespace-pre-line"
-            style={{ color: '#1F3864' }}
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+      {(Object.keys(scenario.options) as ScenarioOptionKey[]).map((key) => {
+        const isSelected = selected === key;
+        return (
+          <button
+            key={key}
+            type="button"
+            onClick={() => onSelect(key)}
+            className={`text-left rounded-xl border p-6 md:p-7 min-h-[120px] transition-all ${
+              isSelected
+                ? 'bg-[#EEF4FF] border-[#2E7CF6] shadow-[0_0_0_1px_rgba(46,124,246,0.25)]'
+                : `${MODULE_SURFACE} border-slate-200 hover:border-[#2E7CF6]/40 shadow-[0_20px_40px_-15px_rgba(47,99,120,0.06)]`
+            }`}
           >
-            {scenario.situation}
-          </p>
-        </div>
-      </div>
+            <div className="flex items-start gap-5">
+              <span
+                className={`flex items-center justify-center w-12 h-12 rounded-xl text-base font-bold shrink-0 ${
+                  isSelected
+                    ? 'bg-[#2E7CF6] text-white'
+                    : 'bg-[#F7F9FB] text-[#1F3864] border border-slate-200'
+                }`}
+              >
+                {key}
+              </span>
+              <p className="text-[16px] text-slate-700 leading-relaxed">
+                {scenario.options[key]}
+              </p>
+            </div>
+          </button>
+        );
+      })}
     </div>
   );
 }
 
-function ScenarioChooseSection({
+function ScenarioSituationSection({
   scenarioId,
   selected,
   onSelect,
@@ -1911,44 +1969,27 @@ function ScenarioChooseSection({
     <div className="max-w-[1200px] mx-auto flex flex-col flex-1 min-h-0 h-full overflow-hidden pt-2">
       <ScenarioHeading scenarioId={scenarioId} />
       <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar pr-1 -mr-1">
-        <h3
-          className="text-[36px] md:text-[40px] leading-tight font-bold mb-6"
-          style={{ color: '#1F3864' }}
-        >
-          {scenario.title}
-        </h3>
+        <div className={`w-full ${MODULE_SURFACE} p-6 md:p-8 lg:p-10 rounded-xl border-l-4 border-l-[#2E7CF6]`}>
+          <p
+            className="text-[20px] md:text-[22px] lg:text-[24px] leading-relaxed whitespace-pre-line"
+            style={{ color: '#1F3864' }}
+          >
+            {scenario.situation}
+          </p>
+        </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          {(Object.keys(scenario.options) as ScenarioOptionKey[]).map((key) => {
-            const isSelected = selected === key;
-            return (
-              <button
-                key={key}
-                type="button"
-                onClick={() => onSelect(key)}
-                className={`text-left rounded-xl border p-6 md:p-7 min-h-[120px] transition-all ${
-                  isSelected
-                    ? 'bg-[#EEF4FF] border-[#2E7CF6] shadow-[0_0_0_1px_rgba(46,124,246,0.25)]'
-                    : 'bg-white border-slate-200 hover:border-[#2E7CF6]/40 shadow-[0_20px_40px_-15px_rgba(47,99,120,0.06)]'
-                }`}
-              >
-                <div className="flex items-start gap-5">
-                  <span
-                    className={`flex items-center justify-center w-12 h-12 rounded-xl text-base font-bold shrink-0 ${
-                      isSelected
-                        ? 'bg-[#2E7CF6] text-white'
-                        : 'bg-[#F7F9FB] text-[#1F3864] border border-slate-200'
-                    }`}
-                  >
-                    {key}
-                  </span>
-                  <p className="text-[16px] text-slate-700 leading-relaxed">
-                    {scenario.options[key]}
-                  </p>
-                </div>
-              </button>
-            );
-          })}
+        <div className="mt-8 space-y-6">
+          <h3
+            className="text-[24px] md:text-[24px] leading-tight font-semibold"
+            style={{ color: '#1F3864' }}
+          >
+            {scenario.title}
+          </h3>
+          <ScenarioChoiceGrid
+            scenarioId={scenarioId}
+            selected={selected}
+            onSelect={onSelect}
+          />
         </div>
       </div>
     </div>
@@ -2005,7 +2046,7 @@ function ScenarioCompareModal({
         </div>
 
         <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar p-5 md:p-6 space-y-5">
-          <div className="bg-white rounded-xl border border-[#2E7CF6]/30 shadow-[0_20px_40px_-15px_rgba(47,99,120,0.06)] p-5 md:p-6">
+          <div className={`${MODULE_SURFACE} rounded-xl border border-[#2E7CF6]/30 shadow-[0_20px_40px_-15px_rgba(47,99,120,0.06)] p-5 md:p-6`}>
             <p className="text-[11px] font-semibold uppercase tracking-wider text-[#2E7CF6] mb-2">
               Your choice
             </p>
@@ -2029,7 +2070,7 @@ function ScenarioCompareModal({
                 .map((key) => (
                   <div
                     key={key}
-                    className="bg-white rounded-xl border border-slate-200 p-4 md:p-5"
+                    className={`${MODULE_SURFACE} rounded-xl border border-slate-200 p-4 md:p-5`}
                   >
                     <p className="text-[13px] font-semibold text-slate-500 mb-2">
                       Option {key}
@@ -2050,56 +2091,6 @@ function ScenarioCompareModal({
   );
 }
 
-function getPractiseHeroSubtitle(screen: Screen): string {
-  if (screen.id === 18) return screen.t2 ?? 'Part 3. Practise';
-  if (screen.type === 'scenario_situation' && screen.scenarioId) {
-    return SCENARIOS[screen.scenarioId].title;
-  }
-  if (screen.type === 'scenario_choose') return 'What would you do?';
-  return screen.t2 ?? 'Part 3. Practise';
-}
-
-function getModulePageTitles(
-  screen: Screen,
-  activeSidebarSectionKey: SidebarSectionKey | null
-): { h1: string; h2: string } {
-  const h1 =
-    activeSidebarSectionKey === 'introduction'
-      ? 'Introduction'
-      : screen.id === 5
-        ? (screen.t1 ?? 'Part 1. Watch')
-        : activeSidebarSectionKey === 'learn'
-          ? 'Part 2. Learn'
-          : activeSidebarSectionKey === 'practise'
-            ? 'Part 3. Practise'
-            : activeSidebarSectionKey === 'takeaway'
-              ? 'Part 4. Take away'
-              : activeSidebarSectionKey === 'closing'
-                ? 'Closing'
-                : 'MODULE 1 – THE THREE SECOND PAUSE';
-
-  const h2 =
-    screen.type === 'cover'
-      ? (screen.t2 ?? '')
-      : screen.id === 5
-        ? (screen.t2 ?? 'The three second pause, in a real classroom')
-        : activeSidebarSectionKey === 'learn'
-          ? screen.type === 'technique_intro' ||
-            screen.type === 'technique' ||
-            screen.type === 'technique_honest'
-            ? (screen.t2 ?? 'Part 2. Learn')
-            : (screen.lead ?? screen.t2 ?? screen.t3 ?? 'Part 2. Learn')
-          : activeSidebarSectionKey === 'practise'
-            ? getPractiseHeroSubtitle(screen)
-            : activeSidebarSectionKey === 'takeaway'
-              ? (screen.t1 ?? 'Your take away card')
-              : activeSidebarSectionKey === 'closing'
-                ? (screen.t2 ?? 'That is Module 1')
-                : (screen.t2 ?? 'Reading behaviour in the moment');
-
-  return { h1, h2 };
-}
-
 function ModuleInlineHeader({
   screen,
   activeSidebarSectionKey,
@@ -2111,10 +2102,10 @@ function ModuleInlineHeader({
   isModuleContentsOpen: boolean;
   onToggleModuleContents: () => void;
 }) {
-  const { h1, h2 } = getModulePageTitles(screen, activeSidebarSectionKey);
+  const title = getModulePageTitle(screen, activeSidebarSectionKey);
 
   return (
-    <div className="shrink-0 pt-4 pb-2 border-b border-slate-200 bg-slate-100/50 backdrop-blur-sm">
+    <div className={`shrink-0 pt-4 pb-2 border-b border-slate-200 ${MODULE_PAGE_TINT} backdrop-blur-sm`}>
       <div className="flex items-stretch justify-between mb-3 w-full">
         <Link
           to="/dashboard/my-learning/mind-sync"
@@ -2142,26 +2133,8 @@ function ModuleInlineHeader({
         ) : null}
       </div>
       <div className="px-5 md:px-14">
-      <div className="max-w-[1200px] mx-auto w-full">
-        <div className="flex items-start justify-between gap-4 mb-1">
-          <div className="min-w-0">
-        <h1
-          className="shrink-0 text-[32px] leading-tight font-bold max-w-3xl mb-1"
-          style={{ color: '#1F3864' }}
-        >
-          {h1}
-        </h1>
-        <h2
-          className="shrink-0 text-[24px] leading-snug font-bold max-w-3xl"
-          style={{ color: '#1F7A7A' }}
-        >
-          {h2}
-        </h2>
-          </div>
-          <span className="text-xs text-slate-500 font-medium shrink-0 pt-2">
-            Block {screen.id}
-          </span>
-        </div>
+      <div className="max-w-[1200px] mx-auto w-full min-w-0">
+        <ModulePartTitle title={title} blockId={screen.id} />
       </div>
       </div>
     </div>
@@ -2179,7 +2152,7 @@ function LandingSection({
     <div className="relative flex flex-col min-h-screen overflow-hidden">
       <div className="absolute inset-0 z-0">
         <img
-          src={image}
+          src={moduleBgImage}
           alt="Mind Sync"
           className="w-full h-full object-cover object-[center_7%]"
         />
@@ -2220,6 +2193,13 @@ function LandingSection({
           >
             {screen.t2}
           </h2>
+        ) : null}
+        {screen.lead ? (
+          <p
+            className="mt-4 text-base md:text-lg leading-relaxed max-w-2xl text-slate-600 transition-transform group-hover:scale-[1.01]"
+          >
+            {screen.lead}
+          </p>
         ) : null}
         <span className="mt-6 text-xs font-semibold uppercase tracking-widest text-slate-500 opacity-0 group-hover:opacity-100 transition-opacity">
           Click to begin
@@ -2323,10 +2303,7 @@ function ModuleContentsSidebar({
             return true;
           });
 
-          const isQuestionBlock = [20, 23, 26].includes(screen.id);
-          const isSectionActive =
-            isActiveSection ||
-            (section.key === 'practise' && isQuestionBlock);
+          const isSectionActive = isActiveSection;
 
           const canCollapse = isCollapsible && visibleIndices.length > 1;
           const shouldShowItems = canCollapse && isOpen;
@@ -2415,14 +2392,7 @@ function ModuleContentsSidebar({
                   {visibleIndices.map((i) => {
                     const item = toc[i];
                     if (!item) return null;
-                    const questionToScenarioMap: Record<number, number> = {
-                      20: 19,
-                      23: 22,
-                      26: 25,
-                    };
-                    const isCurrent =
-                      item.index === index ||
-                      questionToScenarioMap[screen.id] === item.blockId;
+                    const isCurrent = item.index === index;
                     const isLanding =
                       section.landingBlockId === item.blockId;
                     return (
@@ -2559,17 +2529,29 @@ function parseTakeawaySteps(text: string): {
   return { steps, footerLabel };
 }
 
-function ClosingSection({ screen }: { screen: Screen }) {
+function ClosingSection({
+  screen,
+  activeSidebarSectionKey,
+}: {
+  screen: Screen;
+  activeSidebarSectionKey: SidebarSectionKey | null;
+}) {
+  const showTitle =
+    screen.t2 &&
+    !isSameAsBlockHeader(screen.t2, screen, activeSidebarSectionKey);
+
   return (
     <div className="max-w-[1200px] mx-auto flex flex-col flex-1 min-h-0 h-full justify-center gap-5 md:gap-6">
+      {showTitle ? (
       <h2
         className="shrink-0 text-[32px] leading-tight font-bold max-w-3xl"
         style={{ color: '#1F3864' }}
       >
         {screen.t2}
       </h2>
+      ) : null}
 
-      <div className="rounded-xl border border-slate-200 bg-white shadow-[0_20px_40px_-15px_rgba(47,99,120,0.06)] overflow-hidden border-l-4 border-l-[#2E7CF6] p-6 md:p-8">
+      <div className={`rounded-xl border border-slate-200 ${MODULE_SURFACE} shadow-[0_20px_40px_-15px_rgba(47,99,120,0.06)] overflow-hidden border-l-4 border-l-[#2E7CF6] p-6 md:p-8`}>
         <div className="flex items-start gap-4 md:gap-5">
           <ModuleFavicon className="w-8 h-8 mt-0.5 shrink-0" />
           <div className="space-y-5 min-w-0">
@@ -2662,7 +2644,7 @@ function TakeawayCardSection({ screen }: { screen: Screen }) {
       ) : null}
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-5 flex-1 min-h-0 items-stretch">
-        <div className="rounded-xl border border-slate-200 bg-white shadow-[0_20px_40px_-15px_rgba(47,99,120,0.06)] overflow-hidden border-l-4 border-l-[#2E7CF6] flex flex-col min-h-0">
+        <div className={`rounded-xl border border-slate-200 ${MODULE_SURFACE} shadow-[0_20px_40px_-15px_rgba(47,99,120,0.06)] overflow-hidden border-l-4 border-l-[#2E7CF6] flex flex-col min-h-0`}>
           <div className="p-5 md:p-6 flex flex-col min-h-0">
             <div className="flex items-start gap-3 mb-3 shrink-0">
               <ModuleFavicon className="w-7 h-7 mt-0.5 shrink-0" />
@@ -2864,27 +2846,28 @@ export default function MindSyncTeacherTrainingModule01Page() {
             type: 'landing',
             t1: 'Module 1',
             t2: 'The Three Second Pause',
+            lead: 'Recognising the difference between distress, defiance and overwhelm in the classroom, and how you may respond to it.',
           },
-          {
-            id: 1,
-            type: 'cover',
-            t1: 'The Three Second Pause',
-            t2: 'Reading behaviour in the moment',
-            body: 'How to tell the difference between distress, defiance and overwhelm. ',
-          },
-          {
-            id: 2,
-            type: 'text',
-            t2: 'About this module',
-            lead: 'Sometimes a pupil’s behaviour can look like defiance when what is really going on is distress.',
-            body: 'Same pupil, same behaviour, a different read, a completely different outcome.',
-            dropdowns: [
-              {
-                header: 'Does this only apply to pupils with a diagnosis?',
-                body: 'No. The brain patterns here show up across autism, ADHD, dyslexia and dyspraxia, in pupils with no diagnosis at all, and in any pupil on a bad day.',
-              },
-            ],
-          },
+          // {
+          //   id: 1,
+          //   type: 'cover',
+          //   t1: 'The Three Second Pause',
+          //   t2: 'Reading behaviour in the moment',
+          //   body: 'How to tell the difference between distress, defiance and overwhelm. ',
+          // },
+          // {
+          //   id: 2,
+          //   type: 'text',
+          //   t2: 'About this module',
+          //   lead: 'Sometimes a pupil’s behaviour can look like defiance when what is really going on is distress.',
+          //   body: 'Same pupil, same behaviour, a different read, a completely different outcome.',
+          //   dropdowns: [
+          //     {
+          //       header: 'Does this only apply to pupils with a diagnosis?',
+          //       body: 'No. The brain patterns here show up across autism, ADHD, dyslexia and dyspraxia, in pupils with no diagnosis at all, and in any pupil on a bad day.',
+          //     },
+          //   ],
+          // },
           {
             id: 3,
             type: 'bullets',
@@ -2897,17 +2880,23 @@ export default function MindSyncTeacherTrainingModule01Page() {
             ],
           },
           {
+            id: 4,
+            type: 'research',
+            headerTitle: 'The research behind the technique',
+            dropdowns: RESEARCH_EVIDENCE_DROPDOWNS,
+          },
+          {
             id: 5,
             type: 'divider',
             t2: 'The three second pause, in a real classroom',
             watchIntro: {
-              headline: 'The same moment, twice.',
-              before: {
-                version: 'Version 1',
-                timing: '~1 second',
-                description:
-                  'The teacher responds on reflex, the way any of us might.',
-              },
+              headline: 'You are about to watch the same moment twice: a pupil who has stopped engaging, and how his teacher responds. The first time she reacts straight away. The second time she waits three seconds. See what a difference three seconds can make.',
+              // before: {
+              //   version: 'Version 1',
+              //   timing: '~1 second',
+              //   description:
+              //     'The teacher responds on reflex, the way any of us might.',
+              // },
               after: {
                 version: 'Version 2',
                 timing: '3 seconds',
@@ -2945,12 +2934,12 @@ export default function MindSyncTeacherTrainingModule01Page() {
             type: 'text',
             t3: 'State 1. Calmly engaged (green)',
             body: 'The thinking brain is online. The pupil can follow instructions, manage impulses and learn. Most of your lesson assumes pupils are here. Most are, most of the time.',
-            dropdowns: [
-              {
-                header: 'A bit more on the brain',
-                body: 'The thinking brain is the prefrontal cortex, just behind the forehead. In green it is in charge, so the pupil has the capacity to learn, remember and make choices.',
-              },
-            ],
+            // dropdowns: [
+            //   {
+            //     header: 'A bit more on the brain',
+            //     body: 'The thinking brain is the prefrontal cortex, just behind the forehead. In green it is in charge, so the pupil has the capacity to learn, remember and make choices.',
+            //   },
+            // ],
           },
           {
             id: 9,
@@ -2999,116 +2988,32 @@ export default function MindSyncTeacherTrainingModule01Page() {
             t2: 'Three states, and why the difference matters.',
             body: 'During a lesson, a pupil’s brain can be in one of three states. From the front of the room they can look similar. They need very different things from you, and the costly mistake is treating one as if it were another. Tap each state.',
           },
-          {
-            id: 13,
-            type: 'technique_intro',
-            t2: 'The technique. The three second pause',
-            t3: 'The three steps',
-            lead: 'It is not complicated. You make a small gap between what the pupil does and what you do next, and into that gap you fit one quiet check.',
-            techniqueSteps: TECHNIQUE_STEPS,
-          },
+          
           {
             id: 14,
             type: 'technique',
             t2: 'The three steps',
             lead: 'Full view — all three steps side by side for comparison.',
-            techniqueSteps: TECHNIQUE_STEPS,
+            // techniqueSteps: TECHNIQUE_STEPS,
           },
-          {
-            id: 15,
-            type: 'technique_honest',
-            t2: 'The honest part',
-            keyPoint:
-              'You will not manage this every time, and you are not meant to. The goal is not perfection. It is catching the rise a little more often than you used to. Within a couple of months, the pupils who used to escalate start to settle.',
-          },
-          {
-            id: 16,
-            type: 'timeline',
-            t2: 'Five things that tend to make it harder',
-            body: 'Five responses that look perfectly reasonable under pressure, and tend to escalate a pupil who is already dysregulated. Worth a look. Tap each one.',
-            timelineSteps: [
-              {
-                shortLabel: 'Voice',
-                icon: 'record_voice_over',
-                header: 'Raising your voice to match theirs',
-                body: 'The calmer you sound, the more likely they are to come down with you.',
-                keyInsight:
-                  'The calmer you sound, the more likely they are to come down with you.',
-                // image: learnHeroImage,
-              },
-              {
-                shortLabel: 'Eye contact',
-                icon: 'visibility_off',
-                header: 'Asking for eye contact',
-                body: 'For many neurodivergent pupils it costs thinking capacity they do not have right now. Eye contact is not the test of whether a pupil respects you.',
-                keyInsight:
-                  'For many neurodivergent pupils it costs thinking capacity they do not have right now. Eye contact is not the test of whether a pupil respects you.',
-                image: scenario1Image,
-              },
-              {
-                shortLabel: 'Instructions',
-                icon: 'checklist',
-                header: 'Stacking up instructions',
-                body: 'Working memory shrinks when a pupil is dysregulated. One instruction at a time, with a pause after each, is far more likely to work.',
-                keyInsight:
-                  'Working memory shrinks when a pupil is dysregulated. One instruction at a time, with a pause after each, is far more likely to work.',
-                image: scenario2Image,
-              },
-              {
-                shortLabel: 'In public',
-                icon: 'groups',
-                header:
-                  'Telling a pupil what will happen to them in front of the class',
-                body: 'It almost always escalates, and a pupil in amber or red cannot take it in anyway. Anything that needs saying is better said quietly, later, once they are back in green.',
-                keyInsight:
-                  'It almost always escalates, and a pupil in amber or red cannot take it in anyway. Anything that needs saying is better said quietly, later, once they are back in green.',
-                image: scenario3Image,
-              },
-              {
-                shortLabel: 'Stimming',
-                icon: 'touch_app',
-                header: 'Reading stimming as being off task',
-                body: 'Tapping, rocking and fiddling are usually self regulation. Asking a pupil to stop often removes the very thing keeping them in the lesson.',
-                keyInsight:
-                  'Tapping, rocking and fiddling are usually self regulation. Asking a pupil to stop often removes the very thing keeping them in the lesson.',
-                image: structureLearnImage,
-              },
-            ],
-          },
+
           {
             id: 17,
-            type: 'text',
-            t2: 'Evidence',
-            body: 'The film keeps things simple. The evidence sits here.',
-            dropdowns: [
-              {
-                header: 'The three state model',
-                body: 'Consistent with research by Mullally and colleagues at Newcastle University on school distress, and with the Neurodivergence Task and Finish Group report, which finds that behaviour, including stimming, is too often understood as defiance when it is in fact communication of overwhelm or distress.',
-              },
-              {
-                header: 'Why a pause changes what happens next',
-                body: 'When we respond on reflex, the emotional part of the brain acts before the thinking part has caught up. A short, deliberate pause is what lets the thinking brain come back online, so you can recognise distress rather than defiance and choose your response. This is the basis of co regulation and de escalation practice in schools.',
-              },
-              {
-                header: 'Why three seconds',
-                body: 'The one second and three second figures are anchored in wait time research from the 1970s (Rowe, M. B. 1974, Wait time and rewards as instructional variables, Journal of Research in Science Teaching), which found that teachers naturally pause for about one second, and that stretching that pause to three seconds or more measurably improves what happens in the classroom.\n\nThat research looked at the pause after a teacher asks a question, rather than the pause before responding to distress. So we use it here as a principle and a memorable anchor, not as a study of behaviour. Three seconds is long enough to interrupt the reflex, and short enough that it is realistic in a live classroom.',
-              },
-            ],
+            type: 'technique_intro',
+            t2: 'The Technique. The Three Second Pause',
+            lead: 'The three second pause is a short gap between what a pupil does and how you respond. In that gap, you work out which state the pupil is in before you react. It has three steps.',
+            techniqueSteps: TECHNIQUE_STEPS,
+            keyPoint:
+              'You will not manage this every time, and you are not meant to. The goal is not perfection. It is self-awareness.',
           },
-          {
-            id: 18,
-            type: 'divider',
-            t1: 'Part 3. Practise',
-            t2: 'Three situations you will recognise.',
-            lead: 'Read it, choose what you would do, then compare.',
-            body: 'There are no trick questions, and the aim is not to score well. It is to notice your own instinct, and where a small shift might help. Some options feel reasonable and quietly make things harder.',
-            // dropdowns: [
-            //   {
-            //     header: 'How to get the most from this',
-            //     body: 'Take them slowly. The goal is not to score highly. It is to notice your own instinct, and where it might benefit from a small shift.',
-            //   },
-            // ],
-          },
+          // {
+          //   id: 18,
+          //   type: 'divider',
+          //   t1: 'Part 3. Practise',
+          //   t2: 'Three situations you will recognise.',
+          //   lead: 'Read it, choose what you would do, then compare.',
+          //   body: 'There are no trick questions, and the aim is not to score well. It is to notice your own instinct, and where a small shift might help. Some options feel reasonable and quietly make things harder.',
+          // },
           { id: 19, type: 'scenario_situation', scenarioId: 1 },
           { id: 20, type: 'scenario_choose', scenarioId: 1 },
           { id: 21, type: 'scenario_feedback', scenarioId: 1 },
@@ -3166,6 +3071,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
     Record<SidebarSectionKey, boolean>
   >({
     introduction: false,
+    research: false,
     watch: false,
     learn: false,
     practise: false,
@@ -3178,6 +3084,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
       if (prev[key]) {
         return {
           introduction: false,
+          research: false,
           watch: false,
           learn: false,
           practise: false,
@@ -3187,6 +3094,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
       }
       return {
         introduction: key === 'introduction',
+        research: key === 'research',
         watch: key === 'watch',
         learn: key === 'learn',
         practise: key === 'practise',
@@ -3220,7 +3128,13 @@ export default function MindSyncTeacherTrainingModule01Page() {
               ? `Scenario ${s.scenarioId} · Choose`
               : s.type === 'scenario_feedback' && s.scenarioId
                 ? `Scenario ${s.scenarioId} · Compare`
-                : s.t1 || s.t2 || s.t3 || `Block ${s.id}`;
+                : s.type === 'research'
+                  ? 'Research'
+                  : s.headerTitle ||
+                    s.t1 ||
+                    s.t2 ||
+                    s.t3 ||
+                    `Block ${s.id}`;
       return {
         index: i,
         label,
@@ -3245,24 +3159,33 @@ export default function MindSyncTeacherTrainingModule01Page() {
     return [
       {
         key: 'introduction',
-        label: 'Introduction',
-        indices: range(1, 4),
+        label: SIDEBAR_SECTION_LABELS.introduction,
+        indices: range(1, 3),
       },
-      { key: 'watch', label: 'Part 1. Watch', indices: range(5, 5) },
+      {
+        key: 'research',
+        label: SIDEBAR_SECTION_LABELS.research,
+        indices: range(4, 4),
+      },
+      { key: 'watch', label: SIDEBAR_SECTION_LABELS.watch, indices: range(5, 5) },
       {
         key: 'learn',
-        label: 'Part 2. Learn',
+        label: SIDEBAR_SECTION_LABELS.learn,
         indices: range(7, 17),
         landingBlockId: 7,
       },
       {
         key: 'practise',
-        label: 'Part 3. Practise',
+        label: SIDEBAR_SECTION_LABELS.practise,
         indices: range(18, 27),
         landingBlockId: 18,
       },
-      { key: 'takeaway', label: 'Part 4. Take away', indices: range(28, 28) },
-      { key: 'closing', label: 'Closing', indices: range(29, 29) },
+      {
+        key: 'takeaway',
+        label: SIDEBAR_SECTION_LABELS.takeaway,
+        indices: range(28, 28),
+      },
+      { key: 'closing', label: SIDEBAR_SECTION_LABELS.closing, indices: range(29, 29) },
     ];
   }, [toc]);
 
@@ -3427,7 +3350,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
   const nextVisibleIndex = getNextVisibleIndex(index);
 
   const canGoNext = useMemo(() => {
-    if (screen.type === 'scenario_choose' && screen.scenarioId) {
+    if (screen.type === 'scenario_situation' && screen.scenarioId) {
       return Boolean(scenarioAnswers[screen.scenarioId]);
     }
     return true;
@@ -3436,8 +3359,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
   const nextLabel = useMemo(() => {
     if (screen.id === 29) return 'Back to pathway';
     if (screen.id === 28) return 'Finish';
-    if (screen.type === 'scenario_situation') return 'Choose';
-    if (screen.type === 'scenario_choose' && screen.scenarioId) {
+    if (screen.type === 'scenario_situation' && screen.scenarioId) {
       return scenarioCompareSeen[screen.scenarioId] ? 'Next' : 'Compare';
     }
     return 'Next';
@@ -3452,8 +3374,9 @@ export default function MindSyncTeacherTrainingModule01Page() {
         <LandingSection screen={screen} onNext={() => setIndex(1)} />
       ) : (
       <main className="flex w-full h-screen overflow-hidden">
-        <div className="flex-1 min-w-0 overflow-hidden flex flex-col p-0">
-          <div className="flex-1 min-h-0 flex flex-col overflow-hidden">
+        <div className="flex-1 min-w-0 overflow-hidden flex flex-col p-0 relative bg-[#F7F9FC]">
+          <ModulePageBackground />
+          <div className="relative z-10 flex flex-col flex-1 min-h-0 overflow-hidden">
           <ModuleInlineHeader
             screen={screen}
             activeSidebarSectionKey={activeSidebarSectionKey}
@@ -3463,16 +3386,17 @@ export default function MindSyncTeacherTrainingModule01Page() {
           <div className="flex-1 min-h-0 flex flex-col overflow-hidden">
           <div
             key={index}
-            className="step-transition flex flex-col flex-1 min-h-0 overflow-hidden"
+            className="flex flex-col flex-1 min-h-0 overflow-hidden"
           >
             <div
               ref={scrollAreaRef}
-              className={`flex-1 min-h-0 custom-scrollbar scroll-smooth ${
+              className={`relative flex-1 min-h-0 custom-scrollbar scroll-smooth ${
                 screen.id === 16 ||
                 screen.id === 17 ||
                 screen.id === 18 ||
                 screen.type === 'closing' ||
                 screen.type === 'takeaway' ||
+                screen.type === 'research' ||
                 screen.type === 'scenario_situation' ||
                 screen.type === 'scenario_choose' ||
                 screen.type === 'cover' ||
@@ -3480,6 +3404,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
                 screen.type === 'technique_intro' ||
                 screen.id === 2 ||
                 screen.id === 3 ||
+                screen.id === 4 ||
                 screen.id === 5
                   ? 'pb-4 flex flex-col'
                   : 'pb-24'
@@ -3488,12 +3413,13 @@ export default function MindSyncTeacherTrainingModule01Page() {
               }`}
             >
               <section
-                className={
+                className={`step-transition ${
                   screen.id === 16 ||
                   screen.id === 17 ||
                   screen.id === 18 ||
                   screen.type === 'closing' ||
                   screen.type === 'takeaway' ||
+                  screen.type === 'research' ||
                   screen.type === 'scenario_situation' ||
                   screen.type === 'scenario_choose' ||
                   screen.type === 'cover' ||
@@ -3501,20 +3427,21 @@ export default function MindSyncTeacherTrainingModule01Page() {
                   screen.type === 'technique_intro' ||
                   screen.id === 2 ||
                   screen.id === 3 ||
+                  screen.id === 4 ||
                   screen.id === 5
                     ? isIntroReadMoreLayoutOpen
                       ? 'flex flex-col'
                       : 'flex flex-col flex-1 min-h-full h-full'
                     : 'space-y-4'
-                }
+                }`}
               >
                 {screen.type === 'cover' ? (
                   <div className="p-5 md:p-6 md:px-14 flex flex-col flex-1 min-h-0 h-full">
                     <CoverSection screen={screen} />
                   </div>
                 ) : screen.type === 'technique_intro' ? (
-                  <div className="p-5 md:p-6 md:px-14 flex flex-col flex-1 min-h-0 h-full">
-                    <TechniqueIntroSection
+                  <div className="p-5 md:p-6 md:px-14 flex flex-col flex-1 min-h-0 h-full overflow-hidden">
+                    <TechniqueVerticalStepsSection
                       screen={screen}
                       onStepClick={setActiveTechniqueStep}
                     />
@@ -3525,6 +3452,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
                       screen={screen}
                       openDropdownIds={openDropdownIds}
                       onDropdownToggle={handleDropdownOpenChange}
+                      activeSidebarSectionKey={activeSidebarSectionKey}
                     />
                   </div>
                 ) : screen.type === 'takeaway' ? (
@@ -3533,7 +3461,10 @@ export default function MindSyncTeacherTrainingModule01Page() {
                   </div>
                 ) : screen.type === 'closing' ? (
                   <div className="p-5 md:p-6 md:px-14 flex flex-col flex-1 min-h-0 h-full overflow-hidden">
-                    <ClosingSection screen={screen} />
+                    <ClosingSection
+                      screen={screen}
+                      activeSidebarSectionKey={activeSidebarSectionKey}
+                    />
                   </div>
                 ) : screen.type === 'technique_honest' ? (
                   <div className="p-5 md:p-6 md:px-14">
@@ -3543,21 +3474,13 @@ export default function MindSyncTeacherTrainingModule01Page() {
                   <div className="w-full p-5 md:p-6 md:px-14 flex flex-col flex-1 min-h-0 h-full overflow-hidden">
                     <WhatNotToDoStepperSection screen={screen} />
                   </div>
-                ) : screen.id === 17 ? (
-                  <div className="p-5 md:p-6 md:px-14 flex flex-col flex-1 min-h-0 h-full overflow-hidden">
-                    <EvidenceTabsSection screen={screen} />
-                  </div>
                 ) : screen.id === 18 ? (
                   <div className="p-5 md:p-6 md:px-14 flex flex-col flex-1 min-h-0 h-full overflow-hidden">
                     <PracticeIntroSection screen={screen} />
                   </div>
                 ) : screen.type === 'scenario_situation' && screen.scenarioId ? (
                   <div className="p-5 md:p-6 md:px-14 flex flex-col flex-1 min-h-0 h-full overflow-hidden">
-                    <ScenarioSituationSection scenarioId={screen.scenarioId} />
-                  </div>
-                ) : screen.type === 'scenario_choose' && screen.scenarioId ? (
-                  <div className="p-5 md:p-6 md:px-14 flex flex-col flex-1 min-h-0 h-full overflow-hidden">
-                    <ScenarioChooseSection
+                    <ScenarioSituationSection
                       scenarioId={screen.scenarioId}
                       selected={scenarioAnswers[screen.scenarioId] ?? null}
                       onSelect={(key) => {
@@ -3579,6 +3502,13 @@ export default function MindSyncTeacherTrainingModule01Page() {
                       onDropdownOpenChange={handleDropdownOpenChange}
                     />
                   </div>
+                ) : screen.type === 'research' || screen.id === 4 ? (
+                  <div className="p-5 md:p-6 md:px-14 flex flex-col flex-1 min-h-0 h-full overflow-y-auto custom-scrollbar">
+                    <ResearchSection
+                      screen={screen}
+                      onDropdownOpenChange={handleDropdownOpenChange}
+                    />
+                  </div>
                 ) : screen.id === 5 ? (
                   <div className="p-5 md:p-6 md:px-14 flex flex-col flex-1 min-h-0 h-full">
                     <WatchSection
@@ -3590,80 +3520,20 @@ export default function MindSyncTeacherTrainingModule01Page() {
                   </div>
                 ) : screen.id === 3 && screen.bullets ? (
                   <div className="p-5 md:p-6 md:px-14 flex flex-col flex-1 min-h-0 h-full">
-                    <div className="w-full max-w-[1200px] mx-auto flex flex-col flex-1 min-h-0 h-full gap-6 lg:gap-8">
-                      <div className="rounded-2xl border border-[#E5E9F0] bg-white shadow-[0_4px_24px_-4px_rgba(10,31,68,0.08),0_2px_6px_-2px_rgba(10,31,68,0.04)] p-6 md:p-8 border-l-4 border-l-[#2E7CF6] flex-1 min-h-0">
+                    <div className="w-full max-w-[1230px] mx-auto flex flex-col flex-1 min-h-0 h-full gap-6 lg:gap-8">
+                      <div className={`w-[1230px] max-w-full h-[390px] rounded-2xl border border-[#E5E9F0] ${MODULE_SURFACE} shadow-[0_4px_24px_-4px_rgba(10,31,68,0.08),0_2px_6px_-2px_rgba(10,31,68,0.04)] p-6 md:p-8 border-l-4 border-l-[#2E7CF6] shrink-0 overflow-y-auto custom-scrollbar`}>
                           <div className="space-y-5">
                             {screen.bullets.map((b) => (
                               <div key={b} className="flex items-start gap-4">
                                 <ModuleFavicon className="w-7 h-7 mt-0.5" />
                                 <div
-                                  className="text-[15px] md:text-[16px] leading-relaxed"
-                                  style={{ color: '#1F3864' }}
+                                  className="text-[24px] font-semibold text-slate-900 leading-relaxed"
                                 >
                                   {b}
                                 </div>
                               </div>
                             ))}
                           </div>
-                        </div>
-
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                          {[
-                          {
-                            title: 'Watch',
-                            subtitle: 'VIDEO INSIGHT',
-                            icon: 'play_circle',
-                            bg: structureWatchImage,
-                          },
-                          {
-                            title: 'Learn',
-                            subtitle: 'CORE THEORY',
-                            icon: 'menu_book',
-                            bg: structureLearnImage,
-                          },
-                          {
-                            title: 'Practise',
-                            subtitle: 'INTERACTIVE TASK',
-                            icon: 'task_alt',
-                            bg: structurePracticeImage,
-                          },
-                          {
-                            title: 'Take away',
-                            subtitle: 'PDF RESOURCES',
-                            icon: 'description',
-                            bg: structureTakeawayImage,
-                          },
-                          ].map((item) => (
-                            <div
-                              key={item.title}
-                              className="group relative aspect-square rounded-2xl overflow-hidden shadow-md"
-                            >
-                              <img
-                                alt=""
-                                src={item.bg}
-                                className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                              />
-                              <div className="absolute inset-0 bg-gradient-to-t from-[#1F3864]/80 via-[#1F3864]/25 to-transparent" />
-
-                              <div className="absolute inset-x-0 bottom-0 p-4 flex flex-col items-center gap-1.5 text-center">
-                                <span
-                                  className="material-symbols-outlined text-[22px]"
-                                  style={{ color: '#2E7CF6' }}
-                                >
-                                  {item.icon}
-                                </span>
-                                <div className="text-sm font-semibold text-white">
-                                  {item.title}
-                                </div>
-                                <div
-                                  className="text-[10px] font-semibold uppercase tracking-[0.18em]"
-                                  style={{ color: '#1F7A7A' }}
-                                >
-                                  {item.subtitle}
-                                </div>
-                              </div>
-                            </div>
-                          ))}
                         </div>
                       </div>
                     </div>
@@ -3740,21 +3610,26 @@ export default function MindSyncTeacherTrainingModule01Page() {
                           </div>
                         ) : null}
 
-                        {screen.type === 'divider' && screen.t1 ? (
-                          screen.id === 18 ? null : screen.id === 7 ? null : (
+                        {screen.type === 'divider' &&
+                        screen.t1 &&
+                        !isPartTitleDuplicate(
+                          screen.t1,
+                          activeSidebarSectionKey
+                        ) ? (
                             <div className="text-center">
                               <h1 className="text-2xl md:text-4xl font-black text-slate-900">
                                 {screen.t1}
                               </h1>
                               <div className="mt-3 h-1 w-24 mx-auto rounded-full bg-gradient-to-r from-[#60A5FA] to-[#9333EA]" />
                             </div>
-                          )
                         ) : null}
-
-                        {screen.id === 7 ? null : null}
 
                         {screen.t1 &&
                         screen.type !== 'divider' &&
+                        !isPartTitleDuplicate(
+                          screen.t1,
+                          activeSidebarSectionKey
+                        ) &&
                         activeSidebarSectionKey !== 'learn' ? (
                           screen.t2 ? (
                             <div className="text-center">
@@ -3774,17 +3649,12 @@ export default function MindSyncTeacherTrainingModule01Page() {
                           <div className="pt-2">
                             <div className="max-w-[1200px] mx-auto">
                               <header className="mb-10">
-                                <h2
-                                  className="text-[32px] leading-tight font-bold"
-                                  style={{ color: '#1F3864' }}
-                                >
-                                  Three states, and why the difference matters.
-                                </h2>
+                               
                                 <div
-                                  className="mt-6 max-w-3xl bg-[#F7F9FB] p-8 rounded-xl border-l-4 border-l-[#2E7CF6]"
+                                  className={`mt-6 p-10 max-w-full h-[200px] ${MODULE_SURFACE} rounded-xl border-l-4 border-l-[#2E7CF6]`}
                                 >
                                   <p
-                                    className="text-[18px] leading-relaxed"
+                                    className="text-[24px] font-regular leading-relaxed"
                                     style={{ color: '#333333' }}
                                   >
                                     {screen.body}
@@ -3792,9 +3662,9 @@ export default function MindSyncTeacherTrainingModule01Page() {
                                 </div>
                               </header>
 
-                              <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-10 items-start">
+                              <div className="w-full">
                                 <div>
-                                  <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-6">
+                                  <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 items-stretch">
                                     {(
                                       [
                                         {
@@ -3832,14 +3702,14 @@ export default function MindSyncTeacherTrainingModule01Page() {
                                       return (
                                         <div
                                           key={card.key}
-                                          className="bg-white rounded-xl overflow-hidden border border-slate-200 shadow-[0_20px_40px_-15px_rgba(47,99,120,0.06)] transition-shadow"
+                                          className={`${MODULE_SURFACE} rounded-2xl overflow-hidden border border-[#E5E9EB] shadow-[0_1px_2px_rgba(0,0,0,0.05)] transition-shadow w-full min-h-[320px] flex flex-col`}
                                         >
                                           <button
                                             type="button"
                                             onClick={() =>
                                               setLearnStateModalKey(card.key)
                                             }
-                                            className="w-full h-[170px] p-5 flex flex-col items-center justify-between text-center transition-all duration-300 hover:-translate-y-1"
+                                            className="w-full flex-1 min-h-[320px] p-6 md:p-8 flex flex-col items-center justify-between text-center transition-all duration-300 hover:-translate-y-0.5"
                                           >
                                             <div
                                               className={`size-14 shrink-0 aspect-square rounded-full ${card.iconBg} flex items-center justify-center`}
@@ -3875,35 +3745,8 @@ export default function MindSyncTeacherTrainingModule01Page() {
 
                                   {learnStateItems.brain?.body ? (
                                     <div className="mt-6">
-                                      <LearnAccordionItem
-                                        dropdownId={`${screen.id}:A bit more on the brain`}
-                                        header="A bit more on the brain"
-                                        body={learnStateItems.brain.body}
-                                        open={openDropdownIds.has(
-                                          `${screen.id}:A bit more on the brain`
-                                        )}
-                                        onToggle={handleDropdownOpenChange}
-                                      />
                                     </div>
                                   ) : null}
-                                </div>
-
-                                <div className="rounded-xl overflow-hidden shadow-[0_4px_24px_-4px_rgba(10,31,68,0.12)] border border-[#1F3864]/20 bg-[#1F3864]">
-                                  <div className="p-8">
-                                    <div className="flex items-start gap-4">
-                                      <div className="w-12 h-12 rounded-xl bg-[#2E7CF6]/20 flex items-center justify-center shrink-0">
-                                        <ModuleFavicon className="w-7 h-7" />
-                                      </div>
-                                      <div>
-                                        <div className="text-[18px] font-semibold text-white">
-                                          The single most important point.
-                                        </div>
-                                        <div className="mt-4 text-[14px] leading-relaxed text-white/90">
-                                          {learnStateItems.keyPoint}
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </div>
                                 </div>
                               </div>
 
@@ -3943,6 +3786,11 @@ export default function MindSyncTeacherTrainingModule01Page() {
 
                         {screen.t2 &&
                         !screen.t1 &&
+                        !isSameAsBlockHeader(
+                          screen.t2,
+                          screen,
+                          activeSidebarSectionKey
+                        ) &&
                         screen.id !== 3 &&
                         screen.id !== 4 &&
                         screen.id !== 11 &&
@@ -3960,6 +3808,11 @@ export default function MindSyncTeacherTrainingModule01Page() {
                         ) : null}
 
                         {screen.t3 &&
+                        !isSameAsBlockHeader(
+                          screen.t3,
+                          screen,
+                          activeSidebarSectionKey
+                        ) &&
                         (typeof screen.t1 !== 'string' ||
                           screen.t1.trim().toLowerCase() !==
                             screen.t3.trim().toLowerCase()) &&
@@ -4160,7 +4013,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
 
             
 
-            <div className="sticky bottom-0 mt-auto pt-4 pb-2 border-t border-slate-200 bg-white/90 backdrop-blur">
+            <div className={`sticky bottom-0 mt-auto pt-4 pb-2 border-t border-slate-200 ${MODULE_PAGE_TINT} backdrop-blur-sm`}>
               <div className="flex items-center justify-between gap-2 max-w-[1280px] mx-auto">
                 <button
                   type="button"
@@ -4189,7 +4042,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
                     }
 
                     if (
-                      screen.type === 'scenario_choose' &&
+                      screen.type === 'scenario_situation' &&
                       screen.scenarioId &&
                       !scenarioCompareSeen[screen.scenarioId]
                     ) {
@@ -4237,7 +4090,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
       </main>
       )}
 
-      {screen.type === 'scenario_choose' &&
+      {screen.type === 'scenario_situation' &&
       screen.scenarioId &&
       scenarioAnswers[screen.scenarioId] ? (
         <ScenarioCompareModal

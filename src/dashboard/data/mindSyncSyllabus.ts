@@ -212,7 +212,7 @@ export const MIND_SYNC_TEACHER_TRAINING_MODULE_01: MindSyncModule = {
   },
   learn: {
     body: '',
-    techniqueHeading: 'The technique. The three second pause',
+    techniqueHeading: 'The technique. The Three Second Pause',
     steps: [],
     honestPart: '',
     coRegulationScript: {
