@@ -162,7 +162,7 @@ const MODULE_HEADER_TITLES: Record<SidebarSectionKey, string> = {
   learn: 'Underneath the behaviour: three states',
   practise: 'Part 3. Practise',
   takeaway: 'Part 4. Take Away ',
-  closing: 'Closing', 
+  closing: 'Closing',
 };
 
 /**
@@ -182,23 +182,19 @@ const RESEARCH_SOURCES_HEADER = 'Read the research in full';
 const RESEARCH_EVIDENCE_DROPDOWNS: DropdownItem[] = [
   {
     header: 'The evidence behind the three second pause',
-    body:
-      'In 1974, an education researcher called Mary Budd Rowe recorded and timed hundreds of classroom exchanges. She found that teachers, on average, wait only about one second before they respond.\n\nWhen she coached them to hold that pause for three seconds or more, the classroom changed. Pupils gave longer answers, more pupils joined in, and the pupils who usually said nothing began to contribute.\n\nRowe was studying the pause after a question, not the pause before responding to a pupil in distress. So we use her finding as the principle behind the technique, not as a study of behaviour. The lesson holds either way: a few deliberate seconds change what happens next.\n\nThree seconds is long enough to interrupt your reflex, and short enough to be realistic in a live classroom.',
+    body: 'In 1974, an education researcher called Mary Budd Rowe recorded and timed hundreds of classroom exchanges. She found that teachers, on average, wait only about one second before they respond.\n\nWhen she coached them to hold that pause for three seconds or more, the classroom changed. Pupils gave longer answers, more pupils joined in, and the pupils who usually said nothing began to contribute.\n\nRowe was studying the pause after a question, not the pause before responding to a pupil in distress. So we use her finding as the principle behind the technique, not as a study of behaviour. The lesson holds either way: a few deliberate seconds change what happens next.\n\nThree seconds is long enough to interrupt your reflex, and short enough to be realistic in a live classroom.',
   },
   {
     header: 'UK Neurodivergence Task and Finish Group findings',
-    body:
-      'An independent group of experts, commissioned by the government and chaired by Professor Karen Guldberg of the University of Birmingham, reviewed how to support neurodivergent children in mainstream schools.\n\nIt found that neurodivergent pupils face much higher rates of suspension and absence, and it called for behaviour policies to be rooted in an inclusive culture that values understanding, acceptance and curiosity. This module is one small part of that shift.',
+    body: 'An independent group of experts, commissioned by the government and chaired by Professor Karen Guldberg of the University of Birmingham, reviewed how to support neurodivergent children in mainstream schools.\n\nIt found that neurodivergent pupils face much higher rates of suspension and absence, and it called for behaviour policies to be rooted in an inclusive culture that values understanding, acceptance and curiosity. This module is one small part of that shift.',
   },
   {
     header: 'School distress research',
-    body:
-      'Sinéad Mullally and colleagues at Newcastle University studied children who struggle to attend school. In their sample, more than nine in ten of these children were neurodivergent, and the distress driving their absence was too often missed or misread.\n\nIt is a powerful reminder that behaviour which looks like refusal is frequently distress that has not yet been understood.',
+    body: 'Sinéad Mullally and colleagues at Newcastle University studied children who struggle to attend school. In their sample, more than nine in ten of these children were neurodivergent, and the distress driving their absence was too often missed or misread.\n\nIt is a powerful reminder that behaviour which looks like refusal is frequently distress that has not yet been understood.',
   },
   {
     header: RESEARCH_SOURCES_HEADER,
-    body:
-      'If you would like to go deeper, the full sources are here. Each opens in a new tab.',
+    body: 'If you would like to go deeper, the full sources are here. Each opens in a new tab.',
   },
 ];
 
@@ -272,8 +268,12 @@ function isPartTitleDuplicate(
 ): boolean {
   if (!t1 || !sectionKey) return false;
   const normalized = t1.trim().toLowerCase();
-  const headerPrefix = MODULE_HEADER_TITLES[sectionKey].toLowerCase().slice(0, 8);
-  const sidebarPrefix = SIDEBAR_SECTION_LABELS[sectionKey].toLowerCase().slice(0, 8);
+  const headerPrefix = MODULE_HEADER_TITLES[sectionKey]
+    .toLowerCase()
+    .slice(0, 8);
+  const sidebarPrefix = SIDEBAR_SECTION_LABELS[sectionKey]
+    .toLowerCase()
+    .slice(0, 8);
   return (
     normalized.startsWith(headerPrefix) || normalized.startsWith(sidebarPrefix)
   );
@@ -339,6 +339,12 @@ const TECHNIQUE_STEPS: TechniqueStep[] = [
     body: '• Green: they can make a choice, so this is the calm, firm conversation about what you have asked for.\n\n• Amber: ask a little less for a moment, slow your voice, and offer a small choice.\n\n• Red: ask for almost nothing, give them space rather than solutions, and leave the conversation for later.',
   },
 ];
+
+const SCENARIO_OPTION_STYLE = {
+  card: 'bg-[#EEF4FF]/60 backdrop-blur-sm border-[#2E7CF6]/20',
+  badge: 'bg-[#DBEAFE] text-[#1D4ED8] border border-[#2E7CF6]/30',
+  badgeSelected: 'bg-[#2E7CF6] text-white border-transparent',
+} as const;
 
 const SCENARIOS: Record<1 | 2 | 3, Scenario> = {
   1: {
@@ -487,9 +493,7 @@ function Dropdown({
           });
         }}
         className={`w-full flex items-center justify-between gap-4 bg-white hover:bg-slate-50 transition-colors text-left ${
-          isCover
-            ? 'py-4 px-5 md:px-6 min-h-[70px]'
-            : 'h-[70px] px-[25px]'
+          isCover ? 'py-4 px-5 md:px-6 min-h-[70px]' : 'h-[70px] px-[25px]'
         } ${buttonClassName ?? ''}`}
       >
         <div
@@ -872,24 +876,112 @@ function TechniqueStepBodyContent({
 }) {
   const leadPanel = (content: React.ReactNode) => (
     <div className="bg-[#F7F9FB] p-5 md:p-6 rounded-xl border-l-4 border-l-[#2E7CF6] mb-4">
-      <div
-        className="text-[18px] leading-relaxed"
-        style={{ color: '#333333' }}
-      >
+      <div className="text-[18px] leading-relaxed" style={{ color: '#333333' }}>
         {content}
       </div>
     </div>
   );
 
+  const bulletItems = step.body
+    .split('\n')
+    .map((line) => line.trim())
+    .filter((line) => line.startsWith('•'))
+    .map((line) => line.replace(/^•\s*/, ''));
+
+  const stateLabelClass = (label: string) => {
+    if (label === 'Green') return 'text-emerald-700';
+    if (label === 'Amber') return 'text-amber-700';
+    if (label === 'Red') return 'text-rose-700';
+    return 'text-[#1F3864]';
+  };
+
+  const renderBody = () => {
+    if (variant === 'modal' && bulletItems.length > 0) {
+      return leadPanel(
+        <ul className="space-y-4 list-none pl-0 m-0">
+          {bulletItems.map((item) => {
+            const stateMatch = item.match(/^(Green|Amber|Red):\s*(.+)$/);
+            if (stateMatch) {
+              const [, label, text] = stateMatch;
+              return (
+                <li
+                  key={label}
+                  className="flex items-start gap-2 text-[15px] md:text-[16px] leading-relaxed"
+                >
+                  <span
+                    className={`font-semibold shrink-0 ${stateLabelClass(label)}`}
+                  >
+                    {label}:
+                  </span>
+                  <span>{text}</span>
+                </li>
+              );
+            }
+
+            return (
+              <li
+                key={item}
+                className="flex items-start gap-2 text-[15px] md:text-[16px] leading-relaxed"
+              >
+                <span className="text-[#2E7CF6] shrink-0 leading-relaxed">•</span>
+                <span>{item}</span>
+              </li>
+            );
+          })}
+        </ul>,
+      );
+    }
+
+    if (variant === 'modal' && (step.number === 1 || step.number === 2)) {
+      return leadPanel(step.body);
+    }
+
+    if (bulletItems.length > 0) {
+      return (
+        <ul className="space-y-3 list-none pl-0 mb-4">
+          {bulletItems.map((item) => {
+            const stateMatch = item.match(/^(Green|Amber|Red):\s*(.+)$/);
+            if (stateMatch) {
+              const [, label, text] = stateMatch;
+              return (
+                <li
+                  key={label}
+                  className="flex items-start gap-2 text-[15px] leading-relaxed"
+                >
+                  <span
+                    className={`font-semibold shrink-0 ${stateLabelClass(label)}`}
+                  >
+                    {label}:
+                  </span>
+                  <span className="text-slate-700">{text}</span>
+                </li>
+              );
+            }
+
+            return (
+              <li
+                key={item}
+                className="flex items-start gap-2 text-[15px] text-slate-700 leading-relaxed"
+              >
+                <span className="text-[#2E7CF6] shrink-0">•</span>
+                <span>{item}</span>
+              </li>
+            );
+          })}
+        </ul>
+      );
+    }
+
+    return (
+      <p className="text-[15px] text-slate-700 mb-4 leading-relaxed whitespace-pre-line">
+        {step.body}
+      </p>
+    );
+  };
+
   return (
     <>
-      {variant === 'modal' && (step.number === 1 || step.number === 2) ? (
-        leadPanel(step.body)
-      ) : (
-        <p className="text-[15px] text-slate-700 mb-4 leading-relaxed whitespace-pre-line">
-          {step.body}
-        </p>
-      )}
+      {renderBody()}
 
       {includeTrafficLight && step.showTrafficLight ? (
         <div className="flex items-center justify-center gap-6 my-4 p-4 rounded-xl bg-[#F7F9FB] border border-slate-200">
@@ -989,10 +1081,10 @@ function TechniqueStepDetailModal({
       <div className="relative w-full max-w-[420px] max-h-[85vh] flex flex-col rounded-xl border border-slate-200 bg-white shadow-[0_20px_40px_-15px_rgba(47,99,120,0.06)] overflow-hidden">
         <div className="shrink-0 flex items-start justify-between gap-4 px-6 md:px-7 pt-6 md:pt-7 pb-4 border-b border-slate-100">
           <div className="flex items-center gap-4 min-w-0">
-            <span className="flex items-center justify-center w-10 h-10 rounded-full bg-[#E6F4F4] text-[#1F7A7A] text-sm font-semibold shrink-0">
+            <span className="flex items-center justify-center w-10 h-10 rounded-full bg-[#2E7CF6] text-white text-sm font-semibold shrink-0">
               {step.number}
             </span>
-            <h2 className="text-[18px] font-semibold text-slate-900 leading-snug">
+            <h2 className="text-[18px] font-semibold text-[#2E7CF6] leading-snug">
               {step.title}
             </h2>
           </div>
@@ -1029,7 +1121,7 @@ function TechniqueStepDetailModal({
         </div>
       </div>
     </div>,
-    document.body,
+    document.body
   );
 }
 
@@ -1052,18 +1144,18 @@ function TechniqueStepsSection({
   return (
     <div className="max-w-[1200px] mx-auto flex flex-col flex-1 min-h-0 h-full">
       {showTitle || screen.lead ? (
-      <header className="pt-2 mb-6 shrink-0">
-        {showTitle ? (
-        <h2 className="text-[32px] leading-tight font-bold text-[#1F3864]">
-          {screen.t2}
-        </h2>
-        ) : null}
-        {screen.lead ? (
-          <p className="text-[15px] text-slate-600 leading-relaxed mt-3 max-w-3xl">
-            {screen.lead}
-          </p>
-        ) : null}
-      </header>
+        <header className="pt-2 mb-6 shrink-0">
+          {showTitle ? (
+            <h2 className="text-[32px] leading-tight font-bold text-[#1F3864]">
+              {screen.t2}
+            </h2>
+          ) : null}
+          {screen.lead ? (
+            <p className="text-[15px] text-slate-600 leading-relaxed mt-3 max-w-3xl">
+              {screen.lead}
+            </p>
+          ) : null}
+        </header>
       ) : null}
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch flex-1 min-h-0">
@@ -1071,9 +1163,7 @@ function TechniqueStepsSection({
           const expandId = step.expand
             ? `${screen.id}:${step.expand.header}`
             : null;
-          const isExpandOpen = expandId
-            ? openDropdownIds.has(expandId)
-            : false;
+          const isExpandOpen = expandId ? openDropdownIds.has(expandId) : false;
 
           return (
             <div
@@ -1091,7 +1181,9 @@ function TechniqueStepsSection({
 
               <div
                 className={`${
-                  isExpandOpen ? 'hidden' : 'flex-1 min-h-0 overflow-y-auto custom-scrollbar pr-1 -mr-1'
+                  isExpandOpen
+                    ? 'hidden'
+                    : 'flex-1 min-h-0 overflow-y-auto custom-scrollbar pr-1 -mr-1'
                 }`}
               >
                 <p className="text-[15px] text-slate-700 mb-4 leading-relaxed whitespace-pre-line">
@@ -1301,7 +1393,9 @@ function AboutModuleDiagram() {
 
 function AboutModuleInsightBar() {
   return (
-    <div className={`flex mb-6 md:mb-2 items-center gap-4 py-4 px-5 md:px-6 rounded-xl ${MODULE_SURFACE} border border-[#E5E9F0] shadow-[0_4px_24px_-4px_rgba(10,31,68,0.08)]`}>
+    <div
+      className={`flex mb-6 md:mb-2 items-center gap-4 py-4 px-5 md:px-6 rounded-xl ${MODULE_SURFACE} border border-[#E5E9F0] shadow-[0_4px_24px_-4px_rgba(10,31,68,0.08)]`}
+    >
       <ModuleFavicon className="w-12 h-12 object-contain shrink-0" />
       <p
         className="text-[16px] md:text-[18px] leading-relaxed font-medium"
@@ -1414,7 +1508,9 @@ function WatchSection({
 
   const videoPlayer = (
     <div className="w-full flex-1 min-h-0 flex flex-col">
-      <div className={`w-full flex-1 min-h-0 rounded-2xl border border-[#E5E9F0] ${MODULE_SURFACE} shadow-[0_4px_24px_-4px_rgba(10,31,68,0.08),0_2px_6px_-2px_rgba(10,31,68,0.04)] overflow-hidden p-2 md:p-3 flex flex-col`}>
+      <div
+        className={`w-full flex-1 min-h-0 rounded-2xl border border-[#E5E9F0] ${MODULE_SURFACE} shadow-[0_4px_24px_-4px_rgba(10,31,68,0.08),0_2px_6px_-2px_rgba(10,31,68,0.04)] overflow-hidden p-2 md:p-3 flex flex-col`}
+      >
         <div className="w-full flex-1 min-h-[200px] max-h-[min(480px,52vh)] aspect-video">
           <VideoLessonPlayer
             title={videoTitle}
@@ -1456,7 +1552,9 @@ function WatchSection({
   const watchBody = screen.watchIntro ? (
     isScriptOpen ? (
       <div className="flex flex-col gap-6 w-full flex-1 min-h-0">
-        <div className="w-full flex flex-col flex-1 min-h-0 gap-4">{videoPlayer}</div>
+        <div className="w-full flex flex-col flex-1 min-h-0 gap-4">
+          {videoPlayer}
+        </div>
         <WatchIntroHeadline intro={screen.watchIntro} />
         {/* <WatchIntroCompareCards intro={screen.watchIntro} /> */}
       </div>
@@ -1607,8 +1705,7 @@ function WhatNotToDoStepperSection({ screen }: { screen: Screen }) {
 
   const stepCount = steps.length;
   const trackInset = stepCount > 0 ? `${50 / stepCount}%` : '0%';
-  const progressFill =
-    stepCount > 1 ? (activeStep / (stepCount - 1)) * 100 : 0;
+  const progressFill = stepCount > 1 ? (activeStep / (stepCount - 1)) * 100 : 0;
 
   return (
     <div className="w-full max-w-[1200px] mx-auto relative flex flex-col flex-1 min-h-0 h-full overflow-hidden pt-2">
@@ -1679,7 +1776,9 @@ function WhatNotToDoStepperSection({ screen }: { screen: Screen }) {
               : 'opacity-0 translate-y-4'
           }`}
         >
-          <div className={`col-span-12 w-full ${MODULE_SURFACE} p-4 md:pt-10 md:px-5 rounded-xl border border-slate-200 shadow-[0_20px_40px_-15px_rgba(47,99,120,0.06)] flex flex-col min-h-0 overflow-hidden`}>
+          <div
+            className={`col-span-12 w-full ${MODULE_SURFACE} p-4 md:pt-10 md:px-5 rounded-xl border border-slate-200 shadow-[0_20px_40px_-15px_rgba(47,99,120,0.06)] flex flex-col min-h-0 overflow-hidden`}
+          >
             <div className="ml-0 md:ml-4 flex items-center gap-3 mb-3 shrink-0 ">
               <div className="p-3 rounded-lg bg-[#2E7CF6]/10 text-[#2E7CF6] shrink-0">
                 <span className="material-symbols-outlined text-3xl">
@@ -1699,8 +1798,6 @@ function WhatNotToDoStepperSection({ screen }: { screen: Screen }) {
               {active.body}
             </p>
           </div>
-
-          
         </div>
       ) : null}
     </div>
@@ -1719,67 +1816,72 @@ function TechniqueVerticalStepsSection({
   return (
     <div className="max-w-[1200px] mx-auto flex flex-col flex-1 min-h-0 h-full overflow-hidden">
       <div className="flex  flex-col min-h-0 overflow-hidden">
-          <div className="flex-1  min-h-0 overflow-y-auto pt-2 custom-scrollbar pr-1 -mr-1">
-            {screen.lead ? (
-              <p
-                className="text-[18px]  leading-relaxed mb-10 pt-2"
-                style={{ color: '#333333' }}
-              >
-                {screen.lead}
-              </p>
-            ) : null}
+        <div className="flex-1  min-h-0 overflow-y-auto pt-2 custom-scrollbar pr-1 -mr-1">
+          {screen.lead ? (
+            <p
+              className="text-[18px]  leading-relaxed mb-10 pt-2"
+              style={{ color: '#333333' }}
+            >
+              {screen.lead}
+            </p>
+          ) : null}
 
-            <div className="space-y-4  ">
-              {steps.map((step) => (
-                <button
-                  key={step.number}
-                  type="button"
-                  onClick={() => onStepClick(step.number)}
-                  className={`w-full ${MODULE_SURFACE} h-[120px] p-5 md:p-6 rounded-xl border-l-4 border-l-[#2E7CF6]  border-b-slate-600 text-left hover:bg-[#EEF4FF]/75 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2E7CF6]/30`}
-                >
-                  <div className="flex items-center justify-between gap-4 h-full">
-                    <div className="flex items-center gap-4 min-w-0">
-                      <ModuleFavicon className="w-8 h-8 shrink-0 object-contain" />
-                      <span
-                        className="text-[16px] md:text-[18px] font-semibold leading-snug"
-                        style={{ color: '#1F3864' }}
-                      >
-                        Step {step.number}. {step.title}
-                      </span>
-                    </div>
+          <div className="space-y-4  ">
+            {steps.map((step) => (
+              <button
+                key={step.number}
+                type="button"
+                onClick={() => onStepClick(step.number)}
+                className={`w-full ${MODULE_SURFACE} h-[120px] p-5 md:p-6 rounded-xl border-l-4 border-l-[#2E7CF6]  border-b-slate-600 text-left hover:bg-[#EEF4FF]/75 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2E7CF6]/30`}
+              >
+                <div className="flex items-center justify-between gap-4 h-full">
+                  <div className="flex items-center gap-4 min-w-0">
+                    <ModuleFavicon className="w-8 h-8 shrink-0 object-contain" />
                     <span
-                      className="material-symbols-outlined text-slate-400 text-[22px] shrink-0"
-                      aria-hidden
+                      className="text-[16px] md:text-[18px] font-semibold leading-snug"
+                      style={{ color: '#1F3864' }}
                     >
-                      touch_app
+                      Step {step.number}. {step.title}
                     </span>
                   </div>
-                </button>
-              ))}
-            </div>
+                  <span
+                    className="material-symbols-outlined text-slate-400 text-[22px] shrink-0"
+                    aria-hidden
+                  >
+                    touch_app
+                  </span>
+                </div>
+              </button>
+            ))}
+          </div>
 
-            {screen.keyPoint ? (
-              <div className="mt-8 rounded-xl overflow-hidden shadow-[0_4px_24px_-4px_rgba(10,31,68,0.12)] border border-[#1F3864]/20 bg-[#1F3864]">
-                <div className="p-6 md:p-8">
-                  <div className="flex items-start gap-4">
-                    <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-[#2E7CF6]/20 flex items-center justify-center shrink-0">
-                      <ModuleFavicon className="w-7 h-7 md:w-8 md:h-8" />
-                    </div>
-                    <p className="text-[15px] md:text-[16px] leading-relaxed text-white/90 italic">
-                      {screen.keyPoint}
-                    </p>
+          {screen.keyPoint ? (
+            <div className="mt-8 rounded-xl overflow-hidden shadow-[0_4px_24px_-4px_rgba(10,31,68,0.12)] border border-[#1F3864]/20 bg-[#1F3864]">
+              <div className="p-6 md:p-8">
+                <div className="flex items-start gap-4">
+                  <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-[#2E7CF6]/20 flex items-center justify-center shrink-0">
+                    <ModuleFavicon className="w-7 h-7 md:w-8 md:h-8" />
                   </div>
+                  <p className="text-[15px] md:text-[16px] leading-relaxed text-white/90 italic">
+                    {screen.keyPoint}
+                  </p>
                 </div>
               </div>
-            ) : null}
-          </div>
+            </div>
+          ) : null}
         </div>
+      </div>
     </div>
   );
 }
 
 const PRACTICE_INTRO_STEPS = [
-  { number: 1, label: 'Read it', detail: 'Read the situation', icon: 'menu_book' },
+  {
+    number: 1,
+    label: 'Read it',
+    detail: 'Read the situation',
+    icon: 'menu_book',
+  },
   {
     number: 2,
     label: 'Choose',
@@ -1930,15 +2032,15 @@ function ScenarioChoiceGrid({
             className={`text-left rounded-xl border p-6 md:p-7 min-h-[120px] transition-all ${
               isSelected
                 ? 'bg-[#EEF4FF] border-[#2E7CF6] shadow-[0_0_0_1px_rgba(46,124,246,0.25)]'
-                : `${MODULE_SURFACE} border-slate-200 hover:border-[#2E7CF6]/40 shadow-[0_20px_40px_-15px_rgba(47,99,120,0.06)]`
+                : `${SCENARIO_OPTION_STYLE.card} hover:border-[#2E7CF6]/40 shadow-[0_20px_40px_-15px_rgba(47,99,120,0.06)]`
             }`}
           >
             <div className="flex items-start gap-5">
               <span
                 className={`flex items-center justify-center w-12 h-12 rounded-xl text-base font-bold shrink-0 ${
                   isSelected
-                    ? 'bg-[#2E7CF6] text-white'
-                    : 'bg-[#F7F9FB] text-[#1F3864] border border-slate-200'
+                    ? SCENARIO_OPTION_STYLE.badgeSelected
+                    : SCENARIO_OPTION_STYLE.badge
                 }`}
               >
                 {key}
@@ -1969,9 +2071,11 @@ function ScenarioSituationSection({
     <div className="max-w-[1200px] mx-auto flex flex-col flex-1 min-h-0 h-full overflow-hidden pt-2">
       <ScenarioHeading scenarioId={scenarioId} />
       <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar pr-1 -mr-1">
-        <div className={`w-full ${MODULE_SURFACE} p-6 md:p-8 lg:p-10 rounded-xl border-l-4 border-l-[#2E7CF6]`}>
+        <div
+          className={`w-full ${MODULE_SURFACE} p-6 md:p-6 h-[200px] lg:p-10 rounded-xl border-l-4 border-l-[#2E7CF6]`}
+        >
           <p
-            className="text-[20px] md:text-[22px] lg:text-[24px] leading-relaxed whitespace-pre-line"
+            className="text-[18px] md:text-[20px] lg:text-[20px] leading-relaxed whitespace-pre-line"
             style={{ color: '#1F3864' }}
           >
             {scenario.situation}
@@ -2046,7 +2150,9 @@ function ScenarioCompareModal({
         </div>
 
         <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar p-5 md:p-6 space-y-5">
-          <div className={`${MODULE_SURFACE} rounded-xl border border-[#2E7CF6]/30 shadow-[0_20px_40px_-15px_rgba(47,99,120,0.06)] p-5 md:p-6`}>
+          <div
+            className={`${MODULE_SURFACE} rounded-xl border border-[#2E7CF6]/30 shadow-[0_20px_40px_-15px_rgba(47,99,120,0.06)] p-5 md:p-6`}
+          >
             <p className="text-[11px] font-semibold uppercase tracking-wider text-[#2E7CF6] mb-2">
               Your choice
             </p>
@@ -2087,7 +2193,7 @@ function ScenarioCompareModal({
         </div>
       </div>
     </div>,
-    document.body,
+    document.body
   );
 }
 
@@ -2105,7 +2211,9 @@ function ModuleInlineHeader({
   const title = getModulePageTitle(screen, activeSidebarSectionKey);
 
   return (
-    <div className={`shrink-0 pt-4 pb-2 border-b border-slate-200 ${MODULE_PAGE_TINT} backdrop-blur-sm`}>
+    <div
+      className={`shrink-0 pt-4 pb-2 border-b border-slate-200 ${MODULE_PAGE_TINT} backdrop-blur-sm`}
+    >
       <div className="flex items-stretch justify-between mb-3 w-full">
         <Link
           to="/dashboard/my-learning/mind-sync"
@@ -2128,14 +2236,16 @@ function ModuleInlineHeader({
             <span className="text-sm font-semibold uppercase tracking-widest">
               Module Contents
             </span>
-            <span className="material-symbols-outlined text-lg">chevron_left</span>
+            <span className="material-symbols-outlined text-lg">
+              chevron_left
+            </span>
           </button>
         ) : null}
       </div>
       <div className="px-5 md:px-14">
-      <div className="max-w-[1200px] mx-auto w-full min-w-0">
-        <ModulePartTitle title={title} blockId={screen.id} />
-      </div>
+        <div className="max-w-[1200px] mx-auto w-full min-w-0">
+          <ModulePartTitle title={title} blockId={screen.id} />
+        </div>
       </div>
     </div>
   );
@@ -2195,9 +2305,7 @@ function LandingSection({
           </h2>
         ) : null}
         {screen.lead ? (
-          <p
-            className="mt-4 text-base md:text-lg leading-relaxed max-w-2xl text-slate-600 transition-transform group-hover:scale-[1.01]"
-          >
+          <p className="mt-4 text-base md:text-lg leading-relaxed max-w-2xl text-slate-600 transition-transform group-hover:scale-[1.01]">
             {screen.lead}
           </p>
         ) : null}
@@ -2362,9 +2470,7 @@ function ModuleContentsSidebar({
                   data-sidebar-section-header="true"
                   data-section-key={section.key}
                   className={`w-full text-left px-4 py-4 flex items-center justify-between gap-3 transition-colors relative ${
-                    isSectionActive
-                      ? 'bg-[#EEF4FF]'
-                      : 'hover:bg-slate-50'
+                    isSectionActive ? 'bg-[#EEF4FF]' : 'hover:bg-slate-50'
                   }`}
                 >
                   {isSectionActive ? (
@@ -2373,9 +2479,7 @@ function ModuleContentsSidebar({
                   <div className="min-w-0 flex-1">
                     <div
                       className={`text-xs font-bold uppercase tracking-widest truncate ${
-                        isActiveSection
-                          ? 'text-[#1F3864]'
-                          : 'text-slate-700'
+                        isActiveSection ? 'text-[#1F3864]' : 'text-slate-700'
                       }`}
                     >
                       {section.label}
@@ -2393,8 +2497,7 @@ function ModuleContentsSidebar({
                     const item = toc[i];
                     if (!item) return null;
                     const isCurrent = item.index === index;
-                    const isLanding =
-                      section.landingBlockId === item.blockId;
+                    const isLanding = section.landingBlockId === item.blockId;
                     return (
                       <button
                         key={`${item.blockId}-${item.index}`}
@@ -2543,15 +2646,17 @@ function ClosingSection({
   return (
     <div className="max-w-[1200px] mx-auto flex flex-col flex-1 min-h-0 h-full justify-center gap-5 md:gap-6">
       {showTitle ? (
-      <h2
-        className="shrink-0 text-[32px] leading-tight font-bold max-w-3xl"
-        style={{ color: '#1F3864' }}
-      >
-        {screen.t2}
-      </h2>
+        <h2
+          className="shrink-0 text-[32px] leading-tight font-bold max-w-3xl"
+          style={{ color: '#1F3864' }}
+        >
+          {screen.t2}
+        </h2>
       ) : null}
 
-      <div className={`rounded-xl border border-slate-200 ${MODULE_SURFACE} shadow-[0_20px_40px_-15px_rgba(47,99,120,0.06)] overflow-hidden border-l-4 border-l-[#2E7CF6] p-6 md:p-8`}>
+      <div
+        className={`rounded-xl border border-slate-200 ${MODULE_SURFACE} shadow-[0_20px_40px_-15px_rgba(47,99,120,0.06)] overflow-hidden border-l-4 border-l-[#2E7CF6] p-6 md:p-8`}
+      >
         <div className="flex items-start gap-4 md:gap-5">
           <ModuleFavicon className="w-8 h-8 mt-0.5 shrink-0" />
           <div className="space-y-5 min-w-0">
@@ -2590,7 +2695,10 @@ function TakeawayCardSection({ screen }: { screen: Screen }) {
     : [];
   const parsedSteps = hasHighlight
     ? parseTakeawaySteps(highlightParts[0] ?? '')
-    : { steps: [] as { number: number; body: string }[], footerLabel: undefined as string | undefined };
+    : {
+        steps: [] as { number: number; body: string }[],
+        footerLabel: undefined as string | undefined,
+      };
 
   const renderCardBody = () => {
     if (!screen.takeawayBody) return null;
@@ -2644,7 +2752,9 @@ function TakeawayCardSection({ screen }: { screen: Screen }) {
       ) : null}
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-5 flex-1 min-h-0 items-stretch">
-        <div className={`rounded-xl border border-slate-200 ${MODULE_SURFACE} shadow-[0_20px_40px_-15px_rgba(47,99,120,0.06)] overflow-hidden border-l-4 border-l-[#2E7CF6] flex flex-col min-h-0`}>
+        <div
+          className={`rounded-xl border border-slate-200 ${MODULE_SURFACE} shadow-[0_20px_40px_-15px_rgba(47,99,120,0.06)] overflow-hidden border-l-4 border-l-[#2E7CF6] flex flex-col min-h-0`}
+        >
           <div className="p-5 md:p-6 flex flex-col min-h-0">
             <div className="flex items-start gap-3 mb-3 shrink-0">
               <ModuleFavicon className="w-7 h-7 mt-0.5 shrink-0" />
@@ -2876,7 +2986,6 @@ export default function MindSyncTeacherTrainingModule01Page() {
               'Understand the difference between distress, defiance and overwhelm.',
               'Notice the early signs that a pupil is becoming overwhelmed.',
               'Use the three second pause in the classroom.',
-              
             ],
           },
           {
@@ -2890,7 +2999,8 @@ export default function MindSyncTeacherTrainingModule01Page() {
             type: 'divider',
             t2: 'The three second pause, in a real classroom',
             watchIntro: {
-              headline: 'You are about to watch the same moment twice: a pupil who has stopped engaging, and how his teacher responds. The first time she reacts straight away. The second time she waits three seconds. See what a difference three seconds can make.',
+              headline:
+                'You are about to watch the same moment twice: a pupil who has stopped engaging, and how his teacher responds. The first time she reacts straight away. The second time she waits three seconds. See what a difference three seconds can make.',
               // before: {
               //   version: 'Version 1',
               //   timing: '~1 second',
@@ -2907,8 +3017,8 @@ export default function MindSyncTeacherTrainingModule01Page() {
             videoTitle: 'Module 1 film, around 3 minutes',
             videoUrl: null,
             transcriptDropdown: {
-                header: 'Read the full script',
-                body: 'OPEN. Clean Elara logo, then a soft dissolve into the classroom.\n\nSCENE 1, a pupil who has checked out. A Year 9 English lesson in full flow. Daniel is near the back.\nHis book is closed and he is turning a pen over and over in his hands, bending it, clicking it, eyes\nsomewhere else. The pupils either side of him are writing.\n\nNarrator: Year 9 English, period four on a Wednesday. Watch the boy at the back. His book is shut,\nand he is turning a pen over and over in his hands. He is not being difficult and he is not being loud. He\nhas just stopped being able to join in.\n\nSCENE 2, the ask, and two realities. Ms Patel asks him calmly to get his book out. He does not open it.\nA small tense shake of the head, and a low mutter. From the front it looks like a knock back. Then a\nshort view from Daniel’s side: the room tilts, the light hums, a pencil tap is too loud.\n\nNarrator: A fair, ordinary instruction. From the front of the room, that looks like a refusal. But from\ninside his head, it is not refusal at all. He heard the tone, not the words. Same moment. Two\ncompletely different realities.\n\nSCENE 3, what often happens. She responds in about a second, on reflex. She asks again, harder,\nand names a consequence. It stops being about a book and starts being about winning.\n\nSCENE 4, what could happen instead. The same moment again. Narrator: In a classroom, most of us\nwait about one second before we respond. Researchers have actually measured it. And when a\nteacher holds that pause for just a few seconds longer, what happens next in the room can change\ncompletely. She feels herself about to react, and instead she waits. Three seconds. Then she comes\ndown to his level, off to the side, and asks one quiet question.\n\nSCENE 5, the outcome. He takes two minutes, comes back, and does the work. Narrator: Two\nversions of the same lesson, and the only real difference between them was about two seconds. Not a\nbetter teacher. Not a different pupil. Two seconds.\n\nCLOSE. Clean Elara logo.',
+              header: 'Read the full script',
+              body: 'OPEN. Clean Elara logo, then a soft dissolve into the classroom.\n\nSCENE 1, a pupil who has checked out. A Year 9 English lesson in full flow. Daniel is near the back.\nHis book is closed and he is turning a pen over and over in his hands, bending it, clicking it, eyes\nsomewhere else. The pupils either side of him are writing.\n\nNarrator: Year 9 English, period four on a Wednesday. Watch the boy at the back. His book is shut,\nand he is turning a pen over and over in his hands. He is not being difficult and he is not being loud. He\nhas just stopped being able to join in.\n\nSCENE 2, the ask, and two realities. Ms Patel asks him calmly to get his book out. He does not open it.\nfsmall tense shake of the head, and a low mutter. From the front it looks like a knock back. Then a\nshort view from Daniel’s side: the room tilts, the light hums, a pencil tap is too loud.\n\nNarrator: A fair, ordinary instruction. From the front of the room, that looks like a refusal. But from\ninside his head, it is not refusal at all. He heard the tone, not the words. Same moment. Two\ncompletely different realities.\n\nSCENE 3, what often happens. She responds in about a second, on reflex. She asks again, harder,\nand names a consequence. It stops being about a book and starts being about winning.\n\nSCENE 4, what could happen instead. The same moment again. Narrator: In a classroom, most of us\nwait about one second before we respond. Researchers have actually measured it. And when a\nteacher holds that pause for just a few seconds longer, what happens next in the room can change\ncompletely. She feels herself about to react, and instead she waits. Three seconds. Then she comes\ndown to his level, off to the side, and asks one quiet question.\n\nSCENE 5, the outcome. He takes two minutes, comes back, and does the work. Narrator: Two\nversions of the same lesson, and the only real difference between them was about two seconds. Not a\nbetter teacher. Not a different pupil. Two seconds.\n\nCLOSE. Clean Elara logo.',
             },
           },
           {
@@ -2927,7 +3037,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
             type: 'divider',
             t1: 'Part 2. Learn',
             lead: 'What you just watched, in plain language.',
-            body: 'During a lesson, a pupil’s brain can be in one of three states. From the front of the room they can look similar. They need very different things from you, and the costly mistake is treating one as if it were another. Tap each state.',
+            body: 'During a lesson, a pupil can look calm on the outside while, inside, they are in one of three very different states. Each state needs a different response from you, and the most common mistake is to respond to all three in the same way. Tap each state to see what it looks like, what is going on underneath, and what may help.',
           },
           {
             id: 8,
@@ -2988,7 +3098,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
             t2: 'Three states, and why the difference matters.',
             body: 'During a lesson, a pupil’s brain can be in one of three states. From the front of the room they can look similar. They need very different things from you, and the costly mistake is treating one as if it were another. Tap each state.',
           },
-          
+
           {
             id: 14,
             type: 'technique',
@@ -3122,19 +3232,15 @@ export default function MindSyncTeacherTrainingModule01Page() {
           ? 'Module 1'
           : s.type === 'cover'
             ? (s.t2 ?? 'Reading behaviour in the moment')
-          : s.type === 'scenario_situation' && s.scenarioId
-            ? `Scenario ${s.scenarioId} · Read`
-            : s.type === 'scenario_choose' && s.scenarioId
-              ? `Scenario ${s.scenarioId} · Choose`
-              : s.type === 'scenario_feedback' && s.scenarioId
-                ? `Scenario ${s.scenarioId} · Compare`
-                : s.type === 'research'
-                  ? 'Research'
-                  : s.headerTitle ||
-                    s.t1 ||
-                    s.t2 ||
-                    s.t3 ||
-                    `Block ${s.id}`;
+            : s.type === 'scenario_situation' && s.scenarioId
+              ? `Scenario ${s.scenarioId} · Read`
+              : s.type === 'scenario_choose' && s.scenarioId
+                ? `Scenario ${s.scenarioId} · Choose`
+                : s.type === 'scenario_feedback' && s.scenarioId
+                  ? `Scenario ${s.scenarioId} · Compare`
+                  : s.type === 'research'
+                    ? 'Research'
+                    : s.headerTitle || s.t1 || s.t2 || s.t3 || `Block ${s.id}`;
       return {
         index: i,
         label,
@@ -3167,7 +3273,11 @@ export default function MindSyncTeacherTrainingModule01Page() {
         label: SIDEBAR_SECTION_LABELS.research,
         indices: range(4, 4),
       },
-      { key: 'watch', label: SIDEBAR_SECTION_LABELS.watch, indices: range(5, 5) },
+      {
+        key: 'watch',
+        label: SIDEBAR_SECTION_LABELS.watch,
+        indices: range(5, 5),
+      },
       {
         key: 'learn',
         label: SIDEBAR_SECTION_LABELS.learn,
@@ -3185,7 +3295,11 @@ export default function MindSyncTeacherTrainingModule01Page() {
         label: SIDEBAR_SECTION_LABELS.takeaway,
         indices: range(28, 28),
       },
-      { key: 'closing', label: SIDEBAR_SECTION_LABELS.closing, indices: range(29, 29) },
+      {
+        key: 'closing',
+        label: SIDEBAR_SECTION_LABELS.closing,
+        indices: range(29, 29),
+      },
     ];
   }, [toc]);
 
@@ -3289,10 +3403,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
             return;
           }
 
-          if (
-            !willCurrentScreenOpen &&
-            scrollRestoreTopRef.current !== null
-          ) {
+          if (!willCurrentScreenOpen && scrollRestoreTopRef.current !== null) {
             el.scrollTo({
               top: scrollRestoreTopRef.current,
               behavior: 'smooth',
@@ -3311,8 +3422,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
     screen.id
   );
   const isIntroReadMoreLayoutOpen =
-    isCurrentScreenDropdownOpen &&
-    (screen.id === 2 || screen.id === 3);
+    isCurrentScreenDropdownOpen && (screen.id === 2 || screen.id === 3);
 
   const learnStatesScreen = useMemo(
     () => screens.find((s) => s.id === 11) ?? null,
@@ -3373,721 +3483,736 @@ export default function MindSyncTeacherTrainingModule01Page() {
       {screen.type === 'landing' ? (
         <LandingSection screen={screen} onNext={() => setIndex(1)} />
       ) : (
-      <main className="flex w-full h-screen overflow-hidden">
-        <div className="flex-1 min-w-0 overflow-hidden flex flex-col p-0 relative bg-[#F7F9FC]">
-          <ModulePageBackground />
-          <div className="relative z-10 flex flex-col flex-1 min-h-0 overflow-hidden">
-          <ModuleInlineHeader
-            screen={screen}
-            activeSidebarSectionKey={activeSidebarSectionKey}
-            isModuleContentsOpen={isModuleContentsOpen}
-            onToggleModuleContents={toggleModuleContents}
-          />
-          <div className="flex-1 min-h-0 flex flex-col overflow-hidden">
-          <div
-            key={index}
-            className="flex flex-col flex-1 min-h-0 overflow-hidden"
-          >
-            <div
-              ref={scrollAreaRef}
-              className={`relative flex-1 min-h-0 custom-scrollbar scroll-smooth ${
-                screen.id === 16 ||
-                screen.id === 17 ||
-                screen.id === 18 ||
-                screen.type === 'closing' ||
-                screen.type === 'takeaway' ||
-                screen.type === 'research' ||
-                screen.type === 'scenario_situation' ||
-                screen.type === 'scenario_choose' ||
-                screen.type === 'cover' ||
-                screen.type === 'technique' ||
-                screen.type === 'technique_intro' ||
-                screen.id === 2 ||
-                screen.id === 3 ||
-                screen.id === 4 ||
-                screen.id === 5
-                  ? 'pb-4 flex flex-col'
-                  : 'pb-24'
-              } ${
-                isCurrentScreenDropdownOpen ? 'overflow-y-auto' : 'overflow-hidden'
-              }`}
-            >
-              <section
-                className={`step-transition ${
-                  screen.id === 16 ||
-                  screen.id === 17 ||
-                  screen.id === 18 ||
-                  screen.type === 'closing' ||
-                  screen.type === 'takeaway' ||
-                  screen.type === 'research' ||
-                  screen.type === 'scenario_situation' ||
-                  screen.type === 'scenario_choose' ||
-                  screen.type === 'cover' ||
-                  screen.type === 'technique' ||
-                  screen.type === 'technique_intro' ||
-                  screen.id === 2 ||
-                  screen.id === 3 ||
-                  screen.id === 4 ||
-                  screen.id === 5
-                    ? isIntroReadMoreLayoutOpen
-                      ? 'flex flex-col'
-                      : 'flex flex-col flex-1 min-h-full h-full'
-                    : 'space-y-4'
-                }`}
-              >
-                {screen.type === 'cover' ? (
-                  <div className="p-5 md:p-6 md:px-14 flex flex-col flex-1 min-h-0 h-full">
-                    <CoverSection screen={screen} />
-                  </div>
-                ) : screen.type === 'technique_intro' ? (
-                  <div className="p-5 md:p-6 md:px-14 flex flex-col flex-1 min-h-0 h-full overflow-hidden">
-                    <TechniqueVerticalStepsSection
-                      screen={screen}
-                      onStepClick={setActiveTechniqueStep}
-                    />
-                  </div>
-                ) : screen.type === 'technique' ? (
-                  <div className="p-5 md:p-6 md:px-14 flex flex-col flex-1 min-h-0 h-full">
-                    <TechniqueStepsSection
-                      screen={screen}
-                      openDropdownIds={openDropdownIds}
-                      onDropdownToggle={handleDropdownOpenChange}
-                      activeSidebarSectionKey={activeSidebarSectionKey}
-                    />
-                  </div>
-                ) : screen.type === 'takeaway' ? (
-                  <div className="p-5 md:p-6 md:px-14 flex flex-col flex-1 min-h-0 h-full overflow-hidden">
-                    <TakeawayCardSection screen={screen} />
-                  </div>
-                ) : screen.type === 'closing' ? (
-                  <div className="p-5 md:p-6 md:px-14 flex flex-col flex-1 min-h-0 h-full overflow-hidden">
-                    <ClosingSection
-                      screen={screen}
-                      activeSidebarSectionKey={activeSidebarSectionKey}
-                    />
-                  </div>
-                ) : screen.type === 'technique_honest' ? (
-                  <div className="p-5 md:p-6 md:px-14">
-                    <TechniqueHonestSection screen={screen} />
-                  </div>
-                ) : screen.id === 16 ? (
-                  <div className="w-full p-5 md:p-6 md:px-14 flex flex-col flex-1 min-h-0 h-full overflow-hidden">
-                    <WhatNotToDoStepperSection screen={screen} />
-                  </div>
-                ) : screen.id === 18 ? (
-                  <div className="p-5 md:p-6 md:px-14 flex flex-col flex-1 min-h-0 h-full overflow-hidden">
-                    <PracticeIntroSection screen={screen} />
-                  </div>
-                ) : screen.type === 'scenario_situation' && screen.scenarioId ? (
-                  <div className="p-5 md:p-6 md:px-14 flex flex-col flex-1 min-h-0 h-full overflow-hidden">
-                    <ScenarioSituationSection
-                      scenarioId={screen.scenarioId}
-                      selected={scenarioAnswers[screen.scenarioId] ?? null}
-                      onSelect={(key) => {
-                        setScenarioAnswers((prev) => ({
-                          ...prev,
-                          [screen.scenarioId!]: key,
-                        }));
-                        setScenarioCompareSeen((prev) => ({
-                          ...prev,
-                          [screen.scenarioId!]: false,
-                        }));
-                      }}
-                    />
-                  </div>
-                ) : screen.id === 2 ? (
-                  <div className="p-5 md:p-6 md:px-14 flex flex-col flex-1 min-h-0 h-full">
-                    <AboutModuleSection
-                      screen={screen}
-                      onDropdownOpenChange={handleDropdownOpenChange}
-                    />
-                  </div>
-                ) : screen.type === 'research' || screen.id === 4 ? (
-                  <div className="p-5 md:p-6 md:px-14 flex flex-col flex-1 min-h-0 h-full overflow-y-auto custom-scrollbar">
-                    <ResearchSection
-                      screen={screen}
-                      onDropdownOpenChange={handleDropdownOpenChange}
-                    />
-                  </div>
-                ) : screen.id === 5 ? (
-                  <div className="p-5 md:p-6 md:px-14 flex flex-col flex-1 min-h-0 h-full">
-                    <WatchSection
-                      screen={screen}
-                      isScriptOpen={isWatchScriptOpen}
-                      onOpenScript={() => setIsWatchScriptOpen(true)}
-                      onCloseScript={() => setIsWatchScriptOpen(false)}
-                    />
-                  </div>
-                ) : screen.id === 3 && screen.bullets ? (
-                  <div className="p-5 md:p-6 md:px-14 flex flex-col flex-1 min-h-0 h-full">
-                    <div className="w-full max-w-[1230px] mx-auto flex flex-col flex-1 min-h-0 h-full gap-6 lg:gap-8">
-                      <div className={`w-[1230px] max-w-full h-[390px] rounded-2xl border border-[#E5E9F0] ${MODULE_SURFACE} shadow-[0_4px_24px_-4px_rgba(10,31,68,0.08),0_2px_6px_-2px_rgba(10,31,68,0.04)] p-6 md:p-8 border-l-4 border-l-[#2E7CF6] shrink-0 overflow-y-auto custom-scrollbar`}>
-                          <div className="space-y-5">
-                            {screen.bullets.map((b) => (
-                              <div key={b} className="flex items-start gap-4">
-                                <ModuleFavicon className="w-7 h-7 mt-0.5" />
-                                <div
-                                  className="text-[24px] font-semibold text-slate-900 leading-relaxed"
-                                >
-                                  {b}
-                                </div>
-                              </div>
-                            ))}
-                          </div>
+        <main className="flex w-full h-screen overflow-hidden">
+          <div className="flex-1 min-w-0 overflow-hidden flex flex-col p-0 relative bg-[#F7F9FC]">
+            <ModulePageBackground />
+            <div className="relative z-10 flex flex-col flex-1 min-h-0 overflow-hidden">
+              <ModuleInlineHeader
+                screen={screen}
+                activeSidebarSectionKey={activeSidebarSectionKey}
+                isModuleContentsOpen={isModuleContentsOpen}
+                onToggleModuleContents={toggleModuleContents}
+              />
+              <div className="flex-1 min-h-0 flex flex-col overflow-hidden">
+                <div
+                  key={index}
+                  className="flex flex-col flex-1 min-h-0 overflow-hidden"
+                >
+                  <div
+                    ref={scrollAreaRef}
+                    className={`relative flex-1 min-h-0 custom-scrollbar scroll-smooth ${
+                      screen.id === 16 ||
+                      screen.id === 17 ||
+                      screen.id === 18 ||
+                      screen.type === 'closing' ||
+                      screen.type === 'takeaway' ||
+                      screen.type === 'research' ||
+                      screen.type === 'scenario_situation' ||
+                      screen.type === 'scenario_choose' ||
+                      screen.type === 'cover' ||
+                      screen.type === 'technique' ||
+                      screen.type === 'technique_intro' ||
+                      screen.id === 2 ||
+                      screen.id === 3 ||
+                      screen.id === 4 ||
+                      screen.id === 5
+                        ? 'pb-4 flex flex-col'
+                        : 'pb-24'
+                    } ${
+                      isCurrentScreenDropdownOpen
+                        ? 'overflow-y-auto'
+                        : 'overflow-hidden'
+                    }`}
+                  >
+                    <section
+                      className={`step-transition ${
+                        screen.id === 16 ||
+                        screen.id === 17 ||
+                        screen.id === 18 ||
+                        screen.type === 'closing' ||
+                        screen.type === 'takeaway' ||
+                        screen.type === 'research' ||
+                        screen.type === 'scenario_situation' ||
+                        screen.type === 'scenario_choose' ||
+                        screen.type === 'cover' ||
+                        screen.type === 'technique' ||
+                        screen.type === 'technique_intro' ||
+                        screen.id === 2 ||
+                        screen.id === 3 ||
+                        screen.id === 4 ||
+                        screen.id === 5
+                          ? isIntroReadMoreLayoutOpen
+                            ? 'flex flex-col'
+                            : 'flex flex-col flex-1 min-h-full h-full'
+                          : 'space-y-4'
+                      }`}
+                    >
+                      {screen.type === 'cover' ? (
+                        <div className="p-5 md:p-6 md:px-14 flex flex-col flex-1 min-h-0 h-full">
+                          <CoverSection screen={screen} />
                         </div>
-                      </div>
-                    </div>
-                ) : (
-                  <div className="p-5 md:p-6 md:px-14 flex flex-col min-h-0">
-                      <>
-                        <div className="flex items-center justify-between gap-4">
-                          <div className="flex items-center gap-2 flex-wrap" />
+                      ) : screen.type === 'technique_intro' ? (
+                        <div className="p-2 md:p-2 md:px-14 flex flex-col flex-1 min-h-0 h-full overflow-hidden">
+                          <TechniqueVerticalStepsSection
+                            screen={screen}
+                            onStepClick={setActiveTechniqueStep}
+                          />
                         </div>
-
-                        {screen.id === 8 ||
-                        screen.id === 9 ||
-                        screen.id === 10 ? (
-                          <div className="flex-1 flex flex-col gap-6 min-h-0">
-                            {activeSidebarSectionKey !== 'learn' ? (
-                              <div className="text-center">
-                                {screen.t3 ? (
-                                  <h3 className="text-lg md:text-xl font-bold text-slate-900">
-                                    {screen.t3}
-                                  </h3>
-                                ) : null}
-                                <div className="mt-3 h-1 w-24 mx-auto rounded-full bg-gradient-to-r from-[#60A5FA] to-[#9333EA]" />
-                              </div>
-                            ) : null}
-
-                            {screen.body ? (
-                              <div
-                                className={`w-full mx-auto ${
-                                  screen.id === 10
-                                    ? 'max-w-[1100px]'
-                                    : 'max-w-[784px]'
-                                }`}
-                              >
-                                <div
-                                  className={`whitespace-pre-line text-center md:text-left ${
-                                    screen.id === 10
-                                      ? 'text-base md:text-lg leading-relaxed text-slate-100/90'
-                                      : 'text-sm md:text-base text-slate-700 leading-relaxed'
-                                  }`}
-                                >
-                                  {screen.body}
-                                </div>
-                              </div>
-                            ) : null}
-
-                            {screen.id !== 10 ? (
-                              <div className="flex justify-center">
-                                <div className="w-full max-w-[520px] md:w-[520px] rounded-2xl overflow-hidden border border-slate-200 bg-white">
-                                  <img
-                                    src={structureLearnImage}
-                                    alt="Learn"
-                                    className="w-full h-[220px] md:h-[280px] object-cover"
-                                  />
-                                </div>
-                              </div>
-                            ) : null}
-
-                            {screen.dropdowns && screen.dropdowns.length ? (
-                              <div className="space-y-3 w-full max-w-[920px] mx-auto">
-                                {screen.dropdowns.map((d) => (
-                                  <div key={d.header} className="w-full">
-                                    <div className="[&>div>button]:py-4 [&>div>button]:px-5">
-                                      <Dropdown
-                                        dropdownId={`${screen.id}:${d.header}`}
-                                        header={d.header}
-                                        body={d.body}
-                                        onOpenChange={handleDropdownOpenChange}
-                                      />
+                      ) : screen.type === 'technique' ? (
+                        <div className="p-5 md:p-6 md:px-14 flex flex-col flex-1 min-h-0 h-full">
+                          <TechniqueStepsSection
+                            screen={screen}
+                            openDropdownIds={openDropdownIds}
+                            onDropdownToggle={handleDropdownOpenChange}
+                            activeSidebarSectionKey={activeSidebarSectionKey}
+                          />
+                        </div>
+                      ) : screen.type === 'takeaway' ? (
+                        <div className="p-5 md:p-6 md:px-14 flex flex-col flex-1 min-h-0 h-full overflow-hidden">
+                          <TakeawayCardSection screen={screen} />
+                        </div>
+                      ) : screen.type === 'closing' ? (
+                        <div className="p-5 md:p-6 md:px-14 flex flex-col flex-1 min-h-0 h-full overflow-hidden">
+                          <ClosingSection
+                            screen={screen}
+                            activeSidebarSectionKey={activeSidebarSectionKey}
+                          />
+                        </div>
+                      ) : screen.type === 'technique_honest' ? (
+                        <div className="p-5 md:p-6 md:px-14">
+                          <TechniqueHonestSection screen={screen} />
+                        </div>
+                      ) : screen.id === 16 ? (
+                        <div className="w-full p-5 md:p-6 md:px-14 flex flex-col flex-1 min-h-0 h-full overflow-hidden">
+                          <WhatNotToDoStepperSection screen={screen} />
+                        </div>
+                      ) : screen.id === 18 ? (
+                        <div className="p-5 md:p-6 md:px-14 flex flex-col flex-1 min-h-0 h-full overflow-hidden">
+                          <PracticeIntroSection screen={screen} />
+                        </div>
+                      ) : screen.type === 'scenario_situation' &&
+                        screen.scenarioId ? (
+                        <div className="p-5 md:p-6 md:px-14 flex flex-col flex-1 min-h-0 h-full overflow-hidden">
+                          <ScenarioSituationSection
+                            scenarioId={screen.scenarioId}
+                            selected={
+                              scenarioAnswers[screen.scenarioId] ?? null
+                            }
+                            onSelect={(key) => {
+                              setScenarioAnswers((prev) => ({
+                                ...prev,
+                                [screen.scenarioId!]: key,
+                              }));
+                              setScenarioCompareSeen((prev) => ({
+                                ...prev,
+                                [screen.scenarioId!]: false,
+                              }));
+                            }}
+                          />
+                        </div>
+                      ) : screen.id === 2 ? (
+                        <div className="p-5 md:p-6 md:px-14 flex flex-col flex-1 min-h-0 h-full">
+                          <AboutModuleSection
+                            screen={screen}
+                            onDropdownOpenChange={handleDropdownOpenChange}
+                          />
+                        </div>
+                      ) : screen.type === 'research' || screen.id === 4 ? (
+                        <div className="p-5 md:p-6 md:px-14 flex flex-col flex-1 min-h-0 h-full overflow-y-auto custom-scrollbar">
+                          <ResearchSection
+                            screen={screen}
+                            onDropdownOpenChange={handleDropdownOpenChange}
+                          />
+                        </div>
+                      ) : screen.id === 5 ? (
+                        <div className="p-5 md:p-6 md:px-14 flex flex-col flex-1 min-h-0 h-full">
+                          <WatchSection
+                            screen={screen}
+                            isScriptOpen={isWatchScriptOpen}
+                            onOpenScript={() => setIsWatchScriptOpen(true)}
+                            onCloseScript={() => setIsWatchScriptOpen(false)}
+                          />
+                        </div>
+                      ) : screen.id === 3 && screen.bullets ? (
+                        <div className="p-5 md:p-6 md:px-14 flex flex-col flex-1 min-h-0 h-full">
+                          <div className="w-full max-w-[1230px] mx-auto flex flex-col flex-1 min-h-0 h-full gap-6 lg:gap-8">
+                            <div
+                              className={`w-[1230px] max-w-full h-[390px] rounded-2xl border border-[#E5E9F0] ${MODULE_SURFACE} shadow-[0_4px_24px_-4px_rgba(10,31,68,0.08),0_2px_6px_-2px_rgba(10,31,68,0.04)] p-6 md:p-8 border-l-4 border-l-[#2E7CF6] shrink-0 overflow-y-auto custom-scrollbar`}
+                            >
+                              <div className="space-y-5">
+                                {screen.bullets.map((b) => (
+                                  <div
+                                    key={b}
+                                    className="flex items-start gap-4"
+                                  >
+                                    <ModuleFavicon className="w-7 h-7 mt-0.5" />
+                                    <div className="text-[24px] font-semibold text-slate-900 leading-relaxed">
+                                      {b}
                                     </div>
                                   </div>
                                 ))}
                               </div>
-                            ) : null}
+                            </div>
                           </div>
-                        ) : null}
-
-                        {screen.type === 'divider' &&
-                        screen.t1 &&
-                        !isPartTitleDuplicate(
-                          screen.t1,
-                          activeSidebarSectionKey
-                        ) ? (
-                            <div className="text-center">
-                              <h1 className="text-2xl md:text-4xl font-black text-slate-900">
-                                {screen.t1}
-                              </h1>
-                              <div className="mt-3 h-1 w-24 mx-auto rounded-full bg-gradient-to-r from-[#60A5FA] to-[#9333EA]" />
+                        </div>
+                      ) : (
+                        <div className="p-5 md:p-6 md:px-14 flex flex-col min-h-0">
+                          <>
+                            <div className="flex items-center justify-between gap-4">
+                              <div className="flex items-center gap-2 flex-wrap" />
                             </div>
-                        ) : null}
 
-                        {screen.t1 &&
-                        screen.type !== 'divider' &&
-                        !isPartTitleDuplicate(
-                          screen.t1,
-                          activeSidebarSectionKey
-                        ) &&
-                        activeSidebarSectionKey !== 'learn' ? (
-                          screen.t2 ? (
-                            <div className="text-center">
-                              <h1 className="text-2xl md:text-4xl font-black text-slate-900">
-                                {screen.t1}
-                              </h1>
-                              <div className="mt-3 h-1 w-24 mx-auto rounded-full bg-gradient-to-r from-[#60A5FA] to-[#9333EA]" />
-                            </div>
-                          ) : (
-                            <h1 className="text-2xl md:text-4xl font-black text-slate-900">
-                              {screen.t1}
-                            </h1>
-                          )
-                        ) : null}
+                            {screen.id === 8 ||
+                            screen.id === 9 ||
+                            screen.id === 10 ? (
+                              <div className="flex-1 flex flex-col gap-6 min-h-0">
+                                {activeSidebarSectionKey !== 'learn' ? (
+                                  <div className="text-center">
+                                    {screen.t3 ? (
+                                      <h3 className="text-lg md:text-xl font-bold text-slate-900">
+                                        {screen.t3}
+                                      </h3>
+                                    ) : null}
+                                    <div className="mt-3 h-1 w-24 mx-auto rounded-full bg-gradient-to-r from-[#60A5FA] to-[#9333EA]" />
+                                  </div>
+                                ) : null}
 
-                        {screen.id === 7 ? (
-                          <div className="pt-2">
-                            <div className="max-w-[1200px] mx-auto">
-                              <header className="mb-10">
-                               
-                                <div
-                                  className={`mt-6 p-10 max-w-full h-[200px] ${MODULE_SURFACE} rounded-xl border-l-4 border-l-[#2E7CF6]`}
-                                >
-                                  <p
-                                    className="text-[24px] font-regular leading-relaxed"
-                                    style={{ color: '#333333' }}
+                                {screen.body ? (
+                                  <div
+                                    className={`w-full mx-auto ${
+                                      screen.id === 10
+                                        ? 'max-w-[1100px]'
+                                        : 'max-w-[784px]'
+                                    }`}
                                   >
-                                    {screen.body}
-                                  </p>
-                                </div>
-                              </header>
+                                    <div
+                                      className={`whitespace-pre-line text-center md:text-left ${
+                                        screen.id === 10
+                                          ? 'text-base md:text-lg leading-relaxed text-slate-100/90'
+                                          : 'text-sm md:text-base text-slate-700 leading-relaxed'
+                                      }`}
+                                    >
+                                      {screen.body}
+                                    </div>
+                                  </div>
+                                ) : null}
 
-                              <div className="w-full">
-                                <div>
-                                  <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 items-stretch">
-                                    {(
-                                      [
-                                        {
-                                          key: 'green' as const,
-                                          title: 'State One',
-                                          subtitle: 'Ready for learning',
-                                          accentText: 'text-emerald-800',
-                                          iconBg: 'bg-emerald-100',
-                                          iconText: 'text-emerald-700',
-                                          barBg: 'bg-emerald-100',
-                                          icon: 'psychology',
-                                        },
-                                        {
-                                          key: 'amber' as const,
-                                          title: 'State Two',
-                                          subtitle: 'Escalation imminent',
-                                          accentText: 'text-amber-700',
-                                          iconBg: 'bg-amber-100',
-                                          iconText: 'text-amber-700',
-                                          barBg: 'bg-amber-100',
-                                          icon: 'warning',
-                                        },
-                                        {
-                                          key: 'red' as const,
-                                          title: 'State Three',
-                                          subtitle: 'Full survival mode',
-                                          accentText: 'text-rose-700',
-                                          iconBg: 'bg-rose-100',
-                                          iconText: 'text-rose-700',
-                                          barBg: 'bg-rose-100',
-                                          icon: 'emergency_home',
-                                        },
-                                      ] as const
-                                    ).map((card) => {
-                                      return (
-                                        <div
-                                          key={card.key}
-                                          className={`${MODULE_SURFACE} rounded-2xl overflow-hidden border border-[#E5E9EB] shadow-[0_1px_2px_rgba(0,0,0,0.05)] transition-shadow w-full min-h-[320px] flex flex-col`}
-                                        >
-                                          <button
-                                            type="button"
-                                            onClick={() =>
-                                              setLearnStateModalKey(card.key)
+                                {screen.id !== 10 ? (
+                                  <div className="flex justify-center">
+                                    <div className="w-full max-w-[520px] md:w-[520px] rounded-2xl overflow-hidden border border-slate-200 bg-white">
+                                      <img
+                                        src={structureLearnImage}
+                                        alt="Learn"
+                                        className="w-full h-[220px] md:h-[280px] object-cover"
+                                      />
+                                    </div>
+                                  </div>
+                                ) : null}
+
+                                {screen.dropdowns && screen.dropdowns.length ? (
+                                  <div className="space-y-3 w-full max-w-[920px] mx-auto">
+                                    {screen.dropdowns.map((d) => (
+                                      <div key={d.header} className="w-full">
+                                        <div className="[&>div>button]:py-4 [&>div>button]:px-5">
+                                          <Dropdown
+                                            dropdownId={`${screen.id}:${d.header}`}
+                                            header={d.header}
+                                            body={d.body}
+                                            onOpenChange={
+                                              handleDropdownOpenChange
                                             }
-                                            className="w-full flex-1 min-h-[320px] p-6 md:p-8 flex flex-col items-center justify-between text-center transition-all duration-300 hover:-translate-y-0.5"
-                                          >
-                                            <div
-                                              className={`size-14 shrink-0 aspect-square rounded-full ${card.iconBg} flex items-center justify-center`}
-                                            >
-                                              <span
-                                                className={`material-symbols-outlined text-[28px] leading-none ${card.iconText}`}
-                                                style={{
-                                                  fontVariationSettings:
-                                                    '"FILL" 1',
-                                                }}
-                                              >
-                                                {card.icon}
-                                              </span>
-                                            </div>
-                                            <div className="flex flex-col items-center gap-1.5 shrink-0">
-                                              <div
-                                                className={`text-[15px] font-semibold leading-tight ${card.accentText}`}
-                                              >
-                                                {card.title}
-                                              </div>
-                                              <div
-                                                className={`h-1 w-12 rounded-full ${card.barBg}`}
-                                              />
-                                            </div>
-                                            <span className="material-symbols-outlined text-slate-400 text-[18px] shrink-0">
-                                              expand_more
-                                            </span>
-                                          </button>
+                                          />
                                         </div>
+                                      </div>
+                                    ))}
+                                  </div>
+                                ) : null}
+                              </div>
+                            ) : null}
+
+                            {screen.type === 'divider' &&
+                            screen.t1 &&
+                            !isPartTitleDuplicate(
+                              screen.t1,
+                              activeSidebarSectionKey
+                            ) ? (
+                              <div className="text-center">
+                                <h1 className="text-2xl md:text-4xl font-black text-slate-900">
+                                  {screen.t1}
+                                </h1>
+                                <div className="mt-3 h-1 w-24 mx-auto rounded-full bg-gradient-to-r from-[#60A5FA] to-[#9333EA]" />
+                              </div>
+                            ) : null}
+
+                            {screen.t1 &&
+                            screen.type !== 'divider' &&
+                            !isPartTitleDuplicate(
+                              screen.t1,
+                              activeSidebarSectionKey
+                            ) &&
+                            activeSidebarSectionKey !== 'learn' ? (
+                              screen.t2 ? (
+                                <div className="text-center">
+                                  <h1 className="text-2xl md:text-4xl font-black text-slate-900">
+                                    {screen.t1}
+                                  </h1>
+                                  <div className="mt-3 h-1 w-24 mx-auto rounded-full bg-gradient-to-r from-[#60A5FA] to-[#9333EA]" />
+                                </div>
+                              ) : (
+                                <h1 className="text-2xl md:text-4xl font-black text-slate-900">
+                                  {screen.t1}
+                                </h1>
+                              )
+                            ) : null}
+
+                            {screen.id === 7 ? (
+                              <div className="pt-2">
+                                <div className="max-w-[1200px] mx-auto">
+                                  <header className="mb-10">
+                                    <div
+                                      className={`mt-6 p-10  max-w-full h-[230px] ${MODULE_SURFACE} rounded-xl border-l-4 border-l-[#2E7CF6]`}
+                                    >
+                                      <p
+                                        className="text-[24px] font-regular leading-relaxed"
+                                        style={{ color: '#333333' }}
+                                      >
+                                        {screen.body}
+                                      </p>
+                                    </div>
+                                  </header>
+
+                                  <div className="w-full">
+                                    <div>
+                                      <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 items-stretch">
+                                        {(
+                                          [
+                                            {
+                                              key: 'green' as const,
+                                              title: 'State One',
+                                              subtitle: 'Ready for learning',
+                                              accentText: 'text-emerald-800',
+                                              iconBg: 'bg-emerald-100',
+                                              iconText: 'text-emerald-700',
+                                              barBg: 'bg-emerald-100',
+                                              icon: 'psychology',
+                                            },
+                                            {
+                                              key: 'amber' as const,
+                                              title: 'State Two',
+                                              subtitle: 'Escalation imminent',
+                                              accentText: 'text-amber-700',
+                                              iconBg: 'bg-amber-100',
+                                              iconText: 'text-amber-700',
+                                              barBg: 'bg-amber-100',
+                                              icon: 'warning',
+                                            },
+                                            {
+                                              key: 'red' as const,
+                                              title: 'State Three',
+                                              subtitle: 'Full survival mode',
+                                              accentText: 'text-rose-700',
+                                              iconBg: 'bg-rose-100',
+                                              iconText: 'text-rose-700',
+                                              barBg: 'bg-rose-100',
+                                              icon: 'emergency_home',
+                                            },
+                                          ] as const
+                                        ).map((card) => {
+                                          return (
+                                            <div
+                                              key={card.key}
+                                              className={`${MODULE_SURFACE} rounded-2xl overflow-hidden border border-[#E5E9EB] shadow-[0_1px_2px_rgba(0,0,0,0.05)] transition-shadow w-full min-h-[320px] flex flex-col`}
+                                            >
+                                              <button
+                                                type="button"
+                                                onClick={() =>
+                                                  setLearnStateModalKey(
+                                                    card.key
+                                                  )
+                                                }
+                                                className="w-full flex-1 min-h-[320px] p-6 md:p-8 flex flex-col items-center justify-between text-center transition-all duration-300 hover:-translate-y-0.5"
+                                              >
+                                                <div
+                                                  className={`size-20 md:size-24 lg:size-28 shrink-0 aspect-square rounded-full ${card.iconBg} flex items-center justify-center`}
+                                                >
+                                                  <span
+                                                    className={`material-symbols-outlined text-[28px] leading-none ${card.iconText}`}
+                                                    style={{
+                                                      fontVariationSettings:
+                                                        '"FILL" 1',
+                                                    }}
+                                                  >
+                                                    {card.icon}
+                                                  </span>
+                                                </div>
+                                                <div className="flex flex-col items-center gap-1.5 shrink-0">
+                                                  <div
+                                                    className={`text-[15px] font-semibold leading-tight ${card.accentText}`}
+                                                  >
+                                                    {card.title}
+                                                  </div>
+                                                  <div
+                                                    className={`h-1 w-12 rounded-full ${card.barBg}`}
+                                                  />
+                                                </div>
+                                                <span className="material-symbols-outlined text-slate-400 text-[18px] shrink-0">
+                                                  expand_more
+                                                </span>
+                                              </button>
+                                            </div>
+                                          );
+                                        })}
+                                      </div>
+
+                                      {learnStateItems.brain?.body ? (
+                                        <div className="mt-6"></div>
+                                      ) : null}
+                                    </div>
+                                  </div>
+
+                                  <LearnStateModal
+                                    open={learnStateModalKey === 'green'}
+                                    title={
+                                      learnStateItems.green?.header ??
+                                      'State One: Green. Calmly engaged'
+                                    }
+                                    accentColor="#37675e"
+                                    body={learnStateItems.green?.body ?? ''}
+                                    onClose={() => setLearnStateModalKey(null)}
+                                  />
+                                  <LearnStateModal
+                                    open={learnStateModalKey === 'amber'}
+                                    title={
+                                      learnStateItems.amber?.header ??
+                                      'State Two: Amber. Dysregulated'
+                                    }
+                                    accentColor="#ba7a1a"
+                                    body={learnStateItems.amber?.body ?? ''}
+                                    onClose={() => setLearnStateModalKey(null)}
+                                  />
+                                  <LearnStateModal
+                                    open={learnStateModalKey === 'red'}
+                                    title={
+                                      learnStateItems.red?.header ??
+                                      'State Three: Red. Shut down'
+                                    }
+                                    accentColor="#ba1a1a"
+                                    body={learnStateItems.red?.body ?? ''}
+                                    onClose={() => setLearnStateModalKey(null)}
+                                  />
+                                </div>
+                              </div>
+                            ) : null}
+
+                            {screen.t2 &&
+                            !screen.t1 &&
+                            !isSameAsBlockHeader(
+                              screen.t2,
+                              screen,
+                              activeSidebarSectionKey
+                            ) &&
+                            screen.id !== 3 &&
+                            screen.id !== 4 &&
+                            screen.id !== 11 &&
+                            screen.id !== 12 &&
+                            screen.type !== 'accordion' &&
+                            screen.type !== 'video' ? (
+                              activeSidebarSectionKey !== 'learn' ? (
+                                <div className="text-center">
+                                  <h2 className="text-xl md:text-2xl font-black text-slate-900">
+                                    {screen.t2}
+                                  </h2>
+                                  <div className="mt-3 h-1 w-24 mx-auto rounded-full bg-gradient-to-r from-[#60A5FA] to-[#9333EA]" />
+                                </div>
+                              ) : null
+                            ) : null}
+
+                            {screen.t3 &&
+                            !isSameAsBlockHeader(
+                              screen.t3,
+                              screen,
+                              activeSidebarSectionKey
+                            ) &&
+                            (typeof screen.t1 !== 'string' ||
+                              screen.t1.trim().toLowerCase() !==
+                                screen.t3.trim().toLowerCase()) &&
+                            (typeof screen.t2 !== 'string' ||
+                              screen.t2.trim().toLowerCase() !==
+                                screen.t3.trim().toLowerCase()) &&
+                            screen.id !== 8 &&
+                            screen.id !== 9 &&
+                            screen.id !== 10 &&
+                            activeSidebarSectionKey !== 'learn' ? (
+                              <h3 className="text-lg md:text-xl font-bold text-slate-900">
+                                {screen.t3}
+                              </h3>
+                            ) : null}
+
+                            {screen.lead && screen.id !== 7 ? (
+                              <div className="text-base md:text-lg font-semibold text-slate-900 whitespace-pre-line">
+                                {screen.lead}
+                              </div>
+                            ) : null}
+
+                            {screen.body &&
+                            screen.id !== 7 &&
+                            screen.id !== 5 &&
+                            screen.id !== 8 &&
+                            screen.id !== 9 &&
+                            screen.id !== 10 &&
+                            screen.id !== 12 &&
+                            screen.id !== 18 &&
+                            screen.type !== 'accordion' ? (
+                              <div
+                                className={`text-sm md:text-base text-slate-700 whitespace-pre-line leading-relaxed ${
+                                  screen.type === 'divider' ? 'mt-4' : ''
+                                }`}
+                              >
+                                {screen.body}
+                              </div>
+                            ) : null}
+                          </>
+
+                          {screen.bullets && screen.id !== 3 ? (
+                            <ul className="list-disc pl-6 space-y-2 text-sm md:text-base text-slate-200 ">
+                              {screen.bullets.map((b) => (
+                                <li key={b} className="leading-relaxed">
+                                  {b}
+                                </li>
+                              ))}
+                            </ul>
+                          ) : null}
+
+                          {screen.keyPoint ? (
+                            screen.id === 10 ? (
+                              <div className="mt-8 w-full max-w-[784px] mx-auto">
+                                <Dropdown
+                                  dropdownId={`${screen.id}:key-point`}
+                                  header="The single most important point."
+                                  body={screen.keyPoint}
+                                  onOpenChange={handleDropdownOpenChange}
+                                  containerClassName="rounded-xl"
+                                  buttonClassName="h-[64px]"
+                                />
+                              </div>
+                            ) : screen.id === 11 ? null : (
+                              <KeyPoint>{screen.keyPoint}</KeyPoint>
+                            )
+                          ) : null}
+
+                          {screen.type === 'video' ? (
+                            <div className="space-y-3">
+                              {screen.t2 ? (
+                                <div className="text-center">
+                                  <h2 className="text-xl  md:text-2xl font-black text-white">
+                                    {screen.t2}
+                                  </h2>
+                                  <div className="mt-3 h-1 w-24 mx-auto rounded-full bg-gradient-to-r from-[#60A5FA] to-[#9333EA]" />
+                                </div>
+                              ) : null}
+
+                              <div className="flex justify-center">
+                                <div className="w-full max-w-[784px] space-y-3">
+                                  <VideoLessonPlayer
+                                    title={screen.videoTitle ?? 'Video'}
+                                    videoUrl={screen.videoUrl}
+                                    className="rounded-[18px]"
+                                  />
+                                </div>
+                              </div>
+
+                              {screen.videoPrompt ? (
+                                <div className="text-sm text-slate-200 text-center">
+                                  {screen.videoPrompt}
+                                </div>
+                              ) : null}
+                            </div>
+                          ) : null}
+
+                          {screen.dropdowns &&
+                          screen.id !== 2 &&
+                          screen.id !== 5 &&
+                          screen.id !== 8 &&
+                          screen.id !== 9 &&
+                          screen.id !== 10 &&
+                          screen.id !== 18 ? (
+                            <div className="space-y-3">
+                              {screen.dropdowns.map((d) => (
+                                <div
+                                  key={d.header}
+                                  className="w-full md:w-[715px]"
+                                >
+                                  <div className="[&>div>button]:py-6 [&>div>button]:px-6">
+                                    <Dropdown
+                                      dropdownId={`${screen.id}:${d.header}`}
+                                      header={d.header}
+                                      body={d.body}
+                                      onOpenChange={handleDropdownOpenChange}
+                                    />
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          ) : null}
+
+                          {screen.type === 'accordion' &&
+                          screen.accordionItems ? (
+                            <div className="pt-2">
+                              {screen.t2 &&
+                              screen.id !== 11 &&
+                              screen.id !== 16 &&
+                              activeSidebarSectionKey !== 'learn' ? (
+                                <div className="text-center">
+                                  <h2 className="text-2xl md:text-3xl font-black text-slate-900">
+                                    {screen.t2}
+                                  </h2>
+                                  <div className="mt-3 h-1 w-24 mx-auto rounded-full bg-gradient-to-r from-[#60A5FA] to-[#9333EA]" />
+                                </div>
+                              ) : null}
+
+                              {screen.body && screen.id !== 16 ? (
+                                <div className="text-sm md:text-base text-slate-600 text-center whitespace-pre-line leading-relaxed max-w-[720px] mx-auto">
+                                  {screen.body}
+                                </div>
+                              ) : null}
+
+                              {screen.id === 11 ? (
+                                <div className="mt-8 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                                  <div className="lg:col-span-8 flex flex-col gap-4">
+                                    {screen.accordionItems.map((item) => {
+                                      const dropdownId = `${screen.id}:${item.header}`;
+                                      return (
+                                        <LearnAccordionItem
+                                          key={item.header}
+                                          dropdownId={dropdownId}
+                                          header={item.header}
+                                          body={item.body}
+                                          open={openDropdownIds.has(dropdownId)}
+                                          onToggle={handleDropdownOpenChange}
+                                        />
                                       );
                                     })}
                                   </div>
 
-                                  {learnStateItems.brain?.body ? (
-                                    <div className="mt-6">
+                                  <aside className="lg:col-span-4">
+                                    <div className="lg:sticky lg:top-6 p-8 bg-[#1F7A7A] rounded-xl text-white shadow-[0_20px_40px_-15px_rgba(47,99,120,0.18)] flex flex-col gap-6">
+                                      <div className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center">
+                                        <span className="material-symbols-outlined text-white">
+                                          lightbulb
+                                        </span>
+                                      </div>
+                                      <h4 className="text-[20px] font-semibold">
+                                        The single most important point.
+                                      </h4>
+                                      {screen.keyPoint ? (
+                                        <div className="text-[15px] opacity-90 leading-relaxed whitespace-pre-line">
+                                          {screen.keyPoint}
+                                        </div>
+                                      ) : null}
                                     </div>
-                                  ) : null}
+                                  </aside>
                                 </div>
-                              </div>
-
-                              <LearnStateModal
-                                open={learnStateModalKey === 'green'}
-                                title={
-                                  learnStateItems.green?.header ??
-                                  'State One: Green. Calmly engaged'
-                                }
-                                accentColor="#37675e"
-                                body={learnStateItems.green?.body ?? ''}
-                                onClose={() => setLearnStateModalKey(null)}
-                              />
-                              <LearnStateModal
-                                open={learnStateModalKey === 'amber'}
-                                title={
-                                  learnStateItems.amber?.header ??
-                                  'State Two: Amber. Dysregulated'
-                                }
-                                accentColor="#ba7a1a"
-                                body={learnStateItems.amber?.body ?? ''}
-                                onClose={() => setLearnStateModalKey(null)}
-                              />
-                              <LearnStateModal
-                                open={learnStateModalKey === 'red'}
-                                title={
-                                  learnStateItems.red?.header ??
-                                  'State Three: Red. Shut down'
-                                }
-                                accentColor="#ba1a1a"
-                                body={learnStateItems.red?.body ?? ''}
-                                onClose={() => setLearnStateModalKey(null)}
-                              />
-                            </div>
-                          </div>
-                        ) : null}
-
-                        {screen.t2 &&
-                        !screen.t1 &&
-                        !isSameAsBlockHeader(
-                          screen.t2,
-                          screen,
-                          activeSidebarSectionKey
-                        ) &&
-                        screen.id !== 3 &&
-                        screen.id !== 4 &&
-                        screen.id !== 11 &&
-                        screen.id !== 12 &&
-                        screen.type !== 'accordion' &&
-                        screen.type !== 'video' ? (
-                          activeSidebarSectionKey !== 'learn' ? (
-                            <div className="text-center">
-                              <h2 className="text-xl md:text-2xl font-black text-slate-900">
-                                {screen.t2}
-                              </h2>
-                              <div className="mt-3 h-1 w-24 mx-auto rounded-full bg-gradient-to-r from-[#60A5FA] to-[#9333EA]" />
-                            </div>
-                          ) : null
-                        ) : null}
-
-                        {screen.t3 &&
-                        !isSameAsBlockHeader(
-                          screen.t3,
-                          screen,
-                          activeSidebarSectionKey
-                        ) &&
-                        (typeof screen.t1 !== 'string' ||
-                          screen.t1.trim().toLowerCase() !==
-                            screen.t3.trim().toLowerCase()) &&
-                        (typeof screen.t2 !== 'string' ||
-                          screen.t2.trim().toLowerCase() !==
-                            screen.t3.trim().toLowerCase()) &&
-                        screen.id !== 8 &&
-                        screen.id !== 9 &&
-                        screen.id !== 10 &&
-                        activeSidebarSectionKey !== 'learn' ? (
-                          <h3 className="text-lg md:text-xl font-bold text-slate-900">
-                            {screen.t3}
-                          </h3>
-                        ) : null}
-
-                        {screen.lead && screen.id !== 7 ? (
-                          <div className="text-base md:text-lg font-semibold text-slate-900 whitespace-pre-line">
-                            {screen.lead}
-                          </div>
-                        ) : null}
-
-                        {screen.body &&
-                        screen.id !== 7 &&
-                        screen.id !== 5 &&
-                        screen.id !== 8 &&
-                        screen.id !== 9 &&
-                        screen.id !== 10 &&
-                        screen.id !== 12 &&
-                        screen.id !== 18 &&
-                        screen.type !== 'accordion' ? (
-                          <div
-                            className={`text-sm md:text-base text-slate-700 whitespace-pre-line leading-relaxed ${
-                              screen.type === 'divider' ? 'mt-4' : ''
-                            }`}
-                          >
-                            {screen.body}
-                          </div>
-                        ) : null}
-                      </>
-
-                    {screen.bullets && screen.id !== 3 ? (
-                      <ul className="list-disc pl-6 space-y-2 text-sm md:text-base text-slate-200 ">
-                        {screen.bullets.map((b) => (
-                          <li key={b} className="leading-relaxed">
-                            {b}
-                          </li>
-                        ))}
-                      </ul>
-                    ) : null}
-
-                    {screen.keyPoint ? (
-                      screen.id === 10 ? (
-                        <div className="mt-8 w-full max-w-[784px] mx-auto">
-                          <Dropdown
-                            dropdownId={`${screen.id}:key-point`}
-                            header="The single most important point."
-                            body={screen.keyPoint}
-                            onOpenChange={handleDropdownOpenChange}
-                            containerClassName="rounded-xl"
-                            buttonClassName="h-[64px]"
-                          />
-                        </div>
-                      ) : screen.id === 11 ? null : (
-                        <KeyPoint>{screen.keyPoint}</KeyPoint>
-                      )
-                    ) : null}
-
-                    {screen.type === 'video' ? (
-                      <div className="space-y-3">
-                        {screen.t2 ? (
-                          <div className="text-center">
-                            <h2 className="text-xl  md:text-2xl font-black text-white">
-                              {screen.t2}
-                            </h2>
-                            <div className="mt-3 h-1 w-24 mx-auto rounded-full bg-gradient-to-r from-[#60A5FA] to-[#9333EA]" />
-                          </div>
-                        ) : null}
-
-                        <div className="flex justify-center">
-                          <div className="w-full max-w-[784px] space-y-3">
-                            <VideoLessonPlayer
-                              title={screen.videoTitle ?? 'Video'}
-                              videoUrl={screen.videoUrl}
-                              className="rounded-[18px]"
-                            />
-                          </div>
-                        </div>
-
-                        {screen.videoPrompt ? (
-                          <div className="text-sm text-slate-200 text-center">
-                            {screen.videoPrompt}
-                          </div>
-                        ) : null}
-                      </div>
-                    ) : null}
-
-                    {screen.dropdowns &&
-                    screen.id !== 2 &&
-                    screen.id !== 5 &&
-                    screen.id !== 8 &&
-                    screen.id !== 9 &&
-                    screen.id !== 10 &&
-                    screen.id !== 18 ? (
-                      <div className="space-y-3">
-                        {screen.dropdowns.map((d) => (
-                          <div key={d.header} className="w-full md:w-[715px]">
-                            <div className="[&>div>button]:py-6 [&>div>button]:px-6">
-                              <Dropdown
-                                dropdownId={`${screen.id}:${d.header}`}
-                                header={d.header}
-                                body={d.body}
-                                onOpenChange={handleDropdownOpenChange}
-                              />
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    ) : null}
-
-                    {screen.type === 'accordion' && screen.accordionItems ? (
-                      <div className="pt-2">
-                        {screen.t2 &&
-                        screen.id !== 11 &&
-                        screen.id !== 16 &&
-                        activeSidebarSectionKey !== 'learn' ? (
-                          <div className="text-center">
-                            <h2 className="text-2xl md:text-3xl font-black text-slate-900">
-                              {screen.t2}
-                            </h2>
-                            <div className="mt-3 h-1 w-24 mx-auto rounded-full bg-gradient-to-r from-[#60A5FA] to-[#9333EA]" />
-                          </div>
-                        ) : null}
-
-                        {screen.body && screen.id !== 16 ? (
-                          <div className="text-sm md:text-base text-slate-600 text-center whitespace-pre-line leading-relaxed max-w-[720px] mx-auto">
-                            {screen.body}
-                          </div>
-                        ) : null}
-
-                        {screen.id === 11 ? (
-                          <div className="mt-8 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-                            <div className="lg:col-span-8 flex flex-col gap-4">
-                              {screen.accordionItems.map((item) => {
-                                const dropdownId = `${screen.id}:${item.header}`;
-                                return (
-                                  <LearnAccordionItem
-                                    key={item.header}
-                                    dropdownId={dropdownId}
-                                    header={item.header}
-                                    body={item.body}
-                                    open={openDropdownIds.has(dropdownId)}
-                                    onToggle={handleDropdownOpenChange}
-                                  />
-                                );
-                              })}
-                            </div>
-
-                            <aside className="lg:col-span-4">
-                              <div className="lg:sticky lg:top-6 p-8 bg-[#1F7A7A] rounded-xl text-white shadow-[0_20px_40px_-15px_rgba(47,99,120,0.18)] flex flex-col gap-6">
-                                <div className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center">
-                                  <span className="material-symbols-outlined text-white">
-                                    lightbulb
-                                  </span>
+                              ) : (
+                                <div className="mt-8 space-y-4 max-w-[920px] mx-auto">
+                                  {screen.accordionItems.map((item) => (
+                                    <Dropdown
+                                      key={item.header}
+                                      dropdownId={`${screen.id}:${item.header}`}
+                                      header={item.header}
+                                      body={item.body}
+                                      onOpenChange={handleDropdownOpenChange}
+                                      containerClassName="rounded-xl"
+                                      buttonClassName="h-[64px]"
+                                    />
+                                  ))}
                                 </div>
-                                <h4 className="text-[20px] font-semibold">
-                                  The single most important point.
-                                </h4>
-                                {screen.keyPoint ? (
-                                  <div className="text-[15px] opacity-90 leading-relaxed whitespace-pre-line">
-                                    {screen.keyPoint}
-                                  </div>
-                                ) : null}
-                              </div>
-                            </aside>
-                          </div>
-                        ) : (
-                          <div className="mt-8 space-y-4 max-w-[920px] mx-auto">
-                            {screen.accordionItems.map((item) => (
-                              <Dropdown
-                                key={item.header}
-                                dropdownId={`${screen.id}:${item.header}`}
-                                header={item.header}
-                                body={item.body}
-                                onOpenChange={handleDropdownOpenChange}
-                                containerClassName="rounded-xl"
-                                buttonClassName="h-[64px]"
-                              />
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    ) : null}
-
+                              )}
+                            </div>
+                          ) : null}
+                        </div>
+                      )}
+                    </section>
                   </div>
-                )}
-              </section>
-            </div>
 
-            
+                  <div
+                    className={`sticky bottom-0 mt-auto pt-4 pb-2 border-t border-slate-200 ${MODULE_PAGE_TINT} backdrop-blur-sm`}
+                  >
+                    <div className="flex items-center justify-between gap-2 max-w-[1280px] mx-auto">
+                      <button
+                        type="button"
+                        disabled={prevVisibleIndex === null}
+                        onClick={() => {
+                          if (prevVisibleIndex === null) return;
+                          setIndex(prevVisibleIndex);
+                        }}
+                        className={`flex items-center gap-2 h-12 px-5 rounded-full text-sm font-semibold border transition-colors ${
+                          prevVisibleIndex === null
+                            ? 'bg-slate-50 border-slate-200 text-slate-400 cursor-not-allowed'
+                            : 'bg-slate-50 hover:bg-slate-100 border-slate-200 text-slate-700'
+                        }`}
+                      >
+                        <span className="material-symbols-outlined">
+                          arrow_back
+                        </span>
+                        <span>Previous</span>
+                      </button>
 
-            <div className={`sticky bottom-0 mt-auto pt-4 pb-2 border-t border-slate-200 ${MODULE_PAGE_TINT} backdrop-blur-sm`}>
-              <div className="flex items-center justify-between gap-2 max-w-[1280px] mx-auto">
-                <button
-                  type="button"
-                  disabled={prevVisibleIndex === null}
-                  onClick={() => {
-                    if (prevVisibleIndex === null) return;
-                    setIndex(prevVisibleIndex);
-                  }}
-                  className={`flex items-center gap-2 h-12 px-5 rounded-full text-sm font-semibold border transition-colors ${
-                    prevVisibleIndex === null
-                      ? 'bg-slate-50 border-slate-200 text-slate-400 cursor-not-allowed'
-                      : 'bg-slate-50 hover:bg-slate-100 border-slate-200 text-slate-700'
-                  }`}
-                >
-                  <span className="material-symbols-outlined">arrow_back</span>
-                  <span>Previous</span>
-                </button>
+                      <button
+                        type="button"
+                        disabled={!canGoNext || nextVisibleIndex === null}
+                        onClick={() => {
+                          if (screen.id === 29) {
+                            navigate('/dashboard/my-learning/mind-sync');
+                            return;
+                          }
 
-                <button
-                  type="button"
-                  disabled={!canGoNext || nextVisibleIndex === null}
-                  onClick={() => {
-                    if (screen.id === 29) {
-                      navigate('/dashboard/my-learning/mind-sync');
-                      return;
-                    }
+                          if (
+                            screen.type === 'scenario_situation' &&
+                            screen.scenarioId &&
+                            !scenarioCompareSeen[screen.scenarioId]
+                          ) {
+                            setIsScenarioCompareOpen(true);
+                            return;
+                          }
 
-                    if (
-                      screen.type === 'scenario_situation' &&
-                      screen.scenarioId &&
-                      !scenarioCompareSeen[screen.scenarioId]
-                    ) {
-                      setIsScenarioCompareOpen(true);
-                      return;
-                    }
-
-                    if (nextVisibleIndex === null) return;
-                    setIndex(nextVisibleIndex);
-                  }}
-                  className={`flex items-center gap-2 h-12 px-6 rounded-full text-sm font-semibold border border-transparent transition-colors ${
-                    canGoNext && nextVisibleIndex !== null
-                      ? 'bg-gradient-to-r from-[#60A5FA] to-[#9333EA] text-white hover:shadow-indigo-500/20'
-                      : 'bg-slate-100 text-slate-400 cursor-not-allowed'
-                  }`}
-                >
-                  <span>{nextLabel}</span>
-                  <span className="material-symbols-outlined">
-                    arrow_forward
-                  </span>
-                </button>
+                          if (nextVisibleIndex === null) return;
+                          setIndex(nextVisibleIndex);
+                        }}
+                        className={`flex items-center gap-2 h-12 px-6 rounded-full text-sm font-semibold border border-transparent transition-colors ${
+                          canGoNext && nextVisibleIndex !== null
+                            ? 'bg-gradient-to-r from-[#60A5FA] to-[#9333EA] text-white hover:shadow-indigo-500/20'
+                            : 'bg-slate-100 text-slate-400 cursor-not-allowed'
+                        }`}
+                      >
+                        <span>{nextLabel}</span>
+                        <span className="material-symbols-outlined">
+                          arrow_forward
+                        </span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-          </div>
-        </div>
-        </div>
 
-        <ModuleContentsSidebar
-          toc={toc}
-          sidebarSections={sidebarSections}
-          openSections={openSections}
-          activeSidebarSectionKey={activeSidebarSectionKey}
-          index={index}
-          screen={screen}
-          toggleSection={toggleSection}
-          setIndex={setIndex}
-          sidebarScrollRef={sidebarScrollRef}
-          suppressAutoOpenRef={suppressAutoOpenRef}
-          isSidebarTranscriptOpen={isSidebarTranscriptOpen}
-          setIsSidebarTranscriptOpen={setIsSidebarTranscriptOpen}
-          isOpen={isModuleContentsOpen}
-          onToggle={toggleModuleContents}
-        />
-      </main>
+          <ModuleContentsSidebar
+            toc={toc}
+            sidebarSections={sidebarSections}
+            openSections={openSections}
+            activeSidebarSectionKey={activeSidebarSectionKey}
+            index={index}
+            screen={screen}
+            toggleSection={toggleSection}
+            setIndex={setIndex}
+            sidebarScrollRef={sidebarScrollRef}
+            suppressAutoOpenRef={suppressAutoOpenRef}
+            isSidebarTranscriptOpen={isSidebarTranscriptOpen}
+            setIsSidebarTranscriptOpen={setIsSidebarTranscriptOpen}
+            isOpen={isModuleContentsOpen}
+            onToggle={toggleModuleContents}
+          />
+        </main>
       )}
 
       {screen.type === 'scenario_situation' &&
@@ -4112,9 +4237,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
         <TechniqueStepDetailModal
           open
           step={
-            screen.techniqueSteps.find(
-              (s) => s.number === activeTechniqueStep
-            )!
+            screen.techniqueSteps.find((s) => s.number === activeTechniqueStep)!
           }
           onClose={() => setActiveTechniqueStep(null)}
         />
