@@ -45,6 +45,7 @@ import Signup from './components/Signup';
 import Home2 from './pages/Home2';
 import ComingSoon from './pages/ComingSoon';
 import { VideoProvider } from './contexts/VideoContext';
+import HomeNewBrand from './pages/HomeNewBrand';
 
 function DashboardComingSoon({ title }: { title: string }) {
   return (
@@ -81,12 +82,14 @@ function AppContent() {
     location.pathname.startsWith('/survey') ||
     location.pathname === '/login' ||
     location.pathname === '/signup';
+  const hideNavbar = location.pathname === '/';
 
   return (
     <div className="min-h-screen">
-      {!isDashboard && <Navbar />}
+      {!isDashboard && !hideNavbar && <Navbar />}
       <Routes>
-        <Route path="/" element={<Home2 />} />
+        <Route path="/" element={<HomeNewBrand />} />
+        <Route path="/home1" element={<Home2 />} />
         <Route path="/home-1" element={<Home />} />
         <Route path="/home-2" element={<Home2 />} />
         <Route path="/why-elerea-exist" element={<WhyElereaExist />} />
