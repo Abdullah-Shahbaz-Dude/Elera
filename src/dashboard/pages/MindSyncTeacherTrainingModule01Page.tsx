@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Link, useNavigate } from 'react-router-dom';
 import VideoLessonPlayer from '../components/VideoLessonPlayer';
@@ -282,21 +282,601 @@ function isPartTitleDuplicate(
 function ModulePartTitle({
   title,
   blockId: _blockId,
+  titleRef,
 }: {
   title: string;
   blockId: number;
+  titleRef?: React.RefObject<HTMLHeadingElement>;
 }) {
   return (
-    <div className="flex items-start justify-between gap-6 mb-1 w-full min-w-0">
+    <div className="mb-1 w-full min-w-0">
       <h1
-        className="flex-1 min-w-0 text-[64px] leading-tight font-bold whitespace-nowrap pr-4"
-        style={{ color: '#6366F1' }}
+        ref={titleRef}
+        className={`min-w-0 ${MODULE_PART_TITLE_CLASS}`}
+        style={MODULE_PART_TITLE_STYLE}
       >
         {title}
       </h1>
-      {/* <span className="text-xs text-slate-500 font-medium shrink-0 pt-2">
-        Block {blockId}
-      </span> */}
+    </div>
+  );
+}
+
+const MODULE_PART_TITLE_CLASS =
+  'font-display text-[64px] leading-tight font-bold whitespace-nowrap';
+const MODULE_PART_TITLE_COLOR = '#6366F1';
+const MODULE_PART_TITLE_STYLE: React.CSSProperties = {
+  color: MODULE_PART_TITLE_COLOR,
+  fontFamily: 'Arial',
+};
+
+type LearningOutcomesPhase = 'center' | 'header' | 'reveal' | 'done';
+
+const CARD_TO_BULLET_DELAY_MS = 1500;
+const BULLET_TYPING_SPEED_MS = 30;
+
+function useTypingText(text: string, enabled: boolean, speedMs = 42) {
+  const [displayed, setDisplayed] = useState(enabled ? '' : text);
+  const [isComplete, setIsComplete] = useState(!enabled);
+
+  useEffect(() => {
+    if (!enabled) {
+      setDisplayed(text);
+      setIsComplete(true);
+      return;
+    }
+
+    setDisplayed('');
+    setIsComplete(false);
+    let charIndex = 0;
+    const timer = window.setInterval(() => {
+      charIndex += 1;
+      setDisplayed(text.slice(0, charIndex));
+      if (charIndex >= text.length) {
+        window.clearInterval(timer);
+        setIsComplete(true);
+      }
+    }, speedMs);
+
+    return () => window.clearInterval(timer);
+  }, [text, enabled, speedMs]);
+
+  return { displayed, isComplete };
+}
+
+function getContentCenterStyle(
+  contentAreaRef: React.RefObject<HTMLDivElement>,
+): React.CSSProperties {
+  const rect = contentAreaRef.current?.getBoundingClientRect();
+  const centerX = rect ? rect.left + rect.width / 2 : window.innerWidth / 2;
+  return {
+    position: 'fixed',
+    left: centerX,
+    top: '50%',
+    transform: 'translate(-50%, -50%)',
+    zIndex: 50,
+    transition: 'none',
+  };
+}
+
+function getHeaderTrackLeft(
+  contentAreaRef: React.RefObject<HTMLDivElement>,
+  anchorRef?: React.RefObject<HTMLHeadingElement>,
+): number {
+  const anchor = anchorRef?.current;
+  if (anchor) {
+    return anchor.getBoundingClientRect().left;
+  }
+
+  const rect = contentAreaRef.current?.getBoundingClientRect();
+  if (!rect) return 20;
+
+  // Match ModuleInlineHeader: px-5 md:px-14, then max-w-[1200px] mx-auto
+  const headerPadding = window.matchMedia('(min-width: 768px)').matches ? 56 : 20;
+  const innerWidth = rect.width - headerPadding * 2;
+  const maxW = Math.min(1200, innerWidth);
+  return rect.left + headerPadding + (innerWidth - maxW) / 2;
+}
+
+function getLeftHeaderStyle(
+  contentAreaRef: React.RefObject<HTMLDivElement>,
+  anchorRef?: React.RefObject<HTMLHeadingElement>,
+): React.CSSProperties {
+  return {
+    position: 'fixed',
+    left: getHeaderTrackLeft(contentAreaRef, anchorRef),
+    top: '50%',
+    transform: 'translateY(-50%)',
+    zIndex: 50,
+    transition: 'none',
+  };
+}
+
+function getIntroTitleStyle(
+  contentAreaRef: React.RefObject<HTMLDivElement>,
+  centerContent: boolean,
+  anchorRef?: React.RefObject<HTMLHeadingElement>,
+): React.CSSProperties {
+  return centerContent
+    ? getContentCenterStyle(contentAreaRef)
+    : getLeftHeaderStyle(contentAreaRef, anchorRef);
+}
+
+function snapIntroTitleToAnchor(
+  anchor: HTMLElement,
+): React.CSSProperties {
+  const rect = anchor.getBoundingClientRect();
+  return {
+    position: 'fixed',
+    left: rect.left,
+    top: rect.top,
+    transform: 'none',
+    zIndex: 50,
+    transition: 'none',
+  };
+}
+
+function IntroTitleOverlay({
+  title,
+  phase,
+  anchorRef,
+  contentAreaRef,
+  centerContent,
+  displayedText,
+  onMoveComplete,
+}: {
+  title: string;
+  phase: 'center' | 'header';
+  anchorRef: React.RefObject<HTMLHeadingElement>;
+  contentAreaRef: React.RefObject<HTMLDivElement>;
+  centerContent: boolean;
+  displayedText: string;
+  onMoveComplete: () => void;
+}) {
+  const titleRef = useRef<HTMLHeadingElement>(null);
+  const [style, setStyle] = useState<React.CSSProperties>(() =>
+    getIntroTitleStyle(contentAreaRef, centerContent, anchorRef),
+  );
+
+  const applyIntroStyle = useCallback(() => {
+    setStyle(getIntroTitleStyle(contentAreaRef, centerContent, anchorRef));
+  }, [contentAreaRef, centerContent, anchorRef]);
+
+  useEffect(() => {
+    if (phase !== 'center') return;
+    applyIntroStyle();
+  }, [phase, applyIntroStyle]);
+
+  useEffect(() => {
+    if (phase !== 'center') return;
+
+    const handleLayoutChange = () => applyIntroStyle();
+    window.addEventListener('resize', handleLayoutChange);
+
+    const contentEl = contentAreaRef.current;
+    let observer: ResizeObserver | undefined;
+    if (contentEl && typeof ResizeObserver !== 'undefined') {
+      observer = new ResizeObserver(handleLayoutChange);
+      observer.observe(contentEl);
+    }
+
+    return () => {
+      window.removeEventListener('resize', handleLayoutChange);
+      observer?.disconnect();
+    };
+  }, [phase, applyIntroStyle, contentAreaRef]);
+
+  useEffect(() => {
+    if (phase !== 'center' || centerContent) return;
+
+    let raf = 0;
+    let cancelled = false;
+
+    const syncToAnchor = () => {
+      if (cancelled) return;
+      if (anchorRef.current) {
+        applyIntroStyle();
+        return;
+      }
+      raf = requestAnimationFrame(syncToAnchor);
+    };
+
+    raf = requestAnimationFrame(syncToAnchor);
+
+    return () => {
+      cancelled = true;
+      cancelAnimationFrame(raf);
+    };
+  }, [phase, centerContent, applyIntroStyle, anchorRef]);
+
+  useEffect(() => {
+    if (phase !== 'header') return;
+
+    let cancelled = false;
+    let raf1 = 0;
+    let raf2 = 0;
+    let raf3 = 0;
+    let completeTimer = 0;
+    let transitionTarget: HTMLHeadingElement | null = null;
+    let finished = false;
+
+    const finishMove = () => {
+      if (cancelled || finished) return;
+      finished = true;
+      window.clearTimeout(completeTimer);
+      transitionTarget?.removeEventListener('transitionend', handleTransitionEnd);
+
+      const anchor = anchorRef.current;
+      if (anchor) {
+        setStyle(snapIntroTitleToAnchor(anchor));
+      }
+      requestAnimationFrame(() => {
+        if (!cancelled) onMoveComplete();
+      });
+    };
+
+    const handleTransitionEnd = (event: TransitionEvent) => {
+      if (event.propertyName !== 'transform') return;
+      finishMove();
+    };
+
+    raf1 = requestAnimationFrame(() => {
+      if (cancelled) return;
+
+      const startStyle = getIntroTitleStyle(contentAreaRef, centerContent, anchorRef);
+      setStyle(startStyle);
+
+      raf2 = requestAnimationFrame(() => {
+        if (cancelled) return;
+
+        const runMove = () => {
+          if (cancelled) return;
+
+          const titleEl = titleRef.current;
+          const anchor = anchorRef.current;
+          if (!titleEl || !anchor) {
+            raf3 = requestAnimationFrame(runMove);
+            return;
+          }
+
+          const titleRect = titleEl.getBoundingClientRect();
+          const anchorRect = anchor.getBoundingClientRect();
+          const deltaX = anchorRect.left - titleRect.left;
+          const deltaY = anchorRect.top - titleRect.top;
+
+          transitionTarget = titleEl;
+          titleEl.addEventListener('transitionend', handleTransitionEnd);
+
+          if (centerContent) {
+            setStyle({
+              ...startStyle,
+              transform: `translate(-50%, -50%) translate(${deltaX}px, ${deltaY}px)`,
+              transition: 'transform 0.75s ease-in-out',
+            });
+          } else {
+            setStyle({
+              ...startStyle,
+              transform: `translateY(-50%) translate(${deltaX}px, ${deltaY}px)`,
+              transition: 'transform 0.75s ease-in-out',
+            });
+          }
+
+          completeTimer = window.setTimeout(finishMove, 850);
+        };
+
+        runMove();
+      });
+    });
+
+    return () => {
+      cancelled = true;
+      cancelAnimationFrame(raf1);
+      cancelAnimationFrame(raf2);
+      cancelAnimationFrame(raf3);
+      window.clearTimeout(completeTimer);
+      transitionTarget?.removeEventListener('transitionend', handleTransitionEnd);
+    };
+  }, [phase, anchorRef, contentAreaRef, centerContent, onMoveComplete]);
+
+  return createPortal(
+    <h1
+      ref={titleRef}
+      className={`${MODULE_PART_TITLE_CLASS} pointer-events-none`}
+      style={{ ...MODULE_PART_TITLE_STYLE, ...style }}
+      aria-label={title}
+    >
+      {displayedText}
+    </h1>,
+    document.body,
+  );
+}
+
+function usePrefersReducedMotion() {
+  const [reduced, setReduced] = useState(false);
+
+  useEffect(() => {
+    const media = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const update = () => setReduced(media.matches);
+    update();
+    media.addEventListener('change', update);
+    return () => media.removeEventListener('change', update);
+  }, []);
+
+  return reduced;
+}
+
+function StaticBullet({ text }: { text: string }) {
+  return (
+    <div className="flex items-start gap-4">
+      <ModuleFavicon className="w-7 h-7 mt-0.5 shrink-0" />
+      <div className="text-[24px] font-semibold text-slate-900 leading-relaxed">
+        {text}
+      </div>
+    </div>
+  );
+}
+
+function TypingBullet({
+  text,
+  enabled,
+  onComplete,
+}: {
+  text: string;
+  enabled: boolean;
+  onComplete: () => void;
+}) {
+  const { displayed, isComplete } = useTypingText(
+    text,
+    enabled,
+    BULLET_TYPING_SPEED_MS,
+  );
+
+  useEffect(() => {
+    if (isComplete) onComplete();
+  }, [isComplete, onComplete]);
+
+  return (
+    <div className="flex items-start gap-4">
+      <ModuleFavicon className="w-7 h-7 mt-0.5 shrink-0" />
+      <div className="text-[24px] font-semibold text-slate-900 leading-relaxed">
+        {displayed}
+      </div>
+    </div>
+  );
+}
+
+function LearningOutcomesTapSection({
+  title,
+  bullets,
+  headerTitleAnchorRef,
+  contentAreaRef,
+  centerContent,
+  onCompleteChange,
+  onPhaseChange,
+}: {
+  title: string;
+  bullets: string[];
+  headerTitleAnchorRef: React.RefObject<HTMLHeadingElement>;
+  contentAreaRef: React.RefObject<HTMLDivElement>;
+  centerContent: boolean;
+  onCompleteChange: (complete: boolean) => void;
+  onPhaseChange: (phase: LearningOutcomesPhase) => void;
+}) {
+  const prefersReducedMotion = usePrefersReducedMotion();
+  const skipIntro = prefersReducedMotion;
+  const firstBulletDelayRef = useRef(0);
+
+  const [phase, setPhase] = useState<LearningOutcomesPhase>(() =>
+    skipIntro ? 'done' : 'center',
+  );
+  const [revealedCount, setRevealedCount] = useState(() =>
+    skipIntro ? bullets.length : 0,
+  );
+  const [cardVisible, setCardVisible] = useState(() => skipIntro);
+  const [awaitingFirstBullet, setAwaitingFirstBullet] = useState(false);
+  const [activeTypingIndex, setActiveTypingIndex] = useState<number | null>(
+    null,
+  );
+  const typingEnabled = phase === 'center' && !skipIntro;
+  const { displayed: typedTitle, isComplete: typingComplete } = useTypingText(
+    title,
+    typingEnabled,
+  );
+  const [displayTitle, setDisplayTitle] = useState(title);
+
+  const finishIntro = useCallback(() => {
+    window.clearTimeout(firstBulletDelayRef.current);
+    setDisplayTitle(title);
+    setCardVisible(true);
+    setAwaitingFirstBullet(false);
+    setActiveTypingIndex(null);
+    setRevealedCount(bullets.length);
+    onPhaseChange('done');
+    setPhase('done');
+  }, [bullets.length, onPhaseChange, title]);
+
+  const handleBulletTyped = useCallback(
+    (index: number) => {
+      const next = index + 1;
+      setRevealedCount(next);
+      setActiveTypingIndex(null);
+      if (next >= bullets.length) {
+        setPhase('done');
+      }
+    },
+    [bullets.length],
+  );
+
+  useEffect(() => {
+    return () => window.clearTimeout(firstBulletDelayRef.current);
+  }, []);
+
+  const advanceToHeader = useCallback(() => {
+    setDisplayTitle(title);
+    onPhaseChange('header');
+    setPhase('header');
+  }, [onPhaseChange, title]);
+
+  const handleMoveComplete = useCallback(() => {
+    onPhaseChange('reveal');
+    setPhase('reveal');
+  }, [onPhaseChange]);
+
+  useLayoutEffect(() => {
+    onPhaseChange(phase);
+    onCompleteChange(phase === 'done' || revealedCount >= bullets.length);
+  }, [phase, revealedCount, bullets.length, onPhaseChange, onCompleteChange]);
+
+  useEffect(() => {
+    if (phase === 'center') {
+      setDisplayTitle(typedTitle);
+    }
+  }, [phase, typedTitle]);
+
+  useEffect(() => {
+    if (phase !== 'center' || skipIntro || !typingComplete) return;
+    const timer = window.setTimeout(advanceToHeader, 700);
+    return () => window.clearTimeout(timer);
+  }, [phase, skipIntro, typingComplete, advanceToHeader]);
+
+  const handleCenterTap = () => {
+    if (phase === 'center') advanceToHeader();
+  };
+
+  const handleRevealTap = () => {
+    if (phase !== 'reveal' && phase !== 'done') return;
+    if (revealedCount >= bullets.length) return;
+    if (activeTypingIndex !== null || awaitingFirstBullet) return;
+
+    if (!cardVisible) {
+      setCardVisible(true);
+      setAwaitingFirstBullet(true);
+      firstBulletDelayRef.current = window.setTimeout(() => {
+        setAwaitingFirstBullet(false);
+        setActiveTypingIndex(0);
+      }, CARD_TO_BULLET_DELAY_MS);
+      return;
+    }
+
+    setActiveTypingIndex(revealedCount);
+  };
+
+  const showCard = cardVisible && (phase === 'reveal' || phase === 'done');
+  const showInitialTapPrompt = phase === 'reveal' && !cardVisible;
+  const isTyping = activeTypingIndex !== null;
+  const showInCardTapPrompt =
+    showCard &&
+    !isTyping &&
+    !awaitingFirstBullet &&
+    revealedCount < bullets.length &&
+    phase === 'reveal';
+
+  return (
+    <div className="relative flex flex-col flex-1 min-h-0 h-full">
+      {phase !== 'done' && !skipIntro ? (
+        <button
+          type="button"
+          onClick={finishIntro}
+          className="absolute top-0 right-0 z-20 text-sm font-semibold text-[#2E7CF6] hover:text-[#1F3864] transition-colors"
+        >
+          Skip intro
+        </button>
+      ) : null}
+
+      {phase === 'center' || phase === 'header' ? (
+        <>
+          <button
+            type="button"
+            onClick={handleCenterTap}
+            className={`absolute inset-0 z-10 ${
+              phase === 'center' ? 'cursor-pointer' : 'pointer-events-none'
+            }`}
+            aria-label="Continue to learning outcomes"
+          />
+          <IntroTitleOverlay
+            title={title}
+            phase={phase}
+            anchorRef={headerTitleAnchorRef}
+            contentAreaRef={contentAreaRef}
+            centerContent={centerContent}
+            displayedText={displayTitle}
+            onMoveComplete={handleMoveComplete}
+          />
+        </>
+      ) : null}
+
+      {showInitialTapPrompt ? (
+        <button
+          type="button"
+          onClick={handleRevealTap}
+          className="flex flex-1 flex-col items-center justify-center gap-3 text-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2E7CF6]/30 rounded-xl"
+        >
+          <span
+            className="material-symbols-outlined text-slate-400 text-[32px] animate-pulse"
+            aria-hidden
+          >
+            touch_app
+          </span>
+          <span className="text-base font-semibold text-[#2E7CF6]">
+            Tap to reveal
+          </span>
+        </button>
+      ) : null}
+
+      <div
+        className={`flex flex-col transition-opacity duration-500 ${
+          centerContent ? 'flex-1 min-h-0' : 'shrink-0'
+        } ${
+          showCard
+            ? 'opacity-100'
+            : 'opacity-0 pointer-events-none absolute inset-0'
+        }`}
+      >
+        <div
+          className={`w-full max-w-[1230px] mx-auto flex flex-col ${
+            centerContent ? 'flex-1 min-h-0 h-full' : ''
+          }`}
+        >
+          <div
+            className={`w-[1230px] max-w-full h-[390px] rounded-2xl border border-[#E5E9F0] ${MODULE_SURFACE} shadow-[0_4px_24px_-4px_rgba(10,31,68,0.08),0_2px_6px_-2px_rgba(10,31,68,0.04)] p-6 md:p-8 border-l-4 border-l-[#2E7CF6] shrink-0 flex flex-col overflow-hidden`}
+          >
+            <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar space-y-5">
+              {bullets.slice(0, revealedCount).map((bullet) => (
+                <StaticBullet key={bullet} text={bullet} />
+              ))}
+              {activeTypingIndex !== null &&
+              activeTypingIndex >= revealedCount ? (
+                <TypingBullet
+                  key={`typing-${bullets[activeTypingIndex]}`}
+                  text={bullets[activeTypingIndex]}
+                  enabled={!skipIntro}
+                  onComplete={() => handleBulletTyped(activeTypingIndex)}
+                />
+              ) : null}
+            </div>
+
+            {showInCardTapPrompt ? (
+              <button
+                type="button"
+                onClick={handleRevealTap}
+                className="shrink-0 mt-4 pt-4 border-t border-slate-200/80 w-full flex flex-col items-center gap-2 text-center hover:bg-[#EEF4FF]/40 rounded-b-xl transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2E7CF6]/30"
+              >
+                <span className="text-sm font-medium text-slate-600">
+                  Learning outcome {revealedCount + 1} of {bullets.length}
+                </span>
+                <span
+                  className="material-symbols-outlined text-slate-400 text-[22px] animate-pulse"
+                  aria-hidden
+                >
+                  touch_app
+                </span>
+                <span className="text-sm font-semibold text-[#2E7CF6]">
+                  Tap to reveal next
+                </span>
+              </button>
+            ) : null}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
@@ -2202,13 +2782,58 @@ function ModuleInlineHeader({
   activeSidebarSectionKey,
   isModuleContentsOpen,
   onToggleModuleContents,
+  visible = true,
+  keepTitleAnchor = false,
+  hideTitle = false,
+  titleAnchorRef,
 }: {
   screen: Screen;
   activeSidebarSectionKey: SidebarSectionKey | null;
   isModuleContentsOpen: boolean;
   onToggleModuleContents: () => void;
+  visible?: boolean;
+  keepTitleAnchor?: boolean;
+  hideTitle?: boolean;
+  titleAnchorRef?: React.RefObject<HTMLHeadingElement>;
 }) {
   const title = getModulePageTitle(screen, activeSidebarSectionKey);
+
+  const titleBlock = (
+    <div className="px-5 md:px-14">
+      <div className="max-w-[1200px] mx-auto w-full min-w-0">
+        <div
+          className={`max-h-[120px] overflow-visible ${
+            hideTitle && visible
+              ? 'opacity-0 invisible pointer-events-none'
+              : 'opacity-100 visible'
+          }`}
+          aria-hidden={hideTitle && visible}
+        >
+          <ModulePartTitle
+            title={title}
+            blockId={screen.id}
+            titleRef={titleAnchorRef}
+          />
+        </div>
+      </div>
+    </div>
+  );
+
+  if (!visible && keepTitleAnchor) {
+    return (
+      <div
+        className="absolute inset-x-0 top-0 -z-10 opacity-0 pointer-events-none"
+        aria-hidden
+      >
+        <div className="pt-4 pb-2">
+          <div className="mb-3 h-11" aria-hidden />
+          {titleBlock}
+        </div>
+      </div>
+    );
+  }
+
+  if (!visible) return null;
 
   return (
     <div
@@ -2242,11 +2867,7 @@ function ModuleInlineHeader({
           </button>
         ) : null}
       </div>
-      <div className="px-5 md:px-14">
-        <div className="max-w-[1200px] mx-auto w-full min-w-0">
-          <ModulePartTitle title={title} blockId={screen.id} />
-        </div>
-      </div>
+      {titleBlock}
     </div>
   );
 }
@@ -2803,6 +3424,7 @@ function TakeawayCardSection({ screen }: { screen: Screen }) {
               </p>
             </div>
             <div className="relative flex-1 min-h-[100px] rounded-xl overflow-hidden border border-slate-200 shadow-[0_20px_40px_-15px_rgba(47,99,120,0.06)]">
+              ˆ 𝛉 = (X X) ⊺ −1 X ⊺ y
               <img
                 src={structureTakeawayImage}
                 alt=""
@@ -3150,6 +3772,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
               'Next in the pathway: Module 2, Don’t Break What’s Working. How to tell when a quietly off task pupil is actually coping, and what it costs to take their coping away.',
           },
         ] as Screen[]
+        
       ).filter((s) => s.id !== 6 && s.id !== 12),
     []
   );
@@ -3162,6 +3785,8 @@ export default function MindSyncTeacherTrainingModule01Page() {
     () => new Set()
   );
   const scrollAreaRef = useRef<HTMLDivElement | null>(null);
+  const mainContentRef = useRef<HTMLDivElement>(null);
+  const headerTitleAnchorRef = useRef<HTMLHeadingElement>(null);
   const scrollRestoreTopRef = useRef<number | null>(null);
   const sidebarScrollRef = useRef<HTMLDivElement | null>(null);
   const suppressAutoOpenRef = useRef(false);
@@ -3176,6 +3801,17 @@ export default function MindSyncTeacherTrainingModule01Page() {
   const [activeTechniqueStep, setActiveTechniqueStep] = useState<number | null>(
     null
   );
+  const [block3IntroPhase, setBlock3IntroPhase] =
+    useState<LearningOutcomesPhase>('center');
+  const [block3IntroComplete, setBlock3IntroComplete] = useState(false);
+
+  const handleBlock3PhaseChange = useCallback((phase: LearningOutcomesPhase) => {
+    setBlock3IntroPhase(phase);
+  }, []);
+
+  const handleBlock3CompleteChange = useCallback((complete: boolean) => {
+    setBlock3IntroComplete(complete);
+  }, []);
 
   const [openSections, setOpenSections] = useState<
     Record<SidebarSectionKey, boolean>
@@ -3361,6 +3997,13 @@ export default function MindSyncTeacherTrainingModule01Page() {
   }, [index]);
 
   useEffect(() => {
+    if (screen.id !== 3) return;
+    localStorage.removeItem('mindsync-m1-block3-intro-done');
+    setBlock3IntroPhase('center');
+    setBlock3IntroComplete(false);
+  }, [index, screen.id]);
+
+  useEffect(() => {
     if (screen.type !== 'scenario_situation') return;
 
     const scenarioId = screen.scenarioId;
@@ -3460,11 +4103,14 @@ export default function MindSyncTeacherTrainingModule01Page() {
   const nextVisibleIndex = getNextVisibleIndex(index);
 
   const canGoNext = useMemo(() => {
+    if (screen.id === 3) {
+      return block3IntroComplete;
+    }
     if (screen.type === 'scenario_situation' && screen.scenarioId) {
       return Boolean(scenarioAnswers[screen.scenarioId]);
     }
     return true;
-  }, [screen.type, screen.scenarioId, scenarioAnswers]);
+  }, [screen.id, screen.type, screen.scenarioId, scenarioAnswers, block3IntroComplete]);
 
   const nextLabel = useMemo(() => {
     if (screen.id === 29) return 'Back to pathway';
@@ -3484,7 +4130,10 @@ export default function MindSyncTeacherTrainingModule01Page() {
         <LandingSection screen={screen} onNext={() => setIndex(1)} />
       ) : (
         <main className="flex w-full h-screen overflow-hidden">
-          <div className="flex-1 min-w-0 overflow-hidden flex flex-col p-0 relative bg-[#F7F9FC]">
+          <div
+            ref={mainContentRef}
+            className="flex-1 min-w-0 overflow-hidden flex flex-col p-0 relative bg-[#F7F9FC]"
+          >
             <ModulePageBackground />
             <div className="relative z-10 flex flex-col flex-1 min-h-0 overflow-hidden">
               <ModuleInlineHeader
@@ -3492,6 +4141,16 @@ export default function MindSyncTeacherTrainingModule01Page() {
                 activeSidebarSectionKey={activeSidebarSectionKey}
                 isModuleContentsOpen={isModuleContentsOpen}
                 onToggleModuleContents={toggleModuleContents}
+                visible={screen.id !== 3 || block3IntroPhase !== 'center'}
+                keepTitleAnchor={
+                  screen.id === 3 && block3IntroPhase === 'center'
+                }
+                hideTitle={
+                  screen.id === 3 &&
+                  block3IntroPhase !== 'reveal' &&
+                  block3IntroPhase !== 'done'
+                }
+                titleAnchorRef={headerTitleAnchorRef}
               />
               <div className="flex-1 min-h-0 flex flex-col overflow-hidden">
                 <div
@@ -3635,25 +4294,18 @@ export default function MindSyncTeacherTrainingModule01Page() {
                         </div>
                       ) : screen.id === 3 && screen.bullets ? (
                         <div className="p-5 md:p-6 md:px-14 flex flex-col flex-1 min-h-0 h-full">
-                          <div className="w-full max-w-[1230px] mx-auto flex flex-col flex-1 min-h-0 h-full gap-6 lg:gap-8">
-                            <div
-                              className={`w-[1230px] max-w-full h-[390px] rounded-2xl border border-[#E5E9F0] ${MODULE_SURFACE} shadow-[0_4px_24px_-4px_rgba(10,31,68,0.08),0_2px_6px_-2px_rgba(10,31,68,0.04)] p-6 md:p-8 border-l-4 border-l-[#2E7CF6] shrink-0 overflow-y-auto custom-scrollbar`}
-                            >
-                              <div className="space-y-5">
-                                {screen.bullets.map((b) => (
-                                  <div
-                                    key={b}
-                                    className="flex items-start gap-4"
-                                  >
-                                    <ModuleFavicon className="w-7 h-7 mt-0.5" />
-                                    <div className="text-[24px] font-semibold text-slate-900 leading-relaxed">
-                                      {b}
-                                    </div>
-                                  </div>
-                                ))}
-                              </div>
-                            </div>
-                          </div>
+                          <LearningOutcomesTapSection
+                            title={
+                              MODULE_BLOCK_HEADER_TITLES[3] ??
+                              'What You Will Learn On This Module'
+                            }
+                            bullets={screen.bullets}
+                            headerTitleAnchorRef={headerTitleAnchorRef}
+                            contentAreaRef={mainContentRef}
+                            centerContent={!isModuleContentsOpen}
+                            onCompleteChange={handleBlock3CompleteChange}
+                            onPhaseChange={handleBlock3PhaseChange}
+                          />
                         </div>
                       ) : (
                         <div className="p-5 md:p-6 md:px-14 flex flex-col min-h-0">
