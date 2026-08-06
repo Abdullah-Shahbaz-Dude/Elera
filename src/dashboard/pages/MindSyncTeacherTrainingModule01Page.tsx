@@ -1932,61 +1932,63 @@ function TechniqueVerticalStepsSection({
   const steps = screen.techniqueSteps ?? [];
 
   return (
-    <div className="max-w-[1200px] mx-auto flex flex-col flex-1 min-h-0 h-full">
-      {screen.lead ? (
-        <p className="text-[15px] text-slate-600 leading-relaxed mt-4 max-w-3xl">
-          {screen.lead}
-        </p>
-      ) : null}
+    <div className="max-w-[1200px] mx-auto flex flex-col flex-1 min-h-0 h-full overflow-hidden">
+      <div className="flex flex-col min-h-0 overflow-hidden">
+        <div className="flex-1 min-h-0 overflow-y-auto pt-2 custom-scrollbar pr-1 -mr-1">
+          {screen.lead ? (
+            <p
+              className="text-[18px] leading-relaxed mb-10 pt-2"
+              style={{ color: '#333333' }}
+            >
+              {screen.lead}
+            </p>
+          ) : null}
 
-      <div className="mt-6 flex flex-col gap-4">
-        {steps.map((step) => (
-          <button
-            key={step.number}
-            type="button"
-            onClick={() => onStepClick(step.number)}
-            className={`w-full flex items-center justify-between gap-4 rounded-2xl border border-[#E5E9F0] ${MODULE_SURFACE} shadow-[0_1px_2px_rgba(0,0,0,0.05)] px-5 md:px-6 py-5 text-left transition-colors hover:bg-white/40`}
-          >
-            <div className="flex items-center gap-4 min-w-0">
-              <div className="w-1.5 self-stretch rounded-full bg-[#2E7CF6]" />
-              <div className="w-10 h-10 rounded-full bg-[#E6F4F4] flex items-center justify-center shrink-0">
-                <span
-                  className="material-symbols-outlined text-[20px]"
-                  style={{ color: '#2E7CF6' }}
-                  aria-hidden
-                >
-                  chat
-                </span>
-              </div>
-              <div className="min-w-0">
-                <div className="text-[13px] font-semibold text-[#2E7CF6]">
-                  Step {step.number}.
+          <div className="space-y-4">
+            {steps.map((step) => (
+              <button
+                key={step.number}
+                type="button"
+                onClick={() => onStepClick(step.number)}
+                className={`w-full ${MODULE_SURFACE} h-[120px] p-5 md:p-6 rounded-xl border-l-4 border-l-[#2E7CF6] text-left hover:bg-[#EEF4FF]/75 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2E7CF6]/30`}
+              >
+                <div className="flex items-center justify-between gap-4 h-full">
+                  <div className="flex items-center gap-4 min-w-0">
+                    <ModuleFavicon className="w-8 h-8 shrink-0 object-contain" />
+                    <span
+                      className="text-[16px] md:text-[18px] font-semibold leading-snug"
+                      style={{ color: '#1F3864' }}
+                    >
+                      Step {step.number}. {step.title}
+                    </span>
+                  </div>
+                  <span
+                    className="material-symbols-outlined text-slate-400 text-[22px] shrink-0"
+                    aria-hidden
+                  >
+                    touch_app
+                  </span>
                 </div>
-                <div className="text-[15px] md:text-[16px] font-semibold text-[#121B2C] leading-snug mt-1">
-                  {step.title}
+              </button>
+            ))}
+          </div>
+
+          {screen.keyPoint ? (
+            <div className="mt-8 rounded-xl overflow-hidden shadow-[0_4px_24px_-4px_rgba(10,31,68,0.12)] border border-[#1F3864]/20 bg-[#1F3864]">
+              <div className="p-6 md:p-8">
+                <div className="flex items-start gap-4">
+                  <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-[#2E7CF6]/20 flex items-center justify-center shrink-0">
+                    <ModuleFavicon className="w-7 h-7 md:w-8 md:h-8" />
+                  </div>
+                  <p className="text-[15px] md:text-[16px] leading-relaxed text-white/90 italic whitespace-pre-line">
+                    {screen.keyPoint}
+                  </p>
                 </div>
               </div>
             </div>
-            <span
-              className="material-symbols-outlined text-slate-400 shrink-0"
-              aria-hidden
-            >
-              content_copy
-            </span>
-          </button>
-        ))}
-      </div>
-
-      {screen.keyPoint ? (
-        <div className="mt-8 rounded-2xl bg-[#1F3864] text-white px-6 md:px-8 py-6 shadow-[0_20px_40px_-15px_rgba(47,99,120,0.18)] flex items-center gap-4">
-          <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center shrink-0">
-            <span className="material-symbols-outlined">psychology</span>
-          </div>
-          <div className="text-[13px] md:text-[14px] leading-relaxed opacity-90 whitespace-pre-line">
-            {screen.keyPoint}
-          </div>
+          ) : null}
         </div>
-      ) : null}
+      </div>
     </div>
   );
 }
