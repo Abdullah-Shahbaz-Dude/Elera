@@ -333,7 +333,7 @@ function useTypingText(text: string, enabled: boolean, speedMs = 42) {
   const [displayed, setDisplayed] = useState(enabled ? '' : text);
   const [isComplete, setIsComplete] = useState(!enabled);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!enabled) {
       setDisplayed(text);
       setIsComplete(true);
@@ -835,87 +835,80 @@ function LearningOutcomesTapSection({
         </>
       ) : null}
 
-      <button
-        type="button"
-        onClick={handleRevealTap}
-        className={`flex flex-1 flex-col items-center justify-center gap-3 text-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2E7CF6]/30 rounded-xl transition-all duration-[350ms] ease-out ${
-          showInitialTapPrompt
-            ? 'opacity-100 translate-y-0'
-            : 'opacity-0 translate-y-2 pointer-events-none absolute inset-0'
-        }`}
-        aria-hidden={!showInitialTapPrompt}
-        tabIndex={showInitialTapPrompt ? 0 : -1}
-      >
-        <span
-          className="material-symbols-outlined text-slate-400 text-[32px] animate-pulse"
-          aria-hidden
+      {showInitialTapPrompt ? (
+        <button
+          type="button"
+          onClick={handleRevealTap}
+          className="flex flex-1 flex-col items-center justify-center gap-3 text-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2E7CF6]/30 rounded-xl transition-all duration-[350ms] ease-out opacity-100 translate-y-0"
+          aria-label="Tap to reveal"
         >
-          touch_app
-        </span>
-        <span className="text-base font-semibold text-[#2E7CF6]">
-          Tap to reveal
-        </span>
-      </button>
+          <span
+            className="material-symbols-outlined text-slate-400 text-[32px] animate-pulse"
+            aria-hidden
+          >
+            touch_app
+          </span>
+          <span className="text-base font-semibold text-[#2E7CF6]">
+            Tap to reveal
+          </span>
+        </button>
+      ) : null}
 
-      <div
-        className={`flex flex-col transition-opacity duration-500 ${
-          centerContent ? 'flex-1 min-h-0' : 'shrink-0'
-        } ${
-          showCard
-            ? 'opacity-100'
-            : 'opacity-0 pointer-events-none absolute inset-0'
-        }`}
-      >
+      {showCard ? (
         <div
-          className={`w-full max-w-[1230px] mx-auto flex flex-col ${
-            centerContent ? 'flex-1 min-h-0 h-full' : ''
-          }`}
+          className={`flex flex-col ${centerContent ? 'flex-1 min-h-0' : 'shrink-0'}`}
         >
           <div
-            className={`w-[1230px] max-w-full h-[390px] rounded-2xl border border-[#E5E9F0] ${MODULE_SURFACE} shadow-[0_4px_24px_-4px_rgba(10,31,68,0.08),0_2px_6px_-2px_rgba(10,31,68,0.04)] p-6 md:p-8 border-l-4 border-l-[#2E7CF6] shrink-0 flex flex-col overflow-hidden`}
+            className={`w-full max-w-[1230px] mx-auto flex flex-col ${
+              centerContent ? 'flex-1 min-h-0 h-full' : ''
+            }`}
           >
-            <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar space-y-5">
-              {bullets.slice(0, revealedCount).map((bullet) => (
-                <StaticBullet key={bullet} text={bullet} />
-              ))}
-              {activeTypingIndex !== null &&
-              activeTypingIndex >= revealedCount ? (
-                <TypingBullet
-                  key={`typing-${bullets[activeTypingIndex]}`}
-                  text={bullets[activeTypingIndex]}
-                  enabled={!skipIntro}
-                  onComplete={() => handleBulletTyped(activeTypingIndex)}
-                />
-              ) : null}
-            </div>
-
-            <button
-              type="button"
-              onClick={handleRevealTap}
-              className={`shrink-0 mt-4 pt-4 border-t border-slate-200/80 w-full flex flex-col items-center gap-2 text-center hover:bg-[#EEF4FF]/40 rounded-b-xl transition-all duration-[350ms] ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2E7CF6]/30 ${
-                showInCardTapPrompt
-                  ? 'opacity-100 translate-y-0'
-                  : 'opacity-0 translate-y-2 pointer-events-none h-0 overflow-hidden'
-              }`}
-              aria-hidden={!showInCardTapPrompt}
-              tabIndex={showInCardTapPrompt ? 0 : -1}
+            <div
+              className={`w-[1230px] max-w-full h-[390px] rounded-2xl border border-[#E5E9F0] ${MODULE_SURFACE} shadow-[0_4px_24px_-4px_rgba(10,31,68,0.08),0_2px_6px_-2px_rgba(10,31,68,0.04)] p-6 md:p-8 border-l-4 border-l-[#2E7CF6] shrink-0 flex flex-col overflow-hidden`}
             >
-              <span className="text-sm font-medium text-slate-600">
-                Learning outcome {revealedCount + 1} of {bullets.length}
-              </span>
-              <span
-                className="material-symbols-outlined text-slate-400 text-[22px] animate-pulse"
-                aria-hidden
+              <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar space-y-5">
+                {bullets.slice(0, revealedCount).map((bullet) => (
+                  <StaticBullet key={bullet} text={bullet} />
+                ))}
+                {activeTypingIndex !== null &&
+                activeTypingIndex >= revealedCount ? (
+                  <TypingBullet
+                    key={`typing-${bullets[activeTypingIndex]}`}
+                    text={bullets[activeTypingIndex]}
+                    enabled={!skipIntro}
+                    onComplete={() => handleBulletTyped(activeTypingIndex)}
+                  />
+                ) : null}
+              </div>
+
+              <button
+                type="button"
+                onClick={handleRevealTap}
+                className={`shrink-0 mt-4 pt-4 border-t border-slate-200/80 w-full flex flex-col items-center gap-2 text-center hover:bg-[#EEF4FF]/40 rounded-b-xl transition-all duration-[350ms] ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2E7CF6]/30 ${
+                  showInCardTapPrompt
+                    ? 'opacity-100 translate-y-0'
+                    : 'opacity-0 translate-y-2 pointer-events-none h-0 overflow-hidden'
+                }`}
+                aria-hidden={!showInCardTapPrompt}
+                tabIndex={showInCardTapPrompt ? 0 : -1}
               >
-                touch_app
-              </span>
-              <span className="text-sm font-semibold text-[#2E7CF6]">
-                Tap to reveal next
-              </span>
-            </button>
+                <span className="text-sm font-medium text-slate-600">
+                  Learning outcome {revealedCount + 1} of {bullets.length}
+                </span>
+                <span
+                  className="material-symbols-outlined text-slate-400 text-[22px] animate-pulse"
+                  aria-hidden
+                >
+                  touch_app
+                </span>
+                <span className="text-sm font-semibold text-[#2E7CF6]">
+                  Tap to reveal next
+                </span>
+              </button>
+            </div>
           </div>
         </div>
-      </div>
+      ) : null}
     </div>
   );
 }
@@ -4304,7 +4297,43 @@ export default function MindSyncTeacherTrainingModule01Page() {
     isComplete: watchIntroTypingComplete,
   } = useTypingText(watchIntroText, watchIntroTypingEnabled);
 
+  const [watchIntroVideoMounted, setWatchIntroVideoMounted] = useState(false);
+  const [watchIntroVideoShown, setWatchIntroVideoShown] = useState(false);
+
   useEffect(() => {
+    if (screen.id !== 5) return;
+    if (prefersReducedMotion) {
+      setWatchIntroVideoMounted(true);
+      setWatchIntroVideoShown(true);
+      return;
+    }
+
+    if (watchIntroPhase !== 'intro') {
+      setWatchIntroVideoMounted(false);
+      setWatchIntroVideoShown(false);
+      return;
+    }
+
+    if (!watchIntroTypingComplete) {
+      setWatchIntroVideoMounted(false);
+      setWatchIntroVideoShown(false);
+      return;
+    }
+
+    const timer = window.setTimeout(() => {
+      setWatchIntroVideoMounted(true);
+      requestAnimationFrame(() => setWatchIntroVideoShown(true));
+    }, 1000);
+
+    return () => window.clearTimeout(timer);
+  }, [
+    screen.id,
+    prefersReducedMotion,
+    watchIntroPhase,
+    watchIntroTypingComplete,
+  ]);
+
+  useLayoutEffect(() => {
     if (screen.id !== 5) return;
     setWatchIntroPhase(prefersReducedMotion ? 'reveal_intro' : 'center');
   }, [index, screen.id, prefersReducedMotion]);
@@ -4685,189 +4714,160 @@ export default function MindSyncTeacherTrainingModule01Page() {
                               </>
                             ) : null}
 
-                            <button
-                              type="button"
-                              onClick={() =>
-                                setWatchIntroPhase((prev) =>
-                                  prev === 'reveal_intro'
-                                    ? 'intro'
-                                    : prefersReducedMotion
-                                      ? 'done'
-                                      : 'fade_out_intro'
-                                )
-                              }
-                              className={`absolute inset-0 flex flex-col items-center justify-center gap-3 text-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2E7CF6]/30 rounded-xl transition-all duration-[350ms] ease-out ${
-                                watchIntroPhase === 'reveal_intro' ||
-                                (watchIntroPhase === 'intro' &&
-                                  watchIntroTypingComplete)
-                                  ? 'opacity-100 translate-y-0'
-                                  : 'opacity-0 translate-y-2 pointer-events-none'
-                              }`}
-                              aria-hidden={
-                                !(
-                                  watchIntroPhase === 'reveal_intro' ||
-                                  (watchIntroPhase === 'intro' &&
-                                    watchIntroTypingComplete)
-                                )
-                              }
-                              tabIndex={
-                                watchIntroPhase === 'reveal_intro' ||
-                                (watchIntroPhase === 'intro' &&
-                                  watchIntroTypingComplete)
-                                  ? 0
-                                  : -1
-                              }
-                            >
-                              <span
-                                className="material-symbols-outlined text-slate-400 text-[32px] animate-pulse"
-                                aria-hidden
+                            {watchIntroPhase === 'reveal_intro' ||
+                            (watchIntroPhase === 'intro' &&
+                              watchIntroTypingComplete) ? (
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  setWatchIntroPhase((prev) =>
+                                    prev === 'reveal_intro'
+                                      ? 'intro'
+                                      : prefersReducedMotion
+                                        ? 'done'
+                                        : 'fade_out_intro'
+                                  )
+                                }
+                                className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2E7CF6]/30 rounded-xl transition-all duration-[350ms] ease-out opacity-100 translate-y-0"
                               >
-                                touch_app
-                              </span>
-                              <span className="text-base font-semibold text-[#2E7CF6]">
-                                {watchIntroPhase === 'intro'
-                                  ? 'Reveal video'
-                                  : 'Reveal'}
-                              </span>
-                            </button>
-
-                            <div
-                              className={`w-full max-w-[1200px] mx-auto transition-all duration-[350ms] ease-out ${
-                                watchIntroPhase === 'intro'
-                                  ? 'opacity-100 translate-y-0'
-                                  : watchIntroPhase === 'fade_out_intro'
-                                    ? 'opacity-0 translate-y-2'
-                                    : 'opacity-0 translate-y-2 pointer-events-none absolute inset-0'
-                              }`}
-                              aria-hidden={
-                                !(
-                                  watchIntroPhase === 'intro' ||
-                                  watchIntroPhase === 'fade_out_intro'
-                                )
-                              }
-                            >
-                              <div className="flex flex-col gap-6">
-                                <div className="px-2 md:px-3">
-                                  <h3
-                                    className="shrink-0 text-left text-[24px] leading-tight font-regular whitespace-pre-line"
-                                    style={{ color: '#1F3864' }}
-                                  >
-                                    {prefersReducedMotion ? (
-                                      watchIntroText
-                                    ) : (
-                                      <>
-                                        <span>{typedWatchIntroText}</span>
-                                        <span className="text-transparent">
-                                          {watchIntroText.slice(
-                                            typedWatchIntroText.length
-                                          )}
-                                        </span>
-                                      </>
-                                    )}
-                                  </h3>
-                                </div>
-
-                                <div
-                                  className={`transition-all duration-[350ms] ease-out ${
-                                    prefersReducedMotion ||
-                                    watchIntroTypingComplete
-                                      ? 'opacity-100 translate-y-0'
-                                      : 'opacity-0 translate-y-2 pointer-events-none'
-                                  }`}
-                                  aria-hidden={
-                                    !(
-                                      prefersReducedMotion ||
-                                      watchIntroTypingComplete
-                                    )
-                                  }
+                                <span
+                                  className="material-symbols-outlined text-slate-400 text-[32px] animate-pulse"
+                                  aria-hidden
                                 >
-                                  <div className="w-full flex flex-col">
-                                    <div className="w-full min-h-0 flex flex-col">
-                                      <div
-                                        className={`w-full min-h-0 rounded-2xl border border-[#E5E9F0] ${MODULE_SURFACE} shadow-[0_4px_24px_-4px_rgba(10,31,68,0.08),0_2px_6px_-2px_rgba(10,31,68,0.04)] overflow-hidden p-2 md:p-3 flex flex-col`}
-                                      >
-                                        <div className="w-full min-h-[180px] max-h-[min(420px,46vh)] aspect-video">
-                                          <VideoLessonPlayer
-                                            title={
-                                              screen.videoTitle ??
-                                              'Module 1 film, around 3 minutes'
-                                            }
-                                            videoUrl={screen.videoUrl ?? null}
-                                            theme="light"
-                                            compact
-                                            hideFooter={!screen.videoUrl}
-                                            className="h-full w-full rounded-xl border-0"
-                                          />
-                                        </div>
-                                      </div>
-                                    </div>
+                                  touch_app
+                                </span>
+                                <span className="text-base font-semibold text-[#2E7CF6]">
+                                  {watchIntroPhase === 'intro'
+                                    ? 'Reveal video'
+                                    : 'Reveal'}
+                                </span>
+                              </button>
+                            ) : null}
+
+                            {watchIntroPhase === 'intro' ||
+                            watchIntroPhase === 'fade_out_intro' ? (
+                              <div
+                                className={`w-full max-w-[1200px] mx-auto transition-all duration-[350ms] ease-out ${
+                                  watchIntroPhase === 'intro'
+                                    ? 'opacity-100 translate-y-0'
+                                    : 'opacity-0 translate-y-2'
+                                }`}
+                              >
+                                <div className="flex flex-col gap-6">
+                                  <div className="px-2 md:px-3">
+                                    <h3
+                                      className="shrink-0 text-left text-[24px] leading-tight font-regular whitespace-pre-line"
+                                      style={{ color: '#1F3864' }}
+                                    >
+                                      {prefersReducedMotion ? (
+                                        watchIntroText
+                                      ) : (
+                                        <>
+                                          <span>{typedWatchIntroText}</span>
+                                          <span className="text-transparent">
+                                            {watchIntroText.slice(
+                                              typedWatchIntroText.length
+                                            )}
+                                          </span>
+                                        </>
+                                      )}
+                                    </h3>
                                   </div>
 
-                                  {screen.transcriptDropdown &&
-                                  !isWatchScriptOpen ? (
-                                    <div className="mt-5 shrink-0 w-full text-left">
-                                      <button
-                                        type="button"
-                                        onClick={() => {
-                                          setWatchIntroPhase('done');
-                                          setIsWatchScriptOpen(true);
-                                        }}
-                                        className="w-full flex items-center justify-between gap-4 bg-white hover:bg-slate-50 transition-colors text-left py-3 px-5 md:px-6 min-h-[56px] rounded-xl border border-slate-200 shadow-[0_4px_24px_-4px_rgba(10,31,68,0.08)]"
-                                      >
-                                        <div
-                                          className="text-[16px] md:text-[18px] font-medium leading-relaxed"
-                                          style={{ color: '#1F3864' }}
-                                        >
-                                          {screen.transcriptDropdown.header}
+                                  {watchIntroVideoMounted ? (
+                                    <div
+                                      className={`transition-all duration-[350ms] ease-out ${
+                                        watchIntroVideoShown
+                                          ? 'opacity-100 translate-y-0'
+                                          : 'opacity-0 translate-y-2 pointer-events-none'
+                                      }`}
+                                    >
+                                      <div className="w-full flex flex-col">
+                                        <div className="w-full min-h-0 flex flex-col">
+                                          <div
+                                            className={`w-full min-h-0 rounded-2xl border border-[#E5E9F0] ${MODULE_SURFACE} shadow-[0_4px_24px_-4px_rgba(10,31,68,0.08),0_2px_6px_-2px_rgba(10,31,68,0.04)] overflow-hidden p-2 md:p-3 flex flex-col`}
+                                          >
+                                            <div className="w-full min-h-[180px] max-h-[min(420px,46vh)] aspect-video">
+                                              <VideoLessonPlayer
+                                                title={
+                                                  screen.videoTitle ??
+                                                  'Module 1 film, around 3 minutes'
+                                                }
+                                                videoUrl={
+                                                  screen.videoUrl ?? null
+                                                }
+                                                theme="light"
+                                                compact
+                                                hideFooter={!screen.videoUrl}
+                                                className="h-full w-full rounded-xl border-0"
+                                              />
+                                            </div>
+                                          </div>
                                         </div>
-                                        <span
-                                          className="material-symbols-outlined shrink-0"
-                                          style={{ color: '#1F7A7A' }}
-                                        >
-                                          menu_book
-                                        </span>
-                                      </button>
+                                      </div>
+
+                                      {screen.transcriptDropdown &&
+                                      !isWatchScriptOpen ? (
+                                        <div className="mt-5 shrink-0 w-full text-left">
+                                          <button
+                                            type="button"
+                                            onClick={() => {
+                                              setWatchIntroPhase('done');
+                                              setIsWatchScriptOpen(true);
+                                            }}
+                                            className="w-full flex items-center justify-between gap-4 bg-white hover:bg-slate-50 transition-colors text-left py-3 px-5 md:px-6 min-h-[56px] rounded-xl border border-slate-200 shadow-[0_4px_24px_-4px_rgba(10,31,68,0.08)]"
+                                          >
+                                            <div
+                                              className="text-[16px] md:text-[18px] font-medium leading-relaxed"
+                                              style={{ color: '#1F3864' }}
+                                            >
+                                              {screen.transcriptDropdown.header}
+                                            </div>
+                                            <span
+                                              className="material-symbols-outlined shrink-0"
+                                              style={{ color: '#1F7A7A' }}
+                                            >
+                                              menu_book
+                                            </span>
+                                          </button>
+                                        </div>
+                                      ) : null}
                                     </div>
                                   ) : null}
                                 </div>
                               </div>
-                            </div>
+                            ) : null}
 
-                            <div
-                              className={`transition-all duration-[350ms] ease-out ${
-                                watchIntroPhase === 'done'
-                                  ? 'opacity-100 translate-y-0'
-                                  : watchIntroPhase === 'fade_out_intro'
-                                    ? 'opacity-100 translate-y-0'
-                                    : 'opacity-0 translate-y-2 pointer-events-none absolute inset-0'
-                              }`}
-                              aria-hidden={
-                                !(
-                                  watchIntroPhase === 'done' ||
-                                  watchIntroPhase === 'fade_out_intro'
-                                )
-                              }
-                            >
+                            {watchIntroPhase === 'done' ||
+                            watchIntroPhase === 'fade_out_intro' ? (
                               <div
                                 className={`transition-all duration-[350ms] ease-out ${
                                   watchIntroPhase === 'done'
-                                    ? 'opacity-100'
-                                    : 'opacity-0'
+                                    ? 'opacity-100 translate-y-0'
+                                    : 'opacity-100 translate-y-0'
                                 }`}
                               >
-                                <WatchSection
-                                  screen={screen}
-                                  isScriptOpen={isWatchScriptOpen}
-                                  onOpenScript={() =>
-                                    setIsWatchScriptOpen(true)
-                                  }
-                                  onCloseScript={() =>
-                                    setIsWatchScriptOpen(false)
-                                  }
-                                  hideIntroHeadline
-                                />
+                                <div
+                                  className={`transition-all duration-[350ms] ease-out ${
+                                    watchIntroPhase === 'done'
+                                      ? 'opacity-100'
+                                      : 'opacity-0'
+                                  }`}
+                                >
+                                  <WatchSection
+                                    screen={screen}
+                                    isScriptOpen={isWatchScriptOpen}
+                                    onOpenScript={() =>
+                                      setIsWatchScriptOpen(true)
+                                    }
+                                    onCloseScript={() =>
+                                      setIsWatchScriptOpen(false)
+                                    }
+                                    hideIntroHeadline
+                                  />
+                                </div>
                               </div>
-                            </div>
+                            ) : null}
                           </div>
                         ) : screen.id === 3 && screen.bullets ? (
                           <div className="p-5 md:p-6 md:px-14 flex flex-col flex-1 min-h-0 h-full">
