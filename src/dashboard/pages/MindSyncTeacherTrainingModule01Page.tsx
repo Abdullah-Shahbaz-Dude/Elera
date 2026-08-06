@@ -327,16 +327,26 @@ const MODULE_PART_TITLE_STYLE: React.CSSProperties = {
 type LearningOutcomesPhase = 'center' | 'header' | 'reveal' | 'done';
 
 const CARD_TO_BULLET_DELAY_MS = 1500;
+const SPEECH_LEAD_MS = 300;
 const BULLET_TYPING_SPEED_MS = 30;
 
-function useTypingText(text: string, enabled: boolean, speedMs = 42) {
-  const [displayed, setDisplayed] = useState(enabled ? '' : text);
-  const [isComplete, setIsComplete] = useState(!enabled);
+function useTypingText(
+  text: string,
+  enabled: boolean,
+  speedMs = 42,
+  whenDisabled: 'full' | 'empty' = 'full',
+) {
+  const [displayed, setDisplayed] = useState(() =>
+    enabled ? '' : whenDisabled === 'empty' ? '' : text
+  );
+  const [isComplete, setIsComplete] = useState(
+    () => (enabled ? false : whenDisabled !== 'empty')
+  );
 
   useLayoutEffect(() => {
     if (!enabled) {
-      setDisplayed(text);
-      setIsComplete(true);
+      setDisplayed(whenDisabled === 'empty' ? '' : text);
+      setIsComplete(whenDisabled === 'empty' ? false : true);
       return;
     }
 
@@ -353,7 +363,7 @@ function useTypingText(text: string, enabled: boolean, speedMs = 42) {
     }, speedMs);
 
     return () => window.clearInterval(timer);
-  }, [text, enabled, speedMs]);
+  }, [text, enabled, speedMs, whenDisabled]);
 
   return { displayed, isComplete };
 }
@@ -629,6 +639,158 @@ function usePrefersReducedMotion() {
   return reduced;
 }
 
+function speakTextOnce(text: string) {
+  if (typeof window === 'undefined') return;
+  if (!('speechSynthesis' in window)) return;
+  const trimmed = text.trim();
+  if (!trimmed) return;
+
+  window.speechSynthesis.cancel();
+  const utterance = new SpeechSynthesisUtterance(trimmed);
+  utterance.rate = 1;
+  utterance.pitch = 1;
+  window.speechSynthesis.speak(utterance);
+}
+
+function useNarration(text: string, enabled: boolean) {
+  const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
+  const lastSpokenTextRef = useRef<string>('');
+  const userPausedRef = useRef(false);
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
+
+  const stop = useCallback(() => {
+    if (typeof window === 'undefined') return;
+    if (!('speechSynthesis' in window)) return;
+    window.speechSynthesis.cancel();
+    utteranceRef.current = null;
+    setIsSpeaking(false);
+    setIsPaused(false);
+    userPausedRef.current = false;
+  }, []);
+
+  const speak = useCallback(() => {
+    if (typeof window === 'undefined') return;
+    if (!('speechSynthesis' in window)) return;
+    if (!enabled) return;
+    if (!text.trim()) return;
+    if (userPausedRef.current) return;
+    if (lastSpokenTextRef.current === text.trim()) return;
+
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.rate = 1;
+    utterance.pitch = 1;
+
+    utterance.onstart = () => {
+      setIsSpeaking(true);
+      setIsPaused(false);
+    };
+    utterance.onend = () => {
+      setIsSpeaking(false);
+      setIsPaused(false);
+    };
+    utterance.onerror = () => {
+      setIsSpeaking(false);
+      setIsPaused(false);
+    };
+
+    lastSpokenTextRef.current = text.trim();
+    utteranceRef.current = utterance;
+    window.speechSynthesis.speak(utterance);
+  }, [enabled, text]);
+
+  const togglePlayPause = useCallback(() => {
+    if (typeof window === 'undefined') return;
+    if (!('speechSynthesis' in window)) return;
+    if (!enabled) return;
+
+    if (!isSpeaking) {
+      userPausedRef.current = false;
+      lastSpokenTextRef.current = '';
+      speak();
+      return;
+    }
+
+    if (window.speechSynthesis.paused) {
+      window.speechSynthesis.resume();
+      setIsPaused(false);
+      userPausedRef.current = false;
+      return;
+    }
+
+    window.speechSynthesis.pause();
+    setIsPaused(true);
+    userPausedRef.current = true;
+  }, [enabled, isSpeaking, speak]);
+
+  useEffect(() => {
+    if (!enabled) {
+      stop();
+      return;
+    }
+
+    userPausedRef.current = false;
+    lastSpokenTextRef.current = '';
+    speak();
+
+    return () => stop();
+  }, [enabled, speak, stop]);
+
+  return { isSpeaking, isPaused, togglePlayPause, stop };
+}
+
+function FloatingNarratorAvatar({
+  enabled,
+  text,
+}: {
+  enabled: boolean;
+  text: string;
+}) {
+  const { isSpeaking, isPaused, togglePlayPause, stop } = useNarration(
+    text,
+    enabled
+  );
+
+  if (!enabled) return null;
+
+  return (
+    <div className="fixed bottom-[92px] right-5 z-[120] flex flex-col items-end gap-2">
+      <button
+        type="button"
+        onClick={togglePlayPause}
+        className={`w-14 h-14 rounded-full border border-slate-200 bg-white shadow-[0_12px_30px_rgba(15,23,42,0.12)] overflow-hidden flex items-center justify-center transition-transform active:scale-[0.98] ${
+          isSpeaking && !isPaused ? 'ring-2 ring-[#2E7CF6]/35' : ''
+        }`}
+        aria-label={
+          isSpeaking
+            ? isPaused
+              ? 'Resume narration'
+              : 'Pause narration'
+            : 'Play narration'
+        }
+      >
+        <img
+          src="/favicon.png"
+          alt=""
+          className={`w-10 h-10 ${isSpeaking && !isPaused ? 'animate-pulse' : ''}`}
+        />
+      </button>
+
+      {isSpeaking ? (
+        <button
+          type="button"
+          onClick={stop}
+          className="h-8 px-3 rounded-full text-xs font-semibold border border-slate-200 bg-white text-slate-700 shadow-sm hover:bg-slate-50 transition-colors"
+          aria-label="Stop narration"
+        >
+          Stop
+        </button>
+      ) : null}
+    </div>
+  );
+}
+
 function StaticBullet({ text }: { text: string }) {
   return (
     <div className="flex items-start gap-4">
@@ -688,7 +850,41 @@ function LearningOutcomesTapSection({
 }) {
   const prefersReducedMotion = usePrefersReducedMotion();
   const skipIntro = prefersReducedMotion;
-  const firstBulletDelayRef = useRef(0);
+  const bulletSpeechTimerRef = useRef(0);
+  const bulletTypingTimerRef = useRef(0);
+  const lastSpokenBulletIndexRef = useRef<number | null>(null);
+
+  const clearBulletTimers = useCallback(() => {
+    window.clearTimeout(bulletSpeechTimerRef.current);
+    window.clearTimeout(bulletTypingTimerRef.current);
+  }, []);
+
+  const speakBullet = useCallback(
+    (index: number) => {
+      if (lastSpokenBulletIndexRef.current === index) return;
+      lastSpokenBulletIndexRef.current = index;
+      speakTextOnce(bullets[index] ?? '');
+    },
+    [bullets]
+  );
+
+  const scheduleBulletReveal = useCallback(
+    (index: number, typingDelayMs: number) => {
+      clearBulletTimers();
+      const speechDelay = Math.max(0, typingDelayMs - SPEECH_LEAD_MS);
+      if (speechDelay > 0) {
+        bulletSpeechTimerRef.current = window.setTimeout(() => {
+          speakBullet(index);
+        }, speechDelay);
+      } else {
+        speakBullet(index);
+      }
+      bulletTypingTimerRef.current = window.setTimeout(() => {
+        setActiveTypingIndex(index);
+      }, typingDelayMs);
+    },
+    [clearBulletTimers, speakBullet]
+  );
 
   const [phase, setPhase] = useState<LearningOutcomesPhase>(() =>
     skipIntro ? 'done' : 'center'
@@ -709,7 +905,8 @@ function LearningOutcomesTapSection({
   const [displayTitle, setDisplayTitle] = useState(title);
 
   const finishIntro = useCallback(() => {
-    window.clearTimeout(firstBulletDelayRef.current);
+    clearBulletTimers();
+    lastSpokenBulletIndexRef.current = null;
     setDisplayTitle(title);
     setCardVisible(true);
     setAwaitingFirstBullet(false);
@@ -717,7 +914,7 @@ function LearningOutcomesTapSection({
     setRevealedCount(bullets.length);
     onPhaseChange('done');
     setPhase('done');
-  }, [bullets.length, onPhaseChange, title]);
+  }, [bullets.length, clearBulletTimers, onPhaseChange, title]);
 
   const handleBulletTyped = useCallback(
     (index: number) => {
@@ -728,12 +925,23 @@ function LearningOutcomesTapSection({
         setPhase('done');
       }
     },
-    [bullets.length]
+    [bullets]
   );
 
   useEffect(() => {
-    return () => window.clearTimeout(firstBulletDelayRef.current);
-  }, []);
+    return () => clearBulletTimers();
+  }, [clearBulletTimers]);
+
+  useEffect(() => {
+    if (!cardVisible || typeof window === 'undefined') return;
+    if (!('speechSynthesis' in window)) return;
+    window.speechSynthesis.getVoices();
+  }, [cardVisible]);
+
+  useLayoutEffect(() => {
+    if (activeTypingIndex === null) return;
+    speakBullet(activeTypingIndex);
+  }, [activeTypingIndex, speakBullet]);
 
   const advanceToHeader = useCallback(() => {
     setDisplayTitle(title);
@@ -781,14 +989,20 @@ function LearningOutcomesTapSection({
     if (!cardVisible) {
       setCardVisible(true);
       setAwaitingFirstBullet(true);
-      firstBulletDelayRef.current = window.setTimeout(() => {
+      lastSpokenBulletIndexRef.current = null;
+      clearBulletTimers();
+      bulletSpeechTimerRef.current = window.setTimeout(() => {
+        speakBullet(0);
+      }, CARD_TO_BULLET_DELAY_MS - SPEECH_LEAD_MS);
+      bulletTypingTimerRef.current = window.setTimeout(() => {
         setAwaitingFirstBullet(false);
         setActiveTypingIndex(0);
       }, CARD_TO_BULLET_DELAY_MS);
       return;
     }
 
-    setActiveTypingIndex(revealedCount);
+    lastSpokenBulletIndexRef.current = null;
+    scheduleBulletReveal(revealedCount, SPEECH_LEAD_MS);
   };
 
   const showCard = cardVisible && (phase === 'reveal' || phase === 'done');
@@ -4110,7 +4324,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
 
   const [isSidebarTranscriptOpen, setIsSidebarTranscriptOpen] = useState(false);
   const [isWatchScriptOpen, setIsWatchScriptOpen] = useState(false);
-  const [isModuleContentsOpen, setIsModuleContentsOpen] = useState(true);
+  const [isModuleContentsOpen, setIsModuleContentsOpen] = useState(false);
   const toggleModuleContents = () => setIsModuleContentsOpen((v) => !v);
 
   const prefersReducedMotion = usePrefersReducedMotion();
@@ -4282,6 +4496,38 @@ export default function MindSyncTeacherTrainingModule01Page() {
 
   const screen = screens[Math.min(screens.length - 1, Math.max(0, index))];
 
+  const narratorEnabled =
+    index === 0 ||
+    screen.type === 'bullets' ||
+    screen.type === 'research' ||
+    (screen.id === 5 &&
+      (watchIntroPhase === 'center' || watchIntroPhase === 'header'));
+  const narratorText = useMemo(() => {
+    if (!narratorEnabled) return '';
+    if (index === 0) {
+      const parts = [screen.t1, screen.t2, screen.lead].filter(Boolean);
+      return parts.join('. ');
+    }
+
+    const title =
+      MODULE_BLOCK_HEADER_TITLES[screen.id] ??
+      screen.headerTitle ??
+      screen.t2 ??
+      screen.t1 ??
+      '';
+
+    if (
+      screen.type === 'bullets' ||
+      screen.type === 'research' ||
+      screen.id === 5
+    ) {
+      return title;
+    }
+
+    const parts = [title, screen.lead, screen.body].filter(Boolean);
+    return parts.join('. ');
+  }, [index, narratorEnabled, screen]);
+
   const watchTitle = getModulePageTitle(screen, activeSidebarSectionKey);
   const watchTypingEnabled =
     screen.id === 5 && watchIntroPhase === 'center' && !prefersReducedMotion;
@@ -4290,31 +4536,37 @@ export default function MindSyncTeacherTrainingModule01Page() {
 
   const watchIntroText =
     screen.id === 5 ? (screen.watchIntro?.headline ?? '') : '';
+  const watchIntroSpokenRef = useRef(false);
+  const watchIntroSpeechTimerRef = useRef(0);
+  const [watchIntroTypingActive, setWatchIntroTypingActive] = useState(false);
   const watchIntroTypingEnabled =
-    screen.id === 5 && watchIntroPhase === 'intro' && !prefersReducedMotion;
+    screen.id === 5 &&
+    watchIntroPhase === 'intro' &&
+    watchIntroTypingActive &&
+    !prefersReducedMotion;
   const {
     displayed: typedWatchIntroText,
     isComplete: watchIntroTypingComplete,
-  } = useTypingText(watchIntroText, watchIntroTypingEnabled);
+  } = useTypingText(watchIntroText, watchIntroTypingEnabled, 42, 'empty');
 
+  const [watchIntroVideoRevealed, setWatchIntroVideoRevealed] = useState(false);
   const [watchIntroVideoMounted, setWatchIntroVideoMounted] = useState(false);
   const [watchIntroVideoShown, setWatchIntroVideoShown] = useState(false);
 
   useEffect(() => {
     if (screen.id !== 5) return;
     if (prefersReducedMotion) {
+      if (!watchIntroVideoRevealed) {
+        setWatchIntroVideoMounted(false);
+        setWatchIntroVideoShown(false);
+        return;
+      }
       setWatchIntroVideoMounted(true);
       setWatchIntroVideoShown(true);
       return;
     }
 
-    if (watchIntroPhase !== 'intro') {
-      setWatchIntroVideoMounted(false);
-      setWatchIntroVideoShown(false);
-      return;
-    }
-
-    if (!watchIntroTypingComplete) {
+    if (watchIntroPhase !== 'intro' || !watchIntroVideoRevealed) {
       setWatchIntroVideoMounted(false);
       setWatchIntroVideoShown(false);
       return;
@@ -4330,13 +4582,47 @@ export default function MindSyncTeacherTrainingModule01Page() {
     screen.id,
     prefersReducedMotion,
     watchIntroPhase,
-    watchIntroTypingComplete,
+    watchIntroVideoRevealed,
   ]);
 
   useLayoutEffect(() => {
     if (screen.id !== 5) return;
     setWatchIntroPhase(prefersReducedMotion ? 'reveal_intro' : 'center');
+    setWatchIntroVideoRevealed(false);
+    setWatchIntroVideoMounted(false);
+    setWatchIntroVideoShown(false);
+    watchIntroSpokenRef.current = false;
+    setWatchIntroTypingActive(false);
+    window.clearTimeout(watchIntroSpeechTimerRef.current);
   }, [index, screen.id, prefersReducedMotion]);
+
+  useEffect(() => {
+    if (screen.id !== 5) return;
+    if (watchIntroPhase !== 'intro') {
+      watchIntroSpokenRef.current = false;
+      setWatchIntroTypingActive(false);
+      window.clearTimeout(watchIntroSpeechTimerRef.current);
+      return;
+    }
+    if (watchIntroSpokenRef.current || !watchIntroText.trim()) return;
+
+    watchIntroSpokenRef.current = true;
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      window.speechSynthesis.getVoices();
+    }
+    speakTextOnce(watchIntroText);
+
+    if (prefersReducedMotion) {
+      setWatchIntroTypingActive(true);
+      return;
+    }
+
+    watchIntroSpeechTimerRef.current = window.setTimeout(() => {
+      setWatchIntroTypingActive(true);
+    }, SPEECH_LEAD_MS);
+
+    return () => window.clearTimeout(watchIntroSpeechTimerRef.current);
+  }, [screen.id, watchIntroPhase, watchIntroText, prefersReducedMotion]);
 
   useEffect(() => {
     if (screen.id !== 5) return;
@@ -4492,6 +4778,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
       className="flex flex-col min-h-screen bg-[#F7F9FC] text-slate-900"
       style={{ fontFamily: 'Arial' }}
     >
+      <FloatingNarratorAvatar enabled={narratorEnabled} text={narratorText} />
       {screen.type === 'landing' ? (
         <LandingSection screen={screen} onNext={() => transitionToIndex(1)} />
       ) : (
@@ -4716,18 +5003,20 @@ export default function MindSyncTeacherTrainingModule01Page() {
 
                             {watchIntroPhase === 'reveal_intro' ||
                             (watchIntroPhase === 'intro' &&
-                              watchIntroTypingComplete) ? (
+                              watchIntroTypingComplete &&
+                              !watchIntroVideoRevealed) ? (
                               <button
                                 type="button"
-                                onClick={() =>
-                                  setWatchIntroPhase((prev) =>
-                                    prev === 'reveal_intro'
-                                      ? 'intro'
-                                      : prefersReducedMotion
-                                        ? 'done'
-                                        : 'fade_out_intro'
-                                  )
-                                }
+                                onClick={() => {
+                                  if (watchIntroPhase === 'reveal_intro') {
+                                    setWatchIntroPhase('intro');
+                                    return;
+                                  }
+                                  setWatchIntroVideoRevealed(true);
+                                  if (prefersReducedMotion) {
+                                    setWatchIntroPhase('done');
+                                  }
+                                }}
                                 className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2E7CF6]/30 rounded-xl transition-all duration-[350ms] ease-out opacity-100 translate-y-0"
                               >
                                 <span
@@ -4744,15 +5033,8 @@ export default function MindSyncTeacherTrainingModule01Page() {
                               </button>
                             ) : null}
 
-                            {watchIntroPhase === 'intro' ||
-                            watchIntroPhase === 'fade_out_intro' ? (
-                              <div
-                                className={`w-full max-w-[1200px] mx-auto transition-all duration-[350ms] ease-out ${
-                                  watchIntroPhase === 'intro'
-                                    ? 'opacity-100 translate-y-0'
-                                    : 'opacity-0 translate-y-2'
-                                }`}
-                              >
+                            {watchIntroPhase === 'intro' ? (
+                              <div className="w-full max-w-[1200px] mx-auto transition-all duration-[350ms] ease-out opacity-100 translate-y-0">
                                 <div className="flex flex-col gap-6">
                                   <div className="px-2 md:px-3">
                                     <h3
@@ -4838,22 +5120,9 @@ export default function MindSyncTeacherTrainingModule01Page() {
                               </div>
                             ) : null}
 
-                            {watchIntroPhase === 'done' ||
-                            watchIntroPhase === 'fade_out_intro' ? (
-                              <div
-                                className={`transition-all duration-[350ms] ease-out ${
-                                  watchIntroPhase === 'done'
-                                    ? 'opacity-100 translate-y-0'
-                                    : 'opacity-100 translate-y-0'
-                                }`}
-                              >
-                                <div
-                                  className={`transition-all duration-[350ms] ease-out ${
-                                    watchIntroPhase === 'done'
-                                      ? 'opacity-100'
-                                      : 'opacity-0'
-                                  }`}
-                                >
+                            {watchIntroPhase === 'done' ? (
+                              <div className="transition-all duration-[350ms] ease-out opacity-100 translate-y-0">
+                                <div className="transition-all duration-[350ms] ease-out opacity-100">
                                   <WatchSection
                                     screen={screen}
                                     isScriptOpen={isWatchScriptOpen}
