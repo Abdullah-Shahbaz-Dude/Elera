@@ -3593,8 +3593,7 @@ function ScenarioSituationSection({
               }`}
             >
               <p
-                className="flex-1 min-h-0 overflow-y-auto custom-scrollbar text-[20px] md:text-[24px] leading-relaxed whitespace-pre-line"
-                style={{ color: '#1F3864' }}
+                className="flex-1 min-h-0 overflow-y-auto custom-scrollbar text-[20px] md:text-[24px] leading-relaxed whitespace-pre-line text-slate-900"
               >
                 {situationContent ?? scenario.situation}
               </p>
@@ -4688,8 +4687,7 @@ function TakeawayCardSection({
         {showBody && introCopy ? (
           <header className="pt-2 shrink-0">
             <h2
-              className="text-[32px] leading-tight font-bold max-w-[1200px]"
-              style={{ color: '#1F3864' }}
+              className="text-[32px] leading-tight font-bold max-w-[1200px] text-slate-900"
             >
               {isBodyTyping ? (
                 <>
