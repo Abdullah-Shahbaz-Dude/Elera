@@ -2428,6 +2428,23 @@ function TechniqueStepDetailModal({
     if (!open) setExpandOpen(false);
   }, [open]);
 
+  const bodySpokenRef = useRef(false);
+
+  useEffect(() => {
+    if (!open) {
+      bodySpokenRef.current = false;
+      return;
+    }
+    const speechText = step.body.trim();
+    if (bodySpokenRef.current || !speechText) return;
+
+    bodySpokenRef.current = true;
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      window.speechSynthesis.getVoices();
+    }
+    void speakTextOnceAsync(speechText);
+  }, [open, step.body]);
+
   if (!open) return null;
 
   const expandId = step.expand
@@ -3566,7 +3583,9 @@ function ScenarioSituationSection({
           {!hideSituation ? (
             <div
               className={`relative w-full ${MODULE_SURFACE} p-5 md:p-6 lg:p-8 rounded-xl border-l-4 border-l-[#2E7CF6] flex flex-col min-h-[100px] transition-opacity duration-[350ms] ease-out ${
-                hideOptions ? 'shrink-0' : 'flex-1 min-h-0'
+                hideOptions
+                  ? 'shrink-0 max-h-[min(220px,32vh)]'
+                  : 'flex-1 min-h-0'
               } ${
                 situationVisible
                   ? 'opacity-100 translate-y-0'
@@ -3574,20 +3593,17 @@ function ScenarioSituationSection({
               }`}
             >
               <p
-                className={`text-[18px] md:text-[20px] leading-relaxed whitespace-pre-line ${
-                  hideOptions
-                    ? ''
-                    : 'flex-1 min-h-0 overflow-y-auto custom-scrollbar'
-                }`}
+                className="flex-1 min-h-0 overflow-y-auto custom-scrollbar text-[20px] md:text-[24px] leading-relaxed whitespace-pre-line"
                 style={{ color: '#1F3864' }}
               >
                 {situationContent ?? scenario.situation}
               </p>
-              {optionsRevealOverlay ? (
-                <div className="shrink-0 flex justify-center pt-3">
-                  {optionsRevealOverlay}
-                </div>
-              ) : null}
+            </div>
+          ) : null}
+
+          {optionsRevealOverlay ? (
+            <div className="shrink-0 flex justify-center py-1">
+              {optionsRevealOverlay}
             </div>
           ) : null}
 
@@ -3643,6 +3659,22 @@ function ScenarioCompareModal({
   useEffect(() => {
     if (!open) setShowAll(false);
   }, [open]);
+
+  const feedbackSpokenRef = useRef(false);
+
+  useEffect(() => {
+    if (!open) {
+      feedbackSpokenRef.current = false;
+      return;
+    }
+    if (feedbackSpokenRef.current || !feedbackText.trim()) return;
+
+    feedbackSpokenRef.current = true;
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      window.speechSynthesis.getVoices();
+    }
+    void speakTextOnceAsync(feedbackText);
+  }, [open, feedbackText]);
 
   if (!open) return null;
 
