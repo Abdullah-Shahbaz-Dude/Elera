@@ -901,7 +901,6 @@ function ModuleAudioGuide({
 }) {
   const { isSpeaking, readAloudEnabled, setReadAloudEnabled } =
     useModuleNarration();
-  const [expanded, setExpanded] = useState(false);
 
   useAutoNarration(autoNarrationText, autoNarrationEnabled && readAloudEnabled);
 
@@ -911,15 +910,11 @@ function ModuleAudioGuide({
     window.speechSynthesis.getVoices();
   }, []);
 
-  const handleToggleReadAloud = () => {
-    setReadAloudEnabled(!readAloudEnabled);
-  };
-
   const pillLabel = isSpeaking
     ? 'Reading…'
     : readAloudEnabled
-      ? 'Audio guide'
-      : 'Audio off';
+      ? 'Turn audio guide off'
+      : 'Turn audio guide on';
 
   return (
     <div
@@ -931,68 +926,12 @@ function ModuleAudioGuide({
           isSpeaking ? 'border-[#2E7CF6]/35 ring-2 ring-[#2E7CF6]/20' : 'border-slate-200'
         }`}
       >
-        {expanded ? (
-          <div className="p-4 border-b border-slate-100">
-            <div className="flex items-start justify-between gap-3">
-              <div className="min-w-0">
-                <p className="text-sm font-semibold text-[#1F3864]">
-                  Audio guide
-                </p>
-                <p className="text-xs text-slate-500 mt-1 leading-relaxed">
-                  {isSpeaking
-                    ? 'Reading aloud. Turn off read aloud to stop.'
-                    : readAloudEnabled
-                      ? 'Content is read aloud as you progress through the module.'
-                      : 'Read aloud is off. Turn it on to hear content as you move through the module.'}
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={() => setExpanded(false)}
-                className="shrink-0 text-slate-400 hover:text-slate-600"
-                aria-label="Close audio guide"
-              >
-                <span className="material-symbols-outlined text-[20px]">
-                  close
-                </span>
-              </button>
-            </div>
-
-            <label className="mt-3 flex items-center justify-between gap-3 rounded-lg border border-slate-200 px-3 py-2.5">
-              <span className="text-sm font-medium text-slate-700">
-                Read aloud
-              </span>
-              <button
-                type="button"
-                role="switch"
-                aria-checked={readAloudEnabled}
-                onClick={handleToggleReadAloud}
-                className={`relative w-11 h-6 rounded-full transition-colors ${
-                  readAloudEnabled ? 'bg-[#2E7CF6]' : 'bg-slate-300'
-                }`}
-              >
-                <span
-                  className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform ${
-                    readAloudEnabled ? 'translate-x-5' : 'translate-x-0'
-                  }`}
-                />
-              </button>
-            </label>
-          </div>
-        ) : null}
-
         <button
           type="button"
-          onClick={() => setExpanded((v) => !v)}
+          onClick={() => setReadAloudEnabled(!readAloudEnabled)}
           className="flex items-center gap-2 w-full h-12 pl-3 pr-4 transition-all active:scale-[0.99]"
-          aria-label={
-            expanded
-              ? 'Collapse audio guide'
-              : readAloudEnabled
-                ? 'Open audio guide controls'
-                : 'Read aloud is off — open audio guide'
-          }
-          aria-expanded={expanded}
+          aria-label={pillLabel}
+          aria-pressed={readAloudEnabled}
         >
           <img
             src="/favicon.png"
@@ -1003,7 +942,7 @@ function ModuleAudioGuide({
             {pillLabel}
           </span>
           <span className="material-symbols-outlined text-slate-400 text-[18px] shrink-0">
-            {expanded ? 'expand_more' : 'volume_up'}
+            {readAloudEnabled ? 'volume_up' : 'volume_off'}
           </span>
         </button>
       </div>
@@ -1623,10 +1562,10 @@ function TapContinuePrompt({
     <button
       type="button"
       onClick={onClick}
-      className={`flex flex-col items-center justify-center gap-3 text-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2E7CF6]/30 rounded-xl transition-all duration-[350ms] ease-out ${
+      className={`flex flex-col items-center justify-center gap-3 text-center shrink-0 w-fit mx-auto focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2E7CF6]/30 rounded-xl transition-all duration-[350ms] ease-out ${
         visible
           ? 'opacity-100 translate-y-0'
-          : 'opacity-0 translate-y-2 pointer-events-none absolute inset-0'
+          : 'opacity-0 translate-y-2 pointer-events-none'
       } ${className}`}
       aria-label={label}
       aria-hidden={!visible}
@@ -2139,16 +2078,76 @@ const TECHNIQUE_STATE_STYLES: Record<
   },
 };
 
+function getTechniqueStepBulletItems(body: string): string[] {
+  return body
+    .split('\n')
+    .map((line) => line.trim())
+    .filter((line) => line.startsWith('•'))
+    .map((line) => line.replace(/^•\s*/, ''));
+}
+
+function getTechniqueStepModalTypingText(body: string): string {
+  const bulletItems = getTechniqueStepBulletItems(body);
+  if (bulletItems.length > 0) {
+    return bulletItems
+      .map((item) => {
+        const stateMatch = item.match(/^(Green|Amber|Red):\s*(.+)$/);
+        return stateMatch ? stateMatch[2] : item;
+      })
+      .join('\n\n');
+  }
+  return body;
+}
+
+function sliceModalBulletTyping(
+  bulletItems: string[],
+  displayedLength: number
+): Array<{
+  label: string | null;
+  text: string;
+  visibleText: string;
+  ghostText: string;
+  started: boolean;
+}> {
+  const segments = bulletItems.map((item) => {
+    const stateMatch = item.match(/^(Green|Amber|Red):\s*(.+)$/);
+    return stateMatch
+      ? { label: stateMatch[1], text: stateMatch[2] }
+      : { label: null, text: item };
+  });
+
+  let cursor = 0;
+  return segments.map((segment, index) => {
+    if (index > 0) cursor += 2;
+    const start = cursor;
+    const visibleLength = Math.max(
+      0,
+      Math.min(segment.text.length, displayedLength - start)
+    );
+    cursor += segment.text.length;
+
+    return {
+      label: segment.label,
+      text: segment.text,
+      visibleText: segment.text.slice(0, visibleLength),
+      ghostText: segment.text.slice(visibleLength),
+      started: displayedLength > start,
+    };
+  });
+}
+
 function TechniqueStepBodyContent({
   step,
   includeExpand = true,
   includeTrafficLight = true,
   variant = 'card',
+  bodyTyping,
 }: {
   step: TechniqueStep;
   includeExpand?: boolean;
   includeTrafficLight?: boolean;
   variant?: 'card' | 'modal';
+  bodyTyping?: { displayed: string; isComplete: boolean };
 }) {
   const leadPanel = (content: React.ReactNode) => (
     <div className="bg-[#F7F9FB] p-5 md:p-6 rounded-xl border-l-4 border-l-[#2E7CF6] mb-4">
@@ -2158,11 +2157,7 @@ function TechniqueStepBodyContent({
     </div>
   );
 
-  const bulletItems = step.body
-    .split('\n')
-    .map((line) => line.trim())
-    .filter((line) => line.startsWith('•'))
-    .map((line) => line.replace(/^•\s*/, ''));
+  const bulletItems = getTechniqueStepBulletItems(step.body);
 
   const stateLabelClass = (label: string) => {
     if (label === 'Green') return 'text-emerald-700';
@@ -2171,7 +2166,67 @@ function TechniqueStepBodyContent({
     return 'text-[#1F3864]';
   };
 
+  const showSecondaryContent = !bodyTyping || bodyTyping.isComplete;
+
   const renderBody = () => {
+    if (variant === 'modal' && bodyTyping && !bodyTyping.isComplete) {
+      if (bulletItems.length > 0) {
+        const slices = sliceModalBulletTyping(
+          bulletItems,
+          bodyTyping.displayed.length
+        );
+
+        return leadPanel(
+          <ul className="space-y-4 list-none pl-0 m-0">
+            {slices
+              .filter((slice) => slice.started)
+              .map((slice) =>
+                slice.label ? (
+                  <li
+                    key={slice.label}
+                    className="flex items-start gap-2 text-[15px] md:text-[16px] leading-relaxed"
+                  >
+                    <span
+                      className={`font-semibold shrink-0 ${stateLabelClass(slice.label)}`}
+                    >
+                      {slice.label}:
+                    </span>
+                    <span>
+                      <span>{slice.visibleText}</span>
+                      <span className="text-transparent">{slice.ghostText}</span>
+                    </span>
+                  </li>
+                ) : (
+                  <li
+                    key={slice.text}
+                    className="flex items-start gap-2 text-[15px] md:text-[16px] leading-relaxed"
+                  >
+                    <span className="text-[#2E7CF6] shrink-0 leading-relaxed">
+                      •
+                    </span>
+                    <span>
+                      <span>{slice.visibleText}</span>
+                      <span className="text-transparent">{slice.ghostText}</span>
+                    </span>
+                  </li>
+                )
+              )}
+          </ul>
+        );
+      }
+
+      const typingSource = getTechniqueStepModalTypingText(step.body);
+
+      return leadPanel(
+        <>
+          <span>{bodyTyping.displayed}</span>
+          <span className="text-transparent">
+            {typingSource.slice(bodyTyping.displayed.length)}
+          </span>
+        </>
+      );
+    }
+
     if (variant === 'modal' && bulletItems.length > 0) {
       return leadPanel(
         <ul className="space-y-4 list-none pl-0 m-0">
@@ -2282,7 +2337,7 @@ function TechniqueStepBodyContent({
         </div>
       ) : null}
 
-      {step.stateCards && step.stateCards.length ? (
+      {showSecondaryContent && step.stateCards && step.stateCards.length ? (
         <div
           className={`${variant === 'modal' ? 'space-y-4' : 'space-y-3'} pb-1`}
         >
@@ -2336,6 +2391,14 @@ function TechniqueStepDetailModal({
   onClose: () => void;
 }) {
   const [expandOpen, setExpandOpen] = useState(false);
+  const prefersReducedMotion = usePrefersReducedMotion();
+  const skipTyping = prefersReducedMotion;
+  const { displayed: typedBody, isComplete: bodyTypingComplete } = useTypingText(
+    getTechniqueStepModalTypingText(step.body),
+    open && !skipTyping,
+    42,
+    'empty'
+  );
 
   useEffect(() => {
     if (!open) setExpandOpen(false);
@@ -2346,6 +2409,7 @@ function TechniqueStepDetailModal({
   const expandId = step.expand
     ? `modal:${step.number}:${step.expand.header}`
     : null;
+  const showSecondaryContent = skipTyping || bodyTypingComplete;
 
   return createPortal(
     <div className="fixed inset-0 z-[200] flex items-center justify-center p-6">
@@ -2356,13 +2420,13 @@ function TechniqueStepDetailModal({
         className="absolute inset-0 bg-black/30"
       />
 
-      <div className="relative w-full max-w-[420px] max-h-[85vh] flex flex-col rounded-xl border border-slate-200 bg-white shadow-[0_20px_40px_-15px_rgba(47,99,120,0.06)] overflow-hidden">
-        <div className="shrink-0 flex items-start justify-between gap-4 px-6 md:px-7 pt-6 md:pt-7 pb-4 border-b border-slate-100">
+      <div className="relative w-full max-w-4xl max-h-[85vh] flex flex-col rounded-xl border border-slate-200 bg-white shadow-[0_20px_40px_-15px_rgba(47,99,120,0.06)] overflow-hidden">
+        <div className="shrink-0 flex items-start justify-between gap-4 px-10 md:px-12 pt-8 md:pt-10 pb-4 border-b border-slate-100">
           <div className="flex items-center gap-4 min-w-0">
             <span className="flex items-center justify-center w-10 h-10 rounded-full bg-[#2E7CF6] text-white text-sm font-semibold shrink-0">
               {step.number}
             </span>
-            <h2 className="text-[18px] font-semibold text-[#2E7CF6] leading-snug">
+            <h2 className="text-xl md:text-2xl font-semibold text-[#2E7CF6] leading-snug">
               {step.title}
             </h2>
           </div>
@@ -2376,15 +2440,20 @@ function TechniqueStepDetailModal({
           </button>
         </div>
 
-        <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar px-6 md:px-7 py-4">
+        <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar px-10 md:px-12 py-6">
           <TechniqueStepBodyContent
             step={step}
             variant="modal"
             includeExpand={false}
             includeTrafficLight={false}
+            bodyTyping={
+              skipTyping
+                ? undefined
+                : { displayed: typedBody, isComplete: bodyTypingComplete }
+            }
           />
 
-          {step.expand && expandId ? (
+          {showSecondaryContent && step.expand && expandId ? (
             <div className="pt-3 mt-2 border-t border-slate-100 shrink-0">
               <LearnAccordionItem
                 dropdownId={expandId}
@@ -2457,82 +2526,87 @@ function TechniqueVerticalStepsSection({
     showKeyPoint &&
     screen.keyPoint &&
     (!staggerReveal || revealedStepCount >= steps.length);
+  const useEqualSlots = showSteps;
 
   return (
     <div className="max-w-[1226px] mx-auto w-full flex flex-col flex-1 min-h-0 h-full overflow-hidden">
-      <div className="flex flex-col min-h-0 overflow-hidden flex-1">
-        <div className="flex-1 min-h-0 overflow-y-auto pt-2 custom-scrollbar pr-1 -mr-1">
-          {(screen.lead || leadContent) && !hideLead ? (
-            <p
-              className="text-[18px] leading-relaxed mb-10 pt-2"
-              style={{ color: '#333333' }}
-            >
-              {leadContent ?? screen.lead}
-            </p>
-          ) : null}
-
-          <div
-            className={`flex flex-col min-h-0 transition-opacity duration-500 ${
-              showSteps ? 'opacity-100' : 'opacity-0 pointer-events-none'
-            }`}
+      <div className="flex flex-col flex-1 min-h-0 overflow-hidden pt-2">
+        {(screen.lead || leadContent) && !hideLead ? (
+          <p
+            className="shrink-0 text-[18px] leading-relaxed mb-4 pt-2"
+            style={{ color: '#333333' }}
           >
-            {steps.length > 0 ? (
-              <div className="space-y-4">
-                {steps.map((step, index) => {
-                  const visible = index < visibleStepCount;
-                  return (
-                    <div
-                      key={step.number}
-                      className={`transition-all duration-300 ease-out ${
-                        visible
-                          ? 'opacity-100 translate-y-0'
-                          : 'opacity-0 translate-y-2 pointer-events-none h-0 overflow-hidden'
-                      }`}
-                    >
-                      <button
-                        type="button"
-                        onClick={() => onStepClick(step.number)}
-                        className={`w-full ${MODULE_SURFACE} h-[120px] p-5 md:p-6 rounded-xl border-l-4 border-l-[#2E7CF6] text-left hover:bg-[#EEF4FF]/75 transition-colors duration-[350ms] ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2E7CF6]/30`}
-                      >
-                        <div className="flex items-center justify-between gap-4 h-full">
-                          <div className="flex items-center gap-4 min-w-0">
-                            <ModuleFavicon className="w-8 h-8 shrink-0 object-contain" />
-                            <span
-                              className="text-[16px] md:text-[18px] font-semibold leading-snug"
-                              style={{ color: '#1F3864' }}
-                            >
-                              Step {step.number}. {step.title}
-                            </span>
-                          </div>
-                          <span
-                            className="material-symbols-outlined text-slate-400 text-[22px] shrink-0"
-                            aria-hidden
-                          >
-                            touch_app
-                          </span>
-                        </div>
-                      </button>
-                    </div>
-                  );
-                })}
-              </div>
-            ) : null}
+            {leadContent ?? screen.lead}
+          </p>
+        ) : null}
 
-            {showKeyPointNow ? (
-              <div className="mt-8 rounded-xl overflow-hidden shadow-[0_4px_24px_-4px_rgba(10,31,68,0.12)] border border-[#1F3864]/20 bg-[#1F3864] transition-all duration-300 ease-out opacity-100 translate-y-0">
-                <div className="p-6 md:p-8">
-                  <div className="flex items-start gap-4">
-                    <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-[#2E7CF6]/20 flex items-center justify-center shrink-0">
-                      <ModuleFavicon className="w-7 h-7 md:w-8 md:h-8" />
+        <div
+          className={`flex flex-col flex-1 min-h-0 gap-2 transition-opacity duration-500 ${
+            showSteps ? 'opacity-100' : 'opacity-0 pointer-events-none'
+          }`}
+        >
+          {steps.map((step, index) => {
+            const visible = index < visibleStepCount;
+            return (
+              <div
+                key={step.number}
+                className={`flex flex-col min-h-0 transition-opacity duration-300 ease-out ${
+                  useEqualSlots ? 'flex-1' : ''
+                } ${
+                  visible
+                    ? 'opacity-100 translate-y-0'
+                    : useEqualSlots
+                      ? 'opacity-0 pointer-events-none'
+                      : 'opacity-0 translate-y-2 pointer-events-none h-0 overflow-hidden shrink-0'
+                }`}
+              >
+                <button
+                  type="button"
+                  onClick={() => onStepClick(step.number)}
+                  className={`w-full flex flex-col flex-1 h-full min-h-[94px] ${MODULE_SURFACE} px-4 py-3 md:px-5 md:py-3.5 rounded-xl border-l-4 border-l-[#2E7CF6] text-left hover:bg-[#EEF4FF]/75 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2E7CF6]/30`}
+                >
+                  <div className="flex items-center justify-between gap-4 h-full">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <ModuleFavicon className="w-7 h-7 shrink-0 object-contain" />
+                      <span
+                        className="text-[15px] md:text-[16px] font-semibold leading-snug"
+                        style={{ color: '#1F3864' }}
+                      >
+                        Step {step.number}. {step.title}
+                      </span>
                     </div>
-                    <p className="text-[15px] md:text-[16px] leading-relaxed text-white/90 italic whitespace-pre-line">
-                      {screen.keyPoint}
-                    </p>
+                    <span
+                      className="material-symbols-outlined text-slate-400 text-[22px] shrink-0"
+                      aria-hidden
+                    >
+                      touch_app
+                    </span>
                   </div>
+                </button>
+              </div>
+            );
+          })}
+
+          {useEqualSlots && screen.keyPoint ? (
+            <div
+              className={`flex-1 min-h-[94px] flex flex-col rounded-xl overflow-hidden shadow-[0_4px_24px_-4px_rgba(10,31,68,0.12)] border border-[#1F3864]/20 bg-[#1F3864] transition-opacity duration-300 ease-out ${
+                showKeyPointNow
+                  ? 'opacity-100 translate-y-0'
+                  : 'opacity-0 pointer-events-none'
+              }`}
+            >
+              <div className="flex-1 flex items-start p-5 md:p-6">
+                <div className="flex items-start gap-4">
+                  <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-[#2E7CF6]/20 flex items-center justify-center shrink-0">
+                    <ModuleFavicon className="w-7 h-7 md:w-8 md:h-8" />
+                  </div>
+                  <p className="text-[15px] md:text-[16px] leading-relaxed text-white/90 italic whitespace-pre-line">
+                    {screen.keyPoint}
+                  </p>
                 </div>
               </div>
-            ) : null}
-          </div>
+            </div>
+          ) : null}
         </div>
       </div>
     </div>
@@ -3357,10 +3431,10 @@ function ScenarioInsightCard({ children }: { children: string }) {
             </span>
           </div>
           <div>
-            <div className="text-[15px] font-semibold text-white mb-2">
+            <div className="text-base md:text-lg font-semibold text-white mb-2">
               The point
             </div>
-            <div className="text-[14px] leading-relaxed text-white/90 whitespace-pre-line">
+            <div className="text-base md:text-lg leading-relaxed text-white/90 whitespace-pre-line">
               {children}
             </div>
           </div>
@@ -3382,7 +3456,7 @@ function ScenarioChoiceGrid({
   const scenario = SCENARIOS[scenarioId];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4 flex-1 min-h-0 auto-rows-fr">
       {(Object.keys(scenario.options) as ScenarioOptionKey[]).map((key) => {
         const isSelected = selected === key;
         return (
@@ -3390,15 +3464,15 @@ function ScenarioChoiceGrid({
             key={key}
             type="button"
             onClick={() => onSelect(key)}
-            className={`text-left rounded-xl border p-6 md:p-7 min-h-[120px] transition-all ${
+            className={`h-full min-h-[72px] md:min-h-[80px] text-left rounded-xl border p-4 md:p-5 transition-all ${
               isSelected
                 ? 'bg-[#EEF4FF] border-[#2E7CF6] shadow-[0_0_0_1px_rgba(46,124,246,0.25)]'
                 : `${SCENARIO_OPTION_STYLE.card} hover:border-[#2E7CF6]/40 shadow-[0_20px_40px_-15px_rgba(47,99,120,0.06)]`
             }`}
           >
-            <div className="flex items-start gap-5">
+            <div className="flex items-start gap-4 md:gap-5 h-full">
               <span
-                className={`flex items-center justify-center w-12 h-12 rounded-xl text-base font-bold shrink-0 ${
+                className={`flex items-center justify-center w-11 h-11 md:w-12 md:h-12 rounded-xl text-base font-bold shrink-0 ${
                   isSelected
                     ? SCENARIO_OPTION_STYLE.badgeSelected
                     : SCENARIO_OPTION_STYLE.badge
@@ -3406,7 +3480,7 @@ function ScenarioChoiceGrid({
               >
                 {key}
               </span>
-              <p className="text-[16px] text-slate-700 leading-relaxed">
+              <p className="text-[15px] md:text-[16px] text-slate-700 leading-relaxed">
                 {scenario.options[key]}
               </p>
             </div>
@@ -3452,49 +3526,65 @@ function ScenarioSituationSection({
         <ScenarioHeading scenarioId={scenarioId} />
       ) : null}
       {showIntroCallout ? <ScenarioIntroCallout /> : null}
-      <div className="relative flex-1 min-h-0 flex flex-col overflow-hidden">
-        <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar pr-1 -mr-1">
-        {!hideSituation ? (
-          <div
-            className={`w-full ${MODULE_SURFACE} p-6 md:p-6 h-[200px] lg:p-10 rounded-xl border-l-4 border-l-[#2E7CF6] transition-all duration-[350ms] ease-out ${
-              situationVisible
-                ? 'opacity-100 translate-y-0'
-                : 'opacity-0 translate-y-2 pointer-events-none'
-            }`}
-          >
-            <p
-              className="text-[18px] md:text-[20px] lg:text-[20px] leading-relaxed whitespace-pre-line"
-              style={{ color: '#1F3864' }}
-            >
-              {situationContent ?? scenario.situation}
-            </p>
-          </div>
-        ) : null}
-
-        {!hideOptions ? (
-          <div
-            className={`mt-8 space-y-6 transition-all duration-[350ms] ease-out ${
-              optionsVisible
-                ? 'opacity-100 translate-y-0'
-                : 'opacity-0 translate-y-2 pointer-events-none'
-            }`}
-          >
-            <h3
-              className="text-[24px] md:text-[24px] leading-tight font-semibold"
-              style={{ color: '#1F3864' }}
-            >
-              {scenario.title}
-            </h3>
-            <ScenarioChoiceGrid
-              scenarioId={scenarioId}
-              selected={selected}
-              onSelect={onSelect}
-            />
-          </div>
-        ) : null}
+      {situationRevealOverlay ? (
+        <div className="shrink-0 flex justify-center py-2">
+          {situationRevealOverlay}
         </div>
-        {situationRevealOverlay}
-        {optionsRevealOverlay}
+      ) : null}
+      <div className="relative flex-1 min-h-0 flex flex-col overflow-hidden">
+        <div className="flex flex-col flex-1 min-h-0 overflow-hidden gap-4">
+          {!hideSituation ? (
+            <div
+              className={`relative w-full ${MODULE_SURFACE} p-5 md:p-6 lg:p-8 rounded-xl border-l-4 border-l-[#2E7CF6] flex flex-col min-h-[100px] transition-opacity duration-[350ms] ease-out ${
+                hideOptions ? 'shrink-0' : 'flex-1 min-h-0'
+              } ${
+                situationVisible
+                  ? 'opacity-100 translate-y-0'
+                  : 'opacity-0 translate-y-2 pointer-events-none'
+              }`}
+            >
+              <p
+                className={`text-[18px] md:text-[20px] leading-relaxed whitespace-pre-line ${
+                  hideOptions
+                    ? ''
+                    : 'flex-1 min-h-0 overflow-y-auto custom-scrollbar'
+                }`}
+                style={{ color: '#1F3864' }}
+              >
+                {situationContent ?? scenario.situation}
+              </p>
+              {optionsRevealOverlay ? (
+                <div className="shrink-0 flex justify-center pt-3">
+                  {optionsRevealOverlay}
+                </div>
+              ) : null}
+            </div>
+          ) : null}
+
+          {!hideOptions ? (
+            <div
+              className={`flex flex-col gap-4 min-h-0 transition-all duration-[350ms] ease-out ${
+                hideSituation ? 'flex-1' : 'flex-[1.4]'
+              } ${
+                optionsVisible
+                  ? 'opacity-100 translate-y-0'
+                  : 'opacity-0 translate-y-2 pointer-events-none'
+              }`}
+            >
+              <h3
+                className="shrink-0 text-[22px] md:text-[24px] leading-tight font-semibold"
+                style={{ color: '#1F3864' }}
+              >
+                {scenario.title}
+              </h3>
+              <ScenarioChoiceGrid
+                scenarioId={scenarioId}
+                selected={selected}
+                onSelect={onSelect}
+              />
+            </div>
+          ) : null}
+        </div>
       </div>
     </div>
   );
@@ -3513,6 +3603,12 @@ function ScenarioCompareModal({
 }) {
   const scenario = SCENARIOS[scenarioId];
   const [showAll, setShowAll] = useState(false);
+  const prefersReducedMotion = usePrefersReducedMotion();
+  const feedbackText = scenario.feedback[selected];
+  const { displayed: typedFeedback, isComplete: feedbackTypingComplete } =
+    useTypingText(feedbackText, open && !prefersReducedMotion, 42, 'empty');
+  const showSecondaryContent =
+    prefersReducedMotion || feedbackTypingComplete;
 
   useEffect(() => {
     if (!open) setShowAll(false);
@@ -3529,67 +3625,78 @@ function ScenarioCompareModal({
         className="absolute inset-0 bg-black/30"
       />
 
-      <div className="relative w-full max-w-2xl max-h-[85vh] flex flex-col rounded-2xl border border-slate-200 bg-white shadow-[0_30px_120px_rgba(15,23,42,0.18)]">
-        <div className="flex items-start justify-between gap-4 shrink-0 p-5 md:p-6 border-b border-slate-200">
+      <div className="relative w-full max-w-4xl max-h-[85vh] flex flex-col rounded-xl border border-slate-200 bg-white shadow-[0_20px_40px_-15px_rgba(47,99,120,0.06)] overflow-hidden">
+        <div className="flex items-start justify-between gap-4 shrink-0 px-10 md:px-12 pt-8 md:pt-10 pb-4 border-b border-slate-100">
           <div className="min-w-0">
-            <p className="text-[11px] font-semibold uppercase tracking-wider text-[#2E7CF6] mb-1">
+            <p className="text-sm md:text-base font-bold uppercase tracking-wider text-[#2E7CF6] mb-2">
               Compare your choice
             </p>
-            <p className="text-[18px] font-semibold text-[#1F3864]">
+            <p className="text-xl md:text-2xl font-semibold text-[#1F3864]">
               Option {selected}
             </p>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="p-2 rounded-full text-slate-500 hover:text-slate-900 transition-colors shrink-0"
+            className="p-2 rounded-full text-slate-500 hover:text-slate-900 transition-colors shrink-0 -mr-1 -mt-1"
             aria-label="Close compare feedback"
           >
             <span className="material-symbols-outlined">close</span>
           </button>
         </div>
 
-        <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar p-5 md:p-6 space-y-5">
-          <div
-            className={`${MODULE_SURFACE} rounded-xl border border-[#2E7CF6]/30 shadow-[0_20px_40px_-15px_rgba(47,99,120,0.06)] p-5 md:p-6`}
-          >
-            <p className="text-[11px] font-semibold uppercase tracking-wider text-[#2E7CF6] mb-2">
+        <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar px-10 md:px-12 py-6 space-y-5">
+          <div className="bg-[#F7F9FB] rounded-xl border-l-4 border-l-[#2E7CF6] p-5 md:p-6">
+            <p className="text-sm md:text-base font-bold uppercase tracking-wider text-[#2E7CF6] mb-3">
               Your choice
             </p>
-            <p className="text-[15px] text-slate-700 leading-relaxed whitespace-pre-line">
-              {scenario.feedback[selected]}
+            <p className="text-base md:text-lg text-slate-800 leading-relaxed whitespace-pre-line">
+              {prefersReducedMotion ? (
+                feedbackText
+              ) : (
+                <>
+                  <span>{typedFeedback}</span>
+                  <span className="text-transparent">
+                    {feedbackText.slice(typedFeedback.length)}
+                  </span>
+                </>
+              )}
             </p>
           </div>
 
-          <button
-            type="button"
-            onClick={() => setShowAll((v) => !v)}
-            className="text-[14px] font-semibold text-[#2E7CF6] hover:text-[#1F3864] transition-colors"
-          >
-            {showAll ? 'Hide other options' : 'See all options'}
-          </button>
+          {showSecondaryContent ? (
+            <>
+              <button
+                type="button"
+                onClick={() => setShowAll((v) => !v)}
+                className="text-base font-semibold text-[#2E7CF6] hover:text-[#1F3864] transition-colors"
+              >
+                {showAll ? 'Hide other options' : 'See all options'}
+              </button>
 
-          {showAll ? (
-            <div className="space-y-3">
-              {(Object.keys(scenario.feedback) as ScenarioOptionKey[])
-                .filter((key) => key !== selected)
-                .map((key) => (
-                  <div
-                    key={key}
-                    className={`${MODULE_SURFACE} rounded-xl border border-slate-200 p-4 md:p-5`}
-                  >
-                    <p className="text-[13px] font-semibold text-slate-500 mb-2">
-                      Option {key}
-                    </p>
-                    <p className="text-[14px] text-slate-700 leading-relaxed whitespace-pre-line">
-                      {scenario.feedback[key]}
-                    </p>
-                  </div>
-                ))}
-            </div>
+              {showAll ? (
+                <div className="space-y-3">
+                  {(Object.keys(scenario.feedback) as ScenarioOptionKey[])
+                    .filter((key) => key !== selected)
+                    .map((key) => (
+                      <div
+                        key={key}
+                        className={`${MODULE_SURFACE} rounded-xl border border-slate-200 p-5 md:p-6`}
+                      >
+                        <p className="text-sm md:text-base font-bold uppercase tracking-wider text-slate-500 mb-2">
+                          Option {key}
+                        </p>
+                        <p className="text-base md:text-lg text-slate-700 leading-relaxed whitespace-pre-line">
+                          {scenario.feedback[key]}
+                        </p>
+                      </div>
+                    ))}
+                </div>
+              ) : null}
+
+              <ScenarioInsightCard>{scenario.point}</ScenarioInsightCard>
+            </>
           ) : null}
-
-          <ScenarioInsightCard>{scenario.point}</ScenarioInsightCard>
         </div>
       </div>
     </div>,
@@ -4657,6 +4764,9 @@ function LearnStateModal({
 }) {
   if (!open) return null;
   const sections = parseLearnStateSections(body);
+  const sectionLabelClass =
+    'text-sm md:text-base font-bold uppercase tracking-wider text-[#2E7CF6] mb-3';
+  const sectionBodyClass = 'text-base md:text-lg text-slate-800 leading-relaxed';
 
   return (
     <div
@@ -4665,11 +4775,11 @@ function LearnStateModal({
         if (e.target === e.currentTarget) onClose();
       }}
     >
-      <div className="bg-white max-w-2xl w-full rounded-xl shadow-xl overflow-hidden">
-        <div className="p-8">
-          <div className="flex justify-between items-start gap-6 mb-6">
+      <div className="bg-white max-w-4xl w-full rounded-xl shadow-xl overflow-hidden">
+        <div className="p-10 md:p-12">
+          <div className="flex justify-between items-start gap-6 mb-8">
             <h2
-              className="text-2xl md:text-3xl font-black"
+              className="text-3xl md:text-4xl font-black"
               style={{ color: accentColor }}
             >
               {title}
@@ -4684,15 +4794,11 @@ function LearnStateModal({
             </button>
           </div>
 
-          <div className="space-y-6">
+          <div className="space-y-8">
             {sections.whatYouSee ? (
               <div>
-                <div className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">
-                  What you see
-                </div>
-                <div className="text-sm md:text-base text-slate-800 leading-relaxed">
-                  {sections.whatYouSee}
-                </div>
+                <div className={sectionLabelClass}>What you see</div>
+                <div className={sectionBodyClass}>{sections.whatYouSee}</div>
               </div>
             ) : null}
 
@@ -4701,23 +4807,15 @@ function LearnStateModal({
                 className="p-4 rounded-lg"
                 style={{ backgroundColor: `${accentColor}14` }}
               >
-                <div className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">
-                  Underneath
-                </div>
-                <div className="text-sm md:text-base text-slate-800 leading-relaxed">
-                  {sections.underneath}
-                </div>
+                <div className={sectionLabelClass}>Underneath</div>
+                <div className={sectionBodyClass}>{sections.underneath}</div>
               </div>
             ) : null}
 
             {sections.whatHelps ? (
               <div>
-                <div className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">
-                  What helps
-                </div>
-                <div className="text-sm md:text-base text-slate-800 leading-relaxed">
-                  {sections.whatHelps}
-                </div>
+                <div className={sectionLabelClass}>What helps</div>
+                <div className={sectionBodyClass}>{sections.whatHelps}</div>
               </div>
             ) : null}
           </div>
@@ -6302,7 +6400,6 @@ export default function MindSyncTeacherTrainingModule01Page() {
                                       }
                                       setScenarioIntroPhase('situation');
                                     }}
-                                    className="absolute inset-0 z-20"
                                   />
                                 ) : null
                               }
@@ -6313,7 +6410,6 @@ export default function MindSyncTeacherTrainingModule01Page() {
                                     onClick={() =>
                                       setScenarioIntroPhase('done')
                                     }
-                                    className="absolute inset-0 z-20"
                                   />
                                 ) : null
                               }
@@ -6725,7 +6821,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
                                     learnStateItems.green?.header ??
                                     'State One: Green. Calmly engaged'
                                   }
-                                  accentColor="#37675e"
+                                  accentColor="#047857"
                                   body={learnStateItems.green?.body ?? ''}
                                   onClose={() => setLearnStateModalKey(null)}
                                 />
