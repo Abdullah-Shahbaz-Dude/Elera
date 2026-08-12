@@ -5,6 +5,7 @@ import {
   useMemo,
   useRef,
   useState,
+  useSyncExternalStore,
 } from 'react';
 import { createPortal } from 'react-dom';
 import { Link, useNavigate } from 'react-router-dom';
@@ -151,6 +152,21 @@ type WatchIntroPhase =
   | 'fade_out_intro'
   | 'done';
 
+type TechniqueIntroPhase =
+  | 'center'
+  | 'header'
+  | 'paragraph'
+  | 'reveal'
+  | 'done';
+
+type ScenarioIntroPhase =
+  | 'center'
+  | 'header'
+  | 'reveal_situation'
+  | 'situation'
+  | 'reveal_options'
+  | 'done';
+
 type SidebarSection = {
   key: SidebarSectionKey;
   label: string;
@@ -180,6 +196,10 @@ const MODULE_HEADER_TITLES: Record<SidebarSectionKey, string> = {
   closing: 'Closing',
 };
 
+const SCENARIO_MAIN_TITLE = "Let's put the learning into practice";
+const SCENARIO_CALLOUT_KEY = 'mindsync-m1-scenario-callout-done';
+const MODULE_READ_ALOUD_KEY = 'mindsync-m1-read-aloud';
+
 /**
  * Per-block purple header overrides (by block id).
  * Edit here for a specific screen; sidebar labels are not affected.
@@ -190,6 +210,7 @@ const MODULE_BLOCK_HEADER_TITLES: Partial<Record<number, string>> = {
   4: 'The Research Behind The Technique',
   5: 'The Three Second Pause In Action',
   7: 'Underneath The Behaviour: Three States',
+  17: 'The Technique. The Three Second Pause',
 };
 
 const RESEARCH_SOURCES_HEADER = 'Read the research in full';
@@ -222,10 +243,7 @@ function getDerivedBlockHeaderTitle(screen: Screen): string | undefined {
       screen.type === 'scenario_feedback') &&
     screen.scenarioId
   ) {
-    if (screen.type === 'scenario_feedback') {
-      return `Scenario ${screen.scenarioId} of 3`;
-    }
-    return SCENARIOS[screen.scenarioId].title;
+    return SCENARIO_MAIN_TITLE;
   }
 
   if (screen.type === 'takeaway') {
@@ -247,6 +265,27 @@ function getDerivedBlockHeaderTitle(screen: Screen): string | undefined {
   }
 
   return undefined;
+}
+
+function isPractiseScenarioScreen(screen: Screen): boolean {
+  return (
+    screen.type === 'scenario_situation' ||
+    screen.type === 'scenario_choose' ||
+    screen.type === 'scenario_feedback'
+  );
+}
+
+function shouldSkipPractiseScenarioNavTransition(
+  from: Screen,
+  to: Screen
+): boolean {
+  return (
+    to.type === 'scenario_situation' &&
+    isPractiseScenarioScreen(from) &&
+    from.scenarioId !== undefined &&
+    to.scenarioId !== undefined &&
+    from.scenarioId !== to.scenarioId
+  );
 }
 
 function getModulePageTitle(
@@ -327,20 +366,25 @@ const MODULE_PART_TITLE_STYLE: React.CSSProperties = {
 type LearningOutcomesPhase = 'center' | 'header' | 'reveal' | 'done';
 
 const CARD_TO_BULLET_DELAY_MS = 1500;
-const SPEECH_LEAD_MS = 300;
+const SPEECH_LEAD_MS = 1500;
+const BULLET_GAP_MS = 2000;
+const INTRO_TITLE_HEADER_SETTLE_MS = 350;
 const BULLET_TYPING_SPEED_MS = 30;
+const STEP_STAGGER_MS = 500;
+const MODULE_1_MAIN_VIDEO_URL =
+  'https://drive.google.com/file/d/11Bp_-ULiJLnF22QHjTu4NRxzTeM28ZuR/view?usp=sharing';
 
 function useTypingText(
   text: string,
   enabled: boolean,
   speedMs = 42,
-  whenDisabled: 'full' | 'empty' = 'full',
+  whenDisabled: 'full' | 'empty' = 'full'
 ) {
   const [displayed, setDisplayed] = useState(() =>
     enabled ? '' : whenDisabled === 'empty' ? '' : text
   );
-  const [isComplete, setIsComplete] = useState(
-    () => (enabled ? false : whenDisabled !== 'empty')
+  const [isComplete, setIsComplete] = useState(() =>
+    enabled ? false : whenDisabled !== 'empty'
   );
 
   useLayoutEffect(() => {
@@ -521,6 +565,7 @@ function IntroTitleOverlay({
     let raf2 = 0;
     let raf3 = 0;
     let completeTimer = 0;
+    let settleTimer = 0;
     let transitionTarget: HTMLHeadingElement | null = null;
     let finished = false;
 
@@ -560,42 +605,46 @@ function IntroTitleOverlay({
       raf2 = requestAnimationFrame(() => {
         if (cancelled) return;
 
-        const runMove = () => {
+        settleTimer = window.setTimeout(() => {
           if (cancelled) return;
 
-          const titleEl = titleRef.current;
-          const anchor = anchorRef.current;
-          if (!titleEl || !anchor) {
-            raf3 = requestAnimationFrame(runMove);
-            return;
-          }
+          const runMove = () => {
+            if (cancelled) return;
 
-          const titleRect = titleEl.getBoundingClientRect();
-          const anchorRect = anchor.getBoundingClientRect();
-          const deltaX = anchorRect.left - titleRect.left;
-          const deltaY = anchorRect.top - titleRect.top;
+            const titleEl = titleRef.current;
+            const anchor = anchorRef.current;
+            if (!titleEl || !anchor) {
+              raf3 = requestAnimationFrame(runMove);
+              return;
+            }
 
-          transitionTarget = titleEl;
-          titleEl.addEventListener('transitionend', handleTransitionEnd);
+            const titleRect = titleEl.getBoundingClientRect();
+            const anchorRect = anchor.getBoundingClientRect();
+            const deltaX = anchorRect.left - titleRect.left;
+            const deltaY = anchorRect.top - titleRect.top;
 
-          if (centerContent) {
-            setStyle({
-              ...startStyle,
-              transform: `translate(-50%, -50%) translate(${deltaX}px, ${deltaY}px)`,
-              transition: 'transform 0.75s ease-in-out',
-            });
-          } else {
-            setStyle({
-              ...startStyle,
-              transform: `translateY(-50%) translate(${deltaX}px, ${deltaY}px)`,
-              transition: 'transform 0.75s ease-in-out',
-            });
-          }
+            transitionTarget = titleEl;
+            titleEl.addEventListener('transitionend', handleTransitionEnd);
 
-          completeTimer = window.setTimeout(finishMove, 850);
-        };
+            if (centerContent) {
+              setStyle({
+                ...startStyle,
+                transform: `translate(-50%, -50%) translate(${deltaX}px, ${deltaY}px)`,
+                transition: 'transform 0.75s ease-in-out',
+              });
+            } else {
+              setStyle({
+                ...startStyle,
+                transform: `translateY(-50%) translate(${deltaX}px, ${deltaY}px)`,
+                transition: 'transform 0.75s ease-in-out',
+              });
+            }
 
-        runMove();
+            completeTimer = window.setTimeout(finishMove, 850);
+          };
+
+          runMove();
+        }, INTRO_TITLE_HEADER_SETTLE_MS);
       });
     });
 
@@ -605,6 +654,7 @@ function IntroTitleOverlay({
       cancelAnimationFrame(raf2);
       cancelAnimationFrame(raf3);
       window.clearTimeout(completeTimer);
+      window.clearTimeout(settleTimer);
       transitionTarget?.removeEventListener(
         'transitionend',
         handleTransitionEnd
@@ -639,60 +689,181 @@ function usePrefersReducedMotion() {
   return reduced;
 }
 
+type ModuleNarrationState = {
+  isSpeaking: boolean;
+  isPaused: boolean;
+  readAloudEnabled: boolean;
+};
+
+const moduleNarrationListeners = new Set<() => void>();
+let moduleNarrationState: ModuleNarrationState = {
+  isSpeaking: false,
+  isPaused: false,
+  readAloudEnabled: true,
+};
+let moduleNarrationPendingResolve: (() => void) | null = null;
+
+function readStoredReadAloudPreference(): boolean {
+  if (typeof window === 'undefined') return true;
+  const stored = localStorage.getItem(MODULE_READ_ALOUD_KEY);
+  if (stored === '0') return false;
+  if (stored === '1') return true;
+  return true;
+}
+
+function setModuleNarrationState(patch: Partial<ModuleNarrationState>) {
+  moduleNarrationState = { ...moduleNarrationState, ...patch };
+  moduleNarrationListeners.forEach((listener) => listener());
+}
+
+function subscribeModuleNarration(listener: () => void) {
+  moduleNarrationListeners.add(listener);
+  return () => moduleNarrationListeners.delete(listener);
+}
+
+function getModuleNarrationSnapshot() {
+  return moduleNarrationState;
+}
+
+function initModuleNarrationPreference() {
+  setModuleNarrationState({
+    readAloudEnabled: readStoredReadAloudPreference(),
+  });
+}
+
+if (typeof window !== 'undefined') {
+  initModuleNarrationPreference();
+}
+
+function useModuleNarration() {
+  const state = useSyncExternalStore(
+    subscribeModuleNarration,
+    getModuleNarrationSnapshot,
+    getModuleNarrationSnapshot
+  );
+
+  const setReadAloudEnabled = useCallback((enabled: boolean) => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(MODULE_READ_ALOUD_KEY, enabled ? '1' : '0');
+    }
+    if (!enabled) {
+      stopAllModuleSpeech();
+    }
+    setModuleNarrationState({ readAloudEnabled: enabled });
+  }, []);
+
+  return { ...state, setReadAloudEnabled };
+}
+
+function stopAllModuleSpeech() {
+  if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+  }
+  moduleNarrationPendingResolve?.();
+  moduleNarrationPendingResolve = null;
+  setModuleNarrationState({ isSpeaking: false, isPaused: false });
+}
+
 function speakTextOnce(text: string) {
   if (typeof window === 'undefined') return;
   if (!('speechSynthesis' in window)) return;
+  if (!moduleNarrationState.readAloudEnabled) return;
   const trimmed = text.trim();
   if (!trimmed) return;
 
   window.speechSynthesis.cancel();
+  moduleNarrationPendingResolve?.();
+  moduleNarrationPendingResolve = null;
+
   const utterance = new SpeechSynthesisUtterance(trimmed);
   utterance.rate = 1;
   utterance.pitch = 1;
+  utterance.onstart = () => {
+    setModuleNarrationState({ isSpeaking: true, isPaused: false });
+  };
+  utterance.onend = () => {
+    setModuleNarrationState({ isSpeaking: false, isPaused: false });
+  };
+  utterance.onerror = () => {
+    setModuleNarrationState({ isSpeaking: false, isPaused: false });
+  };
   window.speechSynthesis.speak(utterance);
 }
 
-function useNarration(text: string, enabled: boolean) {
-  const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
-  const lastSpokenTextRef = useRef<string>('');
-  const userPausedRef = useRef(false);
-  const [isSpeaking, setIsSpeaking] = useState(false);
-  const [isPaused, setIsPaused] = useState(false);
+function speakTextOnceAsync(text: string): Promise<void> {
+  return new Promise((resolve) => {
+    if (typeof window === 'undefined') {
+      resolve();
+      return;
+    }
+    if (!('speechSynthesis' in window)) {
+      resolve();
+      return;
+    }
+    if (!moduleNarrationState.readAloudEnabled) {
+      resolve();
+      return;
+    }
+    const trimmed = text.trim();
+    if (!trimmed) {
+      resolve();
+      return;
+    }
 
-  const stop = useCallback(() => {
-    if (typeof window === 'undefined') return;
-    if (!('speechSynthesis' in window)) return;
     window.speechSynthesis.cancel();
-    utteranceRef.current = null;
-    setIsSpeaking(false);
-    setIsPaused(false);
-    userPausedRef.current = false;
-  }, []);
+    moduleNarrationPendingResolve?.();
+    moduleNarrationPendingResolve = null;
+
+    const utterance = new SpeechSynthesisUtterance(trimmed);
+    utterance.rate = 1;
+    utterance.pitch = 1;
+
+    const finish = () => {
+      if (moduleNarrationPendingResolve === finishWrapper) {
+        moduleNarrationPendingResolve = null;
+      }
+      setModuleNarrationState({ isSpeaking: false, isPaused: false });
+      resolve();
+    };
+    const finishWrapper = finish;
+
+    utterance.onstart = () => {
+      setModuleNarrationState({ isSpeaking: true, isPaused: false });
+    };
+    utterance.onend = finish;
+    utterance.onerror = finish;
+    moduleNarrationPendingResolve = finishWrapper;
+    window.speechSynthesis.speak(utterance);
+  });
+}
+
+function useAutoNarration(text: string, enabled: boolean) {
+  const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
+  const lastSpokenTextRef = useRef('');
 
   const speak = useCallback(() => {
     if (typeof window === 'undefined') return;
     if (!('speechSynthesis' in window)) return;
     if (!enabled) return;
+    if (!moduleNarrationState.readAloudEnabled) return;
     if (!text.trim()) return;
-    if (userPausedRef.current) return;
     if (lastSpokenTextRef.current === text.trim()) return;
 
     window.speechSynthesis.cancel();
+    moduleNarrationPendingResolve?.();
+    moduleNarrationPendingResolve = null;
+
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.rate = 1;
     utterance.pitch = 1;
-
     utterance.onstart = () => {
-      setIsSpeaking(true);
-      setIsPaused(false);
+      setModuleNarrationState({ isSpeaking: true, isPaused: false });
     };
     utterance.onend = () => {
-      setIsSpeaking(false);
-      setIsPaused(false);
+      setModuleNarrationState({ isSpeaking: false, isPaused: false });
     };
     utterance.onerror = () => {
-      setIsSpeaking(false);
-      setIsPaused(false);
+      setModuleNarrationState({ isSpeaking: false, isPaused: false });
     };
 
     lastSpokenTextRef.current = text.trim();
@@ -700,93 +871,134 @@ function useNarration(text: string, enabled: boolean) {
     window.speechSynthesis.speak(utterance);
   }, [enabled, text]);
 
-  const togglePlayPause = useCallback(() => {
-    if (typeof window === 'undefined') return;
-    if (!('speechSynthesis' in window)) return;
-    if (!enabled) return;
-
-    if (!isSpeaking) {
-      userPausedRef.current = false;
-      lastSpokenTextRef.current = '';
-      speak();
-      return;
-    }
-
-    if (window.speechSynthesis.paused) {
-      window.speechSynthesis.resume();
-      setIsPaused(false);
-      userPausedRef.current = false;
-      return;
-    }
-
-    window.speechSynthesis.pause();
-    setIsPaused(true);
-    userPausedRef.current = true;
-  }, [enabled, isSpeaking, speak]);
+  useEffect(() => {
+    lastSpokenTextRef.current = '';
+  }, [text, enabled]);
 
   useEffect(() => {
-    if (!enabled) {
-      stop();
-      return;
-    }
-
-    userPausedRef.current = false;
-    lastSpokenTextRef.current = '';
+    if (!enabled) return;
     speak();
-
-    return () => stop();
-  }, [enabled, speak, stop]);
-
-  return { isSpeaking, isPaused, togglePlayPause, stop };
+    return () => {
+      utteranceRef.current = null;
+    };
+  }, [enabled, speak]);
 }
 
-function FloatingNarratorAvatar({
-  enabled,
-  text,
+function ModuleAudioGuide({
+  autoNarrationEnabled,
+  autoNarrationText,
 }: {
-  enabled: boolean;
-  text: string;
+  autoNarrationEnabled: boolean;
+  autoNarrationText: string;
 }) {
-  const { isSpeaking, isPaused, togglePlayPause, stop } = useNarration(
-    text,
-    enabled
-  );
+  const { isSpeaking, readAloudEnabled, setReadAloudEnabled } =
+    useModuleNarration();
+  const [expanded, setExpanded] = useState(false);
 
-  if (!enabled) return null;
+  useAutoNarration(autoNarrationText, autoNarrationEnabled && readAloudEnabled);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    if (!('speechSynthesis' in window)) return;
+    window.speechSynthesis.getVoices();
+  }, []);
+
+  const handleToggleReadAloud = () => {
+    setReadAloudEnabled(!readAloudEnabled);
+  };
+
+  const pillLabel = isSpeaking
+    ? 'Reading…'
+    : readAloudEnabled
+      ? 'Audio guide'
+      : 'Audio off';
 
   return (
-    <div className="fixed bottom-[92px] right-5 z-[120] flex flex-col items-end gap-2">
-      <button
-        type="button"
-        onClick={togglePlayPause}
-        className={`w-14 h-14 rounded-full border border-slate-200 bg-white shadow-[0_12px_30px_rgba(15,23,42,0.12)] overflow-hidden flex items-center justify-center transition-transform active:scale-[0.98] ${
-          isSpeaking && !isPaused ? 'ring-2 ring-[#2E7CF6]/35' : ''
+    <div
+      className="fixed bottom-[92px] right-5 z-[120] max-w-[min(320px,calc(100vw-2.5rem))]"
+      aria-live="polite"
+    >
+      <div
+        className={`rounded-2xl border bg-white shadow-[0_12px_30px_rgba(15,23,42,0.12)] overflow-hidden transition-all ${
+          isSpeaking ? 'border-[#2E7CF6]/35 ring-2 ring-[#2E7CF6]/20' : 'border-slate-200'
         }`}
-        aria-label={
-          isSpeaking
-            ? isPaused
-              ? 'Resume narration'
-              : 'Pause narration'
-            : 'Play narration'
-        }
       >
-        <img
-          src="/favicon.png"
-          alt=""
-          className={`w-10 h-10 ${isSpeaking && !isPaused ? 'animate-pulse' : ''}`}
-        />
-      </button>
+        {expanded ? (
+          <div className="p-4 border-b border-slate-100">
+            <div className="flex items-start justify-between gap-3">
+              <div className="min-w-0">
+                <p className="text-sm font-semibold text-[#1F3864]">
+                  Audio guide
+                </p>
+                <p className="text-xs text-slate-500 mt-1 leading-relaxed">
+                  {isSpeaking
+                    ? 'Reading aloud. Turn off read aloud to stop.'
+                    : readAloudEnabled
+                      ? 'Content is read aloud as you progress through the module.'
+                      : 'Read aloud is off. Turn it on to hear content as you move through the module.'}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setExpanded(false)}
+                className="shrink-0 text-slate-400 hover:text-slate-600"
+                aria-label="Close audio guide"
+              >
+                <span className="material-symbols-outlined text-[20px]">
+                  close
+                </span>
+              </button>
+            </div>
 
-      {isSpeaking ? (
+            <label className="mt-3 flex items-center justify-between gap-3 rounded-lg border border-slate-200 px-3 py-2.5">
+              <span className="text-sm font-medium text-slate-700">
+                Read aloud
+              </span>
+              <button
+                type="button"
+                role="switch"
+                aria-checked={readAloudEnabled}
+                onClick={handleToggleReadAloud}
+                className={`relative w-11 h-6 rounded-full transition-colors ${
+                  readAloudEnabled ? 'bg-[#2E7CF6]' : 'bg-slate-300'
+                }`}
+              >
+                <span
+                  className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform ${
+                    readAloudEnabled ? 'translate-x-5' : 'translate-x-0'
+                  }`}
+                />
+              </button>
+            </label>
+          </div>
+        ) : null}
+
         <button
           type="button"
-          onClick={stop}
-          className="h-8 px-3 rounded-full text-xs font-semibold border border-slate-200 bg-white text-slate-700 shadow-sm hover:bg-slate-50 transition-colors"
-          aria-label="Stop narration"
+          onClick={() => setExpanded((v) => !v)}
+          className="flex items-center gap-2 w-full h-12 pl-3 pr-4 transition-all active:scale-[0.99]"
+          aria-label={
+            expanded
+              ? 'Collapse audio guide'
+              : readAloudEnabled
+                ? 'Open audio guide controls'
+                : 'Read aloud is off — open audio guide'
+          }
+          aria-expanded={expanded}
         >
-          Stop
+          <img
+            src="/favicon.png"
+            alt=""
+            className={`w-8 h-8 shrink-0 ${isSpeaking ? 'animate-pulse' : ''}`}
+          />
+          <span className="text-xs font-semibold text-[#1F3864] whitespace-nowrap flex-1 text-left">
+            {pillLabel}
+          </span>
+          <span className="material-symbols-outlined text-slate-400 text-[18px] shrink-0">
+            {expanded ? 'expand_more' : 'volume_up'}
+          </span>
         </button>
-      ) : null}
+      </div>
     </div>
   );
 }
@@ -851,40 +1063,11 @@ function LearningOutcomesTapSection({
   const prefersReducedMotion = usePrefersReducedMotion();
   const skipIntro = prefersReducedMotion;
   const bulletSpeechTimerRef = useRef(0);
-  const bulletTypingTimerRef = useRef(0);
-  const lastSpokenBulletIndexRef = useRef<number | null>(null);
-
-  const clearBulletTimers = useCallback(() => {
-    window.clearTimeout(bulletSpeechTimerRef.current);
-    window.clearTimeout(bulletTypingTimerRef.current);
-  }, []);
-
-  const speakBullet = useCallback(
-    (index: number) => {
-      if (lastSpokenBulletIndexRef.current === index) return;
-      lastSpokenBulletIndexRef.current = index;
-      speakTextOnce(bullets[index] ?? '');
-    },
-    [bullets]
-  );
-
-  const scheduleBulletReveal = useCallback(
-    (index: number, typingDelayMs: number) => {
-      clearBulletTimers();
-      const speechDelay = Math.max(0, typingDelayMs - SPEECH_LEAD_MS);
-      if (speechDelay > 0) {
-        bulletSpeechTimerRef.current = window.setTimeout(() => {
-          speakBullet(index);
-        }, speechDelay);
-      } else {
-        speakBullet(index);
-      }
-      bulletTypingTimerRef.current = window.setTimeout(() => {
-        setActiveTypingIndex(index);
-      }, typingDelayMs);
-    },
-    [clearBulletTimers, speakBullet]
-  );
+  const bulletGapTimerRef = useRef(0);
+  const bulletTypingCompleteRef = useRef(false);
+  const bulletSpeechCompleteRef = useRef(false);
+  const activeBulletIndexRef = useRef<number | null>(null);
+  const revealBulletRef = useRef<(index: number) => void>(() => {});
 
   const [phase, setPhase] = useState<LearningOutcomesPhase>(() =>
     skipIntro ? 'done' : 'center'
@@ -897,6 +1080,52 @@ function LearningOutcomesTapSection({
   const [activeTypingIndex, setActiveTypingIndex] = useState<number | null>(
     null
   );
+
+  const clearBulletTimers = useCallback(() => {
+    window.clearTimeout(bulletSpeechTimerRef.current);
+    window.clearTimeout(bulletGapTimerRef.current);
+    stopAllModuleSpeech();
+  }, []);
+
+  const tryFinishBullet = useCallback(
+    (index: number) => {
+      if (!bulletTypingCompleteRef.current || !bulletSpeechCompleteRef.current) {
+        return;
+      }
+      if (activeBulletIndexRef.current !== index) return;
+
+      clearBulletTimers();
+      const next = index + 1;
+      if (next >= bullets.length) {
+        setPhase('done');
+        return;
+      }
+
+      bulletGapTimerRef.current = window.setTimeout(() => {
+        revealBulletRef.current(next);
+      }, BULLET_GAP_MS);
+    },
+    [bullets.length, clearBulletTimers]
+  );
+
+  const revealBullet = useCallback(
+    (index: number) => {
+      activeBulletIndexRef.current = index;
+      bulletTypingCompleteRef.current = false;
+      bulletSpeechCompleteRef.current = false;
+      setActiveTypingIndex(index);
+
+      void speakTextOnceAsync(bullets[index] ?? '').then(() => {
+        if (activeBulletIndexRef.current !== index) return;
+        bulletSpeechCompleteRef.current = true;
+        tryFinishBullet(index);
+      });
+    },
+    [bullets, tryFinishBullet]
+  );
+
+  revealBulletRef.current = revealBullet;
+
   const typingEnabled = phase === 'center' && !skipIntro;
   const { displayed: typedTitle, isComplete: typingComplete } = useTypingText(
     title,
@@ -906,7 +1135,7 @@ function LearningOutcomesTapSection({
 
   const finishIntro = useCallback(() => {
     clearBulletTimers();
-    lastSpokenBulletIndexRef.current = null;
+    activeBulletIndexRef.current = null;
     setDisplayTitle(title);
     setCardVisible(true);
     setAwaitingFirstBullet(false);
@@ -918,14 +1147,14 @@ function LearningOutcomesTapSection({
 
   const handleBulletTyped = useCallback(
     (index: number) => {
-      const next = index + 1;
-      setRevealedCount(next);
+      if (activeBulletIndexRef.current !== index) return;
+
+      setRevealedCount(index + 1);
       setActiveTypingIndex(null);
-      if (next >= bullets.length) {
-        setPhase('done');
-      }
+      bulletTypingCompleteRef.current = true;
+      tryFinishBullet(index);
     },
-    [bullets]
+    [tryFinishBullet]
   );
 
   useEffect(() => {
@@ -938,11 +1167,6 @@ function LearningOutcomesTapSection({
     window.speechSynthesis.getVoices();
   }, [cardVisible]);
 
-  useLayoutEffect(() => {
-    if (activeTypingIndex === null) return;
-    speakBullet(activeTypingIndex);
-  }, [activeTypingIndex, speakBullet]);
-
   const advanceToHeader = useCallback(() => {
     setDisplayTitle(title);
     onPhaseChange('header');
@@ -953,6 +1177,23 @@ function LearningOutcomesTapSection({
     onPhaseChange('reveal');
     setPhase('reveal');
   }, [onPhaseChange]);
+
+  const startFirstBulletReveal = useCallback(() => {
+    if (cardVisible || awaitingFirstBullet || activeTypingIndex !== null) return;
+
+    setCardVisible(true);
+    setAwaitingFirstBullet(true);
+    clearBulletTimers();
+    bulletSpeechTimerRef.current = window.setTimeout(() => {
+      setAwaitingFirstBullet(false);
+      revealBulletRef.current(0);
+    }, CARD_TO_BULLET_DELAY_MS);
+  }, [
+    activeTypingIndex,
+    awaitingFirstBullet,
+    cardVisible,
+    clearBulletTimers,
+  ]);
 
   useLayoutEffect(() => {
     onPhaseChange(phase);
@@ -977,43 +1218,16 @@ function LearningOutcomesTapSection({
     return () => window.clearTimeout(timer);
   }, [phase, skipIntro, typingComplete, advanceToHeader]);
 
+  useEffect(() => {
+    if (phase !== 'reveal' || skipIntro || cardVisible) return;
+    startFirstBulletReveal();
+  }, [phase, skipIntro, cardVisible, startFirstBulletReveal]);
+
   const handleCenterTap = () => {
     if (phase === 'center') advanceToHeader();
   };
 
-  const handleRevealTap = () => {
-    if (phase !== 'reveal' && phase !== 'done') return;
-    if (revealedCount >= bullets.length) return;
-    if (activeTypingIndex !== null || awaitingFirstBullet) return;
-
-    if (!cardVisible) {
-      setCardVisible(true);
-      setAwaitingFirstBullet(true);
-      lastSpokenBulletIndexRef.current = null;
-      clearBulletTimers();
-      bulletSpeechTimerRef.current = window.setTimeout(() => {
-        speakBullet(0);
-      }, CARD_TO_BULLET_DELAY_MS - SPEECH_LEAD_MS);
-      bulletTypingTimerRef.current = window.setTimeout(() => {
-        setAwaitingFirstBullet(false);
-        setActiveTypingIndex(0);
-      }, CARD_TO_BULLET_DELAY_MS);
-      return;
-    }
-
-    lastSpokenBulletIndexRef.current = null;
-    scheduleBulletReveal(revealedCount, SPEECH_LEAD_MS);
-  };
-
   const showCard = cardVisible && (phase === 'reveal' || phase === 'done');
-  const showInitialTapPrompt = phase === 'reveal' && !cardVisible;
-  const isTyping = activeTypingIndex !== null;
-  const showInCardTapPrompt =
-    showCard &&
-    !isTyping &&
-    !awaitingFirstBullet &&
-    revealedCount < bullets.length &&
-    phase === 'reveal';
 
   return (
     <div className="relative flex flex-col flex-1 min-h-0 h-full">
@@ -1049,25 +1263,6 @@ function LearningOutcomesTapSection({
         </>
       ) : null}
 
-      {showInitialTapPrompt ? (
-        <button
-          type="button"
-          onClick={handleRevealTap}
-          className="flex flex-1 flex-col items-center justify-center gap-3 text-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2E7CF6]/30 rounded-xl transition-all duration-[350ms] ease-out opacity-100 translate-y-0"
-          aria-label="Tap to reveal"
-        >
-          <span
-            className="material-symbols-outlined text-slate-400 text-[32px] animate-pulse"
-            aria-hidden
-          >
-            touch_app
-          </span>
-          <span className="text-base font-semibold text-[#2E7CF6]">
-            Tap to reveal
-          </span>
-        </button>
-      ) : null}
-
       {showCard ? (
         <div
           className={`flex flex-col ${centerContent ? 'flex-1 min-h-0' : 'shrink-0'}`}
@@ -1094,31 +1289,6 @@ function LearningOutcomesTapSection({
                   />
                 ) : null}
               </div>
-
-              <button
-                type="button"
-                onClick={handleRevealTap}
-                className={`shrink-0 mt-4 pt-4 border-t border-slate-200/80 w-full flex flex-col items-center gap-2 text-center hover:bg-[#EEF4FF]/40 rounded-b-xl transition-all duration-[350ms] ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2E7CF6]/30 ${
-                  showInCardTapPrompt
-                    ? 'opacity-100 translate-y-0'
-                    : 'opacity-0 translate-y-2 pointer-events-none h-0 overflow-hidden'
-                }`}
-                aria-hidden={!showInCardTapPrompt}
-                tabIndex={showInCardTapPrompt ? 0 : -1}
-              >
-                <span className="text-sm font-medium text-slate-600">
-                  Learning outcome {revealedCount + 1} of {bullets.length}
-                </span>
-                <span
-                  className="material-symbols-outlined text-slate-400 text-[22px] animate-pulse"
-                  aria-hidden
-                >
-                  touch_app
-                </span>
-                <span className="text-sm font-semibold text-[#2E7CF6]">
-                  Tap to reveal next
-                </span>
-              </button>
             </div>
           </div>
         </div>
@@ -1430,40 +1600,126 @@ function ResearchSourcesBody() {
   );
 }
 
+function TapContinuePrompt({
+  label,
+  onClick,
+  className = '',
+  visible = true,
+}: {
+  label: string;
+  onClick: () => void;
+  className?: string;
+  visible?: boolean;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`flex flex-col items-center justify-center gap-3 text-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2E7CF6]/30 rounded-xl transition-all duration-[350ms] ease-out ${
+        visible
+          ? 'opacity-100 translate-y-0'
+          : 'opacity-0 translate-y-2 pointer-events-none absolute inset-0'
+      } ${className}`}
+      aria-label={label}
+      aria-hidden={!visible}
+      tabIndex={visible ? 0 : -1}
+    >
+      <span
+        className="material-symbols-outlined text-slate-400 text-[32px] animate-pulse"
+        aria-hidden
+      >
+        touch_app
+      </span>
+      <span className="text-base font-semibold text-[#2E7CF6]">{label}</span>
+    </button>
+  );
+}
+
+function ResearchDropdownBody({
+  body,
+  active,
+  skipAnimation,
+  hasFinished,
+  onFinish,
+}: {
+  body: string;
+  active: boolean;
+  skipAnimation: boolean;
+  hasFinished: boolean;
+  onFinish: () => void;
+}) {
+  const typingEnabled = active && !skipAnimation && !hasFinished;
+  const { displayed, isComplete } = useTypingText(
+    body,
+    typingEnabled,
+    BULLET_TYPING_SPEED_MS,
+    'empty'
+  );
+  const hasSpokenRef = useRef(false);
+
+  useEffect(() => {
+    if (!active || skipAnimation || hasFinished || hasSpokenRef.current) return;
+    hasSpokenRef.current = true;
+    void speakTextOnceAsync(body);
+  }, [active, skipAnimation, hasFinished, body]);
+
+  useEffect(() => {
+    if (!isComplete || !typingEnabled) return;
+    onFinish();
+  }, [isComplete, typingEnabled, onFinish]);
+
+  if (skipAnimation || hasFinished) {
+    return (
+      <p className="whitespace-pre-line text-[15px] leading-relaxed text-slate-900 block w-full">
+        {body}
+      </p>
+    );
+  }
+
+  return (
+    <p className="whitespace-pre-line text-[15px] leading-relaxed text-slate-900 block w-full">
+      <span>{displayed}</span>
+      <span className="text-transparent">{body.slice(displayed.length)}</span>
+    </p>
+  );
+}
+
 function ResearchEvidenceDropdown({
   header,
   body,
-  screenId,
-  onOpenChange,
+  dropdownId,
+  open,
+  onToggle,
   isSources = false,
+  skipAnimation = false,
+  hasFinished = false,
+  onFinish,
+  equalIdle = false,
 }: {
   header: string;
   body: string;
-  screenId: number;
-  onOpenChange: (dropdownId: string, open: boolean) => void;
+  dropdownId: string;
+  open: boolean;
+  onToggle: (dropdownId: string) => void;
   isSources?: boolean;
+  skipAnimation?: boolean;
+  hasFinished?: boolean;
+  onFinish?: () => void;
+  equalIdle?: boolean;
 }) {
-  const [open, setOpen] = useState(false);
-  const didMountRef = useRef(false);
-
-  useEffect(() => {
-    if (!didMountRef.current) {
-      didMountRef.current = true;
-      return;
-    }
-    onOpenChange(`${screenId}:${header}`, open);
-  }, [open, onOpenChange, screenId, header]);
+  const cardClassName =
+    open || equalIdle
+      ? 'flex flex-col flex-1 min-h-0 h-full'
+      : 'flex flex-col shrink-0';
 
   return (
     <div
-      className={`rounded-2xl border border-[#E5E9EB] ${MODULE_SURFACE} shadow-[0_1px_2px_rgba(0,0,0,0.05)] p-[25px]`}
+      className={`rounded-2xl border border-[#E5E9EB] ${MODULE_SURFACE} shadow-[0_1px_2px_rgba(0,0,0,0.05)] p-[25px] ${cardClassName}`}
     >
       <button
         type="button"
-        onClick={() => {
-          setOpen((v) => !v);
-        }}
-        className="w-full flex items-start gap-6 text-left"
+        onClick={() => onToggle(dropdownId)}
+        className="w-full flex items-start gap-6 text-left shrink-0"
         aria-expanded={open}
       >
         <ModuleFavicon className="w-10 h-10 rounded-xl object-contain shrink-0" />
@@ -1478,21 +1734,23 @@ function ResearchEvidenceDropdown({
           expand_more
         </span>
       </button>
-      <div
-        className={`overflow-hidden transition-all duration-300 ease-out ${
-          open ? 'max-h-[2000px] opacity-100 mt-3' : 'max-h-0 opacity-0'
-        }`}
-      >
-        <div className="ml-[64px] border-t border-[#C4C6CF] pt-6">
-          {isSources ? (
-            <ResearchSourcesBody />
-          ) : (
-            <p className="whitespace-pre-line text-[15px] leading-relaxed text-slate-900">
-              {body}
-            </p>
-          )}
+      {open ? (
+        <div className="flex flex-col flex-1 min-h-0 mt-3">
+          <div className="ml-[64px] border-t border-[#C4C6CF] pt-6 flex-1 min-h-0 overflow-y-auto custom-scrollbar">
+            {isSources ? (
+              <ResearchSourcesBody />
+            ) : (
+              <ResearchDropdownBody
+                body={body}
+                active={open}
+                skipAnimation={skipAnimation}
+                hasFinished={hasFinished}
+                onFinish={onFinish ?? (() => {})}
+              />
+            )}
+          </div>
         </div>
-      </div>
+      ) : null}
     </div>
   );
 }
@@ -1501,36 +1759,75 @@ function ResearchSection({
   screen,
   onDropdownOpenChange,
   visibleCount,
+  skipAnimation = false,
 }: {
   screen: Screen;
   onDropdownOpenChange: (dropdownId: string, open: boolean) => void;
   visibleCount?: number;
+  skipAnimation?: boolean;
 }) {
   const dropdowns = screen.dropdowns ?? RESEARCH_EVIDENCE_DROPDOWNS;
   const resolvedVisibleCount =
     typeof visibleCount === 'number'
       ? Math.max(0, Math.min(visibleCount, dropdowns.length))
       : dropdowns.length;
+  const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
+  const [finishedDropdownIds, setFinishedDropdownIds] = useState<Set<string>>(
+    () => new Set()
+  );
+
+  const handleToggle = useCallback(
+    (dropdownId: string) => {
+      setOpenDropdownId((current) => {
+        if (current === dropdownId) {
+          onDropdownOpenChange(dropdownId, false);
+          return null;
+        }
+        if (current) {
+          onDropdownOpenChange(current, false);
+        }
+        onDropdownOpenChange(dropdownId, true);
+        return dropdownId;
+      });
+    },
+    [onDropdownOpenChange]
+  );
 
   return (
-    <div className="max-w-[1226px] mx-auto w-full flex flex-col gap-4">
+    <div className="max-w-[1226px] mx-auto w-full flex flex-col flex-1 min-h-0 h-full gap-2">
       {dropdowns.map((d, index) => {
         const visible = index < resolvedVisibleCount;
+        const dropdownId = `${screen.id}:${d.header}`;
+        const isOpen = openDropdownId === dropdownId;
+        const anyOpen = openDropdownId !== null;
         return (
           <div
             key={d.header}
-            className={`transition-all duration-500 ease-out ${
+            className={`flex flex-col min-h-0 transition-all duration-300 ease-out ${
               visible
                 ? 'opacity-100 translate-y-0'
-                : 'opacity-0 translate-y-2 pointer-events-none h-0 overflow-hidden'
+                : 'opacity-0 translate-y-2 pointer-events-none h-0 overflow-hidden shrink-0'
+            } ${
+              isOpen
+                ? 'flex-1 min-h-0'
+                : anyOpen
+                  ? 'shrink-0'
+                  : 'flex-1 min-h-0'
             }`}
           >
             <ResearchEvidenceDropdown
               header={d.header}
               body={d.body}
-              screenId={screen.id}
-              onOpenChange={onDropdownOpenChange}
+              dropdownId={dropdownId}
+              open={isOpen}
+              onToggle={handleToggle}
               isSources={d.header === RESEARCH_SOURCES_HEADER}
+              skipAnimation={skipAnimation}
+              hasFinished={finishedDropdownIds.has(dropdownId)}
+              onFinish={() =>
+                setFinishedDropdownIds((prev) => new Set(prev).add(dropdownId))
+              }
+              equalIdle={!anyOpen}
             />
           </div>
         );
@@ -1575,15 +1872,10 @@ function ResearchTapRevealSection({
   const [revealedCount, setRevealedCount] = useState(() =>
     skipIntro ? dropdowns.length : 0
   );
-  const revealTimerRef = useRef(0);
 
   useEffect(() => {
     onPhaseChange?.(phase);
   }, [phase, onPhaseChange]);
-
-  useEffect(() => {
-    return () => window.clearInterval(revealTimerRef.current);
-  }, []);
 
   useEffect(() => {
     if (phase === 'center') {
@@ -1611,24 +1903,10 @@ function ResearchTapRevealSection({
     setPhase('reveal');
   }, []);
 
-  const handleRevealClick = () => {
+  const handleContinueClick = () => {
     if (phase !== 'reveal') return;
-    if (revealedCount >= dropdowns.length) {
-      setPhase('done');
-      return;
-    }
-
-    window.clearInterval(revealTimerRef.current);
-    setRevealedCount(0);
-    let nextIndex = 0;
-    revealTimerRef.current = window.setInterval(() => {
-      nextIndex += 1;
-      setRevealedCount(nextIndex);
-      if (nextIndex >= dropdowns.length) {
-        window.clearInterval(revealTimerRef.current);
-        setPhase('done');
-      }
-    }, 140);
+    setRevealedCount(dropdowns.length);
+    setPhase('done');
   };
 
   const showPrompt = phase === 'reveal' && revealedCount === 0;
@@ -1658,28 +1936,15 @@ function ResearchTapRevealSection({
         </>
       ) : null}
 
-      <button
-        type="button"
-        onClick={handleRevealClick}
-        className={`flex flex-1 flex-col items-center justify-center gap-3 text-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2E7CF6]/30 rounded-xl transition-all duration-[350ms] ease-out ${
-          showPrompt
-            ? 'opacity-100 translate-y-0'
-            : 'opacity-0 translate-y-2 pointer-events-none absolute inset-0'
-        }`}
-        aria-hidden={!showPrompt}
-        tabIndex={showPrompt ? 0 : -1}
-      >
-        <span
-          className="material-symbols-outlined text-slate-400 text-[32px] animate-pulse"
-          aria-hidden
-        >
-          touch_app
-        </span>
-        <span className="text-base font-semibold text-[#2E7CF6]">Reveal</span>
-      </button>
+      <TapContinuePrompt
+        label="Tap to continue"
+        onClick={handleContinueClick}
+        className="flex-1"
+        visible={showPrompt}
+      />
 
       <div
-        className={`flex flex-col flex-1 min-h-0 overflow-y-auto custom-scrollbar transition-opacity duration-500 ${
+        className={`flex flex-col flex-1 min-h-0 overflow-hidden transition-opacity duration-500 ${
           showList ? 'opacity-100' : 'opacity-0 pointer-events-none'
         }`}
       >
@@ -1687,6 +1952,7 @@ function ResearchTapRevealSection({
           screen={screen}
           onDropdownOpenChange={onDropdownOpenChange}
           visibleCount={revealedCount}
+          skipAnimation={skipIntro}
         />
       </div>
     </div>
@@ -2132,56 +2398,104 @@ function TechniqueStepDetailModal({
 function TechniqueVerticalStepsSection({
   screen,
   onStepClick,
+  hideLead = false,
+  leadContent,
+  showSteps = true,
+  showKeyPoint = true,
+  staggerReveal = false,
 }: {
   screen: Screen;
   onStepClick: (stepNumber: number) => void;
+  hideLead?: boolean;
+  leadContent?: React.ReactNode;
+  showSteps?: boolean;
+  showKeyPoint?: boolean;
+  staggerReveal?: boolean;
 }) {
   const steps = screen.techniqueSteps ?? [];
+  const prefersReducedMotion = usePrefersReducedMotion();
+  const [revealedStepCount, setRevealedStepCount] = useState(0);
+
+  useEffect(() => {
+    if (!showSteps || !staggerReveal) {
+      setRevealedStepCount(0);
+      return;
+    }
+    if (prefersReducedMotion) {
+      setRevealedStepCount(steps.length);
+      return;
+    }
+
+    setRevealedStepCount(0);
+    let count = 0;
+    const timers: number[] = [];
+
+    const revealNext = () => {
+      count += 1;
+      setRevealedStepCount(count);
+      if (count < steps.length) {
+        timers.push(window.setTimeout(revealNext, STEP_STAGGER_MS));
+      }
+    };
+
+    timers.push(window.setTimeout(revealNext, STEP_STAGGER_MS));
+
+    return () => timers.forEach((t) => window.clearTimeout(t));
+  }, [showSteps, staggerReveal, steps.length, prefersReducedMotion]);
+
+  const visibleStepCount =
+    showSteps && staggerReveal ? revealedStepCount : showSteps ? steps.length : 0;
+  const showKeyPointNow =
+    showKeyPoint &&
+    screen.keyPoint &&
+    (!staggerReveal || revealedStepCount >= steps.length);
 
   return (
     <div className="max-w-[1200px] mx-auto flex flex-col flex-1 min-h-0 h-full overflow-hidden">
       <div className="flex flex-col min-h-0 overflow-hidden">
         <div className="flex-1 min-h-0 overflow-y-auto pt-2 custom-scrollbar pr-1 -mr-1">
-          {screen.lead ? (
+          {(screen.lead || leadContent) && !hideLead ? (
             <p
               className="text-[18px] leading-relaxed mb-10 pt-2"
               style={{ color: '#333333' }}
             >
-              {screen.lead}
+              {leadContent ?? screen.lead}
             </p>
           ) : null}
 
-          <div className="space-y-4">
-            {steps.map((step) => (
-              <button
-                key={step.number}
-                type="button"
-                onClick={() => onStepClick(step.number)}
-                className={`w-full ${MODULE_SURFACE} h-[120px] p-5 md:p-6 rounded-xl border-l-4 border-l-[#2E7CF6] text-left hover:bg-[#EEF4FF]/75 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2E7CF6]/30`}
-              >
-                <div className="flex items-center justify-between gap-4 h-full">
-                  <div className="flex items-center gap-4 min-w-0">
-                    <ModuleFavicon className="w-8 h-8 shrink-0 object-contain" />
+          {visibleStepCount > 0 ? (
+            <div className="space-y-4">
+              {steps.slice(0, visibleStepCount).map((step) => (
+                <button
+                  key={step.number}
+                  type="button"
+                  onClick={() => onStepClick(step.number)}
+                  className={`w-full ${MODULE_SURFACE} h-[120px] p-5 md:p-6 rounded-xl border-l-4 border-l-[#2E7CF6] text-left hover:bg-[#EEF4FF]/75 transition-all duration-[350ms] ease-out opacity-100 translate-y-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2E7CF6]/30`}
+                >
+                  <div className="flex items-center justify-between gap-4 h-full">
+                    <div className="flex items-center gap-4 min-w-0">
+                      <ModuleFavicon className="w-8 h-8 shrink-0 object-contain" />
+                      <span
+                        className="text-[16px] md:text-[18px] font-semibold leading-snug"
+                        style={{ color: '#1F3864' }}
+                      >
+                        Step {step.number}. {step.title}
+                      </span>
+                    </div>
                     <span
-                      className="text-[16px] md:text-[18px] font-semibold leading-snug"
-                      style={{ color: '#1F3864' }}
+                      className="material-symbols-outlined text-slate-400 text-[22px] shrink-0"
+                      aria-hidden
                     >
-                      Step {step.number}. {step.title}
+                      touch_app
                     </span>
                   </div>
-                  <span
-                    className="material-symbols-outlined text-slate-400 text-[22px] shrink-0"
-                    aria-hidden
-                  >
-                    touch_app
-                  </span>
-                </div>
-              </button>
-            ))}
-          </div>
+                </button>
+              ))}
+            </div>
+          ) : null}
 
-          {screen.keyPoint ? (
-            <div className="mt-8 rounded-xl overflow-hidden shadow-[0_4px_24px_-4px_rgba(10,31,68,0.12)] border border-[#1F3864]/20 bg-[#1F3864]">
+          {showKeyPointNow ? (
+            <div className="mt-8 rounded-xl overflow-hidden shadow-[0_4px_24px_-4px_rgba(10,31,68,0.12)] border border-[#1F3864]/20 bg-[#1F3864] transition-all duration-[350ms] ease-out opacity-100 translate-y-0">
               <div className="p-6 md:p-8">
                 <div className="flex items-start gap-4">
                   <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-[#2E7CF6]/20 flex items-center justify-center shrink-0">
@@ -2985,11 +3299,22 @@ function PracticeIntroSection({ screen }: { screen: Screen }) {
 function ScenarioHeading({ scenarioId }: { scenarioId: 1 | 2 | 3 }) {
   return (
     <h2
-      className="text-[24px] leading-tight font-semibold mb-4 shrink-0"
+      className="w-full min-w-0 text-left text-[24px] leading-tight font-semibold mb-4 shrink-0"
       style={{ color: '#1F3864' }}
     >
       Scenario {scenarioId} of 3
     </h2>
+  );
+}
+
+function ScenarioIntroCallout() {
+  return (
+    <p
+      className={`mb-4 shrink-0 w-full min-w-0 text-left rounded-xl border-l-4 border-l-[#2E7CF6] ${MODULE_SURFACE} px-5 py-4 text-[16px] md:text-[17px] leading-relaxed font-medium`}
+      style={{ color: '#1F3864' }}
+    >
+      Read the situation, then choose what you would do.
+    </p>
   );
 }
 
@@ -3071,41 +3396,80 @@ function ScenarioSituationSection({
   scenarioId,
   selected,
   onSelect,
+  hideSituation = false,
+  hideOptions = false,
+  situationContent,
+  showScenarioHeading = true,
+  showIntroCallout = false,
+  situationVisible = true,
+  optionsVisible = true,
+  situationRevealOverlay,
+  optionsRevealOverlay,
 }: {
   scenarioId: 1 | 2 | 3;
   selected: ScenarioOptionKey | null;
   onSelect: (key: ScenarioOptionKey) => void;
+  hideSituation?: boolean;
+  hideOptions?: boolean;
+  situationContent?: React.ReactNode;
+  showScenarioHeading?: boolean;
+  showIntroCallout?: boolean;
+  situationVisible?: boolean;
+  optionsVisible?: boolean;
+  situationRevealOverlay?: React.ReactNode;
+  optionsRevealOverlay?: React.ReactNode;
 }) {
   const scenario = SCENARIOS[scenarioId];
 
   return (
-    <div className="max-w-[1200px] mx-auto flex flex-col flex-1 min-h-0 h-full overflow-hidden pt-2">
-      <ScenarioHeading scenarioId={scenarioId} />
-      <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar pr-1 -mr-1">
-        <div
-          className={`w-full ${MODULE_SURFACE} p-6 md:p-6 h-[200px] lg:p-10 rounded-xl border-l-4 border-l-[#2E7CF6]`}
-        >
-          <p
-            className="text-[18px] md:text-[20px] lg:text-[20px] leading-relaxed whitespace-pre-line"
-            style={{ color: '#1F3864' }}
+    <div className="max-w-[1200px] mx-auto w-full min-w-0 self-stretch flex flex-col flex-1 min-h-0 h-full overflow-hidden pt-2">
+      {showScenarioHeading ? (
+        <ScenarioHeading scenarioId={scenarioId} />
+      ) : null}
+      {showIntroCallout ? <ScenarioIntroCallout /> : null}
+      <div className="relative flex-1 min-h-0 flex flex-col overflow-hidden">
+        <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar pr-1 -mr-1">
+        {!hideSituation ? (
+          <div
+            className={`w-full ${MODULE_SURFACE} p-6 md:p-6 h-[200px] lg:p-10 rounded-xl border-l-4 border-l-[#2E7CF6] transition-all duration-[350ms] ease-out ${
+              situationVisible
+                ? 'opacity-100 translate-y-0'
+                : 'opacity-0 translate-y-2 pointer-events-none'
+            }`}
           >
-            {scenario.situation}
-          </p>
-        </div>
+            <p
+              className="text-[18px] md:text-[20px] lg:text-[20px] leading-relaxed whitespace-pre-line"
+              style={{ color: '#1F3864' }}
+            >
+              {situationContent ?? scenario.situation}
+            </p>
+          </div>
+        ) : null}
 
-        <div className="mt-8 space-y-6">
-          <h3
-            className="text-[24px] md:text-[24px] leading-tight font-semibold"
-            style={{ color: '#1F3864' }}
+        {!hideOptions ? (
+          <div
+            className={`mt-8 space-y-6 transition-all duration-[350ms] ease-out ${
+              optionsVisible
+                ? 'opacity-100 translate-y-0'
+                : 'opacity-0 translate-y-2 pointer-events-none'
+            }`}
           >
-            {scenario.title}
-          </h3>
-          <ScenarioChoiceGrid
-            scenarioId={scenarioId}
-            selected={selected}
-            onSelect={onSelect}
-          />
+            <h3
+              className="text-[24px] md:text-[24px] leading-tight font-semibold"
+              style={{ color: '#1F3864' }}
+            >
+              {scenario.title}
+            </h3>
+            <ScenarioChoiceGrid
+              scenarioId={scenarioId}
+              selected={selected}
+              onSelect={onSelect}
+            />
+          </div>
+        ) : null}
         </div>
+        {situationRevealOverlay}
+        {optionsRevealOverlay}
       </div>
     </div>
   );
@@ -3216,6 +3580,7 @@ function ModuleInlineHeader({
   visible = true,
   keepTitleAnchor = false,
   hideTitle = false,
+  suppressEntranceAnimation = false,
   titleAnchorRef,
 }: {
   screen: Screen;
@@ -3225,12 +3590,13 @@ function ModuleInlineHeader({
   visible?: boolean;
   keepTitleAnchor?: boolean;
   hideTitle?: boolean;
+  suppressEntranceAnimation?: boolean;
   titleAnchorRef?: React.RefObject<HTMLHeadingElement>;
 }) {
   const title = getModulePageTitle(screen, activeSidebarSectionKey);
 
   const prefersReducedMotion = usePrefersReducedMotion();
-  const shouldAnimate = !prefersReducedMotion;
+  const shouldAnimate = !prefersReducedMotion && !suppressEntranceAnimation;
   const HEADER_FADE_MS = 350;
   const [mounted, setMounted] = useState(visible);
   const [shown, setShown] = useState(visible);
@@ -3370,7 +3736,7 @@ function LandingSection({
       >
         {screen.t1 ? (
           <h1
-            className="text-4xl md:text-5xl lg:text-6xl leading-tight font-bold mb-4 tracking-tight transition-transform group-hover:scale-[1.02]"
+            className="text-5xl md:text-6xl lg:text-7xl leading-tight font-bold mb-6 tracking-tight transition-transform group-hover:scale-[1.02]"
             style={{ color: '#1F3864' }}
           >
             {screen.t1}
@@ -3378,21 +3744,21 @@ function LandingSection({
         ) : null}
         {screen.t2 ? (
           <h2
-            className="text-2xl md:text-3xl leading-snug font-bold max-w-2xl transition-transform group-hover:scale-[1.02]"
+            className="text-3xl md:text-4xl lg:text-5xl leading-snug font-bold max-w-3xl transition-transform group-hover:scale-[1.02]"
             style={{ color: '#1F7A7A' }}
           >
             {screen.t2}
           </h2>
         ) : null}
         {screen.lead ? (
-          <p className="mt-4 text-base md:text-lg leading-relaxed max-w-2xl text-slate-600 transition-transform group-hover:scale-[1.01]">
+          <p className="mt-6 text-lg md:text-xl lg:text-2xl leading-relaxed max-w-3xl text-slate-600 transition-transform group-hover:scale-[1.01]">
             {screen.lead}
           </p>
         ) : null}
-        <span className="mt-6 text-xs font-semibold uppercase tracking-widest text-slate-500 opacity-0 group-hover:opacity-100 transition-opacity">
+        <span className="mt-8 text-sm font-semibold uppercase tracking-widest text-slate-500 opacity-0 group-hover:opacity-100 transition-opacity">
           Click to begin
         </span>
-        <ModuleFavicon className="w-20 h-20 object-contain transition-transform group-hover:scale-105" />
+        <ModuleFavicon className="mt-8 w-28 h-28 md:w-32 md:h-32 object-contain transition-transform group-hover:scale-105" />
       </button>
 
       <div className="relative z-20 shrink-0 flex justify-center pb-10 md:pb-14 pointer-events-none">
@@ -4096,7 +4462,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
               footer: 'Watch what changes.',
             },
             videoTitle: 'Module 1 film, around 3 minutes',
-            videoUrl: null,
+            videoUrl: MODULE_1_MAIN_VIDEO_URL,
             transcriptDropdown: {
               header: 'Read the full script',
               body: 'OPEN. Clean Elara logo, then a soft dissolve into the classroom.\n\nSCENE 1, a pupil who has checked out. A Year 9 English lesson in full flow. Daniel is near the back.\nHis book is closed and he is turning a pen over and over in his hands, bending it, clicking it, eyes\nsomewhere else. The pupils either side of him are writing.\n\nNarrator: Year 9 English, period four on a Wednesday. Watch the boy at the back. His book is shut,\nand he is turning a pen over and over in his hands. He is not being difficult and he is not being loud. He\nhas just stopped being able to join in.\n\nSCENE 2, the ask, and two realities. Ms Patel asks him calmly to get his book out. He does not open it.\nfsmall tense shake of the head, and a low mutter. From the front it looks like a knock back. Then a\nshort view from Daniel’s side: the room tilts, the light hums, a pencil tap is too loud.\n\nNarrator: A fair, ordinary instruction. From the front of the room, that looks like a refusal. But from\ninside his head, it is not refusal at all. He heard the tone, not the words. Same moment. Two\ncompletely different realities.\n\nSCENE 3, what often happens. She responds in about a second, on reflex. She asks again, harder,\nand names a consequence. It stops being about a book and starts being about winning.\n\nSCENE 4, what could happen instead. The same moment again. Narrator: In a classroom, most of us\nwait about one second before we respond. Researchers have actually measured it. And when a\nteacher holds that pause for just a few seconds longer, what happens next in the room can change\ncompletely. She feels herself about to react, and instead she waits. Three seconds. Then she comes\ndown to his level, off to the side, and asks one quiet question.\n\nSCENE 5, the outcome. He takes two minutes, comes back, and does the work. Narrator: Two\nversions of the same lesson, and the only real difference between them was about two seconds. Not a\nbetter teacher. Not a different pupil. Two seconds.\n\nCLOSE. Clean Elara logo.',
@@ -4265,6 +4631,25 @@ export default function MindSyncTeacherTrainingModule01Page() {
     useState<LearningOutcomesPhase>('center');
   const [watchIntroPhase, setWatchIntroPhase] =
     useState<WatchIntroPhase>('center');
+  const [threeStatesIntroPhase, setThreeStatesIntroPhase] = useState<
+    | 'center'
+    | 'header'
+    | 'reveal_paragraph'
+    | 'paragraph'
+    | 'reveal_cards'
+    | 'done'
+  >('center');
+  const [techniqueIntroPhase, setTechniqueIntroPhase] =
+    useState<TechniqueIntroPhase>('center');
+  const [scenarioIntroPhase, setScenarioIntroPhase] =
+    useState<ScenarioIntroPhase>('reveal_situation');
+  const [scenarioMainTitleIntroPlayed, setScenarioMainTitleIntroPlayed] =
+    useState(false);
+  const [scenarioCalloutDismissed, setScenarioCalloutDismissed] = useState(
+    () =>
+      typeof window !== 'undefined' &&
+      localStorage.getItem(SCENARIO_CALLOUT_KEY) === '1'
+  );
   const [block3IntroComplete, setBlock3IntroComplete] = useState(false);
 
   const handleBlock3PhaseChange = useCallback(
@@ -4343,12 +4728,17 @@ export default function MindSyncTeacherTrainingModule01Page() {
 
   const transitionToIndex = useCallback(
     (targetIndex: number) => {
-      if (prefersReducedMotion) {
+      if (targetIndex === index) return;
+      if (isScreenTransitioning) return;
+
+      const from = screens[index];
+      const to = screens[Math.min(screens.length - 1, Math.max(0, targetIndex))];
+      const skipFade = shouldSkipPractiseScenarioNavTransition(from, to);
+
+      if (prefersReducedMotion || skipFade) {
         setIndex(targetIndex);
         return;
       }
-      if (isScreenTransitioning) return;
-      if (targetIndex === index) return;
 
       setIsScreenTransitioning(true);
       window.clearTimeout(transitionTimerRef.current);
@@ -4356,7 +4746,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
         setIndex(targetIndex);
       }, NAV_FADE_MS);
     },
-    [index, isScreenTransitioning, prefersReducedMotion]
+    [index, isScreenTransitioning, prefersReducedMotion, screens]
   );
 
   useEffect(() => {
@@ -4496,12 +4886,52 @@ export default function MindSyncTeacherTrainingModule01Page() {
 
   const screen = screens[Math.min(screens.length - 1, Math.max(0, index))];
 
+  const threeStatesTitle =
+    MODULE_BLOCK_HEADER_TITLES[7] ??
+    screen.headerTitle ??
+    screen.t2 ??
+    screen.t1 ??
+    '';
+
+  const techniqueTitle =
+    screen.id === 17
+      ? getModulePageTitle(screen, activeSidebarSectionKey)
+      : '';
+
+  const scenarioTitle =
+    screen.type === 'scenario_situation' ? SCENARIO_MAIN_TITLE : '';
+
+  const shouldPlayScenarioMainTitleIntro =
+    screen.type === 'scenario_situation' &&
+    screen.scenarioId === 1 &&
+    !scenarioMainTitleIntroPlayed &&
+    !prefersReducedMotion;
+
+  const showScenarioIntroCallout =
+    screen.type === 'scenario_situation' &&
+    screen.scenarioId === 1 &&
+    !scenarioCalloutDismissed;
+
+  const dismissScenarioCallout = useCallback(() => {
+    setScenarioCalloutDismissed(true);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(SCENARIO_CALLOUT_KEY, '1');
+    }
+  }, []);
+
   const narratorEnabled =
     index === 0 ||
     screen.type === 'bullets' ||
     screen.type === 'research' ||
     (screen.id === 5 &&
-      (watchIntroPhase === 'center' || watchIntroPhase === 'header'));
+      (watchIntroPhase === 'center' || watchIntroPhase === 'header')) ||
+    (screen.id === 7 &&
+      (threeStatesIntroPhase === 'center' ||
+        threeStatesIntroPhase === 'header')) ||
+    (screen.id === 17 &&
+      (techniqueIntroPhase === 'center' || techniqueIntroPhase === 'header')) ||
+    (shouldPlayScenarioMainTitleIntro &&
+      (scenarioIntroPhase === 'center' || scenarioIntroPhase === 'header'));
   const narratorText = useMemo(() => {
     if (!narratorEnabled) return '';
     if (index === 0) {
@@ -4510,16 +4940,21 @@ export default function MindSyncTeacherTrainingModule01Page() {
     }
 
     const title =
-      MODULE_BLOCK_HEADER_TITLES[screen.id] ??
-      screen.headerTitle ??
-      screen.t2 ??
-      screen.t1 ??
-      '';
+      screen.type === 'scenario_situation'
+        ? SCENARIO_MAIN_TITLE
+        : MODULE_BLOCK_HEADER_TITLES[screen.id] ??
+          screen.headerTitle ??
+          screen.t2 ??
+          screen.t1 ??
+          '';
 
     if (
       screen.type === 'bullets' ||
       screen.type === 'research' ||
-      screen.id === 5
+      screen.id === 5 ||
+      screen.id === 7 ||
+      screen.id === 17 ||
+      screen.type === 'scenario_situation'
     ) {
       return title;
     }
@@ -4649,6 +5084,341 @@ export default function MindSyncTeacherTrainingModule01Page() {
     setBlock3IntroComplete(false);
   }, [index, screen.id]);
 
+  const threeStatesBodySpokenRef = useRef(false);
+  const threeStatesBodySpeechTimerRef = useRef(0);
+  const [threeStatesBodyTypingActive, setThreeStatesBodyTypingActive] =
+    useState(false);
+
+  useEffect(() => {
+    if (screen.id !== 7) return;
+    setThreeStatesIntroPhase(prefersReducedMotion ? 'done' : 'center');
+    threeStatesBodySpokenRef.current = false;
+    setThreeStatesBodyTypingActive(false);
+    window.clearTimeout(threeStatesBodySpeechTimerRef.current);
+  }, [index, screen.id, prefersReducedMotion]);
+
+  const threeStatesTitleTypingEnabled =
+    screen.id === 7 &&
+    threeStatesIntroPhase === 'center' &&
+    !prefersReducedMotion;
+  const {
+    displayed: typedThreeStatesTitle,
+    isComplete: threeStatesTitleTypingComplete,
+  } = useTypingText(threeStatesTitle, threeStatesTitleTypingEnabled);
+
+  useEffect(() => {
+    if (screen.id !== 7) return;
+    if (prefersReducedMotion) return;
+    if (threeStatesIntroPhase !== 'center') return;
+    if (!threeStatesTitleTypingComplete) return;
+
+    const timer = window.setTimeout(() => {
+      setThreeStatesIntroPhase('header');
+    }, 700);
+
+    return () => window.clearTimeout(timer);
+  }, [
+    screen.id,
+    prefersReducedMotion,
+    threeStatesIntroPhase,
+    threeStatesTitleTypingComplete,
+  ]);
+
+  const threeStatesBodyText =
+    screen.id === 7 ? (screen.body ?? '') : '';
+  const threeStatesBodyTypingEnabled =
+    screen.id === 7 &&
+    threeStatesIntroPhase === 'paragraph' &&
+    threeStatesBodyTypingActive &&
+    !prefersReducedMotion;
+  const {
+    displayed: typedThreeStatesBody,
+    isComplete: threeStatesBodyTypingComplete,
+  } = useTypingText(
+    threeStatesBodyText,
+    threeStatesBodyTypingEnabled,
+    42,
+    'empty'
+  );
+
+  useEffect(() => {
+    if (screen.id !== 7) return;
+    if (threeStatesIntroPhase !== 'paragraph') {
+      threeStatesBodySpokenRef.current = false;
+      setThreeStatesBodyTypingActive(false);
+      window.clearTimeout(threeStatesBodySpeechTimerRef.current);
+      return;
+    }
+    if (threeStatesBodySpokenRef.current || !threeStatesBodyText.trim()) return;
+
+    threeStatesBodySpokenRef.current = true;
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      window.speechSynthesis.getVoices();
+    }
+    speakTextOnce(threeStatesBodyText);
+
+    if (prefersReducedMotion) {
+      setThreeStatesBodyTypingActive(true);
+      return;
+    }
+
+    threeStatesBodySpeechTimerRef.current = window.setTimeout(() => {
+      setThreeStatesBodyTypingActive(true);
+    }, SPEECH_LEAD_MS);
+
+    return () => window.clearTimeout(threeStatesBodySpeechTimerRef.current);
+  }, [
+    screen.id,
+    threeStatesIntroPhase,
+    threeStatesBodyText,
+    prefersReducedMotion,
+  ]);
+
+  useEffect(() => {
+    if (screen.id !== 7) return;
+    if (prefersReducedMotion) return;
+    if (threeStatesIntroPhase !== 'paragraph') return;
+    if (!threeStatesBodyTypingComplete) return;
+    setThreeStatesIntroPhase('reveal_cards');
+  }, [
+    screen.id,
+    prefersReducedMotion,
+    threeStatesIntroPhase,
+    threeStatesBodyTypingComplete,
+  ]);
+
+  const techniqueLeadSpokenRef = useRef(false);
+  const techniqueLeadSpeechTimerRef = useRef(0);
+  const [techniqueLeadTypingActive, setTechniqueLeadTypingActive] =
+    useState(false);
+
+  useEffect(() => {
+    if (screen.id !== 17) return;
+    setTechniqueIntroPhase(prefersReducedMotion ? 'done' : 'center');
+    techniqueLeadSpokenRef.current = false;
+    setTechniqueLeadTypingActive(false);
+    window.clearTimeout(techniqueLeadSpeechTimerRef.current);
+  }, [index, screen.id, prefersReducedMotion]);
+
+  const techniqueTitleTypingEnabled =
+    screen.id === 17 &&
+    techniqueIntroPhase === 'center' &&
+    !prefersReducedMotion;
+  const {
+    displayed: typedTechniqueTitle,
+    isComplete: techniqueTitleTypingComplete,
+  } = useTypingText(techniqueTitle, techniqueTitleTypingEnabled);
+
+  useEffect(() => {
+    if (screen.id !== 17) return;
+    if (prefersReducedMotion) return;
+    if (techniqueIntroPhase !== 'center') return;
+    if (!techniqueTitleTypingComplete) return;
+
+    const timer = window.setTimeout(() => {
+      setTechniqueIntroPhase('header');
+    }, 700);
+
+    return () => window.clearTimeout(timer);
+  }, [
+    screen.id,
+    prefersReducedMotion,
+    techniqueIntroPhase,
+    techniqueTitleTypingComplete,
+  ]);
+
+  const techniqueLeadText = screen.id === 17 ? (screen.lead ?? '') : '';
+  const techniqueLeadTypingEnabled =
+    screen.id === 17 &&
+    techniqueIntroPhase === 'paragraph' &&
+    techniqueLeadTypingActive &&
+    !prefersReducedMotion;
+  const {
+    displayed: typedTechniqueLead,
+    isComplete: techniqueLeadTypingComplete,
+  } = useTypingText(
+    techniqueLeadText,
+    techniqueLeadTypingEnabled,
+    42,
+    'empty'
+  );
+
+  useEffect(() => {
+    if (screen.id !== 17) return;
+    if (techniqueIntroPhase !== 'paragraph') {
+      techniqueLeadSpokenRef.current = false;
+      setTechniqueLeadTypingActive(false);
+      window.clearTimeout(techniqueLeadSpeechTimerRef.current);
+      return;
+    }
+    if (techniqueLeadSpokenRef.current || !techniqueLeadText.trim()) return;
+
+    techniqueLeadSpokenRef.current = true;
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      window.speechSynthesis.getVoices();
+    }
+    speakTextOnce(techniqueLeadText);
+
+    if (prefersReducedMotion) {
+      setTechniqueLeadTypingActive(true);
+      return;
+    }
+
+    techniqueLeadSpeechTimerRef.current = window.setTimeout(() => {
+      setTechniqueLeadTypingActive(true);
+    }, SPEECH_LEAD_MS);
+
+    return () => window.clearTimeout(techniqueLeadSpeechTimerRef.current);
+  }, [
+    screen.id,
+    techniqueIntroPhase,
+    techniqueLeadText,
+    prefersReducedMotion,
+  ]);
+
+  useEffect(() => {
+    if (screen.id !== 17) return;
+    if (prefersReducedMotion) return;
+    if (techniqueIntroPhase !== 'paragraph') return;
+    if (!techniqueLeadTypingComplete) return;
+
+    const timer = window.setTimeout(() => {
+      setTechniqueIntroPhase('reveal');
+    }, 700);
+
+    return () => window.clearTimeout(timer);
+  }, [
+    screen.id,
+    prefersReducedMotion,
+    techniqueIntroPhase,
+    techniqueLeadTypingComplete,
+  ]);
+
+  const scenarioSituationSpokenRef = useRef(false);
+  const scenarioSituationSpeechTimerRef = useRef(0);
+  const [scenarioSituationTypingActive, setScenarioSituationTypingActive] =
+    useState(false);
+
+  useLayoutEffect(() => {
+    if (screen.type !== 'scenario_situation') return;
+
+    setScenarioIntroPhase(
+      prefersReducedMotion
+        ? 'done'
+        : screen.scenarioId === 1 && !scenarioMainTitleIntroPlayed
+          ? 'center'
+          : 'reveal_situation'
+    );
+    scenarioSituationSpokenRef.current = false;
+    setScenarioSituationTypingActive(false);
+    window.clearTimeout(scenarioSituationSpeechTimerRef.current);
+  }, [
+    index,
+    screen.id,
+    screen.type,
+    screen.scenarioId,
+    prefersReducedMotion,
+    scenarioMainTitleIntroPlayed,
+  ]);
+
+  const scenarioTitleTypingEnabled =
+    screen.type === 'scenario_situation' &&
+    scenarioIntroPhase === 'center' &&
+    !prefersReducedMotion;
+  const {
+    displayed: typedScenarioTitle,
+    isComplete: scenarioTitleTypingComplete,
+  } = useTypingText(scenarioTitle, scenarioTitleTypingEnabled);
+
+  useEffect(() => {
+    if (screen.type !== 'scenario_situation') return;
+    if (prefersReducedMotion) return;
+    if (scenarioIntroPhase !== 'center') return;
+    if (!scenarioTitleTypingComplete) return;
+
+    const timer = window.setTimeout(() => {
+      setScenarioIntroPhase('header');
+    }, 700);
+
+    return () => window.clearTimeout(timer);
+  }, [
+    screen.type,
+    prefersReducedMotion,
+    scenarioIntroPhase,
+    scenarioTitleTypingComplete,
+  ]);
+
+  const scenarioSituationText =
+    screen.type === 'scenario_situation' && screen.scenarioId
+      ? SCENARIOS[screen.scenarioId].situation
+      : '';
+  const scenarioSituationTypingEnabled =
+    screen.type === 'scenario_situation' &&
+    scenarioIntroPhase === 'situation' &&
+    scenarioSituationTypingActive &&
+    !prefersReducedMotion;
+  const {
+    displayed: typedScenarioSituation,
+    isComplete: scenarioSituationTypingComplete,
+  } = useTypingText(
+    scenarioSituationText,
+    scenarioSituationTypingEnabled,
+    42,
+    'empty'
+  );
+
+  useEffect(() => {
+    if (screen.type !== 'scenario_situation') return;
+    if (scenarioIntroPhase !== 'situation') {
+      scenarioSituationSpokenRef.current = false;
+      setScenarioSituationTypingActive(false);
+      window.clearTimeout(scenarioSituationSpeechTimerRef.current);
+      return;
+    }
+    if (scenarioSituationSpokenRef.current || !scenarioSituationText.trim())
+      return;
+
+    scenarioSituationSpokenRef.current = true;
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      window.speechSynthesis.getVoices();
+    }
+    speakTextOnce(scenarioSituationText);
+
+    if (prefersReducedMotion) {
+      setScenarioSituationTypingActive(true);
+      return;
+    }
+
+    scenarioSituationSpeechTimerRef.current = window.setTimeout(() => {
+      setScenarioSituationTypingActive(true);
+    }, SPEECH_LEAD_MS);
+
+    return () => window.clearTimeout(scenarioSituationSpeechTimerRef.current);
+  }, [
+    screen.type,
+    scenarioIntroPhase,
+    scenarioSituationText,
+    prefersReducedMotion,
+  ]);
+
+  useEffect(() => {
+    if (screen.type !== 'scenario_situation') return;
+    if (prefersReducedMotion) return;
+    if (scenarioIntroPhase !== 'situation') return;
+    if (!scenarioSituationTypingComplete) return;
+
+    const timer = window.setTimeout(() => {
+      setScenarioIntroPhase('reveal_options');
+    }, 700);
+
+    return () => window.clearTimeout(timer);
+  }, [
+    screen.type,
+    prefersReducedMotion,
+    scenarioIntroPhase,
+    scenarioSituationTypingComplete,
+  ]);
+
   useEffect(() => {
     if (screen.type !== 'scenario_situation') return;
 
@@ -4773,12 +5543,27 @@ export default function MindSyncTeacherTrainingModule01Page() {
     return 'Next';
   }, [screen.id, screen.type, screen.scenarioId, scenarioCompareSeen]);
 
+  const skipScenarioSectionEnterAnimation =
+    screen.type === 'scenario_situation' &&
+    (scenarioMainTitleIntroPlayed || (screen.scenarioId ?? 0) > 1);
+
+  const introTitleMovingToHeader =
+    (screen.id === 3 && block3IntroPhase === 'header') ||
+    (screen.id === 4 && block4IntroPhase === 'header') ||
+    (screen.id === 5 && watchIntroPhase === 'header') ||
+    (screen.id === 7 && threeStatesIntroPhase === 'header') ||
+    (screen.id === 17 && techniqueIntroPhase === 'header') ||
+    (shouldPlayScenarioMainTitleIntro && scenarioIntroPhase === 'header');
+
   return (
     <div
       className="flex flex-col min-h-screen bg-[#F7F9FC] text-slate-900"
       style={{ fontFamily: 'Arial' }}
     >
-      <FloatingNarratorAvatar enabled={narratorEnabled} text={narratorText} />
+      <ModuleAudioGuide
+        autoNarrationEnabled={narratorEnabled}
+        autoNarrationText={narratorText}
+      />
       {screen.type === 'landing' ? (
         <LandingSection screen={screen} onNext={() => transitionToIndex(1)} />
       ) : (
@@ -4801,27 +5586,45 @@ export default function MindSyncTeacherTrainingModule01Page() {
                   activeSidebarSectionKey={activeSidebarSectionKey}
                   isModuleContentsOpen={isModuleContentsOpen}
                   onToggleModuleContents={toggleModuleContents}
+                  suppressEntranceAnimation={introTitleMovingToHeader}
                   visible={
                     (screen.id !== 3 || block3IntroPhase !== 'center') &&
                     (screen.id !== 4 || block4IntroPhase !== 'center') &&
-                    (screen.id !== 5 || watchIntroPhase !== 'center')
+                    (screen.id !== 5 || watchIntroPhase !== 'center') &&
+                    (screen.id !== 7 || threeStatesIntroPhase !== 'center') &&
+                    (screen.id !== 17 || techniqueIntroPhase !== 'center') &&
+                    (screen.type !== 'scenario_situation' ||
+                      !shouldPlayScenarioMainTitleIntro ||
+                      scenarioIntroPhase !== 'center')
                   }
                   keepTitleAnchor={
                     (screen.id === 3 && block3IntroPhase === 'center') ||
                     (screen.id === 4 && block4IntroPhase === 'center') ||
-                    (screen.id === 5 && watchIntroPhase === 'center')
+                    (screen.id === 5 && watchIntroPhase === 'center') ||
+                    (screen.id === 7 && threeStatesIntroPhase === 'center') ||
+                    (screen.id === 17 && techniqueIntroPhase === 'center') ||
+                    (shouldPlayScenarioMainTitleIntro &&
+                      scenarioIntroPhase === 'center')
                   }
                   hideTitle={
                     (screen.id === 3 &&
-                      block3IntroPhase !== 'reveal' &&
-                      block3IntroPhase !== 'done') ||
+                      (block3IntroPhase === 'center' ||
+                        block3IntroPhase === 'header')) ||
                     (screen.id === 4 &&
-                      block4IntroPhase !== 'reveal' &&
-                      block4IntroPhase !== 'done') ||
+                      (block4IntroPhase === 'center' ||
+                        block4IntroPhase === 'header')) ||
                     (screen.id === 5 &&
-                      watchIntroPhase !== 'reveal_intro' &&
-                      watchIntroPhase !== 'intro' &&
-                      watchIntroPhase !== 'done')
+                      (watchIntroPhase === 'center' ||
+                        watchIntroPhase === 'header')) ||
+                    (screen.id === 7 &&
+                      (threeStatesIntroPhase === 'center' ||
+                        threeStatesIntroPhase === 'header')) ||
+                    (screen.id === 17 &&
+                      (techniqueIntroPhase === 'center' ||
+                        techniqueIntroPhase === 'header')) ||
+                    (shouldPlayScenarioMainTitleIntro &&
+                      (scenarioIntroPhase === 'center' ||
+                        scenarioIntroPhase === 'header'))
                   }
                   titleAnchorRef={headerTitleAnchorRef}
                 />
@@ -4847,7 +5650,8 @@ export default function MindSyncTeacherTrainingModule01Page() {
                         screen.id === 2 ||
                         screen.id === 3 ||
                         screen.id === 4 ||
-                        screen.id === 5
+                        screen.id === 5 ||
+                        screen.id === 7
                           ? 'pb-4 flex flex-col'
                           : 'pb-24'
                       } ${
@@ -4857,7 +5661,9 @@ export default function MindSyncTeacherTrainingModule01Page() {
                       }`}
                     >
                       <section
-                        className={`step-transition ${
+                        className={`${
+                          skipScenarioSectionEnterAnimation ? '' : 'step-transition'
+                        } ${
                           screen.id === 16 ||
                           screen.id === 17 ||
                           screen.id === 18 ||
@@ -4872,7 +5678,8 @@ export default function MindSyncTeacherTrainingModule01Page() {
                           screen.id === 2 ||
                           screen.id === 3 ||
                           screen.id === 4 ||
-                          screen.id === 5
+                          screen.id === 5 ||
+                          screen.id === 7
                             ? isIntroReadMoreLayoutOpen
                               ? 'flex flex-col'
                               : 'flex flex-col flex-1 min-h-full h-full'
@@ -4884,11 +5691,80 @@ export default function MindSyncTeacherTrainingModule01Page() {
                             <CoverSection screen={screen} />
                           </div>
                         ) : screen.type === 'technique_intro' ? (
-                          <div className="p-2 md:p-2 md:px-14 flex flex-col flex-1 min-h-0 h-full overflow-hidden">
+                          <div className="p-2 md:p-2 md:px-14 flex flex-col flex-1 min-h-0 h-full relative overflow-hidden">
+                            {techniqueIntroPhase === 'center' ||
+                            techniqueIntroPhase === 'header' ? (
+                              <>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    if (techniqueIntroPhase === 'center') {
+                                      setTechniqueIntroPhase('header');
+                                    }
+                                  }}
+                                  className={`absolute inset-0 z-10 ${
+                                    techniqueIntroPhase === 'center'
+                                      ? 'cursor-pointer'
+                                      : 'pointer-events-none'
+                                  }`}
+                                  aria-label="Continue to technique intro"
+                                />
+                                <IntroTitleOverlay
+                                  title={techniqueTitle}
+                                  phase={
+                                    techniqueIntroPhase === 'header'
+                                      ? 'header'
+                                      : 'center'
+                                  }
+                                  anchorRef={headerTitleAnchorRef}
+                                  contentAreaRef={mainContentRef}
+                                  centerContent={!isModuleContentsOpen}
+                                  displayedText={
+                                    techniqueIntroPhase === 'center'
+                                      ? typedTechniqueTitle
+                                      : techniqueTitle
+                                  }
+                                  onMoveComplete={() =>
+                                    setTechniqueIntroPhase('paragraph')
+                                  }
+                                />
+                              </>
+                            ) : null}
+
                             <TechniqueVerticalStepsSection
                               screen={screen}
                               onStepClick={setActiveTechniqueStep}
+                              hideLead={
+                                techniqueIntroPhase === 'center' ||
+                                techniqueIntroPhase === 'header'
+                              }
+                              leadContent={
+                                techniqueIntroPhase === 'paragraph' ? (
+                                  <>
+                                    <span>{typedTechniqueLead}</span>
+                                    <span className="text-transparent">
+                                      {techniqueLeadText.slice(
+                                        typedTechniqueLead.length
+                                      )}
+                                    </span>
+                                  </>
+                                ) : techniqueIntroPhase === 'reveal' ||
+                                  techniqueIntroPhase === 'done' ? (
+                                  techniqueLeadText
+                                ) : undefined
+                              }
+                              showSteps={techniqueIntroPhase === 'done'}
+                              staggerReveal={techniqueIntroPhase === 'done'}
+                              showKeyPoint={techniqueIntroPhase === 'done'}
                             />
+
+                            {techniqueIntroPhase === 'reveal' ? (
+                              <TapContinuePrompt
+                                label="Tap to continue"
+                                onClick={() => setTechniqueIntroPhase('done')}
+                                className="absolute inset-0 z-20"
+                              />
+                            ) : null}
                           </div>
                         ) : screen.type === 'technique' ? (
                           <div className="p-5 md:p-6 md:px-14 flex flex-col flex-1 min-h-0 h-full">
@@ -4924,7 +5800,48 @@ export default function MindSyncTeacherTrainingModule01Page() {
                           </div>
                         ) : screen.type === 'scenario_situation' &&
                           screen.scenarioId ? (
-                          <div className="p-5 md:p-6 md:px-14 flex flex-col flex-1 min-h-0 h-full overflow-hidden">
+                          <div className="p-5 md:p-6 md:px-14 w-full min-w-0 self-stretch flex flex-col flex-1 min-h-0 h-full overflow-hidden relative">
+                            {shouldPlayScenarioMainTitleIntro &&
+                            (scenarioIntroPhase === 'center' ||
+                              scenarioIntroPhase === 'header') ? (
+                              <>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    if (scenarioIntroPhase === 'center') {
+                                      setScenarioIntroPhase('header');
+                                    }
+                                  }}
+                                  className={`absolute inset-0 z-10 ${
+                                    scenarioIntroPhase === 'center'
+                                      ? 'cursor-pointer'
+                                      : 'pointer-events-none'
+                                  }`}
+                                  aria-label="Continue to scenario"
+                                />
+                                <IntroTitleOverlay
+                                  title={scenarioTitle}
+                                  phase={
+                                    scenarioIntroPhase === 'header'
+                                      ? 'header'
+                                      : 'center'
+                                  }
+                                  anchorRef={headerTitleAnchorRef}
+                                  contentAreaRef={mainContentRef}
+                                  centerContent={!isModuleContentsOpen}
+                                  displayedText={
+                                    scenarioIntroPhase === 'center'
+                                      ? typedScenarioTitle
+                                      : scenarioTitle
+                                  }
+                                  onMoveComplete={() => {
+                                    setScenarioMainTitleIntroPlayed(true);
+                                    setScenarioIntroPhase('reveal_situation');
+                                  }}
+                                />
+                              </>
+                            ) : null}
+
                             <ScenarioSituationSection
                               scenarioId={screen.scenarioId}
                               selected={
@@ -4940,6 +5857,72 @@ export default function MindSyncTeacherTrainingModule01Page() {
                                   [screen.scenarioId!]: false,
                                 }));
                               }}
+                              hideSituation={
+                                scenarioIntroPhase === 'center' ||
+                                scenarioIntroPhase === 'header' ||
+                                scenarioIntroPhase === 'reveal_situation'
+                              }
+                              hideOptions={scenarioIntroPhase !== 'done'}
+                              showScenarioHeading={
+                                scenarioIntroPhase === 'reveal_situation' ||
+                                scenarioIntroPhase === 'situation' ||
+                                scenarioIntroPhase === 'reveal_options' ||
+                                scenarioIntroPhase === 'done'
+                              }
+                              showIntroCallout={
+                                showScenarioIntroCallout &&
+                                scenarioIntroPhase === 'reveal_situation'
+                              }
+                              situationVisible={
+                                scenarioIntroPhase === 'situation' ||
+                                scenarioIntroPhase === 'reveal_options' ||
+                                scenarioIntroPhase === 'done'
+                              }
+                              situationContent={
+                                scenarioIntroPhase === 'situation' ? (
+                                  prefersReducedMotion ? (
+                                    scenarioSituationText
+                                  ) : (
+                                    <>
+                                      <span>{typedScenarioSituation}</span>
+                                      <span className="text-transparent">
+                                        {scenarioSituationText.slice(
+                                          typedScenarioSituation.length
+                                        )}
+                                      </span>
+                                    </>
+                                  )
+                                ) : scenarioIntroPhase === 'reveal_options' ||
+                                  scenarioIntroPhase === 'done' ? (
+                                  scenarioSituationText
+                                ) : undefined
+                              }
+                              optionsVisible={scenarioIntroPhase === 'done'}
+                              situationRevealOverlay={
+                                scenarioIntroPhase === 'reveal_situation' ? (
+                                  <TapContinuePrompt
+                                    label="Tap to continue"
+                                    onClick={() => {
+                                      if (showScenarioIntroCallout) {
+                                        dismissScenarioCallout();
+                                      }
+                                      setScenarioIntroPhase('situation');
+                                    }}
+                                    className="absolute inset-0 z-20"
+                                  />
+                                ) : null
+                              }
+                              optionsRevealOverlay={
+                                scenarioIntroPhase === 'reveal_options' ? (
+                                  <TapContinuePrompt
+                                    label="Tap to continue"
+                                    onClick={() =>
+                                      setScenarioIntroPhase('done')
+                                    }
+                                    className="absolute inset-0 z-20"
+                                  />
+                                ) : null
+                              }
                             />
                           </div>
                         ) : screen.id === 2 ? (
@@ -5005,8 +5988,12 @@ export default function MindSyncTeacherTrainingModule01Page() {
                             (watchIntroPhase === 'intro' &&
                               watchIntroTypingComplete &&
                               !watchIntroVideoRevealed) ? (
-                              <button
-                                type="button"
+                              <TapContinuePrompt
+                                label={
+                                  watchIntroPhase === 'intro'
+                                    ? 'Continue to see video'
+                                    : 'Tap to continue'
+                                }
                                 onClick={() => {
                                   if (watchIntroPhase === 'reveal_intro') {
                                     setWatchIntroPhase('intro');
@@ -5017,20 +6004,8 @@ export default function MindSyncTeacherTrainingModule01Page() {
                                     setWatchIntroPhase('done');
                                   }
                                 }}
-                                className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2E7CF6]/30 rounded-xl transition-all duration-[350ms] ease-out opacity-100 translate-y-0"
-                              >
-                                <span
-                                  className="material-symbols-outlined text-slate-400 text-[32px] animate-pulse"
-                                  aria-hidden
-                                >
-                                  touch_app
-                                </span>
-                                <span className="text-base font-semibold text-[#2E7CF6]">
-                                  {watchIntroPhase === 'intro'
-                                    ? 'Reveal video'
-                                    : 'Reveal'}
-                                </span>
-                              </button>
+                                className="absolute inset-0"
+                              />
                             ) : null}
 
                             {watchIntroPhase === 'intro' ? (
@@ -5153,6 +6128,236 @@ export default function MindSyncTeacherTrainingModule01Page() {
                               onPhaseChange={handleBlock3PhaseChange}
                             />
                           </div>
+                        ) : screen.id === 7 ? (
+                          <div className="p-5 md:p-6 md:px-14 flex flex-col flex-1 min-h-0 h-full relative">
+                            <div className="relative flex flex-col flex-1 min-h-0 h-full">
+                              <div className="relative max-w-[1200px] mx-auto w-full flex flex-col flex-1 min-h-0 h-full">
+                                {threeStatesIntroPhase === 'center' ||
+                                threeStatesIntroPhase === 'header' ? (
+                                  <>
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        if (
+                                          threeStatesIntroPhase === 'center'
+                                        ) {
+                                          setThreeStatesIntroPhase('header');
+                                        }
+                                      }}
+                                      className={`absolute inset-0 z-10 ${
+                                        threeStatesIntroPhase === 'center'
+                                          ? 'cursor-pointer'
+                                          : 'pointer-events-none'
+                                      }`}
+                                      aria-label="Continue to three states"
+                                    />
+                                    <IntroTitleOverlay
+                                      title={threeStatesTitle}
+                                      phase={
+                                        threeStatesIntroPhase === 'header'
+                                          ? 'header'
+                                          : 'center'
+                                      }
+                                      anchorRef={headerTitleAnchorRef}
+                                      contentAreaRef={mainContentRef}
+                                      centerContent={!isModuleContentsOpen}
+                                      displayedText={
+                                        threeStatesIntroPhase === 'center'
+                                          ? typedThreeStatesTitle
+                                          : threeStatesTitle
+                                      }
+                                      onMoveComplete={() =>
+                                        setThreeStatesIntroPhase(
+                                          prefersReducedMotion
+                                            ? 'done'
+                                            : 'reveal_paragraph'
+                                        )
+                                      }
+                                    />
+                                  </>
+                                ) : null}
+
+                                {threeStatesIntroPhase === 'reveal_paragraph' ? (
+                                  <TapContinuePrompt
+                                    label="Tap to continue"
+                                    onClick={() =>
+                                      setThreeStatesIntroPhase('paragraph')
+                                    }
+                                    className="absolute inset-0"
+                                  />
+                                ) : null}
+
+                                <header
+                                  className={`mb-10 transition-all duration-[350ms] ease-out ${
+                                    threeStatesIntroPhase === 'paragraph' ||
+                                    threeStatesIntroPhase === 'reveal_cards' ||
+                                    threeStatesIntroPhase === 'done'
+                                      ? 'opacity-100 translate-y-0'
+                                      : 'opacity-0 translate-y-2 pointer-events-none'
+                                  }`}
+                                >
+                                  <div
+                                    className={`mt-6 p-10 max-w-full min-h-[230px] ${MODULE_SURFACE} rounded-xl border-l-4 border-l-[#2E7CF6]`}
+                                  >
+                                    <p
+                                      className="text-[24px] font-regular leading-relaxed whitespace-pre-line"
+                                      style={{ color: '#333333' }}
+                                    >
+                                      {prefersReducedMotion ||
+                                      threeStatesIntroPhase ===
+                                        'reveal_cards' ||
+                                      threeStatesIntroPhase === 'done' ? (
+                                        screen.body
+                                      ) : (
+                                        <>
+                                          <span>{typedThreeStatesBody}</span>
+                                          <span className="text-transparent">
+                                            {threeStatesBodyText.slice(
+                                              typedThreeStatesBody.length
+                                            )}
+                                          </span>
+                                        </>
+                                      )}
+                                    </p>
+                                  </div>
+                                </header>
+
+                                {threeStatesIntroPhase === 'reveal_cards' ? (
+                                  <TapContinuePrompt
+                                    label="Tap to continue"
+                                    onClick={() =>
+                                      setThreeStatesIntroPhase('done')
+                                    }
+                                    className="absolute inset-0"
+                                  />
+                                ) : null}
+
+                                <div
+                                  className={`w-full transition-all duration-[350ms] ease-out ${
+                                    threeStatesIntroPhase === 'done'
+                                      ? 'opacity-100 translate-y-0'
+                                      : 'opacity-0 translate-y-2 pointer-events-none'
+                                  }`}
+                                >
+                                  <div>
+                                    <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 items-stretch">
+                                      {(
+                                        [
+                                          {
+                                            key: 'green' as const,
+                                            title: 'State One',
+                                            subtitle: 'Ready for learning',
+                                            accentText: 'text-emerald-800',
+                                            iconBg: 'bg-emerald-100',
+                                            iconText: 'text-emerald-700',
+                                            barBg: 'bg-emerald-100',
+                                            icon: 'psychology',
+                                          },
+                                          {
+                                            key: 'amber' as const,
+                                            title: 'State Two',
+                                            subtitle: 'Escalation imminent',
+                                            accentText: 'text-amber-700',
+                                            iconBg: 'bg-amber-100',
+                                            iconText: 'text-amber-700',
+                                            barBg: 'bg-amber-100',
+                                            icon: 'warning',
+                                          },
+                                          {
+                                            key: 'red' as const,
+                                            title: 'State Three',
+                                            subtitle: 'Full survival mode',
+                                            accentText: 'text-rose-700',
+                                            iconBg: 'bg-rose-100',
+                                            iconText: 'text-rose-700',
+                                            barBg: 'bg-rose-100',
+                                            icon: 'emergency_home',
+                                          },
+                                        ] as const
+                                      ).map((card) => {
+                                        return (
+                                          <div
+                                            key={card.key}
+                                            className={`${MODULE_SURFACE} rounded-2xl overflow-hidden border border-[#E5E9EB] shadow-[0_1px_2px_rgba(0,0,0,0.05)] transition-shadow w-full min-h-[320px] flex flex-col`}
+                                          >
+                                            <button
+                                              type="button"
+                                              onClick={() =>
+                                                setLearnStateModalKey(card.key)
+                                              }
+                                              className="w-full flex-1 min-h-[320px] p-6 md:p-8 flex flex-col items-center justify-between text-center transition-all duration-300 hover:-translate-y-0.5"
+                                            >
+                                              <div
+                                                className={`size-20 md:size-24 lg:size-28 shrink-0 aspect-square rounded-full ${card.iconBg} flex items-center justify-center`}
+                                              >
+                                                <span
+                                                  className={`material-symbols-outlined text-[28px] leading-none ${card.iconText}`}
+                                                  style={{
+                                                    fontVariationSettings:
+                                                      '"FILL" 1',
+                                                  }}
+                                                >
+                                                  {card.icon}
+                                                </span>
+                                              </div>
+                                              <div className="flex flex-col items-center gap-1.5 shrink-0">
+                                                <div
+                                                  className={`text-[15px] font-semibold leading-tight ${card.accentText}`}
+                                                >
+                                                  {card.title}
+                                                </div>
+                                                <div
+                                                  className={`h-1 w-12 rounded-full ${card.barBg}`}
+                                                />
+                                              </div>
+                                              <span className="material-symbols-outlined text-slate-400 text-[18px] shrink-0">
+                                                expand_more
+                                              </span>
+                                            </button>
+                                          </div>
+                                        );
+                                      })}
+                                    </div>
+
+                                    {learnStateItems.brain?.body ? (
+                                      <div className="mt-6"></div>
+                                    ) : null}
+                                  </div>
+                                </div>
+
+                                <LearnStateModal
+                                  open={learnStateModalKey === 'green'}
+                                  title={
+                                    learnStateItems.green?.header ??
+                                    'State One: Green. Calmly engaged'
+                                  }
+                                  accentColor="#37675e"
+                                  body={learnStateItems.green?.body ?? ''}
+                                  onClose={() => setLearnStateModalKey(null)}
+                                />
+                                <LearnStateModal
+                                  open={learnStateModalKey === 'amber'}
+                                  title={
+                                    learnStateItems.amber?.header ??
+                                    'State Two: Amber. Dysregulated'
+                                  }
+                                  accentColor="#ba7a1a"
+                                  body={learnStateItems.amber?.body ?? ''}
+                                  onClose={() => setLearnStateModalKey(null)}
+                                />
+                                <LearnStateModal
+                                  open={learnStateModalKey === 'red'}
+                                  title={
+                                    learnStateItems.red?.header ??
+                                    'State Three: Red. Shut down'
+                                  }
+                                  accentColor="#ba1a1a"
+                                  body={learnStateItems.red?.body ?? ''}
+                                  onClose={() => setLearnStateModalKey(null)}
+                                />
+                              </div>
+                            </div>
+                          </div>
                         ) : (
                           <div className="p-5 md:p-6 md:px-14 flex flex-col min-h-0">
                             <>
@@ -5262,151 +6467,6 @@ export default function MindSyncTeacherTrainingModule01Page() {
                                     {screen.t1}
                                   </h1>
                                 )
-                              ) : null}
-
-                              {screen.id === 7 ? (
-                                <div className="pt-2">
-                                  <div className="max-w-[1200px] mx-auto">
-                                    <header className="mb-10">
-                                      <div
-                                        className={`mt-6 p-10  max-w-full h-[230px] ${MODULE_SURFACE} rounded-xl border-l-4 border-l-[#2E7CF6]`}
-                                      >
-                                        <p
-                                          className="text-[24px] font-regular leading-relaxed"
-                                          style={{ color: '#333333' }}
-                                        >
-                                          {screen.body}
-                                        </p>
-                                      </div>
-                                    </header>
-
-                                    <div className="w-full">
-                                      <div>
-                                        <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 items-stretch">
-                                          {(
-                                            [
-                                              {
-                                                key: 'green' as const,
-                                                title: 'State One',
-                                                subtitle: 'Ready for learning',
-                                                accentText: 'text-emerald-800',
-                                                iconBg: 'bg-emerald-100',
-                                                iconText: 'text-emerald-700',
-                                                barBg: 'bg-emerald-100',
-                                                icon: 'psychology',
-                                              },
-                                              {
-                                                key: 'amber' as const,
-                                                title: 'State Two',
-                                                subtitle: 'Escalation imminent',
-                                                accentText: 'text-amber-700',
-                                                iconBg: 'bg-amber-100',
-                                                iconText: 'text-amber-700',
-                                                barBg: 'bg-amber-100',
-                                                icon: 'warning',
-                                              },
-                                              {
-                                                key: 'red' as const,
-                                                title: 'State Three',
-                                                subtitle: 'Full survival mode',
-                                                accentText: 'text-rose-700',
-                                                iconBg: 'bg-rose-100',
-                                                iconText: 'text-rose-700',
-                                                barBg: 'bg-rose-100',
-                                                icon: 'emergency_home',
-                                              },
-                                            ] as const
-                                          ).map((card) => {
-                                            return (
-                                              <div
-                                                key={card.key}
-                                                className={`${MODULE_SURFACE} rounded-2xl overflow-hidden border border-[#E5E9EB] shadow-[0_1px_2px_rgba(0,0,0,0.05)] transition-shadow w-full min-h-[320px] flex flex-col`}
-                                              >
-                                                <button
-                                                  type="button"
-                                                  onClick={() =>
-                                                    setLearnStateModalKey(
-                                                      card.key
-                                                    )
-                                                  }
-                                                  className="w-full flex-1 min-h-[320px] p-6 md:p-8 flex flex-col items-center justify-between text-center transition-all duration-300 hover:-translate-y-0.5"
-                                                >
-                                                  <div
-                                                    className={`size-20 md:size-24 lg:size-28 shrink-0 aspect-square rounded-full ${card.iconBg} flex items-center justify-center`}
-                                                  >
-                                                    <span
-                                                      className={`material-symbols-outlined text-[28px] leading-none ${card.iconText}`}
-                                                      style={{
-                                                        fontVariationSettings:
-                                                          '"FILL" 1',
-                                                      }}
-                                                    >
-                                                      {card.icon}
-                                                    </span>
-                                                  </div>
-                                                  <div className="flex flex-col items-center gap-1.5 shrink-0">
-                                                    <div
-                                                      className={`text-[15px] font-semibold leading-tight ${card.accentText}`}
-                                                    >
-                                                      {card.title}
-                                                    </div>
-                                                    <div
-                                                      className={`h-1 w-12 rounded-full ${card.barBg}`}
-                                                    />
-                                                  </div>
-                                                  <span className="material-symbols-outlined text-slate-400 text-[18px] shrink-0">
-                                                    expand_more
-                                                  </span>
-                                                </button>
-                                              </div>
-                                            );
-                                          })}
-                                        </div>
-
-                                        {learnStateItems.brain?.body ? (
-                                          <div className="mt-6"></div>
-                                        ) : null}
-                                      </div>
-                                    </div>
-
-                                    <LearnStateModal
-                                      open={learnStateModalKey === 'green'}
-                                      title={
-                                        learnStateItems.green?.header ??
-                                        'State One: Green. Calmly engaged'
-                                      }
-                                      accentColor="#37675e"
-                                      body={learnStateItems.green?.body ?? ''}
-                                      onClose={() =>
-                                        setLearnStateModalKey(null)
-                                      }
-                                    />
-                                    <LearnStateModal
-                                      open={learnStateModalKey === 'amber'}
-                                      title={
-                                        learnStateItems.amber?.header ??
-                                        'State Two: Amber. Dysregulated'
-                                      }
-                                      accentColor="#ba7a1a"
-                                      body={learnStateItems.amber?.body ?? ''}
-                                      onClose={() =>
-                                        setLearnStateModalKey(null)
-                                      }
-                                    />
-                                    <LearnStateModal
-                                      open={learnStateModalKey === 'red'}
-                                      title={
-                                        learnStateItems.red?.header ??
-                                        'State Three: Red. Shut down'
-                                      }
-                                      accentColor="#ba1a1a"
-                                      body={learnStateItems.red?.body ?? ''}
-                                      onClose={() =>
-                                        setLearnStateModalKey(null)
-                                      }
-                                    />
-                                  </div>
-                                </div>
                               ) : null}
 
                               {screen.t2 &&
