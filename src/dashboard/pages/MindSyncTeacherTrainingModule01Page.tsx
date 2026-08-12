@@ -1569,20 +1569,26 @@ function TapContinuePrompt({
   onClick,
   className = '',
   visible = true,
+  overlay = false,
 }: {
   label: string;
   onClick: () => void;
   className?: string;
   visible?: boolean;
+  overlay?: boolean;
 }) {
   return (
     <button
       type="button"
       onClick={onClick}
-      className={`flex flex-col items-center justify-center gap-3 text-center shrink-0 w-fit mx-auto focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2E7CF6]/30 rounded-xl transition-all duration-[350ms] ease-out ${
-        visible
-          ? 'opacity-100 translate-y-0'
-          : 'opacity-0 translate-y-2 pointer-events-none'
+      className={`flex flex-col items-center justify-center gap-3 text-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2E7CF6]/30 rounded-xl transition-all duration-[350ms] ease-out ${
+        overlay
+          ? visible
+            ? 'opacity-100 translate-y-0'
+            : 'opacity-0 translate-y-2 pointer-events-none absolute inset-0'
+          : visible
+            ? 'opacity-100 translate-y-0 shrink-0 w-fit mx-auto'
+            : 'opacity-0 translate-y-2 pointer-events-none shrink-0 w-fit mx-auto'
       } ${className}`}
       aria-label={label}
       aria-hidden={!visible}
@@ -1905,6 +1911,7 @@ function ResearchTapRevealSection({
         onClick={handleContinueClick}
         className="flex-1"
         visible={showPrompt}
+        overlay
       />
 
       <div
