@@ -159,6 +159,14 @@ type TechniqueIntroPhase =
   | 'reveal'
   | 'done';
 
+type TakeawayIntroPhase =
+  | 'center'
+  | 'header'
+  | 'reveal'
+  | 'paragraph'
+  | 'reveal_cards'
+  | 'done';
+
 type ScenarioIntroPhase =
   | 'center'
   | 'header'
@@ -2451,8 +2459,8 @@ function TechniqueVerticalStepsSection({
     (!staggerReveal || revealedStepCount >= steps.length);
 
   return (
-    <div className="max-w-[1200px] mx-auto flex flex-col flex-1 min-h-0 h-full overflow-hidden">
-      <div className="flex flex-col min-h-0 overflow-hidden">
+    <div className="max-w-[1226px] mx-auto w-full flex flex-col flex-1 min-h-0 h-full overflow-hidden">
+      <div className="flex flex-col min-h-0 overflow-hidden flex-1">
         <div className="flex-1 min-h-0 overflow-y-auto pt-2 custom-scrollbar pr-1 -mr-1">
           {(screen.lead || leadContent) && !hideLead ? (
             <p
@@ -2463,51 +2471,68 @@ function TechniqueVerticalStepsSection({
             </p>
           ) : null}
 
-          {visibleStepCount > 0 ? (
-            <div className="space-y-4">
-              {steps.slice(0, visibleStepCount).map((step) => (
-                <button
-                  key={step.number}
-                  type="button"
-                  onClick={() => onStepClick(step.number)}
-                  className={`w-full ${MODULE_SURFACE} h-[120px] p-5 md:p-6 rounded-xl border-l-4 border-l-[#2E7CF6] text-left hover:bg-[#EEF4FF]/75 transition-all duration-[350ms] ease-out opacity-100 translate-y-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2E7CF6]/30`}
-                >
-                  <div className="flex items-center justify-between gap-4 h-full">
-                    <div className="flex items-center gap-4 min-w-0">
-                      <ModuleFavicon className="w-8 h-8 shrink-0 object-contain" />
-                      <span
-                        className="text-[16px] md:text-[18px] font-semibold leading-snug"
-                        style={{ color: '#1F3864' }}
-                      >
-                        Step {step.number}. {step.title}
-                      </span>
-                    </div>
-                    <span
-                      className="material-symbols-outlined text-slate-400 text-[22px] shrink-0"
-                      aria-hidden
+          <div
+            className={`flex flex-col min-h-0 transition-opacity duration-500 ${
+              showSteps ? 'opacity-100' : 'opacity-0 pointer-events-none'
+            }`}
+          >
+            {steps.length > 0 ? (
+              <div className="space-y-4">
+                {steps.map((step, index) => {
+                  const visible = index < visibleStepCount;
+                  return (
+                    <div
+                      key={step.number}
+                      className={`transition-all duration-300 ease-out ${
+                        visible
+                          ? 'opacity-100 translate-y-0'
+                          : 'opacity-0 translate-y-2 pointer-events-none h-0 overflow-hidden'
+                      }`}
                     >
-                      touch_app
-                    </span>
-                  </div>
-                </button>
-              ))}
-            </div>
-          ) : null}
+                      <button
+                        type="button"
+                        onClick={() => onStepClick(step.number)}
+                        className={`w-full ${MODULE_SURFACE} h-[120px] p-5 md:p-6 rounded-xl border-l-4 border-l-[#2E7CF6] text-left hover:bg-[#EEF4FF]/75 transition-colors duration-[350ms] ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2E7CF6]/30`}
+                      >
+                        <div className="flex items-center justify-between gap-4 h-full">
+                          <div className="flex items-center gap-4 min-w-0">
+                            <ModuleFavicon className="w-8 h-8 shrink-0 object-contain" />
+                            <span
+                              className="text-[16px] md:text-[18px] font-semibold leading-snug"
+                              style={{ color: '#1F3864' }}
+                            >
+                              Step {step.number}. {step.title}
+                            </span>
+                          </div>
+                          <span
+                            className="material-symbols-outlined text-slate-400 text-[22px] shrink-0"
+                            aria-hidden
+                          >
+                            touch_app
+                          </span>
+                        </div>
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : null}
 
-          {showKeyPointNow ? (
-            <div className="mt-8 rounded-xl overflow-hidden shadow-[0_4px_24px_-4px_rgba(10,31,68,0.12)] border border-[#1F3864]/20 bg-[#1F3864] transition-all duration-[350ms] ease-out opacity-100 translate-y-0">
-              <div className="p-6 md:p-8">
-                <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-[#2E7CF6]/20 flex items-center justify-center shrink-0">
-                    <ModuleFavicon className="w-7 h-7 md:w-8 md:h-8" />
+            {showKeyPointNow ? (
+              <div className="mt-8 rounded-xl overflow-hidden shadow-[0_4px_24px_-4px_rgba(10,31,68,0.12)] border border-[#1F3864]/20 bg-[#1F3864] transition-all duration-300 ease-out opacity-100 translate-y-0">
+                <div className="p-6 md:p-8">
+                  <div className="flex items-start gap-4">
+                    <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-[#2E7CF6]/20 flex items-center justify-center shrink-0">
+                      <ModuleFavicon className="w-7 h-7 md:w-8 md:h-8" />
+                    </div>
+                    <p className="text-[15px] md:text-[16px] leading-relaxed text-white/90 italic whitespace-pre-line">
+                      {screen.keyPoint}
+                    </p>
                   </div>
-                  <p className="text-[15px] md:text-[16px] leading-relaxed text-white/90 italic whitespace-pre-line">
-                    {screen.keyPoint}
-                  </p>
                 </div>
               </div>
-            </div>
-          ) : null}
+            ) : null}
+          </div>
         </div>
       </div>
     </div>
@@ -4080,47 +4105,199 @@ function parseTakeawaySteps(text: string): {
 
 function ClosingSection({
   screen,
-  activeSidebarSectionKey,
+  headerTitleAnchorRef,
+  contentAreaRef,
+  centerContent,
+  onPhaseChange,
 }: {
   screen: Screen;
-  activeSidebarSectionKey: SidebarSectionKey | null;
+  headerTitleAnchorRef: React.RefObject<HTMLHeadingElement>;
+  contentAreaRef: React.RefObject<HTMLDivElement>;
+  centerContent: boolean;
+  onPhaseChange?: (phase: LearningOutcomesPhase) => void;
 }) {
-  const showTitle =
-    screen.t2 &&
-    !isSameAsBlockHeader(screen.t2, screen, activeSidebarSectionKey);
+  const headerTitle = (screen.t2 ?? MODULE_HEADER_TITLES.closing).trim();
+  const introCopy = screen.closingBody ?? '';
+  const prefersReducedMotion = usePrefersReducedMotion();
+  const skipIntro = prefersReducedMotion;
+  const bodySpokenRef = useRef(false);
+  const bodySpeechTimerRef = useRef(0);
+  const [bodyTypingActive, setBodyTypingActive] = useState(false);
+
+  const [phase, setPhase] = useState<TakeawayIntroPhase>(() =>
+    skipIntro ? 'done' : 'center'
+  );
+  const [displayTitle, setDisplayTitle] = useState(headerTitle);
+  const typingEnabled = phase === 'center' && !skipIntro;
+  const { displayed: typedTitle, isComplete: typingComplete } = useTypingText(
+    headerTitle,
+    typingEnabled
+  );
+  const bodyTypingEnabled =
+    phase === 'paragraph' && bodyTypingActive && !skipIntro;
+  const { displayed: typedBody, isComplete: bodyTypingComplete } = useTypingText(
+    introCopy,
+    bodyTypingEnabled,
+    42,
+    'empty'
+  );
+
+  useEffect(() => {
+    const headerPhase: LearningOutcomesPhase =
+      phase === 'center' || phase === 'header'
+        ? phase
+        : phase === 'done'
+          ? 'done'
+          : 'reveal';
+    onPhaseChange?.(headerPhase);
+  }, [phase, onPhaseChange]);
+
+  useEffect(() => {
+    if (phase === 'center') {
+      setDisplayTitle(typedTitle);
+    }
+  }, [phase, typedTitle]);
+
+  useEffect(() => {
+    if (phase !== 'center') {
+      setDisplayTitle(headerTitle);
+    }
+  }, [phase, headerTitle]);
+
+  useEffect(() => {
+    if (phase !== 'center' || skipIntro || !typingComplete) return;
+    const timer = window.setTimeout(() => setPhase('header'), 700);
+    return () => window.clearTimeout(timer);
+  }, [phase, skipIntro, typingComplete]);
+
+  useEffect(() => {
+    if (phase !== 'paragraph') {
+      bodySpokenRef.current = false;
+      setBodyTypingActive(false);
+      window.clearTimeout(bodySpeechTimerRef.current);
+      return;
+    }
+    if (bodySpokenRef.current || !introCopy.trim()) return;
+
+    bodySpokenRef.current = true;
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      window.speechSynthesis.getVoices();
+    }
+    speakTextOnce(introCopy);
+
+    if (prefersReducedMotion) {
+      setBodyTypingActive(true);
+      return;
+    }
+
+    bodySpeechTimerRef.current = window.setTimeout(() => {
+      setBodyTypingActive(true);
+    }, SPEECH_LEAD_MS);
+
+    return () => window.clearTimeout(bodySpeechTimerRef.current);
+  }, [phase, introCopy, prefersReducedMotion]);
+
+  useEffect(() => {
+    if (phase !== 'paragraph' || skipIntro || !bodyTypingComplete) return;
+    const timer = window.setTimeout(() => setPhase('done'), 700);
+    return () => window.clearTimeout(timer);
+  }, [phase, skipIntro, bodyTypingComplete]);
+
+  const handleCenterTap = () => {
+    if (phase === 'center') setPhase('header');
+  };
+
+  const handleMoveComplete = useCallback(() => {
+    setPhase('reveal');
+  }, []);
+
+  const handleContinue = () => {
+    if (phase === 'reveal') setPhase('paragraph');
+  };
+
+  const showTapPrompt = phase === 'reveal';
+  const showCard = phase === 'paragraph' || phase === 'done';
+  const isBodyTyping = phase === 'paragraph' && !skipIntro;
+  const showCta = phase === 'done';
+  const showContent = showCard;
 
   return (
-    <div className="max-w-[1200px] mx-auto flex flex-col flex-1 min-h-0 h-full justify-center gap-5 md:gap-6">
-      {showTitle ? (
-        <h2
-          className="shrink-0 text-[32px] leading-tight font-bold max-w-3xl"
-          style={{ color: '#1F3864' }}
-        >
-          {screen.t2}
-        </h2>
+    <div className="relative flex flex-col flex-1 min-h-0 h-full">
+      {phase === 'center' || phase === 'header' ? (
+        <>
+          <button
+            type="button"
+            onClick={handleCenterTap}
+            className={`absolute inset-0 z-10 ${
+              phase === 'center' ? 'cursor-pointer' : 'pointer-events-none'
+            }`}
+            aria-label="Continue to closing"
+          />
+          <IntroTitleOverlay
+            title={headerTitle}
+            phase={phase}
+            anchorRef={headerTitleAnchorRef}
+            contentAreaRef={contentAreaRef}
+            centerContent={centerContent}
+            displayedText={displayTitle}
+            onMoveComplete={handleMoveComplete}
+          />
+        </>
       ) : null}
 
+      <TapContinuePrompt
+        label="Tap to continue"
+        onClick={handleContinue}
+        className="absolute inset-0 z-20"
+        visible={showTapPrompt}
+      />
+
       <div
-        className={`rounded-xl border border-slate-200 ${MODULE_SURFACE} shadow-[0_20px_40px_-15px_rgba(47,99,120,0.06)] overflow-hidden border-l-4 border-l-[#2E7CF6] p-6 md:p-8`}
+        className={`max-w-[1200px] mx-auto w-full flex flex-col flex-1 min-h-0 h-full justify-center gap-5 md:gap-6 ${
+          showContent ? '' : 'opacity-0 pointer-events-none'
+        }`}
       >
-        <div className="flex items-start gap-4 md:gap-5">
-          <ModuleFavicon className="w-8 h-8 mt-0.5 shrink-0" />
-          <div className="space-y-5 min-w-0">
-            <p
-              className="text-[16px] md:text-[17px] leading-relaxed"
-              style={{ color: '#333333' }}
-            >
-              {screen.closingBody}
-            </p>
-            <Link
-              to="/dashboard/my-learning/mind-sync/module-2"
-              className="inline-flex items-center justify-center gap-2 rounded-xl px-6 py-3 text-sm md:text-base font-semibold text-white bg-[#2E7CF6] hover:bg-[#2563EB] transition-colors"
-            >
-              <span>Start Module 2</span>
-              <span className="material-symbols-outlined text-[20px]">
-                arrow_forward
-              </span>
-            </Link>
+        <div
+          className={`transition-opacity duration-500 ${
+            showCard ? 'opacity-100' : 'opacity-0 pointer-events-none'
+          }`}
+        >
+          <div
+            className={`rounded-xl border border-slate-200 ${MODULE_SURFACE} shadow-[0_20px_40px_-15px_rgba(47,99,120,0.06)] overflow-hidden border-l-4 border-l-[#2E7CF6] p-6 md:p-8`}
+          >
+            {introCopy ? (
+              <p
+                className={`shrink-0 w-full text-[16px] md:text-[17px] leading-relaxed ${
+                  showCta ? 'mb-5 md:mb-6' : ''
+                }`}
+                style={{ color: '#333333' }}
+              >
+                {isBodyTyping ? (
+                  <>
+                    <span>{typedBody}</span>
+                    <span className="text-transparent">
+                      {introCopy.slice(typedBody.length)}
+                    </span>
+                  </>
+                ) : showCard ? (
+                  introCopy
+                ) : null}
+              </p>
+            ) : null}
+            {showCta ? (
+              <div className="flex items-start gap-4 md:gap-5 animate-in fade-in duration-500">
+                <ModuleFavicon className="w-8 h-8 mt-0.5 shrink-0" />
+                <Link
+                  to="/dashboard/my-learning/mind-sync/module-2"
+                  className="inline-flex items-center justify-center gap-2 rounded-xl px-6 py-3 text-sm md:text-base font-semibold text-white bg-[#2E7CF6] hover:bg-[#2563EB] transition-colors"
+                >
+                  <span>Start Module 2</span>
+                  <span className="material-symbols-outlined text-[20px]">
+                    arrow_forward
+                  </span>
+                </Link>
+              </div>
+            ) : null}
           </div>
         </div>
       </div>
@@ -4128,7 +4305,126 @@ function ClosingSection({
   );
 }
 
-function TakeawayCardSection({ screen }: { screen: Screen }) {
+function TakeawayCardSection({
+  screen,
+  headerTitleAnchorRef,
+  contentAreaRef,
+  centerContent,
+  onPhaseChange,
+}: {
+  screen: Screen;
+  headerTitleAnchorRef: React.RefObject<HTMLHeadingElement>;
+  contentAreaRef: React.RefObject<HTMLDivElement>;
+  centerContent: boolean;
+  onPhaseChange?: (phase: LearningOutcomesPhase) => void;
+}) {
+  const headerTitle = MODULE_HEADER_TITLES.takeaway.trim();
+  const introCopy = screen.body ?? '';
+  const prefersReducedMotion = usePrefersReducedMotion();
+  const skipIntro = prefersReducedMotion;
+  const bodySpokenRef = useRef(false);
+  const bodySpeechTimerRef = useRef(0);
+  const [bodyTypingActive, setBodyTypingActive] = useState(false);
+
+  const [phase, setPhase] = useState<TakeawayIntroPhase>(() =>
+    skipIntro ? 'done' : 'center'
+  );
+  const [displayTitle, setDisplayTitle] = useState(headerTitle);
+  const typingEnabled = phase === 'center' && !skipIntro;
+  const { displayed: typedTitle, isComplete: typingComplete } = useTypingText(
+    headerTitle,
+    typingEnabled
+  );
+  const bodyTypingEnabled =
+    phase === 'paragraph' && bodyTypingActive && !skipIntro;
+  const { displayed: typedBody, isComplete: bodyTypingComplete } = useTypingText(
+    introCopy,
+    bodyTypingEnabled,
+    42,
+    'empty'
+  );
+
+  useEffect(() => {
+    const headerPhase: LearningOutcomesPhase =
+      phase === 'center' || phase === 'header'
+        ? phase
+        : phase === 'done'
+          ? 'done'
+          : 'reveal';
+    onPhaseChange?.(headerPhase);
+  }, [phase, onPhaseChange]);
+
+  useEffect(() => {
+    if (phase === 'center') {
+      setDisplayTitle(typedTitle);
+    }
+  }, [phase, typedTitle]);
+
+  useEffect(() => {
+    if (phase !== 'center') {
+      setDisplayTitle(headerTitle);
+    }
+  }, [phase, headerTitle]);
+
+  useEffect(() => {
+    if (phase !== 'center' || skipIntro || !typingComplete) return;
+    const timer = window.setTimeout(() => setPhase('header'), 700);
+    return () => window.clearTimeout(timer);
+  }, [phase, skipIntro, typingComplete]);
+
+  useEffect(() => {
+    if (phase !== 'paragraph') {
+      bodySpokenRef.current = false;
+      setBodyTypingActive(false);
+      window.clearTimeout(bodySpeechTimerRef.current);
+      return;
+    }
+    if (bodySpokenRef.current || !introCopy.trim()) return;
+
+    bodySpokenRef.current = true;
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      window.speechSynthesis.getVoices();
+    }
+    speakTextOnce(introCopy);
+
+    if (prefersReducedMotion) {
+      setBodyTypingActive(true);
+      return;
+    }
+
+    bodySpeechTimerRef.current = window.setTimeout(() => {
+      setBodyTypingActive(true);
+    }, SPEECH_LEAD_MS);
+
+    return () => window.clearTimeout(bodySpeechTimerRef.current);
+  }, [phase, introCopy, prefersReducedMotion]);
+
+  useEffect(() => {
+    if (phase !== 'paragraph' || skipIntro || !bodyTypingComplete) return;
+    const timer = window.setTimeout(() => setPhase('reveal_cards'), 700);
+    return () => window.clearTimeout(timer);
+  }, [phase, skipIntro, bodyTypingComplete]);
+
+  const handleCenterTap = () => {
+    if (phase === 'center') setPhase('header');
+  };
+
+  const handleMoveComplete = useCallback(() => {
+    setPhase('reveal');
+  }, []);
+
+  const handleContinue = () => {
+    if (phase === 'reveal') setPhase('paragraph');
+    else if (phase === 'reveal_cards') setPhase('done');
+  };
+
+  const showTapPrompt = phase === 'reveal' || phase === 'reveal_cards';
+  const showBody =
+    phase === 'paragraph' || phase === 'reveal_cards' || phase === 'done';
+  const isBodyTyping = phase === 'paragraph' && !skipIntro;
+  const showGrid = phase === 'done';
+  const showContent = showBody || showGrid;
+
   const [headingLine1, headingLine2 = ''] = (
     screen.takeawayHeading ?? ''
   ).split('\n');
@@ -4185,80 +4481,127 @@ function TakeawayCardSection({ screen }: { screen: Screen }) {
   };
 
   return (
-    <div className="max-w-[1200px] mx-auto flex flex-col flex-1 min-h-0 h-full overflow-hidden gap-3">
-      {screen.body ? (
-        <header className="pt-2 shrink-0">
-          <h2
-            className="text-[32px] leading-tight font-bold max-w-[1200px]"
-            style={{ color: '#1F3864' }}
-          >
-            {screen.body}
-          </h2>
-        </header>
+    <div className="relative flex flex-col flex-1 min-h-0 h-full">
+      {phase === 'center' || phase === 'header' ? (
+        <>
+          <button
+            type="button"
+            onClick={handleCenterTap}
+            className={`absolute inset-0 z-10 ${
+              phase === 'center' ? 'cursor-pointer' : 'pointer-events-none'
+            }`}
+            aria-label="Continue to takeaway"
+          />
+          <IntroTitleOverlay
+            title={headerTitle}
+            phase={phase}
+            anchorRef={headerTitleAnchorRef}
+            contentAreaRef={contentAreaRef}
+            centerContent={centerContent}
+            displayedText={displayTitle}
+            onMoveComplete={handleMoveComplete}
+          />
+        </>
       ) : null}
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-5 flex-1 min-h-0 items-stretch">
+      <TapContinuePrompt
+        label="Tap to continue"
+        onClick={handleContinue}
+        className="absolute inset-0 z-20"
+        visible={showTapPrompt}
+      />
+
+      <div
+        className={`max-w-[1200px] mx-auto flex flex-col flex-1 min-h-0 h-full overflow-hidden gap-3 ${
+          showContent ? '' : 'opacity-0 pointer-events-none'
+        }`}
+      >
+        {showBody && introCopy ? (
+          <header className="pt-2 shrink-0">
+            <h2
+              className="text-[32px] leading-tight font-bold max-w-[1200px]"
+              style={{ color: '#1F3864' }}
+            >
+              {isBodyTyping ? (
+                <>
+                  <span>{typedBody}</span>
+                  <span className="text-transparent">
+                    {introCopy.slice(typedBody.length)}
+                  </span>
+                </>
+              ) : (
+                introCopy
+              )}
+            </h2>
+          </header>
+        ) : null}
+
         <div
-          className={`rounded-xl border border-slate-200 ${MODULE_SURFACE} shadow-[0_20px_40px_-15px_rgba(47,99,120,0.06)] overflow-hidden border-l-4 border-l-[#2E7CF6] flex flex-col min-h-0`}
+          className={`grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-5 flex-1 min-h-0 items-stretch transition-opacity duration-500 ${
+            showGrid ? 'opacity-100' : 'opacity-0 pointer-events-none'
+          }`}
         >
-          <div className="p-5 md:p-6 flex flex-col min-h-0">
-            <div className="flex items-start gap-3 mb-3 shrink-0">
-              <ModuleFavicon className="w-7 h-7 mt-0.5 shrink-0" />
-              <div className="min-w-0">
-                <div className="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1">
-                  Printable, saveable card
+          <div
+            className={`rounded-xl border border-slate-200 ${MODULE_SURFACE} shadow-[0_20px_40px_-15px_rgba(47,99,120,0.06)] overflow-hidden border-l-4 border-l-[#2E7CF6] flex flex-col min-h-0`}
+          >
+            <div className="p-5 md:p-6 flex flex-col min-h-0">
+              <div className="flex items-start gap-3 mb-3 shrink-0">
+                <ModuleFavicon className="w-7 h-7 mt-0.5 shrink-0" />
+                <div className="min-w-0">
+                  <div className="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1">
+                    Printable, saveable card
+                  </div>
+                  {headingLine1 ? (
+                    <h3
+                      className="text-[20px] md:text-[22px] leading-tight font-bold"
+                      style={{ color: '#1F3864' }}
+                    >
+                      {headingLine1}
+                    </h3>
+                  ) : null}
+                  {headingLine2 ? (
+                    <p
+                      className="text-[15px] md:text-[16px] font-semibold mt-0.5"
+                      style={{ color: '#1F7A7A' }}
+                    >
+                      {headingLine2}
+                    </p>
+                  ) : null}
                 </div>
-                {headingLine1 ? (
-                  <h3
-                    className="text-[20px] md:text-[22px] leading-tight font-bold"
-                    style={{ color: '#1F3864' }}
-                  >
-                    {headingLine1}
-                  </h3>
-                ) : null}
-                {headingLine2 ? (
-                  <p
-                    className="text-[15px] md:text-[16px] font-semibold mt-0.5"
-                    style={{ color: '#1F7A7A' }}
-                  >
-                    {headingLine2}
-                  </p>
-                ) : null}
+              </div>
+
+              <div className="space-y-2 min-h-0" style={{ color: '#1F3864' }}>
+                {renderCardBody()}
               </div>
             </div>
-
-            <div className="space-y-2 min-h-0" style={{ color: '#1F3864' }}>
-              {renderCardBody()}
-            </div>
           </div>
+
+          {hasHighlight ? (
+            <div className="flex flex-col gap-2 min-h-0 flex-1">
+              {parsedSteps.footerLabel ? (
+                <p
+                  className="shrink-0 text-sm md:text-[15px] font-semibold uppercase tracking-wide"
+                  style={{ color: '#1F3864' }}
+                >
+                  {parsedSteps.footerLabel}
+                </p>
+              ) : null}
+              <div className="bg-[#F7F9FB] p-4 md:p-5 rounded-xl border-l-4 border-l-[#2E7CF6] shrink-0">
+                <p className="text-[14px] md:text-[15px] leading-snug text-[#1F3864] whitespace-pre-wrap">
+                  {TAKEAWAY_HIGHLIGHT_TEXT}
+                </p>
+              </div>
+              <div className="relative flex-1 min-h-[100px] rounded-xl overflow-hidden border border-slate-200 shadow-[0_20px_40px_-15px_rgba(47,99,120,0.06)]">
+                <img
+                  src={structureTakeawayImage}
+                  alt=""
+                  className="absolute inset-0 w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#1F3864]/30 to-transparent" />
+              </div>
+            </div>
+          ) : null}
         </div>
-
-        {hasHighlight ? (
-          <div className="flex flex-col gap-2 min-h-0 flex-1">
-            {parsedSteps.footerLabel ? (
-              <p
-                className="shrink-0 text-sm md:text-[15px] font-semibold uppercase tracking-wide"
-                style={{ color: '#1F3864' }}
-              >
-                {parsedSteps.footerLabel}
-              </p>
-            ) : null}
-            <div className="bg-[#F7F9FB] p-4 md:p-5 rounded-xl border-l-4 border-l-[#2E7CF6] shrink-0">
-              <p className="text-[14px] md:text-[15px] leading-snug text-[#1F3864] whitespace-pre-wrap">
-                {TAKEAWAY_HIGHLIGHT_TEXT}
-              </p>
-            </div>
-            <div className="relative flex-1 min-h-[100px] rounded-xl overflow-hidden border border-slate-200 shadow-[0_20px_40px_-15px_rgba(47,99,120,0.06)]">
-              ˆ 𝛉 = (X X) ⊺ −1 X ⊺ y
-              <img
-                src={structureTakeawayImage}
-                alt=""
-                className="absolute inset-0 w-full h-full object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#1F3864]/30 to-transparent" />
-            </div>
-          </div>
-        ) : null}
       </div>
     </div>
   );
@@ -4641,6 +4984,10 @@ export default function MindSyncTeacherTrainingModule01Page() {
   >('center');
   const [techniqueIntroPhase, setTechniqueIntroPhase] =
     useState<TechniqueIntroPhase>('center');
+  const [takeawayIntroPhase, setTakeawayIntroPhase] =
+    useState<LearningOutcomesPhase>('center');
+  const [closingIntroPhase, setClosingIntroPhase] =
+    useState<LearningOutcomesPhase>('center');
   const [scenarioIntroPhase, setScenarioIntroPhase] =
     useState<ScenarioIntroPhase>('reveal_situation');
   const [scenarioMainTitleIntroPlayed, setScenarioMainTitleIntroPlayed] =
@@ -4662,6 +5009,20 @@ export default function MindSyncTeacherTrainingModule01Page() {
   const handleBlock4PhaseChange = useCallback(
     (phase: LearningOutcomesPhase) => {
       setBlock4IntroPhase(phase);
+    },
+    []
+  );
+
+  const handleTakeawayPhaseChange = useCallback(
+    (phase: LearningOutcomesPhase) => {
+      setTakeawayIntroPhase(phase);
+    },
+    []
+  );
+
+  const handleClosingPhaseChange = useCallback(
+    (phase: LearningOutcomesPhase) => {
+      setClosingIntroPhase(phase);
     },
     []
   );
@@ -5200,6 +5561,16 @@ export default function MindSyncTeacherTrainingModule01Page() {
     window.clearTimeout(techniqueLeadSpeechTimerRef.current);
   }, [index, screen.id, prefersReducedMotion]);
 
+  useEffect(() => {
+    if (screen.id !== 28) return;
+    setTakeawayIntroPhase(prefersReducedMotion ? 'done' : 'center');
+  }, [index, screen.id, prefersReducedMotion]);
+
+  useEffect(() => {
+    if (screen.id !== 29) return;
+    setClosingIntroPhase(prefersReducedMotion ? 'done' : 'center');
+  }, [index, screen.id, prefersReducedMotion]);
+
   const techniqueTitleTypingEnabled =
     screen.id === 17 &&
     techniqueIntroPhase === 'center' &&
@@ -5553,6 +5924,8 @@ export default function MindSyncTeacherTrainingModule01Page() {
     (screen.id === 5 && watchIntroPhase === 'header') ||
     (screen.id === 7 && threeStatesIntroPhase === 'header') ||
     (screen.id === 17 && techniqueIntroPhase === 'header') ||
+    (screen.id === 28 && takeawayIntroPhase === 'header') ||
+    (screen.id === 29 && closingIntroPhase === 'header') ||
     (shouldPlayScenarioMainTitleIntro && scenarioIntroPhase === 'header');
 
   return (
@@ -5593,6 +5966,8 @@ export default function MindSyncTeacherTrainingModule01Page() {
                     (screen.id !== 5 || watchIntroPhase !== 'center') &&
                     (screen.id !== 7 || threeStatesIntroPhase !== 'center') &&
                     (screen.id !== 17 || techniqueIntroPhase !== 'center') &&
+                    (screen.id !== 28 || takeawayIntroPhase !== 'center') &&
+                    (screen.id !== 29 || closingIntroPhase !== 'center') &&
                     (screen.type !== 'scenario_situation' ||
                       !shouldPlayScenarioMainTitleIntro ||
                       scenarioIntroPhase !== 'center')
@@ -5603,6 +5978,8 @@ export default function MindSyncTeacherTrainingModule01Page() {
                     (screen.id === 5 && watchIntroPhase === 'center') ||
                     (screen.id === 7 && threeStatesIntroPhase === 'center') ||
                     (screen.id === 17 && techniqueIntroPhase === 'center') ||
+                    (screen.id === 28 && takeawayIntroPhase === 'center') ||
+                    (screen.id === 29 && closingIntroPhase === 'center') ||
                     (shouldPlayScenarioMainTitleIntro &&
                       scenarioIntroPhase === 'center')
                   }
@@ -5622,6 +5999,12 @@ export default function MindSyncTeacherTrainingModule01Page() {
                     (screen.id === 17 &&
                       (techniqueIntroPhase === 'center' ||
                         techniqueIntroPhase === 'header')) ||
+                    (screen.id === 28 &&
+                      (takeawayIntroPhase === 'center' ||
+                        takeawayIntroPhase === 'header')) ||
+                    (screen.id === 29 &&
+                      (closingIntroPhase === 'center' ||
+                        closingIntroPhase === 'header')) ||
                     (shouldPlayScenarioMainTitleIntro &&
                       (scenarioIntroPhase === 'center' ||
                         scenarioIntroPhase === 'header'))
@@ -5691,7 +6074,8 @@ export default function MindSyncTeacherTrainingModule01Page() {
                             <CoverSection screen={screen} />
                           </div>
                         ) : screen.type === 'technique_intro' ? (
-                          <div className="p-2 md:p-2 md:px-14 flex flex-col flex-1 min-h-0 h-full relative overflow-hidden">
+                          <div className="p-5 md:p-6 md:px-14 flex flex-col flex-1 min-h-0 h-full overflow-hidden">
+                            <div className="relative flex flex-col flex-1 min-h-0 h-full">
                             {techniqueIntroPhase === 'center' ||
                             techniqueIntroPhase === 'header' ? (
                               <>
@@ -5731,6 +6115,14 @@ export default function MindSyncTeacherTrainingModule01Page() {
                               </>
                             ) : null}
 
+                            {techniqueIntroPhase === 'reveal' ? (
+                              <TapContinuePrompt
+                                label="Tap to continue"
+                                onClick={() => setTechniqueIntroPhase('done')}
+                                className="absolute inset-0 z-20"
+                              />
+                            ) : null}
+
                             <TechniqueVerticalStepsSection
                               screen={screen}
                               onStepClick={setActiveTechniqueStep}
@@ -5757,14 +6149,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
                               staggerReveal={techniqueIntroPhase === 'done'}
                               showKeyPoint={techniqueIntroPhase === 'done'}
                             />
-
-                            {techniqueIntroPhase === 'reveal' ? (
-                              <TapContinuePrompt
-                                label="Tap to continue"
-                                onClick={() => setTechniqueIntroPhase('done')}
-                                className="absolute inset-0 z-20"
-                              />
-                            ) : null}
+                            </div>
                           </div>
                         ) : screen.type === 'technique' ? (
                           <div className="p-5 md:p-6 md:px-14 flex flex-col flex-1 min-h-0 h-full">
@@ -5777,13 +6162,22 @@ export default function MindSyncTeacherTrainingModule01Page() {
                           </div>
                         ) : screen.type === 'takeaway' ? (
                           <div className="p-5 md:p-6 md:px-14 flex flex-col flex-1 min-h-0 h-full overflow-hidden">
-                            <TakeawayCardSection screen={screen} />
+                            <TakeawayCardSection
+                              screen={screen}
+                              headerTitleAnchorRef={headerTitleAnchorRef}
+                              contentAreaRef={mainContentRef}
+                              centerContent={!isModuleContentsOpen}
+                              onPhaseChange={handleTakeawayPhaseChange}
+                            />
                           </div>
                         ) : screen.type === 'closing' ? (
                           <div className="p-5 md:p-6 md:px-14 flex flex-col flex-1 min-h-0 h-full overflow-hidden">
                             <ClosingSection
                               screen={screen}
-                              activeSidebarSectionKey={activeSidebarSectionKey}
+                              headerTitleAnchorRef={headerTitleAnchorRef}
+                              contentAreaRef={mainContentRef}
+                              centerContent={!isModuleContentsOpen}
+                              onPhaseChange={handleClosingPhaseChange}
                             />
                           </div>
                         ) : screen.type === 'technique_honest' ? (
