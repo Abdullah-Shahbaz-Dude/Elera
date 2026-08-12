@@ -373,9 +373,10 @@ const MODULE_PART_TITLE_STYLE: React.CSSProperties = {
 
 type LearningOutcomesPhase = 'center' | 'header' | 'reveal' | 'done';
 
-const CARD_TO_BULLET_DELAY_MS = 1500;
 const SPEECH_LEAD_MS = 1500;
-const BULLET_GAP_MS = 2000;
+const LEARNING_OUTCOMES_CARD_TO_BULLET_MS = 400;
+const LEARNING_OUTCOMES_BULLET_GAP_MS = 600;
+const LEARNING_OUTCOMES_BULLET_TYPING_MS = 40;
 const INTRO_TITLE_HEADER_SETTLE_MS = 350;
 const BULLET_TYPING_SPEED_MS = 30;
 const STEP_STAGGER_MS = 500;
@@ -953,8 +954,8 @@ function ModuleAudioGuide({
 function StaticBullet({ text }: { text: string }) {
   return (
     <div className="flex items-start gap-4">
-      <ModuleFavicon className="w-7 h-7 mt-0.5 shrink-0" />
-      <div className="text-[24px] font-semibold text-slate-900 leading-relaxed">
+      <ModuleFavicon className="w-8 h-8 mt-0.5 shrink-0" />
+      <div className="text-[26px] md:text-[28px] font-semibold text-slate-900 leading-relaxed">
         {text}
       </div>
     </div>
@@ -965,15 +966,17 @@ function TypingBullet({
   text,
   enabled,
   onComplete,
+  speedMs = BULLET_TYPING_SPEED_MS,
 }: {
   text: string;
   enabled: boolean;
   onComplete: () => void;
+  speedMs?: number;
 }) {
   const { displayed, isComplete } = useTypingText(
     text,
     enabled,
-    BULLET_TYPING_SPEED_MS
+    speedMs
   );
 
   useEffect(() => {
@@ -982,8 +985,8 @@ function TypingBullet({
 
   return (
     <div className="flex items-start gap-4">
-      <ModuleFavicon className="w-7 h-7 mt-0.5 shrink-0" />
-      <div className="text-[24px] font-semibold text-slate-900 leading-relaxed">
+      <ModuleFavicon className="w-8 h-8 mt-0.5 shrink-0" />
+      <div className="text-[26px] md:text-[28px] font-semibold text-slate-900 leading-relaxed">
         {displayed}
       </div>
     </div>
@@ -1036,7 +1039,10 @@ function LearningOutcomesTapSection({
 
   const tryFinishBullet = useCallback(
     (index: number) => {
-      if (!bulletTypingCompleteRef.current || !bulletSpeechCompleteRef.current) {
+      if (
+        !bulletTypingCompleteRef.current ||
+        !bulletSpeechCompleteRef.current
+      ) {
         return;
       }
       if (activeBulletIndexRef.current !== index) return;
@@ -1050,7 +1056,7 @@ function LearningOutcomesTapSection({
 
       bulletGapTimerRef.current = window.setTimeout(() => {
         revealBulletRef.current(next);
-      }, BULLET_GAP_MS);
+      }, LEARNING_OUTCOMES_BULLET_GAP_MS);
     },
     [bullets.length, clearBulletTimers]
   );
@@ -1134,7 +1140,7 @@ function LearningOutcomesTapSection({
     bulletSpeechTimerRef.current = window.setTimeout(() => {
       setAwaitingFirstBullet(false);
       revealBulletRef.current(0);
-    }, CARD_TO_BULLET_DELAY_MS);
+    }, LEARNING_OUTCOMES_CARD_TO_BULLET_MS);
   }, [
     activeTypingIndex,
     awaitingFirstBullet,
@@ -1232,6 +1238,7 @@ function LearningOutcomesTapSection({
                     key={`typing-${bullets[activeTypingIndex]}`}
                     text={bullets[activeTypingIndex]}
                     enabled={!skipIntro}
+                    speedMs={LEARNING_OUTCOMES_BULLET_TYPING_MS}
                     onComplete={() => handleBulletTyped(activeTypingIndex)}
                   />
                 ) : null}
@@ -1254,6 +1261,16 @@ const HIDDEN_NAV_BLOCK_IDS = new Set<number>([
 const MODULE_BG_IMAGE = moduleBgImage;
 const MODULE_PAGE_TINT = 'bg-[#F7F9FC]/75';
 const MODULE_SURFACE = 'bg-white/30 backdrop-blur-sm ';
+const WATCH_LAYOUT_MAX = 'max-w-[1200px]';
+const WATCH_SCRIPT_SIDEBAR_WIDTH = 'w-[min(380px,38%)]';
+const WATCH_SPLIT_ROW =
+  'hidden lg:flex flex-1 min-h-0 gap-6 w-full overflow-hidden h-full';
+const WATCH_CONTENT_COLUMN =
+  'w-full max-w-[1200px] mx-auto flex flex-col flex-1 min-h-0 h-full gap-6 lg:gap-8';
+const WATCH_VIDEO_COLUMN =
+  'w-full mx-auto lg:max-w-[calc(100%-min(380px,38%)-1.5rem)]';
+const WATCH_VIDEO_FRAME =
+  'w-full min-h-[180px] max-h-[min(420px,46vh)] aspect-video';
 
 function ModulePageBackground() {
   return (
@@ -2932,7 +2949,7 @@ function ScriptSidebarPanel({
 }) {
   return (
     <aside
-      className={`flex flex-col shrink-0 h-full min-h-0 border border-[#E5E9F0] bg-white overflow-hidden ${className}`}
+      className={`flex flex-col shrink-0 h-full min-h-0 max-h-full border border-[#E5E9F0] bg-white overflow-hidden ${className}`}
     >
       <div className="flex items-start justify-between gap-3 shrink-0 px-4 py-4 md:px-5 border-b border-[#E5E9F0]">
         <div className="min-w-0">
@@ -2987,23 +3004,26 @@ function WatchSection({
   isScriptOpen,
   onOpenScript,
   onCloseScript,
-  hideIntroHeadline = false,
+  showHeadline = true,
 }: {
   screen: Screen;
   isScriptOpen: boolean;
   onOpenScript: () => void;
   onCloseScript: () => void;
-  hideIntroHeadline?: boolean;
+  showHeadline?: boolean;
 }) {
   const videoTitle = screen.videoTitle ?? 'Module 1 film, around 3 minutes';
+  const hasScript = Boolean(screen.transcriptDropdown);
+  const scriptOpen = isScriptOpen && hasScript;
 
   const videoPlayer = (
-    <div className="w-full flex-1 min-h-0 flex flex-col">
+    <div className="w-full flex flex-col shrink-0">
       <div
-        className={`w-full flex-1 min-h-0 rounded-2xl border border-[#E5E9F0] ${MODULE_SURFACE} shadow-[0_4px_24px_-4px_rgba(10,31,68,0.08),0_2px_6px_-2px_rgba(10,31,68,0.04)] overflow-hidden p-2 md:p-3 flex flex-col`}
+        className={`w-full rounded-2xl border border-[#E5E9F0] ${MODULE_SURFACE} shadow-[0_4px_24px_-4px_rgba(10,31,68,0.08),0_2px_6px_-2px_rgba(10,31,68,0.04)] overflow-hidden p-2 md:p-3 flex flex-col`}
       >
-        <div className="w-full flex-1 min-h-[200px] max-h-[min(480px,52vh)] aspect-video">
+        <div className={WATCH_VIDEO_FRAME}>
           <VideoLessonPlayer
+            key="block-5-watch-video"
             title={videoTitle}
             videoUrl={screen.videoUrl ?? null}
             theme="light"
@@ -3017,7 +3037,7 @@ function WatchSection({
   );
 
   const scriptButton =
-    screen.transcriptDropdown && !isScriptOpen ? (
+    screen.transcriptDropdown && !scriptOpen ? (
       <div className="shrink-0 w-full text-left">
         <button
           type="button"
@@ -3040,61 +3060,66 @@ function WatchSection({
       </div>
     ) : null;
 
-  const watchBody = screen.watchIntro ? (
-    isScriptOpen ? (
-      <div className="flex flex-col gap-6 w-full flex-1 min-h-0">
-        <div className="w-full flex flex-col flex-1 min-h-0 gap-4">
-          {videoPlayer}
-        </div>
-        {!hideIntroHeadline ? (
-          <WatchIntroHeadline intro={screen.watchIntro} />
-        ) : null}
-        {/* <WatchIntroCompareCards intro={screen.watchIntro} /> */}
-      </div>
-    ) : (
-      <div className="flex flex-col flex-1 min-h-0 gap-5 lg:gap-6">
-        {!hideIntroHeadline ? (
-          <WatchIntroHeadline intro={screen.watchIntro} />
-        ) : null}
-        <div className="flex flex-col flex-1 min-h-0">{videoPlayer}</div>
-        {scriptButton}
-        {/* <WatchIntroCompareCards intro={screen.watchIntro} /> */}
-      </div>
-    )
-  ) : (
-    <div className="space-y-8 flex-1 min-h-0">
-      {screen.body ? (
-        <div className="border-l-4 border-l-[#2E7CF6] pl-5 md:pl-6 py-1">
-          <p
-            className="text-left text-[15px] md:text-[16px] font-semibold leading-relaxed whitespace-pre-line"
-            style={{ color: '#1F3864' }}
-          >
-            {screen.body}
-          </p>
-        </div>
-      ) : null}
-      {videoPlayer}
-      {scriptButton}
-    </div>
-  );
+  const introHeadline =
+    screen.watchIntro && showHeadline ? (
+      <WatchIntroHeadline intro={screen.watchIntro} />
+    ) : null;
 
-  const contentClassName =
-    'w-full max-w-[1200px] mx-auto flex flex-col flex-1 min-h-0 h-full gap-6 lg:gap-8';
-
-  if (isScriptOpen && screen.transcriptDropdown) {
+  if (!screen.watchIntro) {
     return (
-      <div className="relative w-full max-w-[1200px] mx-auto flex flex-1 min-h-0 h-full">
-        <div className="hidden lg:flex flex-1 min-h-0 gap-6 w-full">
+      <div className={WATCH_CONTENT_COLUMN}>
+        <div className="space-y-8 flex-1 min-h-0">
+          {screen.body ? (
+            <div className="border-l-4 border-l-[#2E7CF6] pl-5 md:pl-6 py-1">
+              <p
+                className="text-left text-[15px] md:text-[16px] font-semibold leading-relaxed whitespace-pre-line"
+                style={{ color: '#1F3864' }}
+              >
+                {screen.body}
+              </p>
+            </div>
+          ) : null}
+          <div className={`${WATCH_VIDEO_COLUMN} flex flex-col gap-5`}>
+            {videoPlayer}
+            {scriptButton}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div
+      className={`relative w-full ${WATCH_LAYOUT_MAX} mx-auto flex flex-col flex-1 min-h-0 h-full overflow-hidden gap-6`}
+    >
+      {introHeadline}
+      <div
+        className={
+          scriptOpen
+            ? WATCH_SPLIT_ROW
+            : 'flex flex-col flex-1 min-h-0 w-full'
+        }
+      >
+        <div
+          className={
+            scriptOpen
+              ? 'flex-1 min-w-0 flex flex-col gap-5'
+              : `${WATCH_VIDEO_COLUMN} flex flex-col gap-5`
+          }
+        >
+          {videoPlayer}
+          {!scriptOpen ? scriptButton : null}
+        </div>
+        {scriptOpen && screen.transcriptDropdown ? (
           <ScriptSidebarPanel
             header={screen.transcriptDropdown.header}
             body={screen.transcriptDropdown.body}
             onClose={onCloseScript}
-            className="w-[min(380px,38%)] rounded-xl shrink-0"
+            className={`${WATCH_SCRIPT_SIDEBAR_WIDTH} rounded-xl shrink-0`}
           />
-          <div className={`${contentClassName} min-w-0 !max-w-none flex-1`}>
-            {watchBody}
-          </div>
-        </div>
+        ) : null}
+      </div>
+      {scriptOpen && screen.transcriptDropdown ? (
         <div className="lg:hidden absolute inset-0 z-20 flex flex-col overflow-hidden">
           <ScriptSidebarPanel
             header={screen.transcriptDropdown.header}
@@ -3103,11 +3128,9 @@ function WatchSection({
             className="flex-1 w-full rounded-xl shadow-lg"
           />
         </div>
-      </div>
-    );
-  }
-
-  return <div className={contentClassName}>{watchBody}</div>;
+      ) : null}
+    </div>
+  );
 }
 
 function CoverSection({ screen }: { screen: Screen }) {
@@ -5460,6 +5483,12 @@ export default function MindSyncTeacherTrainingModule01Page() {
       return;
     }
 
+    if (watchIntroPhase === 'done' && watchIntroVideoRevealed) {
+      setWatchIntroVideoMounted(true);
+      setWatchIntroVideoShown(true);
+      return;
+    }
+
     if (watchIntroPhase !== 'intro' || !watchIntroVideoRevealed) {
       setWatchIntroVideoMounted(false);
       setWatchIntroVideoShown(false);
@@ -6434,7 +6463,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
                             />
                           </div>
                         ) : screen.id === 5 ? (
-                          <div className="p-5 md:p-6 md:px-14 flex flex-col flex-1 min-h-0 h-full relative">
+                          <div className="p-5 md:p-6 md:px-14 flex flex-col flex-1 min-h-0 h-full overflow-hidden relative">
                             {watchIntroPhase === 'center' ||
                             watchIntroPhase === 'header' ? (
                               <>
@@ -6474,6 +6503,73 @@ export default function MindSyncTeacherTrainingModule01Page() {
                               </>
                             ) : null}
 
+                            {watchIntroPhase === 'intro' ||
+                            watchIntroPhase === 'done' ? (
+                              <div
+                                className={`w-full max-w-[1200px] mx-auto flex flex-col flex-1 min-h-0 h-full overflow-hidden transition-all duration-[350ms] ease-out opacity-100 translate-y-0 ${
+                                  watchIntroPhase === 'intro' ? 'gap-6' : ''
+                                } ${
+                                  watchIntroPhase === 'intro' &&
+                                  watchIntroTypingComplete &&
+                                  !watchIntroVideoRevealed
+                                    ? 'pointer-events-none'
+                                    : ''
+                                }`}
+                              >
+                                {watchIntroPhase === 'intro' ? (
+                                  <div className="px-2 md:px-3">
+                                    <h3
+                                      className="shrink-0 text-left text-[24px] leading-tight font-regular whitespace-pre-line"
+                                      style={{ color: '#1F3864' }}
+                                    >
+                                      {prefersReducedMotion ? (
+                                        watchIntroText
+                                      ) : (
+                                        <>
+                                          <span>{typedWatchIntroText}</span>
+                                          <span className="text-transparent">
+                                            {watchIntroText.slice(
+                                              typedWatchIntroText.length
+                                            )}
+                                          </span>
+                                        </>
+                                      )}
+                                    </h3>
+                                  </div>
+                                ) : null}
+
+                                {watchIntroVideoMounted ||
+                                watchIntroPhase === 'done' ? (
+                                  <div
+                                    className={`flex flex-col flex-1 min-h-0 overflow-hidden h-full ${
+                                      watchIntroPhase === 'intro'
+                                        ? `transition-all duration-[350ms] ease-out ${
+                                            watchIntroVideoShown
+                                              ? 'opacity-100 translate-y-0'
+                                              : 'opacity-0 translate-y-2 pointer-events-none'
+                                          }`
+                                        : ''
+                                    }`}
+                                  >
+                                    <WatchSection
+                                      screen={screen}
+                                      isScriptOpen={isWatchScriptOpen}
+                                      onOpenScript={() => {
+                                        setWatchIntroPhase('done');
+                                        setIsWatchScriptOpen(true);
+                                      }}
+                                      onCloseScript={() =>
+                                        setIsWatchScriptOpen(false)
+                                      }
+                                      showHeadline={
+                                        watchIntroPhase === 'done'
+                                      }
+                                    />
+                                  </div>
+                                ) : null}
+                              </div>
+                            ) : null}
+
                             {watchIntroPhase === 'reveal_intro' ||
                             (watchIntroPhase === 'intro' &&
                               watchIntroTypingComplete &&
@@ -6494,113 +6590,8 @@ export default function MindSyncTeacherTrainingModule01Page() {
                                     setWatchIntroPhase('done');
                                   }
                                 }}
-                                className="absolute inset-0"
+                                className="absolute inset-0 z-10"
                               />
-                            ) : null}
-
-                            {watchIntroPhase === 'intro' ? (
-                              <div className="w-full max-w-[1200px] mx-auto transition-all duration-[350ms] ease-out opacity-100 translate-y-0">
-                                <div className="flex flex-col gap-6">
-                                  <div className="px-2 md:px-3">
-                                    <h3
-                                      className="shrink-0 text-left text-[24px] leading-tight font-regular whitespace-pre-line"
-                                      style={{ color: '#1F3864' }}
-                                    >
-                                      {prefersReducedMotion ? (
-                                        watchIntroText
-                                      ) : (
-                                        <>
-                                          <span>{typedWatchIntroText}</span>
-                                          <span className="text-transparent">
-                                            {watchIntroText.slice(
-                                              typedWatchIntroText.length
-                                            )}
-                                          </span>
-                                        </>
-                                      )}
-                                    </h3>
-                                  </div>
-
-                                  {watchIntroVideoMounted ? (
-                                    <div
-                                      className={`transition-all duration-[350ms] ease-out ${
-                                        watchIntroVideoShown
-                                          ? 'opacity-100 translate-y-0'
-                                          : 'opacity-0 translate-y-2 pointer-events-none'
-                                      }`}
-                                    >
-                                      <div className="w-full flex flex-col">
-                                        <div className="w-full min-h-0 flex flex-col">
-                                          <div
-                                            className={`w-full min-h-0 rounded-2xl border border-[#E5E9F0] ${MODULE_SURFACE} shadow-[0_4px_24px_-4px_rgba(10,31,68,0.08),0_2px_6px_-2px_rgba(10,31,68,0.04)] overflow-hidden p-2 md:p-3 flex flex-col`}
-                                          >
-                                            <div className="w-full min-h-[180px] max-h-[min(420px,46vh)] aspect-video">
-                                              <VideoLessonPlayer
-                                                title={
-                                                  screen.videoTitle ??
-                                                  'Module 1 film, around 3 minutes'
-                                                }
-                                                videoUrl={
-                                                  screen.videoUrl ?? null
-                                                }
-                                                theme="light"
-                                                compact
-                                                hideFooter={!screen.videoUrl}
-                                                className="h-full w-full rounded-xl border-0"
-                                              />
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </div>
-
-                                      {screen.transcriptDropdown &&
-                                      !isWatchScriptOpen ? (
-                                        <div className="mt-5 shrink-0 w-full text-left">
-                                          <button
-                                            type="button"
-                                            onClick={() => {
-                                              setWatchIntroPhase('done');
-                                              setIsWatchScriptOpen(true);
-                                            }}
-                                            className="w-full flex items-center justify-between gap-4 bg-white hover:bg-slate-50 transition-colors text-left py-3 px-5 md:px-6 min-h-[56px] rounded-xl border border-slate-200 shadow-[0_4px_24px_-4px_rgba(10,31,68,0.08)]"
-                                          >
-                                            <div
-                                              className="text-[16px] md:text-[18px] font-medium leading-relaxed"
-                                              style={{ color: '#1F3864' }}
-                                            >
-                                              {screen.transcriptDropdown.header}
-                                            </div>
-                                            <span
-                                              className="material-symbols-outlined shrink-0"
-                                              style={{ color: '#1F7A7A' }}
-                                            >
-                                              menu_book
-                                            </span>
-                                          </button>
-                                        </div>
-                                      ) : null}
-                                    </div>
-                                  ) : null}
-                                </div>
-                              </div>
-                            ) : null}
-
-                            {watchIntroPhase === 'done' ? (
-                              <div className="transition-all duration-[350ms] ease-out opacity-100 translate-y-0">
-                                <div className="transition-all duration-[350ms] ease-out opacity-100">
-                                  <WatchSection
-                                    screen={screen}
-                                    isScriptOpen={isWatchScriptOpen}
-                                    onOpenScript={() =>
-                                      setIsWatchScriptOpen(true)
-                                    }
-                                    onCloseScript={() =>
-                                      setIsWatchScriptOpen(false)
-                                    }
-                                    hideIntroHeadline
-                                  />
-                                </div>
-                              </div>
                             ) : null}
                           </div>
                         ) : screen.id === 3 && screen.bullets ? (
