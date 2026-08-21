@@ -1,6 +1,7 @@
 import { useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { AuthContext } from '../contexts/AuthContext';
+import { getApiErrorMessage } from '@/utils/apiError';
 
 export default function Signup() {
   const [userName, setUserName] = useState('');
@@ -25,12 +26,7 @@ export default function Signup() {
       alert('Account created! You can log in now.');
       window.location.href = '/login';
     } catch (err: unknown) {
-      const data =
-        err && typeof err === 'object' && 'response' in err
-          ? (err as { response?: { data?: { message?: string; error?: string } } }).response?.data
-          : null;
-      const msg = data?.message ?? data?.error ?? 'Something went wrong';
-      setError(msg);
+      setError(getApiErrorMessage(err));
     } finally {
       setLoading(false);
     }

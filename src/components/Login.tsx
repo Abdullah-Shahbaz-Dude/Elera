@@ -1,6 +1,7 @@
 import { useState, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../contexts/AuthContext';
+import { getApiErrorMessage } from '@/utils/apiError';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -21,15 +22,9 @@ export default function Login() {
     }
     try {
       await auth.login(email, password);
-      alert('Login successful!');
       navigate('/dashboard', { replace: true });
     } catch (err: unknown) {
-      const data =
-        err && typeof err === 'object' && 'response' in err
-          ? (err as { response?: { data?: { message?: string; error?: string } } }).response?.data
-          : null;
-      const msg = data?.message ?? data?.error ?? 'Something went wrong';
-      setError(msg);
+      setError(getApiErrorMessage(err));
     } finally {
       setLoading(false);
     }

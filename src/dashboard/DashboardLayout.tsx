@@ -27,8 +27,11 @@ function DashboardLayoutInner() {
   const isTrainingRoute = isMindSyncTeacherTrainingRoute(location.pathname);
   const showModuleSidebar = isTrainingRoute && sidebar !== null;
   const hideDashboardNav = isTrainingRoute && sidebar === null;
-  const user = auth?.user as { userName?: string; email?: string } | null;
-  const displayName = user?.userName ?? user?.email ?? 'User';
+  const rawName = auth?.user?.username ?? auth?.user?.email ?? 'User';
+  const displayName =
+    rawName === 'User'
+      ? rawName
+      : rawName.charAt(0).toUpperCase() + rawName.slice(1);
 
   const handleLogout = () => {
     auth?.logout();
