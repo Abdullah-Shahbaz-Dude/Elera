@@ -919,7 +919,9 @@ function ModuleAudioGuide({
     >
       <div
         className={`rounded-2xl border bg-white shadow-[0_12px_30px_rgba(15,23,42,0.12)] overflow-hidden transition-all ${
-          isSpeaking ? 'border-[#2E7CF6]/35 ring-2 ring-[#2E7CF6]/20' : 'border-slate-200'
+          isSpeaking
+            ? 'border-[#2E7CF6]/35 ring-2 ring-[#2E7CF6]/20'
+            : 'border-slate-200'
         }`}
       >
         <button
@@ -968,11 +970,7 @@ function TypingBullet({
   onComplete: () => void;
   speedMs?: number;
 }) {
-  const { displayed, isComplete } = useTypingText(
-    text,
-    enabled,
-    speedMs
-  );
+  const { displayed, isComplete } = useTypingText(text, enabled, speedMs);
 
   useEffect(() => {
     if (isComplete) onComplete();
@@ -1127,7 +1125,8 @@ function LearningOutcomesTapSection({
   }, [onPhaseChange]);
 
   const startFirstBulletReveal = useCallback(() => {
-    if (cardVisible || awaitingFirstBullet || activeTypingIndex !== null) return;
+    if (cardVisible || awaitingFirstBullet || activeTypingIndex !== null)
+      return;
 
     setCardVisible(true);
     setAwaitingFirstBullet(true);
@@ -1136,12 +1135,7 @@ function LearningOutcomesTapSection({
       setAwaitingFirstBullet(false);
       revealBulletRef.current(0);
     }, LEARNING_OUTCOMES_CARD_TO_BULLET_MS);
-  }, [
-    activeTypingIndex,
-    awaitingFirstBullet,
-    cardVisible,
-    clearBulletTimers,
-  ]);
+  }, [activeTypingIndex, awaitingFirstBullet, cardVisible, clearBulletTimers]);
 
   useLayoutEffect(() => {
     onPhaseChange(phase);
@@ -2240,7 +2234,9 @@ function TechniqueStepBodyContent({
                     </span>
                     <span>
                       <span>{slice.visibleText}</span>
-                      <span className="text-transparent">{slice.ghostText}</span>
+                      <span className="text-transparent">
+                        {slice.ghostText}
+                      </span>
                     </span>
                   </li>
                 ) : (
@@ -2253,7 +2249,9 @@ function TechniqueStepBodyContent({
                     </span>
                     <span>
                       <span>{slice.visibleText}</span>
-                      <span className="text-transparent">{slice.ghostText}</span>
+                      <span className="text-transparent">
+                        {slice.ghostText}
+                      </span>
                     </span>
                   </li>
                 )
@@ -2440,12 +2438,13 @@ function TechniqueStepDetailModal({
   const [expandOpen, setExpandOpen] = useState(false);
   const prefersReducedMotion = usePrefersReducedMotion();
   const skipTyping = prefersReducedMotion;
-  const { displayed: typedBody, isComplete: bodyTypingComplete } = useTypingText(
-    getTechniqueStepModalTypingText(step.body),
-    open && !skipTyping,
-    42,
-    'empty'
-  );
+  const { displayed: typedBody, isComplete: bodyTypingComplete } =
+    useTypingText(
+      getTechniqueStepModalTypingText(step.body),
+      open && !skipTyping,
+      42,
+      'empty'
+    );
 
   useEffect(() => {
     if (!open) setExpandOpen(false);
@@ -2585,7 +2584,11 @@ function TechniqueVerticalStepsSection({
   }, [showSteps, staggerReveal, steps.length, prefersReducedMotion]);
 
   const visibleStepCount =
-    showSteps && staggerReveal ? revealedStepCount : showSteps ? steps.length : 0;
+    showSteps && staggerReveal
+      ? revealedStepCount
+      : showSteps
+        ? steps.length
+        : 0;
   const showKeyPointNow =
     showKeyPoint &&
     screen.keyPoint &&
@@ -3142,9 +3145,7 @@ function WatchSection({
       {introHeadline}
       <div
         className={
-          scriptOpen
-            ? WATCH_SPLIT_ROW
-            : 'flex flex-col flex-1 min-h-0 w-full'
+          scriptOpen ? WATCH_SPLIT_ROW : 'flex flex-col flex-1 min-h-0 w-full'
         }
       >
         <div
@@ -3610,9 +3611,7 @@ function ScenarioSituationSection({
 
   return (
     <div className="max-w-[1200px] mx-auto w-full min-w-0 self-stretch flex flex-col flex-1 min-h-0 h-full overflow-hidden pt-2">
-      {showScenarioHeading ? (
-        <ScenarioHeading scenarioId={scenarioId} />
-      ) : null}
+      {showScenarioHeading ? <ScenarioHeading scenarioId={scenarioId} /> : null}
       {showIntroCallout ? <ScenarioIntroCallout /> : null}
       {situationRevealOverlay ? (
         <div className="shrink-0 flex justify-center py-2">
@@ -3633,9 +3632,7 @@ function ScenarioSituationSection({
                   : 'opacity-0 translate-y-2 pointer-events-none'
               }`}
             >
-              <p
-                className="flex-1 min-h-0 overflow-y-auto custom-scrollbar text-[20px] md:text-[24px] leading-relaxed whitespace-pre-line text-slate-900"
-              >
+              <p className="flex-1 min-h-0 overflow-y-auto custom-scrollbar text-[20px] md:text-[24px] leading-relaxed whitespace-pre-line text-slate-900">
                 {situationContent ?? scenario.situation}
               </p>
             </div>
@@ -3693,8 +3690,7 @@ function ScenarioCompareModal({
   const feedbackText = scenario.feedback[selected];
   const { displayed: typedFeedback, isComplete: feedbackTypingComplete } =
     useTypingText(feedbackText, open && !prefersReducedMotion, 42, 'empty');
-  const showSecondaryContent =
-    prefersReducedMotion || feedbackTypingComplete;
+  const showSecondaryContent = prefersReducedMotion || feedbackTypingComplete;
 
   useEffect(() => {
     if (!open) setShowAll(false);
@@ -4002,292 +3998,292 @@ function LandingSection({
   );
 }
 
-type TocItem = { index: number; label: string; blockId: number };
+// type TocItem = { index: number; label: string; blockId: number };
 
-function ModuleContentsSidebar({
-  toc,
-  sidebarSections,
-  openSections,
-  activeSidebarSectionKey,
-  index,
-  screen,
-  toggleSection,
-  setIndex,
-  sidebarScrollRef,
-  suppressAutoOpenRef,
-  isSidebarTranscriptOpen,
-  setIsSidebarTranscriptOpen,
-  isOpen,
-  onToggle,
-  variant = 'inline',
-}: {
-  toc: TocItem[];
-  sidebarSections: SidebarSection[];
-  openSections: Record<SidebarSectionKey, boolean>;
-  activeSidebarSectionKey: SidebarSectionKey | null;
-  index: number;
-  screen: Screen;
-  toggleSection: (key: SidebarSectionKey) => void;
-  setIndex: (index: number) => void;
-  sidebarScrollRef: React.MutableRefObject<HTMLDivElement | null>;
-  suppressAutoOpenRef: React.MutableRefObject<boolean>;
-  isSidebarTranscriptOpen: boolean;
-  setIsSidebarTranscriptOpen: (open: boolean) => void;
-  isOpen: boolean;
-  onToggle: () => void;
-  variant?: 'layout' | 'inline';
-}) {
-  const isLayoutVariant = variant === 'layout';
+// function ModuleContentsSidebar({
+//   toc,
+//   sidebarSections,
+//   openSections,
+//   activeSidebarSectionKey,
+//   index,
+//   screen,
+//   toggleSection,
+//   setIndex,
+//   sidebarScrollRef,
+//   suppressAutoOpenRef,
+//   isSidebarTranscriptOpen,
+//   setIsSidebarTranscriptOpen,
+//   isOpen,
+//   onToggle,
+//   variant = 'inline',
+// }: {
+//   toc: TocItem[];
+//   sidebarSections: SidebarSection[];
+//   openSections: Record<SidebarSectionKey, boolean>;
+//   activeSidebarSectionKey: SidebarSectionKey | null;
+//   index: number;
+//   screen: Screen;
+//   toggleSection: (key: SidebarSectionKey) => void;
+//   setIndex: (index: number) => void;
+//   sidebarScrollRef: React.MutableRefObject<HTMLDivElement | null>;
+//   suppressAutoOpenRef: React.MutableRefObject<boolean>;
+//   isSidebarTranscriptOpen: boolean;
+//   setIsSidebarTranscriptOpen: (open: boolean) => void;
+//   isOpen: boolean;
+//   onToggle: () => void;
+//   variant?: 'layout' | 'inline';
+// }) {
+//   const isLayoutVariant = variant === 'layout';
 
-  const sidebarContent = (
-    <>
-      <div className="p-6 border-b border-slate-200 flex items-start justify-between gap-3 shrink-0 min-w-[280px]">
-        <div className="min-w-0">
-          <h2 className="text-sm font-bold uppercase tracking-widest text-slate-500 mb-1">
-            Module Contents
-          </h2>
-          <p className="text-xs text-slate-400">{toc.length} blocks</p>
-        </div>
-        <button
-          type="button"
-          onClick={onToggle}
-          aria-label="Close module contents"
-          className="w-8 h-8 rounded-lg border border-slate-200 bg-white hover:bg-[#EEF4FF] hover:border-[#2E7CF6]/30 transition-colors flex items-center justify-center shrink-0"
-        >
-          <span className="material-symbols-outlined text-slate-600 text-lg">
-            {isLayoutVariant ? 'chevron_left' : 'chevron_right'}
-          </span>
-        </button>
-      </div>
-      <div
-        ref={sidebarScrollRef}
-        className="flex-1 min-h-0 min-w-[280px] overflow-y-auto custom-scrollbar bg-white"
-      >
-        {sidebarSections.map((section) => {
-          const isOpen = openSections[section.key];
-          const isActiveSection = section.key === activeSidebarSectionKey;
-          const isCollapsible =
-            section.key !== 'closing' && section.key !== 'watch';
-          const visibleIndices = section.indices.filter((i) => {
-            const item = toc[i];
-            if (!item) return false;
-            return item.blockId !== 0;
-          });
+//   const sidebarContent = (
+//     <>
+//       <div className="p-6 border-b border-slate-200 flex items-start justify-between gap-3 shrink-0 min-w-[280px]">
+//         <div className="min-w-0">
+//           <h2 className="text-sm font-bold uppercase tracking-widest text-slate-500 mb-1">
+//             Module Contents
+//           </h2>
+//           <p className="text-xs text-slate-400">{toc.length} blocks</p>
+//         </div>
+//         <button
+//           type="button"
+//           onClick={onToggle}
+//           aria-label="Close module contents"
+//           className="w-8 h-8 rounded-lg border border-slate-200 bg-white hover:bg-[#EEF4FF] hover:border-[#2E7CF6]/30 transition-colors flex items-center justify-center shrink-0"
+//         >
+//           <span className="material-symbols-outlined text-slate-600 text-lg">
+//             {isLayoutVariant ? 'chevron_left' : 'chevron_right'}
+//           </span>
+//         </button>
+//       </div>
+//       <div
+//         ref={sidebarScrollRef}
+//         className="flex-1 min-h-0 min-w-[280px] overflow-y-auto custom-scrollbar bg-white"
+//       >
+//         {sidebarSections.map((section) => {
+//           const isOpen = openSections[section.key];
+//           const isActiveSection = section.key === activeSidebarSectionKey;
+//           const isCollapsible =
+//             section.key !== 'closing' && section.key !== 'watch';
+//           const visibleIndices = section.indices.filter((i) => {
+//             const item = toc[i];
+//             if (!item) return false;
+//             return item.blockId !== 0;
+//           });
 
-          const isSectionActive = isActiveSection;
+//           const isSectionActive = isActiveSection;
 
-          const canCollapse = isCollapsible && visibleIndices.length > 1;
-          const shouldShowItems = canCollapse && isOpen;
-          return (
-            <div key={section.key} className="border-b border-slate-200">
-              {canCollapse ? (
-                <button
-                  type="button"
-                  onClick={() => toggleSection(section.key)}
-                  data-sidebar-section-header="true"
-                  data-section-key={section.key}
-                  aria-expanded={isOpen}
-                  className={`w-full text-left px-4 py-4 border-t flex items-center justify-between gap-3 transition-colors relative ${
-                    isSectionActive
-                      ? 'bg-[#EEF4FF]'
-                      : isOpen
-                        ? 'bg-[#F7FAFF]'
-                        : 'hover:bg-slate-50'
-                  }`}
-                >
-                  {isSectionActive ? (
-                    <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#2E7CF6]/60 to-transparent" />
-                  ) : null}
-                  <div className="min-w-0 flex-1">
-                    <div
-                      className={`text-xs font-bold uppercase tracking-widest truncate ${
-                        isActiveSection || isOpen
-                          ? 'text-[#1F3864]'
-                          : 'text-slate-700'
-                      }`}
-                    >
-                      {section.label}
-                    </div>
-                    <div className="text-[10px] text-slate-500">
-                      {visibleIndices.length} blocks
-                    </div>
-                  </div>
-                  <span
-                    className={`material-symbols-outlined text-slate-500 transition-transform shrink-0 ${
-                      isOpen ? 'rotate-180' : ''
-                    }`}
-                  >
-                    expand_more
-                  </span>
-                </button>
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => {
-                    const targetIndex = section.indices[0];
-                    if (typeof targetIndex !== 'number') return;
-                    if (targetIndex !== index)
-                      suppressAutoOpenRef.current = true;
-                    setIndex(targetIndex);
-                  }}
-                  data-sidebar-section-header="true"
-                  data-section-key={section.key}
-                  className={`w-full text-left px-4 py-4 flex items-center justify-between gap-3 transition-colors relative ${
-                    isSectionActive ? 'bg-[#EEF4FF]' : 'hover:bg-slate-50'
-                  }`}
-                >
-                  {isSectionActive ? (
-                    <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#2E7CF6]/60 to-transparent" />
-                  ) : null}
-                  <div className="min-w-0 flex-1">
-                    <div
-                      className={`text-xs font-bold uppercase tracking-widest truncate ${
-                        isActiveSection ? 'text-[#1F3864]' : 'text-slate-700'
-                      }`}
-                    >
-                      {section.label}
-                    </div>
-                    <div className="text-[10px] text-slate-500">
-                      {visibleIndices.length} blocks
-                    </div>
-                  </div>
-                </button>
-              )}
+//           const canCollapse = isCollapsible && visibleIndices.length > 1;
+//           const shouldShowItems = canCollapse && isOpen;
+//           return (
+//             <div key={section.key} className="border-b border-slate-200">
+//               {canCollapse ? (
+//                 <button
+//                   type="button"
+//                   onClick={() => toggleSection(section.key)}
+//                   data-sidebar-section-header="true"
+//                   data-section-key={section.key}
+//                   aria-expanded={isOpen}
+//                   className={`w-full text-left px-4 py-4 border-t flex items-center justify-between gap-3 transition-colors relative ${
+//                     isSectionActive
+//                       ? 'bg-[#EEF4FF]'
+//                       : isOpen
+//                         ? 'bg-[#F7FAFF]'
+//                         : 'hover:bg-slate-50'
+//                   }`}
+//                 >
+//                   {isSectionActive ? (
+//                     <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#2E7CF6]/60 to-transparent" />
+//                   ) : null}
+//                   <div className="min-w-0 flex-1">
+//                     <div
+//                       className={`text-xs font-bold uppercase tracking-widest truncate ${
+//                         isActiveSection || isOpen
+//                           ? 'text-[#1F3864]'
+//                           : 'text-slate-700'
+//                       }`}
+//                     >
+//                       {section.label}
+//                     </div>
+//                     <div className="text-[10px] text-slate-500">
+//                       {visibleIndices.length} blocks
+//                     </div>
+//                   </div>
+//                   <span
+//                     className={`material-symbols-outlined text-slate-500 transition-transform shrink-0 ${
+//                       isOpen ? 'rotate-180' : ''
+//                     }`}
+//                   >
+//                     expand_more
+//                   </span>
+//                 </button>
+//               ) : (
+//                 <button
+//                   type="button"
+//                   onClick={() => {
+//                     const targetIndex = section.indices[0];
+//                     if (typeof targetIndex !== 'number') return;
+//                     if (targetIndex !== index)
+//                       suppressAutoOpenRef.current = true;
+//                     setIndex(targetIndex);
+//                   }}
+//                   data-sidebar-section-header="true"
+//                   data-section-key={section.key}
+//                   className={`w-full text-left px-4 py-4 flex items-center justify-between gap-3 transition-colors relative ${
+//                     isSectionActive ? 'bg-[#EEF4FF]' : 'hover:bg-slate-50'
+//                   }`}
+//                 >
+//                   {isSectionActive ? (
+//                     <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#2E7CF6]/60 to-transparent" />
+//                   ) : null}
+//                   <div className="min-w-0 flex-1">
+//                     <div
+//                       className={`text-xs font-bold uppercase tracking-widest truncate ${
+//                         isActiveSection ? 'text-[#1F3864]' : 'text-slate-700'
+//                       }`}
+//                     >
+//                       {section.label}
+//                     </div>
+//                     <div className="text-[10px] text-slate-500">
+//                       {visibleIndices.length} blocks
+//                     </div>
+//                   </div>
+//                 </button>
+//               )}
 
-              {shouldShowItems ? (
-                <div>
-                  {visibleIndices.map((i) => {
-                    const item = toc[i];
-                    if (!item) return null;
-                    const isCurrent = item.index === index;
-                    const isLanding = section.landingBlockId === item.blockId;
-                    return (
-                      <button
-                        key={`${item.blockId}-${item.index}`}
-                        type="button"
-                        onClick={() => setIndex(item.index)}
-                        data-sidebar-item="true"
-                        data-toc-index={item.index}
-                        className={`w-full text-left px-4 py-3 border-t flex items-start gap-3 transition-colors cursor-pointer ${
-                          isCurrent
-                            ? 'border-slate-200 bg-[#bdd2f8]'
-                            : 'border-slate-200 hover:bg-[#EEF4FF]'
-                        }`}
-                      >
-                        <div className="w-6 h-6 rounded-full flex items-center justify-center shrink-0 mt-0.5">
-                          {isCurrent ? (
-                            <div className="w-6 h-6 rounded-full border border-[#2E7CF6] flex items-center justify-center">
-                              <div className="w-2 h-2 bg-[#2E7CF6] rounded-full animate-pulse" />
-                            </div>
-                          ) : (
-                            <div className="w-6 h-6 rounded-full border border-slate-300" />
-                          )}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p
-                            className={`text-xs truncate ${
-                              isCurrent
-                                ? 'font-bold text-slate-900'
-                                : 'font-medium text-slate-700'
-                            }`}
-                          >
-                            {item.label}
-                          </p>
-                          <p className="text-[10px] text-slate-500">
-                            {isLanding
-                              ? 'Section overview'
-                              : `Block ${item.blockId}`}
-                          </p>
-                        </div>
-                      </button>
-                    );
-                  })}
+//               {shouldShowItems ? (
+//                 <div>
+//                   {visibleIndices.map((i) => {
+//                     const item = toc[i];
+//                     if (!item) return null;
+//                     const isCurrent = item.index === index;
+//                     const isLanding = section.landingBlockId === item.blockId;
+//                     return (
+//                       <button
+//                         key={`${item.blockId}-${item.index}`}
+//                         type="button"
+//                         onClick={() => setIndex(item.index)}
+//                         data-sidebar-item="true"
+//                         data-toc-index={item.index}
+//                         className={`w-full text-left px-4 py-3 border-t flex items-start gap-3 transition-colors cursor-pointer ${
+//                           isCurrent
+//                             ? 'border-slate-200 bg-[#bdd2f8]'
+//                             : 'border-slate-200 hover:bg-[#EEF4FF]'
+//                         }`}
+//                       >
+//                         <div className="w-6 h-6 rounded-full flex items-center justify-center shrink-0 mt-0.5">
+//                           {isCurrent ? (
+//                             <div className="w-6 h-6 rounded-full border border-[#2E7CF6] flex items-center justify-center">
+//                               <div className="w-2 h-2 bg-[#2E7CF6] rounded-full animate-pulse" />
+//                             </div>
+//                           ) : (
+//                             <div className="w-6 h-6 rounded-full border border-slate-300" />
+//                           )}
+//                         </div>
+//                         <div className="flex-1 min-w-0">
+//                           <p
+//                             className={`text-xs truncate ${
+//                               isCurrent
+//                                 ? 'font-bold text-slate-900'
+//                                 : 'font-medium text-slate-700'
+//                             }`}
+//                           >
+//                             {item.label}
+//                           </p>
+//                           <p className="text-[10px] text-slate-500">
+//                             {isLanding
+//                               ? 'Section overview'
+//                               : `Block ${item.blockId}`}
+//                           </p>
+//                         </div>
+//                       </button>
+//                     );
+//                   })}
 
-                  {section.key === 'watch' &&
-                  screen.type === 'video' &&
-                  screen.transcriptDropdown ? (
-                    <div className="p-4 border-t border-white/5">
-                      <button
-                        type="button"
-                        onClick={() => setIsSidebarTranscriptOpen(true)}
-                        className="w-full h-[56px] rounded-xl border border-white/10 bg-[#1A1A33]/60 hover:bg-[#1A1A33]/75 transition-colors flex items-center gap-3 px-4 text-left"
-                      >
-                        <span className="material-symbols-outlined text-[#818CF8]">
-                          menu_book
-                        </span>
-                        <span className="text-sm font-medium text-white/85 truncate">
-                          {screen.transcriptDropdown.header}
-                        </span>
-                      </button>
-                    </div>
-                  ) : null}
-                </div>
-              ) : null}
-            </div>
-          );
-        })}
-      </div>
+//                   {section.key === 'watch' &&
+//                   screen.type === 'video' &&
+//                   screen.transcriptDropdown ? (
+//                     <div className="p-4 border-t border-white/5">
+//                       <button
+//                         type="button"
+//                         onClick={() => setIsSidebarTranscriptOpen(true)}
+//                         className="w-full h-[56px] rounded-xl border border-white/10 bg-[#1A1A33]/60 hover:bg-[#1A1A33]/75 transition-colors flex items-center gap-3 px-4 text-left"
+//                       >
+//                         <span className="material-symbols-outlined text-[#818CF8]">
+//                           menu_book
+//                         </span>
+//                         <span className="text-sm font-medium text-white/85 truncate">
+//                           {screen.transcriptDropdown.header}
+//                         </span>
+//                       </button>
+//                     </div>
+//                   ) : null}
+//                 </div>
+//               ) : null}
+//             </div>
+//           );
+//         })}
+//       </div>
 
-      {isSidebarTranscriptOpen &&
-      screen.type === 'video' &&
-      screen.transcriptDropdown ? (
-        <div className="absolute inset-0 z-20">
-          <button
-            type="button"
-            aria-label="Close transcript"
-            onClick={() => setIsSidebarTranscriptOpen(false)}
-            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
-          />
-          <div className="absolute inset-3 glass-panel rounded-2xl border border-white/10 bg-[#020617]/90 backdrop-blur p-4 shadow-[0_30px_120px_rgba(0,0,0,0.7)] overflow-hidden flex flex-col">
-            <div className="flex items-start justify-between gap-3">
-              <div className="min-w-0">
-                <div className="text-xs font-bold uppercase tracking-[0.2em] text-white/60">
-                  Transcript
-                </div>
-                <div className="mt-1 text-sm font-semibold text-white truncate">
-                  {screen.transcriptDropdown.header}
-                </div>
-              </div>
-              <button
-                type="button"
-                onClick={() => setIsSidebarTranscriptOpen(false)}
-                className="w-9 h-9 rounded-xl border border-white/10 bg-white/[0.04] hover:bg-white/[0.08] transition-colors flex items-center justify-center shrink-0"
-              >
-                <span className="material-symbols-outlined text-white/80">
-                  close
-                </span>
-              </button>
-            </div>
+//       {isSidebarTranscriptOpen &&
+//       screen.type === 'video' &&
+//       screen.transcriptDropdown ? (
+//         <div className="absolute inset-0 z-20">
+//           <button
+//             type="button"
+//             aria-label="Close transcript"
+//             onClick={() => setIsSidebarTranscriptOpen(false)}
+//             className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+//           />
+//           <div className="absolute inset-3 glass-panel rounded-2xl border border-white/10 bg-[#020617]/90 backdrop-blur p-4 shadow-[0_30px_120px_rgba(0,0,0,0.7)] overflow-hidden flex flex-col">
+//             <div className="flex items-start justify-between gap-3">
+//               <div className="min-w-0">
+//                 <div className="text-xs font-bold uppercase tracking-[0.2em] text-white/60">
+//                   Transcript
+//                 </div>
+//                 <div className="mt-1 text-sm font-semibold text-white truncate">
+//                   {screen.transcriptDropdown.header}
+//                 </div>
+//               </div>
+//               <button
+//                 type="button"
+//                 onClick={() => setIsSidebarTranscriptOpen(false)}
+//                 className="w-9 h-9 rounded-xl border border-white/10 bg-white/[0.04] hover:bg-white/[0.08] transition-colors flex items-center justify-center shrink-0"
+//               >
+//                 <span className="material-symbols-outlined text-white/80">
+//                   close
+//                 </span>
+//               </button>
+//             </div>
 
-            <div className="mt-4 flex-1 min-h-0 overflow-y-auto custom-scrollbar text-sm text-slate-200 whitespace-pre-line leading-relaxed pr-1">
-              {screen.transcriptDropdown.body}
-            </div>
-          </div>
-        </div>
-      ) : null}
-    </>
-  );
+//             <div className="mt-4 flex-1 min-h-0 overflow-y-auto custom-scrollbar text-sm text-slate-200 whitespace-pre-line leading-relaxed pr-1">
+//               {screen.transcriptDropdown.body}
+//             </div>
+//           </div>
+//         </div>
+//       ) : null}
+//     </>
+//   );
 
-  if (isLayoutVariant) {
-    return (
-      <div className="relative h-full w-full flex flex-col overflow-hidden bg-white border-r border-slate-200">
-        {sidebarContent}
-      </div>
-    );
-  }
+//   if (isLayoutVariant) {
+//     return (
+//       <div className="relative h-full w-full flex flex-col overflow-hidden bg-white border-r border-slate-200">
+//         {sidebarContent}
+//       </div>
+//     );
+//   }
 
-  return (
-    <aside
-      className={`relative hidden md:flex flex-col shrink-0 h-full bg-white overflow-hidden transition-[width,opacity,border] duration-200 ${
-        isOpen
-          ? 'w-[280px] border-l border-slate-200 opacity-100'
-          : 'w-0 border-0 opacity-0 pointer-events-none'
-      }`}
-    >
-      {sidebarContent}
-    </aside>
-  );
-}
+//   return (
+//     <aside
+//       className={`relative hidden md:flex flex-col shrink-0 h-full bg-white overflow-hidden transition-[width,opacity,border] duration-200 ${
+//         isOpen
+//           ? 'w-[280px] border-l border-slate-200 opacity-100'
+//           : 'w-0 border-0 opacity-0 pointer-events-none'
+//       }`}
+//     >
+//       {sidebarContent}
+//     </aside>
+//   );
+// }
 
 function parseTakeawaySteps(text: string): {
   steps: { number: number; body: string }[];
@@ -4347,12 +4343,8 @@ function ClosingSection({
   );
   const bodyTypingEnabled =
     phase === 'paragraph' && bodyTypingActive && !skipIntro;
-  const { displayed: typedBody, isComplete: bodyTypingComplete } = useTypingText(
-    introCopy,
-    bodyTypingEnabled,
-    42,
-    'empty'
-  );
+  const { displayed: typedBody, isComplete: bodyTypingComplete } =
+    useTypingText(introCopy, bodyTypingEnabled, 42, 'empty');
 
   useEffect(() => {
     const headerPhase: LearningOutcomesPhase =
@@ -4549,12 +4541,8 @@ function TakeawayCardSection({
   );
   const bodyTypingEnabled =
     phase === 'paragraph' && bodyTypingActive && !skipIntro;
-  const { displayed: typedBody, isComplete: bodyTypingComplete } = useTypingText(
-    introCopy,
-    bodyTypingEnabled,
-    42,
-    'empty'
-  );
+  const { displayed: typedBody, isComplete: bodyTypingComplete } =
+    useTypingText(introCopy, bodyTypingEnabled, 42, 'empty');
 
   useEffect(() => {
     const headerPhase: LearningOutcomesPhase =
@@ -4659,7 +4647,9 @@ function TakeawayCardSection({
 
     if (!hasHighlight) {
       return (
-        <p className="whitespace-pre-wrap leading-relaxed">{screen.takeawayBody}</p>
+        <p className="whitespace-pre-wrap leading-relaxed">
+          {screen.takeawayBody}
+        </p>
       );
     }
 
@@ -4682,7 +4672,9 @@ function TakeawayCardSection({
         </div>
 
         {highlightParts[1] ? (
-          <p className="whitespace-pre-wrap leading-snug">{highlightParts[1]}</p>
+          <p className="whitespace-pre-wrap leading-snug">
+            {highlightParts[1]}
+          </p>
         ) : null}
       </>
     );
@@ -4726,9 +4718,7 @@ function TakeawayCardSection({
       >
         {showBody && introCopy ? (
           <header className="pt-2 shrink-0">
-            <h2
-              className="text-[32px] leading-tight font-bold max-w-[1200px] text-slate-900"
-            >
+            <h2 className="text-[32px] leading-tight font-bold max-w-[1200px] text-slate-900">
               {isBodyTyping ? (
                 <>
                   <span>{typedBody}</span>
@@ -4866,7 +4856,8 @@ function LearnStateModal({
   const sections = parseLearnStateSections(body);
   const sectionLabelClass =
     'text-sm md:text-base font-bold uppercase tracking-wider text-[#2E7CF6] mb-3';
-  const sectionBodyClass = 'text-base md:text-lg text-slate-800 leading-relaxed';
+  const sectionBodyClass =
+    'text-base md:text-lg text-slate-800 leading-relaxed';
 
   return (
     <div
@@ -4937,110 +4928,107 @@ export default function MindSyncTeacherTrainingModule01Page() {
   const navigate = useNavigate();
   const screens: Screen[] = useMemo(
     () =>
-      (
-        [
-          {
-            id: 0,
-            type: 'landing',
-            t1: 'Module 1',
-            t2: 'The Three Second Pause',
-            lead: 'Recognising the difference between distress, defiance and overwhelm in the classroom, and how you may respond to it.',
-          },
-          // {
-          //   id: 1,
-          //   type: 'cover',
-          //   t1: 'The Three Second Pause',
-          //   t2: 'Reading behaviour in the moment',
-          //   body: 'How to tell the difference between distress, defiance and overwhelm. ',
-          // },
-          // {
-          //   id: 2,
-          //   type: 'text',
-          //   t2: 'About this module',
-          //   lead: 'Sometimes a pupil’s behaviour can look like defiance when what is really going on is distress.',
-          //   body: 'Same pupil, same behaviour, a different read, a completely different outcome.',
-          //   dropdowns: [
-          //     {
-          //       header: 'Does this only apply to pupils with a diagnosis?',
-          //       body: 'No. The brain patterns here show up across autism, ADHD, dyslexia and dyspraxia, in pupils with no diagnosis at all, and in any pupil on a bad day.',
-          //     },
-          //   ],
-          // },
-          {
-            id: 3,
-            type: 'bullets',
-            t2: 'By the end you will be able to',
-            bullets: [
-              'Understand the difference between distress, defiance and overwhelm.',
-              'Notice the early signs that a pupil is becoming overwhelmed.',
-              'Use the three second pause in the classroom.',
-            ],
-          },
-          {
-            id: 4,
-            type: 'research',
-            headerTitle: 'The research behind the technique',
-            dropdowns: RESEARCH_EVIDENCE_DROPDOWNS,
-          },
-          {
-            id: 5,
-            type: 'divider',
-            t2: 'The three second pause, in a real classroom',
-            watchIntro: {
-              headline:
-                'You are about to watch the same moment twice: a pupil who has stopped engaging, and how his teacher responds. The first time she reacts straight away. The second time she waits three seconds. See what a difference three seconds can make.',
-              after: {
-                version: 'Version 2',
-                timing: '3 seconds',
-                description:
-                  'In the second she waits three. Watch what changes.',
-              },
-              footer: 'Watch what changes.',
+      [
+        {
+          id: 0,
+          type: 'landing',
+          t1: 'Module 1',
+          t2: 'The Three Second Pause',
+          lead: 'Recognising the difference between distress, defiance and overwhelm in the classroom, and how you may respond to it.',
+        },
+        // {
+        //   id: 1,
+        //   type: 'cover',
+        //   t1: 'The Three Second Pause',
+        //   t2: 'Reading behaviour in the moment',
+        //   body: 'How to tell the difference between distress, defiance and overwhelm. ',
+        // },
+        // {
+        //   id: 2,
+        //   type: 'text',
+        //   t2: 'About this module',
+        //   lead: 'Sometimes a pupil’s behaviour can look like defiance when what is really going on is distress.',
+        //   body: 'Same pupil, same behaviour, a different read, a completely different outcome.',
+        //   dropdowns: [
+        //     {
+        //       header: 'Does this only apply to pupils with a diagnosis?',
+        //       body: 'No. The brain patterns here show up across autism, ADHD, dyslexia and dyspraxia, in pupils with no diagnosis at all, and in any pupil on a bad day.',
+        //     },
+        //   ],
+        // },
+        {
+          id: 3,
+          type: 'bullets',
+          t2: 'By the end you will be able to',
+          bullets: [
+            'Understand the difference between distress, defiance and overwhelm.',
+            'Notice the early signs that a pupil is becoming overwhelmed.',
+            'Use the three second pause in the classroom.',
+          ],
+        },
+        {
+          id: 4,
+          type: 'research',
+          headerTitle: 'The research behind the technique',
+          dropdowns: RESEARCH_EVIDENCE_DROPDOWNS,
+        },
+        {
+          id: 5,
+          type: 'divider',
+          t2: 'The three second pause, in a real classroom',
+          watchIntro: {
+            headline:
+              'You are about to watch the same moment twice: a pupil who has stopped engaging, and how his teacher responds. The first time she reacts straight away. The second time she waits three seconds. See what a difference three seconds can make.',
+            after: {
+              version: 'Version 2',
+              timing: '3 seconds',
+              description: 'In the second she waits three. Watch what changes.',
             },
-            videoTitle: 'Module 1 film, around 3 minutes',
-            videoUrl: MODULE_1_MAIN_VIDEO_URL,
-            transcriptDropdown: {
-              header: 'Read the full script',
-              body: 'OPEN. Clean Elara logo, then a soft dissolve into the classroom.\n\nSCENE 1, a pupil who has checked out. A Year 9 English lesson in full flow. Daniel is near the back.\nHis book is closed and he is turning a pen over and over in his hands, bending it, clicking it, eyes\nsomewhere else. The pupils either side of him are writing.\n\nNarrator: Year 9 English, period four on a Wednesday. Watch the boy at the back. His book is shut,\nand he is turning a pen over and over in his hands. He is not being difficult and he is not being loud. He\nhas just stopped being able to join in.\n\nSCENE 2, the ask, and two realities. Ms Patel asks him calmly to get his book out. He does not open it.\nfsmall tense shake of the head, and a low mutter. From the front it looks like a knock back. Then a\nshort view from Daniel’s side: the room tilts, the light hums, a pencil tap is too loud.\n\nNarrator: A fair, ordinary instruction. From the front of the room, that looks like a refusal. But from\ninside his head, it is not refusal at all. He heard the tone, not the words. Same moment. Two\ncompletely different realities.\n\nSCENE 3, what often happens. She responds in about a second, on reflex. She asks again, harder,\nand names a consequence. It stops being about a book and starts being about winning.\n\nSCENE 4, what could happen instead. The same moment again. Narrator: In a classroom, most of us\nwait about one second before we respond. Researchers have actually measured it. And when a\nteacher holds that pause for just a few seconds longer, what happens next in the room can change\ncompletely. She feels herself about to react, and instead she waits. Three seconds. Then she comes\ndown to his level, off to the side, and asks one quiet question.\n\nSCENE 5, the outcome. He takes two minutes, comes back, and does the work. Narrator: Two\nversions of the same lesson, and the only real difference between them was about two seconds. Not a\nbetter teacher. Not a different pupil. Two seconds.\n\nCLOSE. Clean Elara logo.',
-            },
+            footer: 'Watch what changes.',
           },
-          {
-            id: 7,
-            type: 'divider',
-            t1: 'Part 2. Learn',
-            lead: 'What you just watched, in plain language.',
-            body: 'During a lesson, a pupil can look calm on the outside while, inside, they are in one of three very different states. Each state needs a different response from you, and the most common mistake is to respond to all three in the same way. Tap each state to see what it looks like, what is going on underneath, and what may help.',
+          videoTitle: 'Module 1 film, around 3 minutes',
+          videoUrl: MODULE_1_MAIN_VIDEO_URL,
+          transcriptDropdown: {
+            header: 'Read the full script',
+            body: 'OPEN. Clean Elara logo, then a soft dissolve into the classroom.\n\nSCENE 1, a pupil who has checked out. A Year 9 English lesson in full flow. Daniel is near the back.\nHis book is closed and he is turning a pen over and over in his hands, bending it, clicking it, eyes\nsomewhere else. The pupils either side of him are writing.\n\nNarrator: Year 9 English, period four on a Wednesday. Watch the boy at the back. His book is shut,\nand he is turning a pen over and over in his hands. He is not being difficult and he is not being loud. He\nhas just stopped being able to join in.\n\nSCENE 2, the ask, and two realities. Ms Patel asks him calmly to get his book out. He does not open it.\nfsmall tense shake of the head, and a low mutter. From the front it looks like a knock back. Then a\nshort view from Daniel’s side: the room tilts, the light hums, a pencil tap is too loud.\n\nNarrator: A fair, ordinary instruction. From the front of the room, that looks like a refusal. But from\ninside his head, it is not refusal at all. He heard the tone, not the words. Same moment. Two\ncompletely different realities.\n\nSCENE 3, what often happens. She responds in about a second, on reflex. She asks again, harder,\nand names a consequence. It stops being about a book and starts being about winning.\n\nSCENE 4, what could happen instead. The same moment again. Narrator: In a classroom, most of us\nwait about one second before we respond. Researchers have actually measured it. And when a\nteacher holds that pause for just a few seconds longer, what happens next in the room can change\ncompletely. She feels herself about to react, and instead she waits. Three seconds. Then she comes\ndown to his level, off to the side, and asks one quiet question.\n\nSCENE 5, the outcome. He takes two minutes, comes back, and does the work. Narrator: Two\nversions of the same lesson, and the only real difference between them was about two seconds. Not a\nbetter teacher. Not a different pupil. Two seconds.\n\nCLOSE. Clean Elara logo.',
           },
-          {
-            id: 17,
-            type: 'technique_intro',
-            t2: 'The Technique. The Three Second Pause',
-            lead: 'The three second pause is a short gap between what a pupil does and how you respond. In that gap, you work out which state the pupil is in before you react. It has three steps.',
-            techniqueSteps: TECHNIQUE_STEPS,
-            keyPoint:
-              'You will not manage this every time, and you are not meant to. The goal is not perfection. It is self-awareness.',
-          },
-          { id: 19, type: 'scenario_situation', scenarioId: 1 },
-          { id: 22, type: 'scenario_situation', scenarioId: 2 },
-          { id: 25, type: 'scenario_situation', scenarioId: 3 },
-          {
-            id: 28,
-            type: 'takeaway',
-            t1: 'Part 4. Your take away card',
-            body: 'A one page summary of the whole module, made to fit a phone screen, a lanyard insert, or a noticeboard. Do not try to remember the module. Just keep this close.',
-            takeawayHeading: 'THE THREE SECOND PAUSE\nThe pocket version',
-            takeawayBody:
-              '1. Notice the rise in yourself. The tight chest, the urge to snap, the feeling of being undermined. Notice it. Do not reply yet.\n\n2. Ask one quiet question. Inside: is this pupil green, amber or red? Out loud if you need to: “Quick check in. Are you with me, or somewhere else?”\n\n3. Match your response to the state, not the behaviour. Green: teach. Amber: lower the demand, offer a choice, buy ninety seconds. Red: reduce demands to almost zero, offer space, save the conversation for later.\n\nAnd when it does not go well:\n\n“Yesterday I misunderstood what was going on for you. I should have checked in rather than snapped. I am sorry. You did not deserve that.” No “but”. No explanation. No asking them to apologise back. Then let them go.',
-          },
-          {
-            id: 29,
-            type: 'closing',
-            t2: 'That is Module 1',
-            closingBody:
-              'Next in the pathway: Module 2, Don’t Break What’s Working. How to tell when a quietly off task pupil is actually coping, and what it costs to take their coping away.',
-          },
-        ] as Screen[]
-      ),
+        },
+        {
+          id: 7,
+          type: 'divider',
+          t1: 'Part 2. Learn',
+          lead: 'What you just watched, in plain language.',
+          body: 'During a lesson, a pupil can look calm on the outside while, inside, they are in one of three very different states. Each state needs a different response from you, and the most common mistake is to respond to all three in the same way. Tap each state to see what it looks like, what is going on underneath, and what may help.',
+        },
+        {
+          id: 17,
+          type: 'technique_intro',
+          t2: 'The Technique. The Three Second Pause',
+          lead: 'The three second pause is a short gap between what a pupil does and how you respond. In that gap, you work out which state the pupil is in before you react. It has three steps.',
+          techniqueSteps: TECHNIQUE_STEPS,
+          keyPoint:
+            'You will not manage this every time, and you are not meant to. The goal is not perfection. It is self-awareness.',
+        },
+        { id: 19, type: 'scenario_situation', scenarioId: 1 },
+        { id: 22, type: 'scenario_situation', scenarioId: 2 },
+        { id: 25, type: 'scenario_situation', scenarioId: 3 },
+        {
+          id: 28,
+          type: 'takeaway',
+          t1: 'Part 4. Your take away card',
+          body: 'A one page summary of the whole module, made to fit a phone screen, a lanyard insert, or a noticeboard. Do not try to remember the module. Just keep this close.',
+          takeawayHeading: 'THE THREE SECOND PAUSE\nThe pocket version',
+          takeawayBody:
+            '1. Notice the rise in yourself. The tight chest, the urge to snap, the feeling of being undermined. Notice it. Do not reply yet.\n\n2. Ask one quiet question. Inside: is this pupil green, amber or red? Out loud if you need to: “Quick check in. Are you with me, or somewhere else?”\n\n3. Match your response to the state, not the behaviour. Green: teach. Amber: lower the demand, offer a choice, buy ninety seconds. Red: reduce demands to almost zero, offer space, save the conversation for later.\n\nAnd when it does not go well:\n\n“Yesterday I misunderstood what was going on for you. I should have checked in rather than snapped. I am sorry. You did not deserve that.” No “but”. No explanation. No asking them to apologise back. Then let them go.',
+        },
+        {
+          id: 29,
+          type: 'closing',
+          t2: 'That is Module 1',
+          closingBody:
+            'Next in the pathway: Module 2, Don’t Break What’s Working. How to tell when a quietly off task pupil is actually coping, and what it costs to take their coping away.',
+        },
+      ] as Screen[],
     []
   );
 
@@ -5092,7 +5080,8 @@ export default function MindSyncTeacherTrainingModule01Page() {
     useState<ScenarioIntroPhase>('reveal_situation');
   const [scenarioMainTitleIntroPlayed, setScenarioMainTitleIntroPlayed] =
     useState(false);
-  const [scenarioCalloutDismissed, setScenarioCalloutDismissed] = useState(false);
+  const [scenarioCalloutDismissed, setScenarioCalloutDismissed] =
+    useState(false);
   const [block3IntroComplete, setBlock3IntroComplete] = useState(false);
 
   const onReadAloudHydrate = useCallback((enabled: boolean) => {
@@ -5178,32 +5167,32 @@ export default function MindSyncTeacherTrainingModule01Page() {
     closing: false,
   });
 
-  const toggleSection = (key: SidebarSectionKey) => {
-    setOpenSections((prev) => {
-      if (prev[key]) {
-        return {
-          introduction: false,
-          research: false,
-          watch: false,
-          learn: false,
-          practise: false,
-          takeaway: false,
-          closing: false,
-        };
-      }
-      return {
-        introduction: key === 'introduction',
-        research: key === 'research',
-        watch: key === 'watch',
-        learn: key === 'learn',
-        practise: key === 'practise',
-        takeaway: key === 'takeaway',
-        closing: key === 'closing',
-      };
-    });
-  };
+  // const toggleSection = (key: SidebarSectionKey) => {
+  //   setOpenSections((prev) => {
+  //     if (prev[key]) {
+  //       return {
+  //         introduction: false,
+  //         research: false,
+  //         watch: false,
+  //         learn: false,
+  //         practise: false,
+  //         takeaway: false,
+  //         closing: false,
+  //       };
+  //     }
+  //     return {
+  //       introduction: key === 'introduction',
+  //       research: key === 'research',
+  //       watch: key === 'watch',
+  //       learn: key === 'learn',
+  //       practise: key === 'practise',
+  //       takeaway: key === 'takeaway',
+  //       closing: key === 'closing',
+  //     };
+  //   });
+  // };
 
-  const [isSidebarTranscriptOpen, setIsSidebarTranscriptOpen] = useState(false);
+  // const [isSidebarTranscriptOpen, setIsSidebarTranscriptOpen] = useState(false);
   const [isWatchScriptOpen, setIsWatchScriptOpen] = useState(false);
   const [isModuleContentsOpen, setIsModuleContentsOpen] = useState(false);
   const toggleModuleContents = () => setIsModuleContentsOpen((v) => !v);
@@ -5228,7 +5217,8 @@ export default function MindSyncTeacherTrainingModule01Page() {
       if (isScreenTransitioning) return;
 
       const from = screens[index];
-      const to = screens[Math.min(screens.length - 1, Math.max(0, targetIndex))];
+      const to =
+        screens[Math.min(screens.length - 1, Math.max(0, targetIndex))];
       const skipFade = shouldSkipPractiseScenarioNavTransition(from, to);
 
       if (prefersReducedMotion || skipFade) {
@@ -5390,9 +5380,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
     '';
 
   const techniqueTitle =
-    screen.id === 17
-      ? getModulePageTitle(screen, activeSidebarSectionKey)
-      : '';
+    screen.id === 17 ? getModulePageTitle(screen, activeSidebarSectionKey) : '';
 
   const scenarioTitle =
     screen.type === 'scenario_situation' ? SCENARIO_MAIN_TITLE : '';
@@ -5436,11 +5424,11 @@ export default function MindSyncTeacherTrainingModule01Page() {
     const title =
       screen.type === 'scenario_situation'
         ? SCENARIO_MAIN_TITLE
-        : MODULE_BLOCK_HEADER_TITLES[screen.id] ??
+        : (MODULE_BLOCK_HEADER_TITLES[screen.id] ??
           screen.headerTitle ??
           screen.t2 ??
           screen.t1 ??
-          '';
+          '');
 
     if (
       screen.type === 'bullets' ||
@@ -5623,8 +5611,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
     threeStatesTitleTypingComplete,
   ]);
 
-  const threeStatesBodyText =
-    screen.id === 7 ? (screen.body ?? '') : '';
+  const threeStatesBodyText = screen.id === 7 ? (screen.body ?? '') : '';
   const threeStatesBodyTypingEnabled =
     screen.id === 7 &&
     threeStatesIntroPhase === 'paragraph' &&
@@ -5745,12 +5732,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
   const {
     displayed: typedTechniqueLead,
     isComplete: techniqueLeadTypingComplete,
-  } = useTypingText(
-    techniqueLeadText,
-    techniqueLeadTypingEnabled,
-    42,
-    'empty'
-  );
+  } = useTypingText(techniqueLeadText, techniqueLeadTypingEnabled, 42, 'empty');
 
   useEffect(() => {
     if (screen.id !== 17) return;
@@ -5778,12 +5760,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
     }, SPEECH_LEAD_MS);
 
     return () => window.clearTimeout(techniqueLeadSpeechTimerRef.current);
-  }, [
-    screen.id,
-    techniqueIntroPhase,
-    techniqueLeadText,
-    prefersReducedMotion,
-  ]);
+  }, [screen.id, techniqueIntroPhase, techniqueLeadText, prefersReducedMotion]);
 
   useEffect(() => {
     if (screen.id !== 17) return;
@@ -6161,7 +6138,9 @@ export default function MindSyncTeacherTrainingModule01Page() {
                     >
                       <section
                         className={`${
-                          skipScenarioSectionEnterAnimation ? '' : 'step-transition'
+                          skipScenarioSectionEnterAnimation
+                            ? ''
+                            : 'step-transition'
                         } ${
                           screen.id === 16 ||
                           screen.id === 17 ||
@@ -6192,79 +6171,79 @@ export default function MindSyncTeacherTrainingModule01Page() {
                         ) : screen.type === 'technique_intro' ? (
                           <div className="p-5 md:p-6 md:px-14 flex flex-col flex-1 min-h-0 h-full overflow-hidden">
                             <div className="relative flex flex-col flex-1 min-h-0 h-full">
-                            {techniqueIntroPhase === 'center' ||
-                            techniqueIntroPhase === 'header' ? (
-                              <>
-                                <button
-                                  type="button"
-                                  onClick={() => {
-                                    if (techniqueIntroPhase === 'center') {
-                                      setTechniqueIntroPhase('header');
+                              {techniqueIntroPhase === 'center' ||
+                              techniqueIntroPhase === 'header' ? (
+                                <>
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      if (techniqueIntroPhase === 'center') {
+                                        setTechniqueIntroPhase('header');
+                                      }
+                                    }}
+                                    className={`absolute inset-0 z-10 ${
+                                      techniqueIntroPhase === 'center'
+                                        ? 'cursor-pointer'
+                                        : 'pointer-events-none'
+                                    }`}
+                                    aria-label="Continue to technique intro"
+                                  />
+                                  <IntroTitleOverlay
+                                    title={techniqueTitle}
+                                    phase={
+                                      techniqueIntroPhase === 'header'
+                                        ? 'header'
+                                        : 'center'
                                     }
-                                  }}
-                                  className={`absolute inset-0 z-10 ${
-                                    techniqueIntroPhase === 'center'
-                                      ? 'cursor-pointer'
-                                      : 'pointer-events-none'
-                                  }`}
-                                  aria-label="Continue to technique intro"
-                                />
-                                <IntroTitleOverlay
-                                  title={techniqueTitle}
-                                  phase={
-                                    techniqueIntroPhase === 'header'
-                                      ? 'header'
-                                      : 'center'
-                                  }
-                                  anchorRef={headerTitleAnchorRef}
-                                  contentAreaRef={mainContentRef}
-                                  centerContent={!isModuleContentsOpen}
-                                  displayedText={
-                                    techniqueIntroPhase === 'center'
-                                      ? typedTechniqueTitle
-                                      : techniqueTitle
-                                  }
-                                  onMoveComplete={() =>
-                                    setTechniqueIntroPhase('paragraph')
-                                  }
-                                />
-                              </>
-                            ) : null}
+                                    anchorRef={headerTitleAnchorRef}
+                                    contentAreaRef={mainContentRef}
+                                    centerContent={!isModuleContentsOpen}
+                                    displayedText={
+                                      techniqueIntroPhase === 'center'
+                                        ? typedTechniqueTitle
+                                        : techniqueTitle
+                                    }
+                                    onMoveComplete={() =>
+                                      setTechniqueIntroPhase('paragraph')
+                                    }
+                                  />
+                                </>
+                              ) : null}
 
-                            {techniqueIntroPhase === 'reveal' ? (
-                              <TapContinuePrompt
-                                label="Tap to continue"
-                                onClick={() => setTechniqueIntroPhase('done')}
-                                className="absolute inset-0 z-20"
+                              {techniqueIntroPhase === 'reveal' ? (
+                                <TapContinuePrompt
+                                  label="Tap to continue"
+                                  onClick={() => setTechniqueIntroPhase('done')}
+                                  className="absolute inset-0 z-20"
+                                />
+                              ) : null}
+
+                              <TechniqueVerticalStepsSection
+                                screen={screen}
+                                onStepClick={setActiveTechniqueStep}
+                                hideLead={
+                                  techniqueIntroPhase === 'center' ||
+                                  techniqueIntroPhase === 'header'
+                                }
+                                leadContent={
+                                  techniqueIntroPhase === 'paragraph' ? (
+                                    <>
+                                      <span>{typedTechniqueLead}</span>
+                                      <span className="text-transparent">
+                                        {techniqueLeadText.slice(
+                                          typedTechniqueLead.length
+                                        )}
+                                      </span>
+                                    </>
+                                  ) : techniqueIntroPhase === 'reveal' ||
+                                    techniqueIntroPhase === 'done' ? (
+                                    techniqueLeadText
+                                  ) : undefined
+                                }
+                                showSteps={techniqueIntroPhase === 'done'}
+                                staggerReveal={techniqueIntroPhase === 'done'}
+                                showKeyPoint={techniqueIntroPhase === 'done'}
                               />
-                            ) : null}
-
-                            <TechniqueVerticalStepsSection
-                              screen={screen}
-                              onStepClick={setActiveTechniqueStep}
-                              hideLead={
-                                techniqueIntroPhase === 'center' ||
-                                techniqueIntroPhase === 'header'
-                              }
-                              leadContent={
-                                techniqueIntroPhase === 'paragraph' ? (
-                                  <>
-                                    <span>{typedTechniqueLead}</span>
-                                    <span className="text-transparent">
-                                      {techniqueLeadText.slice(
-                                        typedTechniqueLead.length
-                                      )}
-                                    </span>
-                                  </>
-                                ) : techniqueIntroPhase === 'reveal' ||
-                                  techniqueIntroPhase === 'done' ? (
-                                  techniqueLeadText
-                                ) : undefined
-                              }
-                              showSteps={techniqueIntroPhase === 'done'}
-                              staggerReveal={techniqueIntroPhase === 'done'}
-                              showKeyPoint={techniqueIntroPhase === 'done'}
-                            />
                             </div>
                           </div>
                         ) : screen.type === 'technique' ? (
@@ -6553,9 +6532,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
                                       onCloseScript={() =>
                                         setIsWatchScriptOpen(false)
                                       }
-                                      showHeadline={
-                                        watchIntroPhase === 'done'
-                                      }
+                                      showHeadline={watchIntroPhase === 'done'}
                                     />
                                   </div>
                                 ) : null}
@@ -6650,7 +6627,8 @@ export default function MindSyncTeacherTrainingModule01Page() {
                                   </>
                                 ) : null}
 
-                                {threeStatesIntroPhase === 'reveal_paragraph' ? (
+                                {threeStatesIntroPhase ===
+                                'reveal_paragraph' ? (
                                   <TapContinuePrompt
                                     label="Tap to continue"
                                     onClick={() =>
