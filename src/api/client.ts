@@ -1,15 +1,18 @@
 import axios from 'axios';
 import { clearAuthCache } from '@/utils/authCache';
 
-export const API_BASE =
-  import.meta.env.VITE_API_URL ??
-  'https://elera-backend-production-aa3a.up.railway.app';
-
+export const API_BASE = import.meta.env.VITE_API_URL;
 export const api = axios.create({
   baseURL: API_BASE,
 });
 
-const PUBLIC_AUTH_PATHS = ['/login', '/signup', '/api/v1/auth/login', '/api/v1/auth/register', '/api/v1/auth/token'];
+const PUBLIC_AUTH_PATHS = [
+  '/login',
+  '/signup',
+  '/api/v1/auth/login',
+  '/api/v1/auth/register',
+  '/api/v1/auth/token',
+];
 
 function isPublicAuthRequest(url: string | undefined): boolean {
   if (!url) return false;
