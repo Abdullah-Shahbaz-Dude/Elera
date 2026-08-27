@@ -8,8 +8,8 @@
 import { getCloudinaryVideoUrl } from '@/config/cloudinary';
 
 // Cloudinary public IDs for hero videos
-const HERO_VIDEO_1_PUBLIC_ID = '7020022_Brain_Science_3840x2160_dwnwse';
-const HERO_VIDEO_2_PUBLIC_ID = 'shutterstock_1057813618_a62hry';
+const HERO_VIDEO_1_PUBLIC_ID = 'shutterstock_1020761695_1_rov4bv';
+const HERO_VIDEO_2_PUBLIC_ID = 'shutterstock_1020761656_1_pqkgsr';
 
 // Generate optimized Cloudinary URLs with transformations:
 // - f_auto: Auto format (serves best format for browser - WebM/MP4)

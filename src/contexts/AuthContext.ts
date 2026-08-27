@@ -1,7 +1,8 @@
 import { createContext } from 'react';
+import type { AuthUser } from '@/types/user';
 
 export interface AuthContextType {
-  user: { token?: string; [key: string]: unknown } | null;
+  user: AuthUser | null;
   loading: boolean;
   signup: (userName: string, email: string, password: string) => Promise<unknown>;
   login: (email: string, password: string) => Promise<unknown>;

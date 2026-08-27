@@ -1,13 +1,13 @@
-import { useEffect, useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useEffect, useMemo, useState, useCallback } from 'react';
+import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
 import { MIND_SYNC_MODULE_01 } from '../data/mindSyncSyllabus';
 import VideoLessonPlayer from '../components/VideoLessonPlayer';
 import image from '../../assets/images/mindsync/2.jpg';
 import aboutimage1 from '../../assets/images/mindsync/4.jpg';
 import aboutImage from '../../assets/images/mindsync/3.jpg';
-
-import { useParams, Navigate } from 'react-router-dom';
 import MindSyncTeacherTrainingModule01Page from './MindSyncTeacherTrainingModule01Page';
+import { useModuleProgress } from '@/hooks/useModuleProgress';
+import { MINDSYNC_MODULE_1_ID } from '@/api/learning';
 
 // import aboutImage from '../../assets/images/mindsync/3.jpg';
 import structureWatchImage from '../../assets/images/mindsync/5.jpg';
@@ -267,6 +267,14 @@ const PRACTICE_SCENARIOS: PracticeScenario[] = [
   },
 ];
 
+const MODULE_1_PROGRESS_SCREENS = [
+  { id: 0 },
+  { id: 1 },
+  { id: 2 },
+  { id: 3 },
+  { id: 4 },
+];
+
 export default function MindSyncModulePage() {
   const { moduleId } = useParams();
 
@@ -278,6 +286,11 @@ export default function MindSyncModulePage() {
     return <Navigate to="/dashboard/my-learning/mind-sync" replace />;
   }
 
+  return <MindSyncParentModulePage />;
+}
+
+function MindSyncParentModulePage() {
+  const navigate = useNavigate();
   const [active, setActive] = useState<TabKey>('introduction');
   const [isScriptOpen, setIsScriptOpen] = useState(false);
   const [isVideoHelpOpen, setIsVideoHelpOpen] = useState(false);
@@ -292,6 +305,37 @@ export default function MindSyncModulePage() {
     useState<PracticeOptionKey | null>(null);
   const [practiceSubmitted, setPracticeSubmitted] = useState(false);
   const [learnSubPage, setLearnSubPage] = useState<0 | 1 | 2>(0);
+  const [scenarioAnswers, setScenarioAnswers] = useState<
+    Partial<Record<number, PracticeOptionKey>>
+  >({});
+
+  const activeIndex = useMemo(() => {
+    return Math.max(
+      0,
+      TOC.findIndex((t) => t.key === active)
+    );
+  }, [active]);
+
+  const setProgressIndex = useCallback((idx: number) => {
+    const tab = TOC[Math.min(Math.max(idx, 0), TOC.length - 1)]?.key;
+    if (tab) setActive(tab);
+  }, []);
+
+  const { persistScenarioAnswer, persistScenarioCompareSeen, completeModule } =
+    useModuleProgress({
+      moduleId: MINDSYNC_MODULE_1_ID,
+      screens: MODULE_1_PROGRESS_SCREENS,
+      index: activeIndex,
+      setIndex: setProgressIndex,
+      completionBlockId: 4,
+      setScenarioAnswers,
+    });
+
+  useEffect(() => {
+    const saved = scenarioAnswers[practiceIndex + 1];
+    setSelectedPracticeOption(saved ?? null);
+    setPracticeSubmitted(Boolean(saved));
+  }, [practiceIndex, scenarioAnswers]);
 
   useEffect(() => {
     if (active !== 'learn') {
@@ -308,13 +352,6 @@ export default function MindSyncModulePage() {
 
   const activeItem = useMemo(() => {
     return TOC.find((t) => t.key === active) ?? TOC[0];
-  }, [active]);
-
-  const activeIndex = useMemo(() => {
-    return Math.max(
-      0,
-      TOC.findIndex((t) => t.key === active)
-    );
   }, [active]);
 
   const heroCopy = useMemo(() => {
@@ -1298,6 +1335,10 @@ export default function MindSyncModulePage() {
                                   onClick={() => {
                                     setSelectedPracticeOption(opt.key);
                                     setPracticeSubmitted(false);
+                                    persistScenarioAnswer(
+                                      practiceIndex + 1,
+                                      opt.key
+                                    );
                                   }}
                                   className={`group relative glass-panel p-6 rounded-xl text-left border transition-all duration-300 ${
                                     isSelected
@@ -1349,7 +1390,10 @@ export default function MindSyncModulePage() {
                             <button
                               type="button"
                               disabled={!selectedPracticeOption}
-                              onClick={() => setPracticeSubmitted(true)}
+                              onClick={() => {
+                                if (!selectedPracticeOption) return;
+                                setPracticeSubmitted(true);
+                              }}
                               className={`px-10 py-4 rounded-full font-semibold shadow-2xl transition-all flex items-center gap-3 ${
                                 selectedPracticeOption
                                   ? 'bg-gradient-to-r from-[#60A5FA] to-[#9333EA] text-white hover:scale-105 active:scale-95'
@@ -1370,7 +1414,10 @@ export default function MindSyncModulePage() {
                               <button
                                 type="button"
                                 aria-label="Close feedback"
-                                onClick={() => setPracticeSubmitted(false)}
+                                onClick={() => {
+                                  setPracticeSubmitted(false);
+                                  persistScenarioCompareSeen(practiceIndex + 1);
+                                }}
                                 className="absolute inset-0 bg-black/60"
                               />
 
@@ -1400,7 +1447,10 @@ export default function MindSyncModulePage() {
 
                                   <button
                                     type="button"
-                                    onClick={() => setPracticeSubmitted(false)}
+                                    onClick={() => {
+                                      setPracticeSubmitted(false);
+                                      persistScenarioCompareSeen(practiceIndex + 1);
+                                    }}
                                     className="p-2 rounded-full text-white/60 hover:text-white transition-colors"
                                     aria-label="Close feedback"
                                   >
@@ -1727,6 +1777,11 @@ export default function MindSyncModulePage() {
                 {active === 'takeaway' ? (
                   <button
                     type="button"
+                    onClick={() => {
+                      void completeModule().finally(() => {
+                        navigate('/dashboard/my-learning/mind-sync');
+                      });
+                    }}
                     className="flex items-center gap-2 px-6 py-3 rounded-full text-sm font-semibold border border-transparent bg-gradient-to-r from-[#60A5FA] to-[#9333EA] text-white hover:shadow-indigo-500/20 transition-colors"
                   >
                     <span>Finish Module</span>

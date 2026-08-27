@@ -14,7 +14,7 @@ const Footer: React.FC = () => {
           <div className="grid gap-8 md:gap-12 md:grid-cols-2 lg:grid-cols-4">
             {/* Logo and Info */}
             <div className="flex items-start">
-              <Logo className="mb-4 md:mb-6 h-[60px] w-auto md:h-[80px] lg:h-[100px] max-w-[150px] md:max-w-[200px]" />
+              <Logo className="mb-4 md:mb-6 h-[60px] w-auto md:h-[80px] lg:h-[100px] max-w-[150px] md:max-w-[200px] brightness-100 invert-0" />
             </div>
 
             {/* Navigation Links */}

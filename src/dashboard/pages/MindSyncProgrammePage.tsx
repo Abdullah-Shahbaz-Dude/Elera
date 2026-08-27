@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useMyModules } from '@/hooks/useMyModules';
 import {
   MIND_SYNC_MODULE_01,
   MIND_SYNC_TEACHER_TRAINING_MODULE_01,
@@ -9,6 +10,7 @@ import image from '../../assets/images/mindsync/2.jpg';
 export default function MindSyncProgrammePage() {
   const navigate = useNavigate();
   const [search, setSearch] = useState('');
+  const { modulesById } = useMyModules();
 
   const filtered = useMemo(() => {
     const modules = [MIND_SYNC_MODULE_01, MIND_SYNC_TEACHER_TRAINING_MODULE_01];
@@ -62,46 +64,64 @@ export default function MindSyncProgrammePage() {
       <div className="flex flex-1 overflow-hidden">
         <main className="flex-1 overflow-y-auto p-8 scroll-hide">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filtered.map((mod) => (
-              <div
-                key={mod.id}
-                role="button"
-                tabIndex={0}
-                onClick={() =>
-                  navigate(`/dashboard/my-learning/mind-sync/modules/${mod.id}`)
-                }
-                onKeyDown={(e) =>
-                  e.key === 'Enter' &&
-                  navigate(`/dashboard/my-learning/mind-sync/modules/${mod.id}`)
-                }
-                className="group relative aspect-[4/3] rounded-3xl overflow-hidden border border-slate-200 bg-white shadow-[0_4px_24px_-4px_rgba(10,31,68,0.08)] hover:border-[#2E7CF6]/30 transition-all duration-500 cursor-pointer"
-              >
-                <img
-                  alt={mod.title}
-                  src={image}
-                  className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                />
-                <div className="absolute top-4 right-4 flex gap-2">
-                  <span className="px-2 py-1 rounded-lg bg-white/90 backdrop-blur-md text-[10px] font-bold uppercase tracking-wider border border-slate-200 text-[#1F3864]">
-                    1 Module
-                  </span>
-                  <span
-                    className="px-2 py-1 rounded-lg backdrop-blur-md text-[10px] font-bold uppercase tracking-wider border border-[#2E7CF6]/20 text-[#2E7CF6]"
-                    style={{ backgroundColor: 'rgba(238, 244, 255, 0.95)' }}
-                  >
-                    Beginner
-                  </span>
+            {filtered.map((mod) => {
+              const progress = modulesById[mod.id];
+              const progressPercent = progress?.progress_percent ?? 0;
+
+              return (
+                <div
+                  key={mod.id}
+                  role="button"
+                  tabIndex={0}
+                  onClick={() =>
+                    navigate(`/dashboard/my-learning/mind-sync/modules/${mod.id}`)
+                  }
+                  onKeyDown={(e) =>
+                    e.key === 'Enter' &&
+                    navigate(`/dashboard/my-learning/mind-sync/modules/${mod.id}`)
+                  }
+                  className="group relative aspect-[4/3] rounded-3xl overflow-hidden border border-slate-200 bg-white shadow-[0_4px_24px_-4px_rgba(10,31,68,0.08)] hover:border-[#2E7CF6]/30 transition-all duration-500 cursor-pointer"
+                >
+                  <img
+                    alt={mod.title}
+                    src={image}
+                    className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                  />
+                  <div className="absolute top-4 right-4 flex gap-2">
+                    {progress && progressPercent > 0 ? (
+                      <span className="px-2 py-1 rounded-lg bg-white/90 backdrop-blur-md text-[10px] font-bold uppercase tracking-wider border border-[#2E7CF6]/20 text-[#2E7CF6]">
+                        {progressPercent}% complete
+                      </span>
+                    ) : null}
+                    <span className="px-2 py-1 rounded-lg bg-white/90 backdrop-blur-md text-[10px] font-bold uppercase tracking-wider border border-slate-200 text-[#1F3864]">
+                      1 Module
+                    </span>
+                    <span
+                      className="px-2 py-1 rounded-lg backdrop-blur-md text-[10px] font-bold uppercase tracking-wider border border-[#2E7CF6]/20 text-[#2E7CF6]"
+                      style={{ backgroundColor: 'rgba(238, 244, 255, 0.95)' }}
+                    >
+                      Beginner
+                    </span>
+                  </div>
+                  {progressPercent > 0 ? (
+                    <div className="absolute inset-x-0 top-0 h-1.5 bg-white/30">
+                      <div
+                        className="h-full bg-[#2E7CF6]"
+                        style={{ width: `${progressPercent}%` }}
+                      />
+                    </div>
+                  ) : null}
+                  <div className="absolute inset-x-0 bottom-0 p-6 bg-gradient-to-t from-[#1F3864]/95 via-[#1F3864]/55 to-transparent flex flex-col justify-end">
+                    <h3 className="text-lg font-bold text-white mb-2 group-hover:text-[#bdd2f8] transition-colors">
+                      {mod.title}
+                    </h3>
+                    <p className="text-xs text-white/80 leading-relaxed line-clamp-2">
+                      {mod.summary}
+                    </p>
+                  </div>
                 </div>
-                <div className="absolute inset-x-0 bottom-0 p-6 bg-gradient-to-t from-[#1F3864]/95 via-[#1F3864]/55 to-transparent flex flex-col justify-end">
-                  <h3 className="text-lg font-bold text-white mb-2 group-hover:text-[#bdd2f8] transition-colors">
-                    {mod.title}
-                  </h3>
-                  <p className="text-xs text-white/80 leading-relaxed line-clamp-2">
-                    {mod.summary}
-                  </p>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </main>
       </div>

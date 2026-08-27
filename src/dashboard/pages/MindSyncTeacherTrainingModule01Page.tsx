@@ -9,10 +9,15 @@ import {
 } from 'react';
 import { createPortal } from 'react-dom';
 import { Link, useNavigate } from 'react-router-dom';
-import { useModuleTrainingSidebar } from '@/dashboard/contexts/ModuleTrainingSidebarContext';
+import { useModuleProgress } from '@/hooks/useModuleProgress';
+import {
+  MINDSYNC_MODULE_2_ID,
+  PREF_READ_ALOUD,
+  PREF_SCENARIO_CALLOUT,
+} from '@/api/learning';
 import VideoLessonPlayer from '../components/VideoLessonPlayer';
+import ModuleProgressLoader from '../components/ModuleProgressLoader';
 import moduleBgImage from '../../assets/images/Module-1/module-1.jpg';
-import structureLearnImage from '../../assets/images/mindsync/6.jpg';
 import structurePracticeImage from '../../assets/images/mindsync/Untitled design.jpg';
 import structureTakeawayImage from '../../assets/images/mindsync/7.jpg';
 import learnHeroImage from '../../assets/images/mindsync/shutterstock_2757853493 (1).jpg';
@@ -207,9 +212,6 @@ const MODULE_HEADER_TITLES: Record<SidebarSectionKey, string> = {
 };
 
 const SCENARIO_MAIN_TITLE = "Let's put the learning into practice";
-const SCENARIO_CALLOUT_KEY = 'mindsync-m1-scenario-callout-done';
-const MODULE_READ_ALOUD_KEY = 'mindsync-m1-read-aloud';
-
 /**
  * Per-block purple header overrides (by block id).
  * Edit here for a specific screen; sidebar labels are not affected.
@@ -713,14 +715,7 @@ let moduleNarrationState: ModuleNarrationState = {
   readAloudEnabled: true,
 };
 let moduleNarrationPendingResolve: (() => void) | null = null;
-
-function readStoredReadAloudPreference(): boolean {
-  if (typeof window === 'undefined') return true;
-  const stored = localStorage.getItem(MODULE_READ_ALOUD_KEY);
-  if (stored === '0') return false;
-  if (stored === '1') return true;
-  return true;
-}
+let saveReadAloudPreference: ((enabled: boolean) => void) | null = null;
 
 function setModuleNarrationState(patch: Partial<ModuleNarrationState>) {
   moduleNarrationState = { ...moduleNarrationState, ...patch };
@@ -738,7 +733,7 @@ function getModuleNarrationSnapshot() {
 
 function initModuleNarrationPreference() {
   setModuleNarrationState({
-    readAloudEnabled: readStoredReadAloudPreference(),
+    readAloudEnabled: true,
   });
 }
 
@@ -754,9 +749,7 @@ function useModuleNarration() {
   );
 
   const setReadAloudEnabled = useCallback((enabled: boolean) => {
-    if (typeof window !== 'undefined') {
-      localStorage.setItem(MODULE_READ_ALOUD_KEY, enabled ? '1' : '0');
-    }
+    saveReadAloudPreference?.(enabled);
     if (!enabled) {
       stopAllModuleSpeech();
     }
@@ -1256,9 +1249,37 @@ function LearningOutcomesTapSection({
 const TAKEAWAY_HIGHLIGHT_TEXT =
   '“Yesterday I misunderstood what was going on for you. I should have checked in rather than snapped. I am sorry. You did not deserve that.” No “but”. No explanation. No asking them to apologise back. Then let them go.';
 
-const HIDDEN_NAV_BLOCK_IDS = new Set<number>([
-  8, 9, 10, 11, 14, 20, 21, 23, 24, 26, 27,
-]);
+const LEARN_STATE_ACCORDION_ITEMS: DropdownItem[] = [
+  {
+    header: 'Green. Calmly engaged',
+    body: 'What you see: on task, following instructions, productive movement, able to wait for help.\n\nUnderneath: the thinking brain is in charge. There is capacity to learn and to choose.\n\nWhat helps: teach, stretch, push gently. High expectations work best here.',
+  },
+  {
+    header: 'Amber. Dysregulated',
+    body: 'What you see: fidgety, restless, off task, short or muttered replies, slower to follow. Can look cheeky or low level disruptive.\n\nUnderneath: something has knocked them out of green. A loud room, a fall out at break, work that feels too hard, being tired or hungry. The thinking brain is only partly online. Their energy is going on staying in the room, so less is left for learning. They did not choose this.\n\nWhat helps: co regulate first. Lower your voice. Reduce the demand briefly. Offer a small choice. Buy ninety seconds. Most pupils come back within two minutes if you do not push.',
+  },
+  {
+    header: 'Red. Shut down',
+    body: 'What you see: frozen, silent, head down. May refuse to move, may walk out, may say something that is not their usual voice.\n\nUnderneath: the alarm system is in charge and the thinking brain has gone offline. Language does not process the way you expect. The brain has to come back down first.\n\nWhat helps: reduce demands to almost zero. Quiet voice. Side on, not face on. Offer space, not solutions. Do not negotiate. Give the brain time to come back.',
+  },
+  {
+    header: 'A bit more on the brain',
+    body: 'The thinking brain is the prefrontal cortex, just behind the forehead. In green it is in charge, so a pupil has the capacity to learn, remember and make choices. When the alarm system fires, that part goes quiet first.',
+  },
+];
+
+const LEARN_STATE_ITEMS = (() => {
+  const find = (prefix: string) =>
+    LEARN_STATE_ACCORDION_ITEMS.find((i) =>
+      i.header.toLowerCase().startsWith(prefix)
+    ) ?? null;
+  return {
+    green: find('green'),
+    amber: find('amber'),
+    red: find('red'),
+    brain: find('a bit more'),
+  };
+})();
 
 const MODULE_BG_IMAGE = moduleBgImage;
 const MODULE_PAGE_TINT = 'bg-[#F7F9FC]/75';
@@ -4050,22 +4071,7 @@ function ModuleContentsSidebar({
           const visibleIndices = section.indices.filter((i) => {
             const item = toc[i];
             if (!item) return false;
-            if (
-              item.blockId === 0 ||
-              item.blockId === 8 ||
-              item.blockId === 9 ||
-              item.blockId === 10 ||
-              item.blockId === 11 ||
-              item.blockId === 14 ||
-              item.blockId === 20 ||
-              item.blockId === 21 ||
-              item.blockId === 23 ||
-              item.blockId === 24 ||
-              item.blockId === 26 ||
-              item.blockId === 27
-            )
-              return false;
-            return true;
+            return item.blockId !== 0;
           });
 
           const isSectionActive = isActiveSection;
@@ -4983,12 +4989,6 @@ export default function MindSyncTeacherTrainingModule01Page() {
             watchIntro: {
               headline:
                 'You are about to watch the same moment twice: a pupil who has stopped engaging, and how his teacher responds. The first time she reacts straight away. The second time she waits three seconds. See what a difference three seconds can make.',
-              // before: {
-              //   version: 'Version 1',
-              //   timing: '~1 second',
-              //   description:
-              //     'The teacher responds on reflex, the way any of us might.',
-              // },
               after: {
                 version: 'Version 2',
                 timing: '3 seconds',
@@ -5005,91 +5005,12 @@ export default function MindSyncTeacherTrainingModule01Page() {
             },
           },
           {
-            id: 6,
-            type: 'video',
-            t2: 'The three second pause, in a real classroom',
-            videoTitle: 'Module 1 film, around 2 minutes',
-            videoUrl: null,
-            transcriptDropdown: {
-              header: 'Read the full script',
-              body: 'OPEN. Clean Elara logo on a plain background. Hold 2 to 3 seconds.\nSoft fade into the classroom.\n\nSCENE 1, the lesson and Daniel (0:00 to 0:30). Wide shot of a Year 9 English lesson already in full flow. The class is working, Ms Patel is teaching in her stride. We move to Daniel near the back: his book is not out, his desk is bare while the pupils beside him work, his pen is on the floor, and he is turned towards the window, not the board. Calm and still, not disturbing anyone.\n\nCaptions, one at a time: “Daniel, Year 9. He has ADHD.” “He is not disrupting anyone.” “His brain cannot hold focus right now.”\n\nMs Patel glances over, sees him, takes it in, and chooses to give him a minute.\n\nNarrator: This is an ordinary Year 9 English lesson, and it is going well. Now look at the back of the room. This is Daniel. He has ADHD. He is not messing about and he is not distracting anyone. His book is not even out, and his pen is on the floor. However hard he tries, his brain cannot hold on to the lesson right now. His teacher has noticed. She has not acted yet. That is the most important second in the lesson, and most observers would not even see it.\n\nSCENE 2, the first ask (0:30 to 1:00). Ms Patel comes alongside Daniel. Calm, low voice. “Daniel, book out please. We are on page forty two.”\n\nDaniel does not respond. He does not get his book out, does not turn to the page, does not look at her. A small mutter under his breath. Ms Patel’s face tightens for a second. Two pupils nearby are watching.\n\nCut to Daniel’s view for two seconds. The room feels louder. The light hums. A pencil tapping is too loud. His face is blank, his jaw tight. He heard the tone, not the words. The tone felt like pressure.\n\nNarrator: We have just seen two versions of the same moment. From the front of the class, it looks as if Daniel has refused a reasonable instruction. From inside Daniel’s head, he could not process it, and he is already starting to shut down. Same behaviour, completely different reality.\n\nSCENE 3, the pause (1:00 to 1:35). Ms Patel is about to repeat herself, more firmly. We see her start to react, then stop herself. She holds it. Three seconds. Caption, low on screen: “The three second pause.” She is choosing.\n\nShe crouches to Daniel’s eye level, side on, not face on. Lower, slower voice. “Daniel. Quick check in. Are you with me, or are you somewhere else right now?” After a few seconds, a tiny shake of the head. Almost nothing, but it is an answer. “OK. Take two minutes. Get a drink. Come back when you are ready. I will catch you up on the page.”\n\nDaniel gets up slowly and goes out. Ms Patel turns back to the class as if nothing unusual has happened.\n\nNarrator: That was the three second pause. It cost her about a minute of lesson time. Without it, this could have gone a very different way. It might have tipped into a behaviour incident, with Daniel walking out and the rest of the lesson lost. Because she paused, it did not have to. He took a short break, came back, and got on with his work.\n\nSCENE 4, the takeaway (1:35 to 2:05). End of lesson. The bell goes. Daniel hands his book to Ms Patel as he leaves. She glances at it. He has done the work. A small nod between them. Ms Patel sits, lets out a breath. Something nearly went wrong, and did not. Not because she was a better teacher than yesterday, but because she paused for three seconds.\n\nNarrator: The pause is not soft. It is not letting him off. It is the difference between responding to what is actually happening and responding to what you assumed was happening. In this module, we will show you exactly how to do it, and when it matters most.\n\nCLOSE. Fade to the clean Elara logo on a plain background. Hold about 3 seconds. Soft music resolves.',
-            },
-          },
-          {
             id: 7,
             type: 'divider',
             t1: 'Part 2. Learn',
             lead: 'What you just watched, in plain language.',
             body: 'During a lesson, a pupil can look calm on the outside while, inside, they are in one of three very different states. Each state needs a different response from you, and the most common mistake is to respond to all three in the same way. Tap each state to see what it looks like, what is going on underneath, and what may help.',
           },
-          {
-            id: 8,
-            type: 'text',
-            t3: 'State 1. Calmly engaged (green)',
-            body: 'The thinking brain is online. The pupil can follow instructions, manage impulses and learn. Most of your lesson assumes pupils are here. Most are, most of the time.',
-            // dropdowns: [
-            //   {
-            //     header: 'A bit more on the brain',
-            //     body: 'The thinking brain is the prefrontal cortex, just behind the forehead. In green it is in charge, so the pupil has the capacity to learn, remember and make choices.',
-            //   },
-            // ],
-          },
-          {
-            id: 9,
-            type: 'text',
-            t3: 'State 2. Dysregulated (amber)',
-            body: 'Something has knocked the pupil out of green: a loud room, a fall out at break, work that feels too hard, being tired or hungry. The thinking brain is only partly online and the alarm system has switched on. They look fidgety, restless, distracted. They did not choose this.',
-          },
-          {
-            id: 10,
-            type: 'key',
-            t3: 'State 3. Shut down (red)',
-            body: 'The alarm system is in charge and the thinking brain has gone offline. The pupil cannot process language the way you expect. They may freeze, refuse to move, go silent, or lash out. None of this is choice in the everyday sense. The brain has to come back down first.',
-            keyPoint:
-              'The single most important point. A pupil in amber or red cannot learn from a consequence in the moment. Their thinking brain is not online to take it in. Give the consequence later, when they are back in green. That is when it teaches.',
-          },
-          {
-            id: 11,
-            type: 'accordion',
-            t2: 'The three states, side by side',
-            // body: 'A quick reference. Tap each state to see what you might see, what is happening underneath, and what helps in the moment.',
-            accordionTitle: 'The three states, side by side',
-            accordionItems: [
-              {
-                header: 'Green. Calmly engaged',
-                body: 'What you see: on task, following instructions, productive movement, able to wait for help.\n\nUnderneath: the thinking brain is in charge. There is capacity to learn and to choose.\n\nWhat helps: teach, stretch, push gently. High expectations work best here.',
-              },
-              {
-                header: 'Amber. Dysregulated',
-                body: 'What you see: fidgety, restless, off task, short or muttered replies, slower to follow. Can look cheeky or low level disruptive.\n\nUnderneath: something has knocked them out of green. A loud room, a fall out at break, work that feels too hard, being tired or hungry. The thinking brain is only partly online. Their energy is going on staying in the room, so less is left for learning. They did not choose this.\n\nWhat helps: co regulate first. Lower your voice. Reduce the demand briefly. Offer a small choice. Buy ninety seconds. Most pupils come back within two minutes if you do not push.',
-              },
-              {
-                header: 'Red. Shut down',
-                body: 'What you see: frozen, silent, head down. May refuse to move, may walk out, may say something that is not their usual voice.\n\nUnderneath: the alarm system is in charge and the thinking brain has gone offline. Language does not process the way you expect. The brain has to come back down first.\n\nWhat helps: reduce demands to almost zero. Quiet voice. Side on, not face on. Offer space, not solutions. Do not negotiate. Give the brain time to come back.',
-              },
-              {
-                header: 'A bit more on the brain',
-                body: 'The thinking brain is the prefrontal cortex, just behind the forehead. In green it is in charge, so a pupil has the capacity to learn, remember and make choices. When the alarm system fires, that part goes quiet first.',
-              },
-            ],
-            keyPoint:
-              'A pupil in amber or red cannot take in a conversation about their behaviour while it is happening. The thinking brain is not online to process it. Have that conversation later, once they are back in green. That is when it teaches them something.',
-          },
-          {
-            id: 12,
-            type: 'text',
-            t2: 'Three states, and why the difference matters.',
-            body: 'During a lesson, a pupil’s brain can be in one of three states. From the front of the room they can look similar. They need very different things from you, and the costly mistake is treating one as if it were another. Tap each state.',
-          },
-
-          {
-            id: 14,
-            type: 'technique',
-            t2: 'The three steps',
-            lead: 'Full view — all three steps side by side for comparison.',
-            // techniqueSteps: TECHNIQUE_STEPS,
-          },
-
           {
             id: 17,
             type: 'technique_intro',
@@ -5099,23 +5020,9 @@ export default function MindSyncTeacherTrainingModule01Page() {
             keyPoint:
               'You will not manage this every time, and you are not meant to. The goal is not perfection. It is self-awareness.',
           },
-          // {
-          //   id: 18,
-          //   type: 'divider',
-          //   t1: 'Part 3. Practise',
-          //   t2: 'Three situations you will recognise.',
-          //   lead: 'Read it, choose what you would do, then compare.',
-          //   body: 'There are no trick questions, and the aim is not to score well. It is to notice your own instinct, and where a small shift might help. Some options feel reasonable and quietly make things harder.',
-          // },
           { id: 19, type: 'scenario_situation', scenarioId: 1 },
-          { id: 20, type: 'scenario_choose', scenarioId: 1 },
-          { id: 21, type: 'scenario_feedback', scenarioId: 1 },
           { id: 22, type: 'scenario_situation', scenarioId: 2 },
-          { id: 23, type: 'scenario_choose', scenarioId: 2 },
-          { id: 24, type: 'scenario_feedback', scenarioId: 2 },
           { id: 25, type: 'scenario_situation', scenarioId: 3 },
-          { id: 26, type: 'scenario_choose', scenarioId: 3 },
-          { id: 27, type: 'scenario_feedback', scenarioId: 3 },
           {
             id: 28,
             type: 'takeaway',
@@ -5133,7 +5040,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
               'Next in the pathway: Module 2, Don’t Break What’s Working. How to tell when a quietly off task pupil is actually coping, and what it costs to take their coping away.',
           },
         ] as Screen[]
-      ).filter((s) => s.id !== 6 && s.id !== 12),
+      ),
     []
   );
 
@@ -5185,12 +5092,47 @@ export default function MindSyncTeacherTrainingModule01Page() {
     useState<ScenarioIntroPhase>('reveal_situation');
   const [scenarioMainTitleIntroPlayed, setScenarioMainTitleIntroPlayed] =
     useState(false);
-  const [scenarioCalloutDismissed, setScenarioCalloutDismissed] = useState(
-    () =>
-      typeof window !== 'undefined' &&
-      localStorage.getItem(SCENARIO_CALLOUT_KEY) === '1'
-  );
+  const [scenarioCalloutDismissed, setScenarioCalloutDismissed] = useState(false);
   const [block3IntroComplete, setBlock3IntroComplete] = useState(false);
+
+  const onReadAloudHydrate = useCallback((enabled: boolean) => {
+    setModuleNarrationState({ readAloudEnabled: enabled });
+  }, []);
+
+  const moduleProgressPreferences = useMemo(
+    () => ({
+      readAloudKey: PREF_READ_ALOUD,
+      scenarioCalloutKey: PREF_SCENARIO_CALLOUT,
+      onReadAloudHydrate,
+    }),
+    [onReadAloudHydrate]
+  );
+
+  const {
+    isHydrating,
+    persistScenarioAnswer,
+    persistScenarioCompareSeen,
+    persistScenarioCalloutDismissed,
+    persistReadAloud,
+    completeModule,
+  } = useModuleProgress({
+    moduleId: MINDSYNC_MODULE_2_ID,
+    screens,
+    index,
+    setIndex,
+    completionBlockId: 29,
+    setScenarioAnswers,
+    setScenarioCompareSeen,
+    setScenarioCalloutDismissed,
+    preferences: moduleProgressPreferences,
+  });
+
+  useEffect(() => {
+    saveReadAloudPreference = persistReadAloud;
+    return () => {
+      saveReadAloudPreference = null;
+    };
+  }, [persistReadAloud]);
 
   const handleBlock3PhaseChange = useCallback(
     (phase: LearningOutcomesPhase) => {
@@ -5371,8 +5313,8 @@ export default function MindSyncTeacherTrainingModule01Page() {
       {
         key: 'practise',
         label: SIDEBAR_SECTION_LABELS.practise,
-        indices: range(18, 27),
-        landingBlockId: 18,
+        indices: range(19, 25),
+        landingBlockId: 19,
       },
       {
         key: 'takeaway',
@@ -5468,10 +5410,8 @@ export default function MindSyncTeacherTrainingModule01Page() {
 
   const dismissScenarioCallout = useCallback(() => {
     setScenarioCalloutDismissed(true);
-    if (typeof window !== 'undefined') {
-      localStorage.setItem(SCENARIO_CALLOUT_KEY, '1');
-    }
-  }, []);
+    persistScenarioCalloutDismissed();
+  }, [persistScenarioCalloutDismissed]);
 
   const narratorEnabled =
     index === 0 ||
@@ -5639,7 +5579,6 @@ export default function MindSyncTeacherTrainingModule01Page() {
 
   useEffect(() => {
     if (screen.id !== 3) return;
-    localStorage.removeItem('mindsync-m1-block3-intro-done');
     setBlock3IntroPhase('center');
     setBlock3IntroComplete(false);
   }, [index, screen.id]);
@@ -6053,37 +5992,11 @@ export default function MindSyncTeacherTrainingModule01Page() {
   const isIntroReadMoreLayoutOpen =
     isCurrentScreenDropdownOpen && (screen.id === 2 || screen.id === 3);
 
-  const learnStatesScreen = useMemo(
-    () => screens.find((s) => s.id === 11) ?? null,
-    [screens]
-  );
+  const getPrevVisibleIndex = (fromIndex: number) =>
+    fromIndex > 0 ? fromIndex - 1 : null;
 
-  const learnStateItems = useMemo(() => {
-    const items = learnStatesScreen?.accordionItems ?? [];
-    const find = (prefix: string) =>
-      items.find((i) => i.header.toLowerCase().startsWith(prefix)) ?? null;
-    return {
-      green: find('green'),
-      amber: find('amber'),
-      red: find('red'),
-      brain: find('a bit more'),
-      keyPoint: learnStatesScreen?.keyPoint ?? '',
-    };
-  }, [learnStatesScreen]);
-
-  const getPrevVisibleIndex = (fromIndex: number) => {
-    for (let i = fromIndex - 1; i >= 0; i -= 1) {
-      if (!HIDDEN_NAV_BLOCK_IDS.has(screens[i].id)) return i;
-    }
-    return null;
-  };
-
-  const getNextVisibleIndex = (fromIndex: number) => {
-    for (let i = fromIndex + 1; i < screens.length; i += 1) {
-      if (!HIDDEN_NAV_BLOCK_IDS.has(screens[i].id)) return i;
-    }
-    return null;
-  };
+  const getNextVisibleIndex = (fromIndex: number) =>
+    fromIndex < screens.length - 1 ? fromIndex + 1 : null;
 
   const prevVisibleIndex = getPrevVisibleIndex(index);
   const nextVisibleIndex = getNextVisibleIndex(index);
@@ -6127,47 +6040,9 @@ export default function MindSyncTeacherTrainingModule01Page() {
     (screen.id === 29 && closingIntroPhase === 'header') ||
     (shouldPlayScenarioMainTitleIntro && scenarioIntroPhase === 'header');
 
-  const { setSidebar } = useModuleTrainingSidebar();
-
-  const moduleSidebarContent = useMemo(() => {
-    if (screen.type === 'landing' || !isModuleContentsOpen) return null;
-    return (
-      <ModuleContentsSidebar
-        toc={toc}
-        sidebarSections={sidebarSections}
-        openSections={openSections}
-        activeSidebarSectionKey={activeSidebarSectionKey}
-        index={index}
-        screen={screen}
-        toggleSection={toggleSection}
-        setIndex={transitionToIndex}
-        sidebarScrollRef={sidebarScrollRef}
-        suppressAutoOpenRef={suppressAutoOpenRef}
-        isSidebarTranscriptOpen={isSidebarTranscriptOpen}
-        setIsSidebarTranscriptOpen={setIsSidebarTranscriptOpen}
-        isOpen={true}
-        onToggle={toggleModuleContents}
-        variant="layout"
-      />
-    );
-  }, [
-    screen,
-    isModuleContentsOpen,
-    toc,
-    sidebarSections,
-    openSections,
-    activeSidebarSectionKey,
-    index,
-    isSidebarTranscriptOpen,
-    toggleSection,
-    transitionToIndex,
-    toggleModuleContents,
-  ]);
-
-  useEffect(() => {
-    setSidebar(moduleSidebarContent);
-    return () => setSidebar(null);
-  }, [moduleSidebarContent, setSidebar]);
+  if (isHydrating) {
+    return <ModuleProgressLoader backgroundImage={MODULE_BG_IMAGE} />;
+  }
 
   return (
     <div
@@ -6491,6 +6366,9 @@ export default function MindSyncTeacherTrainingModule01Page() {
                                   ...prev,
                                   [screen.scenarioId!]: false,
                                 }));
+                                if (screen.scenarioId) {
+                                  persistScenarioAnswer(screen.scenarioId, key);
+                                }
                               }}
                               hideSituation={
                                 scenarioIntroPhase === 'center' ||
@@ -6913,41 +6791,37 @@ export default function MindSyncTeacherTrainingModule01Page() {
                                         );
                                       })}
                                     </div>
-
-                                    {learnStateItems.brain?.body ? (
-                                      <div className="mt-6"></div>
-                                    ) : null}
                                   </div>
                                 </div>
 
                                 <LearnStateModal
                                   open={learnStateModalKey === 'green'}
                                   title={
-                                    learnStateItems.green?.header ??
+                                    LEARN_STATE_ITEMS.green?.header ??
                                     'State One: Green. Calmly engaged'
                                   }
                                   accentColor="#047857"
-                                  body={learnStateItems.green?.body ?? ''}
+                                  body={LEARN_STATE_ITEMS.green?.body ?? ''}
                                   onClose={() => setLearnStateModalKey(null)}
                                 />
                                 <LearnStateModal
                                   open={learnStateModalKey === 'amber'}
                                   title={
-                                    learnStateItems.amber?.header ??
+                                    LEARN_STATE_ITEMS.amber?.header ??
                                     'State Two: Amber. Dysregulated'
                                   }
                                   accentColor="#ba7a1a"
-                                  body={learnStateItems.amber?.body ?? ''}
+                                  body={LEARN_STATE_ITEMS.amber?.body ?? ''}
                                   onClose={() => setLearnStateModalKey(null)}
                                 />
                                 <LearnStateModal
                                   open={learnStateModalKey === 'red'}
                                   title={
-                                    learnStateItems.red?.header ??
+                                    LEARN_STATE_ITEMS.red?.header ??
                                     'State Three: Red. Shut down'
                                   }
                                   accentColor="#ba1a1a"
-                                  body={learnStateItems.red?.body ?? ''}
+                                  body={LEARN_STATE_ITEMS.red?.body ?? ''}
                                   onClose={() => setLearnStateModalKey(null)}
                                 />
                               </div>
@@ -6959,75 +6833,6 @@ export default function MindSyncTeacherTrainingModule01Page() {
                               <div className="flex items-center justify-between gap-4">
                                 <div className="flex items-center gap-2 flex-wrap" />
                               </div>
-
-                              {screen.id === 8 ||
-                              screen.id === 9 ||
-                              screen.id === 10 ? (
-                                <div className="flex-1 flex flex-col gap-6 min-h-0">
-                                  {activeSidebarSectionKey !== 'learn' ? (
-                                    <div className="text-center">
-                                      {screen.t3 ? (
-                                        <h3 className="text-lg md:text-xl font-bold text-slate-900">
-                                          {screen.t3}
-                                        </h3>
-                                      ) : null}
-                                      <div className="mt-3 h-1 w-24 mx-auto rounded-full bg-gradient-to-r from-[#60A5FA] to-[#9333EA]" />
-                                    </div>
-                                  ) : null}
-
-                                  {screen.body ? (
-                                    <div
-                                      className={`w-full mx-auto ${
-                                        screen.id === 10
-                                          ? 'max-w-[1100px]'
-                                          : 'max-w-[784px]'
-                                      }`}
-                                    >
-                                      <div
-                                        className={`whitespace-pre-line text-center md:text-left ${
-                                          screen.id === 10
-                                            ? 'text-base md:text-lg leading-relaxed text-slate-100/90'
-                                            : 'text-sm md:text-base text-slate-700 leading-relaxed'
-                                        }`}
-                                      >
-                                        {screen.body}
-                                      </div>
-                                    </div>
-                                  ) : null}
-
-                                  {screen.id !== 10 ? (
-                                    <div className="flex justify-center">
-                                      <div className="w-full max-w-[520px] md:w-[520px] rounded-2xl overflow-hidden border border-slate-200 bg-white">
-                                        <img
-                                          src={structureLearnImage}
-                                          alt="Learn"
-                                          className="w-full h-[220px] md:h-[280px] object-cover"
-                                        />
-                                      </div>
-                                    </div>
-                                  ) : null}
-
-                                  {screen.dropdowns &&
-                                  screen.dropdowns.length ? (
-                                    <div className="space-y-3 w-full max-w-[920px] mx-auto">
-                                      {screen.dropdowns.map((d) => (
-                                        <div key={d.header} className="w-full">
-                                          <div className="[&>div>button]:py-4 [&>div>button]:px-5">
-                                            <Dropdown
-                                              dropdownId={`${screen.id}:${d.header}`}
-                                              header={d.header}
-                                              body={d.body}
-                                              onOpenChange={
-                                                handleDropdownOpenChange
-                                              }
-                                            />
-                                          </div>
-                                        </div>
-                                      ))}
-                                    </div>
-                                  ) : null}
-                                </div>
-                              ) : null}
 
                               {screen.type === 'divider' &&
                               screen.t1 &&
@@ -7073,8 +6878,6 @@ export default function MindSyncTeacherTrainingModule01Page() {
                               ) &&
                               screen.id !== 3 &&
                               screen.id !== 4 &&
-                              screen.id !== 11 &&
-                              screen.id !== 12 &&
                               screen.type !== 'accordion' &&
                               screen.type !== 'video' ? (
                                 activeSidebarSectionKey !== 'learn' ? (
@@ -7099,9 +6902,6 @@ export default function MindSyncTeacherTrainingModule01Page() {
                               (typeof screen.t2 !== 'string' ||
                                 screen.t2.trim().toLowerCase() !==
                                   screen.t3.trim().toLowerCase()) &&
-                              screen.id !== 8 &&
-                              screen.id !== 9 &&
-                              screen.id !== 10 &&
                               activeSidebarSectionKey !== 'learn' ? (
                                 <h3 className="text-lg md:text-xl font-bold text-slate-900">
                                   {screen.t3}
@@ -7117,10 +6917,6 @@ export default function MindSyncTeacherTrainingModule01Page() {
                               {screen.body &&
                               screen.id !== 7 &&
                               screen.id !== 5 &&
-                              screen.id !== 8 &&
-                              screen.id !== 9 &&
-                              screen.id !== 10 &&
-                              screen.id !== 12 &&
                               screen.id !== 18 &&
                               screen.type !== 'accordion' ? (
                                 <div
@@ -7144,20 +6940,7 @@ export default function MindSyncTeacherTrainingModule01Page() {
                             ) : null}
 
                             {screen.keyPoint ? (
-                              screen.id === 10 ? (
-                                <div className="mt-8 w-full max-w-[784px] mx-auto">
-                                  <Dropdown
-                                    dropdownId={`${screen.id}:key-point`}
-                                    header="The single most important point."
-                                    body={screen.keyPoint}
-                                    onOpenChange={handleDropdownOpenChange}
-                                    containerClassName="rounded-xl"
-                                    buttonClassName="h-[64px]"
-                                  />
-                                </div>
-                              ) : screen.id === 11 ? null : (
-                                <KeyPoint>{screen.keyPoint}</KeyPoint>
-                              )
+                              <KeyPoint>{screen.keyPoint}</KeyPoint>
                             ) : null}
 
                             {screen.type === 'video' ? (
@@ -7192,9 +6975,6 @@ export default function MindSyncTeacherTrainingModule01Page() {
                             {screen.dropdowns &&
                             screen.id !== 2 &&
                             screen.id !== 5 &&
-                            screen.id !== 8 &&
-                            screen.id !== 9 &&
-                            screen.id !== 10 &&
                             screen.id !== 18 ? (
                               <div className="space-y-3">
                                 {screen.dropdowns.map((d) => (
@@ -7219,7 +6999,6 @@ export default function MindSyncTeacherTrainingModule01Page() {
                             screen.accordionItems ? (
                               <div className="pt-2">
                                 {screen.t2 &&
-                                screen.id !== 11 &&
                                 screen.id !== 16 &&
                                 activeSidebarSectionKey !== 'learn' ? (
                                   <div className="text-center">
@@ -7236,59 +7015,19 @@ export default function MindSyncTeacherTrainingModule01Page() {
                                   </div>
                                 ) : null}
 
-                                {screen.id === 11 ? (
-                                  <div className="mt-8 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-                                    <div className="lg:col-span-8 flex flex-col gap-4">
-                                      {screen.accordionItems.map((item) => {
-                                        const dropdownId = `${screen.id}:${item.header}`;
-                                        return (
-                                          <LearnAccordionItem
-                                            key={item.header}
-                                            dropdownId={dropdownId}
-                                            header={item.header}
-                                            body={item.body}
-                                            open={openDropdownIds.has(
-                                              dropdownId
-                                            )}
-                                            onToggle={handleDropdownOpenChange}
-                                          />
-                                        );
-                                      })}
-                                    </div>
-
-                                    <aside className="lg:col-span-4">
-                                      <div className="lg:sticky lg:top-6 p-8 bg-[#1F7A7A] rounded-xl text-white shadow-[0_20px_40px_-15px_rgba(47,99,120,0.18)] flex flex-col gap-6">
-                                        <div className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center">
-                                          <span className="material-symbols-outlined text-white">
-                                            lightbulb
-                                          </span>
-                                        </div>
-                                        <h4 className="text-[20px] font-semibold">
-                                          The single most important point.
-                                        </h4>
-                                        {screen.keyPoint ? (
-                                          <div className="text-[15px] opacity-90 leading-relaxed whitespace-pre-line">
-                                            {screen.keyPoint}
-                                          </div>
-                                        ) : null}
-                                      </div>
-                                    </aside>
-                                  </div>
-                                ) : (
-                                  <div className="mt-8 space-y-4 max-w-[920px] mx-auto">
-                                    {screen.accordionItems.map((item) => (
-                                      <Dropdown
-                                        key={item.header}
-                                        dropdownId={`${screen.id}:${item.header}`}
-                                        header={item.header}
-                                        body={item.body}
-                                        onOpenChange={handleDropdownOpenChange}
-                                        containerClassName="rounded-xl"
-                                        buttonClassName="h-[64px]"
-                                      />
-                                    ))}
-                                  </div>
-                                )}
+                                <div className="mt-8 space-y-4 max-w-[920px] mx-auto">
+                                  {screen.accordionItems.map((item) => (
+                                    <Dropdown
+                                      key={item.header}
+                                      dropdownId={`${screen.id}:${item.header}`}
+                                      header={item.header}
+                                      body={item.body}
+                                      onOpenChange={handleDropdownOpenChange}
+                                      containerClassName="rounded-xl"
+                                      buttonClassName="h-[64px]"
+                                    />
+                                  ))}
+                                </div>
                               </div>
                             ) : null}
                           </div>
@@ -7333,7 +7072,9 @@ export default function MindSyncTeacherTrainingModule01Page() {
                     }
                     onClick={() => {
                       if (screen.id === 29) {
-                        navigate('/dashboard/my-learning/mind-sync');
+                        void completeModule().finally(() => {
+                          navigate('/dashboard/my-learning/mind-sync');
+                        });
                         return;
                       }
 
@@ -7378,10 +7119,12 @@ export default function MindSyncTeacherTrainingModule01Page() {
           open={isScenarioCompareOpen}
           onClose={() => {
             setIsScenarioCompareOpen(false);
+            if (!screen.scenarioId) return;
             setScenarioCompareSeen((prev) => ({
               ...prev,
               [screen.scenarioId!]: true,
             }));
+            persistScenarioCompareSeen(screen.scenarioId);
           }}
         />
       ) : null}

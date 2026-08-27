@@ -15,6 +15,7 @@ const Navbar: React.FC = () => {
     setIsHeroSection(
       location.pathname === '/' ||
         location.pathname === '/home-2' ||
+        location.pathname === '/home1' ||
         location.pathname === '/our-offer/mind-sync'
     );
   }, [location.pathname]);

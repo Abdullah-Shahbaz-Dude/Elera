@@ -1,14 +1,34 @@
 import { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { AuthContext } from '@/contexts/AuthContext';
+import { useMyModules } from '@/hooks/useMyModules';
+import { useLearningProgrammes } from '@/hooks/useLearningProgrammes';
+import LearningProgrammeCard from '@/dashboard/components/LearningProgrammeCard';
+import DashboardProgressCardSkeleton from '@/dashboard/components/DashboardProgressCardSkeleton';
+import LearningProgrammeCardSkeleton from '@/dashboard/components/LearningProgrammeCardSkeleton';
+import { MIND_SYNC_TEACHER_TRAINING_MODULE_01 } from '@/dashboard/data/mindSyncSyllabus';
 
 const cardClass =
   'rounded-2xl border border-slate-200 bg-white shadow-[0_4px_24px_-4px_rgba(10,31,68,0.08)]';
 
 export default function Dashboard() {
   const auth = useContext(AuthContext);
-  const user = auth?.user as { userName?: string; email?: string } | null;
-  const displayName = user?.userName ?? user?.email ?? 'there';
+  const { activeModule, loading: modulesLoading } = useMyModules();
+  const { programmes, loading: programmesLoading } = useLearningProgrammes();
+
+  const rawName = auth?.user?.username ?? auth?.user?.email ?? 'there';
+  const displayName =
+    rawName === 'there'
+      ? rawName
+      : rawName.charAt(0).toUpperCase() + rawName.slice(1);
+  const progressPercent = activeModule?.progress_percent ?? 0;
+  const remainingPercent = Math.max(0, 100 - progressPercent);
+  const moduleTitle =
+    activeModule?.title ?? MIND_SYNC_TEACHER_TRAINING_MODULE_01.title;
+  const resumePath =
+    activeModule?.route ?? '/dashboard/my-learning/mind-sync/modules/2';
+  const programmeLabel =
+    activeModule?.programme === 'mind-sync' ? 'Mind Sync' : 'Learning';
 
   return (
     <div className="min-h-full bg-[#F7F9FC] text-slate-900">
@@ -29,12 +49,14 @@ export default function Dashboard() {
                 auto_awesome
               </span>
               <p className="text-sm">
-                You&apos;ve completed 75% of your weekly learning goal.
+                {modulesLoading
+                  ? 'Loading your learning progress…'
+                  : `You've completed ${progressPercent}% of ${moduleTitle}. ${remainingPercent}% remaining.`}
               </p>
             </div>
           </div>
           <Link
-            to="/dashboard/my-learning/modules/1"
+            to={resumePath}
             className="px-6 py-3 rounded-full font-semibold flex items-center space-x-2 transition-colors text-white bg-[#2E7CF6] hover:bg-[#2563EB] shadow-[0_4px_14px_-4px_rgba(46,124,246,0.45)]"
           >
             <span>Resume Learning</span>
@@ -45,6 +67,9 @@ export default function Dashboard() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           <div className="lg:col-span-8 space-y-10">
             <section>
+              {modulesLoading && !activeModule ? (
+                <DashboardProgressCardSkeleton />
+              ) : (
               <div className={`${cardClass} p-8 border-l-4 border-l-[#2E7CF6]`}>
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
                   <div>
@@ -52,18 +77,16 @@ export default function Dashboard() {
                       className="text-xl font-bold mb-1"
                       style={{ color: '#1F3864' }}
                     >
-                      Advanced Neuro-Leadership
+                      {moduleTitle}
                     </h3>
-                    <p className="text-slate-500 text-sm">
-                      Current Path: Executive Management Tier 2
-                    </p>
+                    <p className="text-slate-500 text-sm">{programmeLabel}</p>
                   </div>
                   <div className="text-right">
                     <span
                       className="text-3xl font-bold"
                       style={{ color: '#2E7CF6' }}
                     >
-                      72%
+                      {progressPercent}%
                     </span>
                     <p className="text-xs text-slate-500 uppercase font-bold tracking-widest">
                       Progress
@@ -73,7 +96,7 @@ export default function Dashboard() {
                 <div className="w-full bg-slate-100 h-3 rounded-full overflow-hidden mb-8">
                   <div
                     className="bg-[#2E7CF6] h-full rounded-full"
-                    style={{ width: '72%' }}
+                    style={{ width: `${progressPercent}%` }}
                   />
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -121,6 +144,7 @@ export default function Dashboard() {
                   </div>
                 </div>
               </div>
+              )}
             </section>
 
             <section>
@@ -129,92 +153,31 @@ export default function Dashboard() {
                   className="text-xl font-bold"
                   style={{ color: '#1F3864' }}
                 >
-                  Featured Training
+                  Available Learning
                 </h3>
-                <div className="flex space-x-2">
-                  <button
-                    type="button"
-                    className="p-2 rounded-full border border-slate-200 bg-white hover:bg-slate-50 text-slate-600"
-                    aria-label="Previous"
-                  >
-                    <span className="material-symbols-outlined">
-                      chevron_left
-                    </span>
-                  </button>
-                  <button
-                    type="button"
-                    className="p-2 rounded-full border border-slate-200 bg-white hover:bg-slate-50 text-slate-600"
-                    aria-label="Next"
-                  >
-                    <span className="material-symbols-outlined">
-                      chevron_right
-                    </span>
-                  </button>
+                <Link
+                  to="/dashboard/my-learning"
+                  className="text-sm font-semibold text-[#2E7CF6] hover:text-[#2563EB] transition-colors"
+                >
+                  View all
+                </Link>
+              </div>
+              {programmesLoading && programmes.length === 0 ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  <LearningProgrammeCardSkeleton />
+                  <LearningProgrammeCardSkeleton />
                 </div>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                <Link
-                  to="/dashboard/my-learning/modules/1"
-                  className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white aspect-video flex items-end shadow-[0_4px_24px_-4px_rgba(10,31,68,0.08)]"
-                >
-                  <img
-                    alt="Cybersecurity training abstract image"
-                    className="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-500"
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuAJOHBD4BDAdUf6l0ySajyyLfHtX7N4U9zLHSb-OqpAY-pQM1Xm6vo3sOD4Uvoy5lvovxObOX429hy9aiLhYRATN0sq46BUzSiS75ZeUS-HnGVZ3r3W9PUZXqob7DUsBQugBITHdCD2-3pI6lM-Hn9iLmDR0g0EXCGXoYuY2qz8m23GwgavnrUTUqMDkWyvLSy37PT8z433CGasEIDs87-Jau6VoCWIWzk5NsinFzfHbHnixLPhBYX0nOqM-QQ9HIDQsLsHIee98E2c"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#1F3864]/85 via-[#1F3864]/25 to-transparent" />
-                  <div className="relative p-6 w-full">
-                    <div className="bg-[#2E7CF6]/20 text-white text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded w-fit mb-2">
-                      New Course
-                    </div>
-                    <h4 className="text-lg font-bold text-white">
-                      Cyber Resilience in AI
-                    </h4>
-                    <div className="flex items-center justify-between mt-4">
-                      <span className="text-sm text-white/80">
-                        4.5 hours • Advanced
-                      </span>
-                      <span className="h-10 w-10 bg-white/20 group-hover:bg-white/30 rounded-full flex items-center justify-center transition-colors">
-                        <span className="material-symbols-outlined text-sm text-white">
-                          arrow_forward
-                        </span>
-                      </span>
-                    </div>
-                  </div>
-                </Link>
-                <Link
-                  to="#"
-                  className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white aspect-video flex items-end shadow-[0_4px_24px_-4px_rgba(10,31,68,0.08)]"
-                >
-                  <img
-                    alt="Robotics and human collaboration"
-                    className="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-500"
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuBN3QGSgsFCQ_zuWhUC3TyCyoCCQNnUmLpzJOnQ3XikE2yk_CZWrus4D1Z8FylhYBLJWHvWHwYeDfmsMvSu_zb7SBhuEFVLGy_r-rOK7YD0Pui2lNJVRsG8SXYm8G8f-Ur2Bo2jK3SnBlAypYK-INQ3HQ1SUK9aTZIsgBJvghb4nI2AQT2DE87DyayHn3nZtHLU8lwO4CqU7VSBZF_aFkktbjcqA1H27lrk8trfRsgn5CrahxJcUzjDOY7Ynqj-kSOWBHTRtnlAoaDO"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#1F3864]/85 via-[#1F3864]/25 to-transparent" />
-                  <div className="relative p-6 w-full">
-                    <div
-                      className="text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded w-fit mb-2 text-white"
-                      style={{ backgroundColor: 'rgba(31, 122, 122, 0.35)' }}
-                    >
-                      Popular
-                    </div>
-                    <h4 className="text-lg font-bold text-white">
-                      Collaborative Intelligence
-                    </h4>
-                    <div className="flex items-center justify-between mt-4">
-                      <span className="text-sm text-white/80">
-                        2.5 hours • Intermediate
-                      </span>
-                      <span className="h-10 w-10 bg-white/20 group-hover:bg-white/30 rounded-full flex items-center justify-center transition-colors">
-                        <span className="material-symbols-outlined text-sm text-white">
-                          arrow_forward
-                        </span>
-                      </span>
-                    </div>
-                  </div>
-                </Link>
-              </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  {programmes.map((programme) => (
+                    <LearningProgrammeCard
+                      key={programme.programme_id}
+                      programme={programme}
+                      compact
+                    />
+                  ))}
+                </div>
+              )}
             </section>
 
             <section>

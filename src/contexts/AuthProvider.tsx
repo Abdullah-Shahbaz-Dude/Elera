@@ -1,50 +1,84 @@
 import { useState, useEffect, type ReactNode } from 'react';
-import axios from 'axios';
+import { api, axios } from '@/api/client';
+import type { AuthUser, UserProfile } from '@/types/user';
+import { getApiErrorMessage } from '@/utils/apiError';
+import {
+  clearAuthCache,
+  getCachedUser,
+  setCachedUser,
+} from '@/utils/authCache';
 import { AuthContext } from './AuthContext';
 
-const API_BASE =
-  // import.meta.env.VITE_API_URL ?? 'https://web-production-d29fb.up.railway.app';
-  import.meta.env.VITE_API_URL ??
-  'https://elera-backend-production-aa3a.up.railway.app';
+async function fetchCurrentUser(token: string): Promise<AuthUser> {
+  try {
+    const res = await api.get<UserProfile>('/api/v1/me', {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return { ...res.data, token };
+  } catch (err) {
+    if (axios.isAxiosError(err) && err.response?.status === 404) {
+      throw new Error(
+        'Profile API (/api/v1/me) not found. Set VITE_API_URL=http://127.0.0.1:5000 in .env and restart the frontend, or deploy the updated backend.'
+      );
+    }
+    throw new Error(getApiErrorMessage(err, 'Could not load your profile'));
+  }
+}
+
+function persistUser(profile: AuthUser) {
+  setCachedUser(profile);
+  return profile;
+}
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<{
-    token?: string;
-    [key: string]: unknown;
-  } | null>(null);
+  const [user, setUser] = useState<AuthUser | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    if (token) {
-      setUser({ token });
+    if (!token) {
+      setLoading(false);
+      return;
     }
-    setLoading(false);
+
+    const cached = getCachedUser();
+    if (cached && cached.token === token) {
+      setUser(cached);
+      setLoading(false);
+      return;
+    }
+
+    fetchCurrentUser(token)
+      .then((profile) => setUser(persistUser(profile)))
+      .catch(() => {
+        localStorage.removeItem('token');
+        clearAuthCache();
+        setUser(null);
+      })
+      .finally(() => setLoading(false));
   }, []);
 
   const signup = async (username: string, email: string, password: string) => {
-    const res = await axios.post(`${API_BASE}/signup`, {
-      username,
-      email,
-      password,
-    });
-    localStorage.setItem('token', res.data.token);
-    setUser(res.data.user ?? { token: res.data.token });
+    const res = await api.post('/signup', { username, email, password });
+    const token = res.data.token as string;
+    localStorage.setItem('token', token);
+    const profile = persistUser(await fetchCurrentUser(token));
+    setUser(profile);
     return res.data;
   };
 
   const login = async (email: string, password: string) => {
-    const res = await axios.post(`${API_BASE}/login`, {
-      email,
-      password,
-    });
-    localStorage.setItem('token', res.data.token);
-    setUser(res.data.user ?? { token: res.data.token });
+    const res = await api.post('/login', { email, password });
+    const token = res.data.token as string;
+    localStorage.setItem('token', token);
+    const profile = persistUser(await fetchCurrentUser(token));
+    setUser(profile);
     return res.data;
   };
 
   const logout = () => {
     localStorage.removeItem('token');
+    clearAuthCache();
     setUser(null);
   };
 

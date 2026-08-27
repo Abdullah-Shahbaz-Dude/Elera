@@ -4,11 +4,12 @@ import { logoImage } from '@/assets/images';
 
 interface LogoProps {
   className?: string;
+  to?: string;
 }
 
-const Logo: React.FC<LogoProps> = ({ className = '' }) => {
+const Logo: React.FC<LogoProps> = ({ className = '', to = '/home-2' }) => {
   return (
-    <Link to="/home-2" className="inline-flex items-center">
+    <Link to={to} className="inline-flex items-center">
       {logoImage ? (
         <img
           src={logoImage}
